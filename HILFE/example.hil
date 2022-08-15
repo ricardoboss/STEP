@@ -1,0 +1,17 @@
+﻿double pi = 3.1415
+string name = "John"
+
+if name == "John" {
+    print "Hello, $name"
+} else {
+    print "Who are you?"
+}
+
+string guess
+print "Guess PI: "
+readline guess
+if guess == pi {
+    print "You got it!"
+} else {
+    print "Nope, it's $pi"
+}
