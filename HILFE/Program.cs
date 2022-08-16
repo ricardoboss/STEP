@@ -33,30 +33,40 @@ rootCommand.AddGlobalOption(configOption);
 rootCommand.AddCommand(runCommand);
 rootCommand.AddCommand(listenCommand);
 
-listenCommand.SetHandler((configFile) =>
+listenCommand.SetHandler(async configFile =>
 {
     var config = configFile != null ? Config.FromFile(configFile) : Config.FromEnvironment();
-    var interpreter = new Interpreter(config, "<stdin>", Console.Out, Console.Error, Console.In);
+    var memoryBuffer = new MemoryStream();
+    var inputReader = new StreamReader(memoryBuffer);
+    var inputWriter = new StreamWriter(memoryBuffer)
+    {
+        AutoFlush = true,
+    };
+
+    var interpreter = new Interpreter(config, "<stdin>", inputReader, Console.Out, Console.Error, inputReader);
+    var interpreterTask = Task.Run(async () => await interpreter.Interpret());
 
     Console.WriteLine("Welcome to HILFE REPL! Use Ctrl-C to exit.");
     Console.Write("> ");
     while (Console.ReadLine() is { } line)
     {
-        interpreter.Interpret(line);
+        inputWriter.WriteLine(line);
         Console.Write("> ");
     }
+
+    inputWriter.WriteLine("exit 0");
     Console.WriteLine("Bye!");
+
+    Environment.ExitCode = await interpreterTask;
 }, configOption);
 
-runCommand.SetHandler((configFile, scriptFile) =>
+runCommand.SetHandler(async (configFile, scriptFile) =>
 {
     var config = configFile != null ? Config.FromFile(configFile) : Config.FromEnvironment();
-    var interpreter = new Interpreter(config, scriptFile.FullName, Console.Out, Console.Error, Console.In);
-    var lines = File.ReadAllLines(scriptFile.FullName);
-    foreach (var line in lines)
-    {
-        interpreter.Interpret(line);
-    }
+    var lineBuffer = new MemoryStream(await File.ReadAllBytesAsync(scriptFile.FullName));
+    var inputReader = new StreamReader(lineBuffer);
+    var interpreter = new Interpreter(config, scriptFile.FullName, inputReader, Console.Out, Console.Error, Console.In);
+    Environment.ExitCode = await interpreter.Interpret();
 }, configOption, fileArgument);
 
 return await rootCommand.InvokeAsync(args);
