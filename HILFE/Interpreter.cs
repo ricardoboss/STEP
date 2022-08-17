@@ -26,14 +26,15 @@ public class Interpreter
         {
             try
             {
-                var tokens = Tokenizer.Tokenize(line)
-                    .Where(t => t.Type != TokenType.Whitespace)
-                    .ToList();
+                var anyPrinted = false;
+                foreach (var token in Tokenizer.Tokenize(line).Where(t => t.Type != TokenType.Whitespace))
+                {
+                    await _stdOut.WriteAsync(token + ".");
+                    anyPrinted = true;
+                }
 
-                if (!tokens.Any())
-                    continue;
-
-                await _stdOut.WriteLineAsync(string.Join(".", tokens));
+                if (anyPrinted)
+                    await _stdOut.WriteLineAsync();
             }
             catch (TokenizerException te)
             {

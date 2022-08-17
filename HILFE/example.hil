@@ -1,17 +1,19 @@
 ﻿double pi = 3.1415
 string name = "John"
 
-if name == "John" {
-    print "Hello, $name"
+if (name == "John") {
+    print("Hello, $name" EOL)
 } else {
-    print "Who are you?"
+    print("Who are you?" EOL)
 }
 
+"Guess PI: ".print()
 string guess
-print "Guess PI: "
-readline guess
-if guess == pi {
-    print "You got it!"
-} else {
-    print "Nope, it's $pi"
+while (guess = readline()) {
+    if (guess == pi) {
+        "You got it!" EOL.print()
+        break
+    } else {
+        "Nope, try again" EOL "Guess PI: ".print()
+    }
 }

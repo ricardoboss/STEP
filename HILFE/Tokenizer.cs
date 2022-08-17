@@ -11,6 +11,7 @@ public static class Tokenizer
         char? stringQuote = null;
         var escaped = false;
         var allowedTypes = TokenTypes.LineStarters;
+        Token? lastToken = null;
 
         Token FinalizeToken(TokenType type)
         {
@@ -20,31 +21,41 @@ public static class Tokenizer
             if (!allowedTypes.Contains(type))
                 throw new TokenizerException($"Unexpected token type {type} with value '{value}'");
 
-            return new(type, value);
+            return lastToken = new(type, value);
         }
 
         foreach (var c in line)
         {
+            TokenType? tmpType;
+            TokenType[]? tmpAllowedTypes;
+
             switch (inString)
             {
-                case false when c is '=':
-                    yield return FinalizeToken(TokenType.AssignmentOperator);
-
-                    allowedTypes = TokenTypes.Values;
-
-                    break;
-                case false when c is ' ' && tokenBuilder.ToString().Trim() is { Length: > 0 } value:
+                case false when c.IsTokenSeparator() && tokenBuilder.ToString() is { Length: > 0 } value:
                     if (value.IsBuiltInType())
                     {
                         yield return FinalizeToken(TokenType.TypeName);
 
                         allowedTypes = new[] { TokenType.Identifier };
                     }
+                    else if (value.TryParseSymbol(lastToken?.Type, out tmpType, out tmpAllowedTypes))
+                    {
+                        yield return FinalizeToken(tmpType.Value);
+
+                        if (tmpAllowedTypes != null)
+                            allowedTypes = tmpAllowedTypes;
+                    }
+                    else if (value.TryParseKeyword(out tmpType))
+                    {
+                        yield return FinalizeToken(tmpType.Value);
+
+                        allowedTypes = new[] { TokenType.FunctionCallArgumentListOpener };
+                    }
                     else
                     {
                         yield return FinalizeToken(TokenType.Identifier);
 
-                        allowedTypes = new[] { TokenType.AssignmentOperator };
+                        allowedTypes = new[] { TokenType.AssignmentOperator, TokenType.FunctionCallArgumentListOpener };
                     }
 
                     break;
@@ -63,6 +74,8 @@ public static class Tokenizer
 
                     yield return FinalizeToken(TokenType.LiteralString);
 
+                    allowedTypes = TokenTypes.LineStarters.Concat(new[] { TokenType.StringConcatenationWhitespace }).ToArray();
+
                     break;
                 case true when c is '\\' && !escaped:
                     escaped = true;
@@ -79,6 +92,8 @@ public static class Tokenizer
         var leftoverTokenValue = tokenBuilder.ToString().Trim();
         if (leftoverTokenValue.Length == 0)
             yield return FinalizeToken(TokenType.Whitespace);
+        else if (double.TryParse(leftoverTokenValue, out _))
+            yield return FinalizeToken(TokenType.LiteralNumber);
         else
             throw new TokenizerException($"Unknown token: {leftoverTokenValue}");
     }
