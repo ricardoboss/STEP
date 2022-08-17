@@ -27,9 +27,9 @@ public class Interpreter
             try
             {
                 var anyPrinted = false;
-                foreach (var token in Tokenizer.Tokenize(line).Where(t => t.Type != TokenType.Whitespace))
+                foreach (var token in Tokenizer.Tokenize(line))
                 {
-                    await _stdOut.WriteAsync(token + ".");
+                    await _stdOut.WriteAsync("." + token);
                     anyPrinted = true;
                 }
 
@@ -38,7 +38,7 @@ public class Interpreter
             }
             catch (TokenizerException te)
             {
-                await _stdErr.WriteLineAsync(nameof(TokenizerException) + ": " + te.Message);
+                await _stdErr.WriteLineAsync(te.GetType().Name + ": " + te.Message);
             }
         }
 

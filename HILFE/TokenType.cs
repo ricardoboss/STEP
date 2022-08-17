@@ -6,7 +6,7 @@ public enum TokenType
 {
     TypeName,
     Identifier,
-    AssignmentOperator,
+    EqualsSymbol,
     LiteralString,
     LiteralNumber,
     Whitespace,
@@ -69,7 +69,7 @@ public static class TokenTypes
             .Concat(Whitespace)
             .ToArray();
 
-    public static bool IsBuiltInType(this string name)
+    public static bool IsKnownTypeName(this string name)
     {
         return name is "string" or "double" or "int" or "bool";
     }
@@ -96,55 +96,42 @@ public static class TokenTypes
             case "continue":
                 type = TokenType.ContinueKeyword;
                 return true;
+            case "==":
+                type = TokenType.EqualityOperator;
+                return true;
         }
 
         type = null;
         return false;
     }
 
-    public static bool TryParseSymbol(this string symbol, TokenType? previous, [NotNullWhen(true)] out TokenType? type, out TokenType[]? allowedFollowedTypes)
+    public static bool TryParseSymbol(this char symbol, TokenType? previous, [NotNullWhen(true)] out TokenType? type)
     {
         switch (symbol)
         {
-            case " " when previous is TokenType.LiteralString:
+            case ' ' when previous is TokenType.LiteralString:
                 type = TokenType.StringConcatenationWhitespace;
-                allowedFollowedTypes = new[] { TokenType.LiteralString };
                 return true;
-            case " ":
+            case ' ':
                 type = TokenType.Whitespace;
-                allowedFollowedTypes = null;
                 return true;
-            case "{":
+            case '{':
                 type = TokenType.CodeBlockOpener;
-                allowedFollowedTypes = LineStarters;
                 return true;
-            case "}":
+            case '}':
                 type = TokenType.CodeBlockCloser;
-                allowedFollowedTypes = LineStarters;
                 return true;
-            case "(" when previous is TokenType.Identifier:
+            case '(' when previous is TokenType.Identifier:
                 type = TokenType.FunctionCallArgumentListOpener;
-                allowedFollowedTypes = Literals.Concat(new [] { TokenType.ExpressionOpener, TokenType.Identifier }).ToArray();
                 return true;
-            case "(":
+            case '(':
                 type = TokenType.ExpressionOpener;
-                allowedFollowedTypes = Literals.Concat(new [] { TokenType.ExpressionOpener, TokenType.Identifier }).ToArray();
                 return true;
-            case ")":
+            case ')':
                 type = TokenType.ExpressionCloser;
-                allowedFollowedTypes = new[] { TokenType.ExpressionCloser, TokenType.CodeBlockOpener };
-                return true;
-            case "=":
-                type = TokenType.AssignmentOperator;
-                allowedFollowedTypes = new[] { TokenType.LiteralString, TokenType.LiteralNumber, TokenType.ExpressionOpener, TokenType.Identifier };
-                return true;
-            case "==":
-                type = TokenType.EqualityOperator;
-                allowedFollowedTypes = new[] { TokenType.LiteralString, TokenType.LiteralNumber, TokenType.ExpressionOpener, TokenType.Identifier };
                 return true;
         }
 
-        allowedFollowedTypes = null;
         type = null;
         return false;
     }

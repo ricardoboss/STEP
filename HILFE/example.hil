@@ -7,13 +7,13 @@ if (name == "John") {
     print("Who are you?" EOL)
 }
 
-"Guess PI: ".print()
+print("Guess PI: ")
 string guess
 while (guess = readline()) {
     if (guess == pi) {
-        "You got it!" EOL.print()
+        print("You got it!" EOL)
         break
     } else {
-        "Nope, try again" EOL "Guess PI: ".print()
+        print("Nope, try again" EOL "Guess PI: ")
     }
 }
