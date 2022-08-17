@@ -26,19 +26,16 @@ public class Interpreter
         {
             try
             {
-                var anyPrinted = false;
-                foreach (var token in Tokenizer.Tokenize(line))
+                await _stdOut.WriteAsync("[");
+                foreach (var token in Tokenizer.Tokenize(line).Where(t => t.Type != TokenType.Whitespace))
                 {
-                    await _stdOut.WriteAsync("." + token);
-                    anyPrinted = true;
+                    await _stdOut.WriteAsync(token + ", ");
                 }
-
-                if (anyPrinted)
-                    await _stdOut.WriteLineAsync();
+                await _stdOut.WriteLineAsync("]");
             }
             catch (TokenizerException te)
             {
-                await _stdErr.WriteLineAsync(te.GetType().Name + ": " + te.Message);
+                await _stdErr.WriteLineAsync(" ~>" + te.GetType().Name + ": " + te.Message);
             }
         }
 
