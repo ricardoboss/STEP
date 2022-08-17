@@ -105,13 +105,10 @@ public static class TokenTypes
         return false;
     }
 
-    public static bool TryParseSymbol(this char symbol, TokenType? previous, [NotNullWhen(true)] out TokenType? type)
+    public static bool TryParseSymbol(this char symbol, [NotNullWhen(true)] out TokenType? type)
     {
         switch (symbol)
         {
-            case ' ' when previous is TokenType.LiteralString:
-                type = TokenType.StringConcatenationWhitespace;
-                return true;
             case ' ':
                 type = TokenType.Whitespace;
                 return true;
@@ -121,23 +118,18 @@ public static class TokenTypes
             case '}':
                 type = TokenType.CodeBlockCloser;
                 return true;
-            case '(' when previous is TokenType.Identifier:
-                type = TokenType.FunctionCallArgumentListOpener;
-                return true;
             case '(':
                 type = TokenType.ExpressionOpener;
                 return true;
             case ')':
                 type = TokenType.ExpressionCloser;
                 return true;
+            case '=':
+                type = TokenType.EqualsSymbol;
+                return true;
         }
 
         type = null;
         return false;
-    }
-
-    public static bool IsTokenSeparator(this char value)
-    {
-        return value is ' ';
     }
 }

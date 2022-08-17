@@ -10,7 +10,6 @@ public static class Tokenizer
         var inString = false;
         char? stringQuote = null;
         var escaped = false;
-        Token? lastToken = null;
 
         Token FinalizeToken(TokenType type, bool clear = true)
         {
@@ -19,7 +18,7 @@ public static class Tokenizer
             if (clear)
                 tokenBuilder.Clear();
 
-            return lastToken = new(type, value);
+            return new(type, value);
         }
 
         foreach (var c in line)
@@ -79,6 +78,13 @@ public static class Tokenizer
 
                 if (tokenValue.Length > 0)
                 {
+                    if (tokenValue.Length == 1 && tokenValue[0].TryParseSymbol(out tmpType))
+                    {
+                        yield return FinalizeToken(tmpType.Value);
+
+                        continue;
+                    }
+
                     yield return FinalizeToken(TokenType.Identifier);
 
                     continue;
@@ -88,8 +94,15 @@ public static class Tokenizer
 
                 yield return FinalizeToken(TokenType.Whitespace);
             }
-            else if (c.TryParseSymbol(lastToken?.Type, out tmpType))
+            else if (c.TryParseSymbol(out tmpType))
             {
+                if (tokenValue.Length > 0)
+                {
+                    yield return FinalizeToken(TokenType.Identifier);
+                }
+
+                tokenBuilder.Append(c);
+
                 yield return FinalizeToken(tmpType.Value);
             }
             else
@@ -97,11 +110,9 @@ public static class Tokenizer
         }
 
         var leftoverTokenValue = tokenBuilder.ToString().Trim();
-        if (leftoverTokenValue.Length == 0)
-            yield return FinalizeToken(TokenType.Whitespace);
-        else if (double.TryParse(leftoverTokenValue, out _))
+        if (double.TryParse(leftoverTokenValue, out _))
             yield return FinalizeToken(TokenType.LiteralNumber);
-        else
-            throw new TokenizerException($"Unknown token: {leftoverTokenValue}");
+        else if (leftoverTokenValue.Length > 0)
+            yield return FinalizeToken(TokenType.Identifier);
     }
 }
