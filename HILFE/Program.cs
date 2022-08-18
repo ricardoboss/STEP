@@ -43,30 +43,29 @@ listenCommand.SetHandler(async configFile =>
         AutoFlush = true,
     };
 
-    var interpreter = new Interpreter(config, "<stdin>", inputReader, Console.Out, Console.Error, inputReader);
-    var interpreterTask = Task.Run(async () => await interpreter.Interpret());
+    var interpreter = new Interpreter(config, "<stdin>", Console.Out, Console.Error, inputReader);
 
     Console.WriteLine("Welcome to HILFE REPL! Use Ctrl-C to exit.");
     Console.Write("> ");
     while (Console.ReadLine() is { } line)
     {
         inputWriter.WriteLine(line);
+
+        await interpreter.InterpretAsync(line.ToAsyncEnumerable().Concat(new [] { '\n' }.ToAsyncEnumerable()));
+
         Console.Write("> ");
     }
 
     inputWriter.WriteLine("exit 0");
     Console.WriteLine("Bye!");
-
-    Environment.ExitCode = await interpreterTask;
 }, configOption);
 
 runCommand.SetHandler(async (configFile, scriptFile) =>
 {
     var config = configFile != null ? Config.FromFile(configFile) : Config.FromEnvironment();
-    var lineBuffer = new MemoryStream(await File.ReadAllBytesAsync(scriptFile.FullName));
-    var inputReader = new StreamReader(lineBuffer);
-    var interpreter = new Interpreter(config, scriptFile.FullName, inputReader, Console.Out, Console.Error, Console.In);
-    Environment.ExitCode = await interpreter.Interpret();
+    var chars = await File.ReadAllBytesAsync(scriptFile.FullName);
+    var interpreter = new Interpreter(config, scriptFile.FullName, Console.Out, Console.Error, Console.In);
+    Environment.ExitCode = await interpreter.InterpretAsync(chars.Select(b => (char)b).ToAsyncEnumerable());
 }, configOption, fileArgument);
 
 return await rootCommand.InvokeAsync(args);

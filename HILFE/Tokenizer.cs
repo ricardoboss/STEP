@@ -1,10 +1,11 @@
-﻿using System.Text;
+﻿using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace HILFE;
 
 public static class Tokenizer
 {
-    public static IEnumerable<Token> Tokenize(string line)
+    public static async IAsyncEnumerable<Token> TokenizeAsync(IAsyncEnumerable<char> characters, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var tokenBuilder = new StringBuilder();
         var inString = false;
@@ -21,8 +22,10 @@ public static class Tokenizer
             return new(type, value);
         }
 
-        foreach (var c in line)
+        await foreach (var c in characters.WithCancellation(cancellationToken))
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             if (inString)
             {
                 if (c is ' ')
@@ -65,18 +68,12 @@ public static class Tokenizer
                 if (tokenValue.IsKnownTypeName())
                 {
                     yield return FinalizeToken(TokenType.TypeName);
-
-                    continue;
                 }
-
-                if (tokenValue.TryParseKeyword(out tmpType))
+                else if (tokenValue.TryParseKeyword(out tmpType))
                 {
                     yield return FinalizeToken(tmpType.Value);
-
-                    continue;
                 }
-
-                if (tokenValue.Length > 0)
+                else if (tokenValue.Length > 0)
                 {
                     if (tokenValue.Length == 1 && tokenValue[0].TryParseSymbol(out tmpType))
                     {
@@ -86,8 +83,6 @@ public static class Tokenizer
                     }
 
                     yield return FinalizeToken(TokenType.Identifier);
-
-                    continue;
                 }
 
                 tokenBuilder.Append(c);
@@ -114,5 +109,7 @@ public static class Tokenizer
             yield return FinalizeToken(TokenType.LiteralNumber);
         else if (leftoverTokenValue.Length > 0)
             yield return FinalizeToken(TokenType.Identifier);
+        else
+            yield return FinalizeToken(TokenType.NewLine);
     }
 }

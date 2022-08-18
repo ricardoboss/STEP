@@ -2,41 +2,38 @@
 
 public class Interpreter
 {
-    private readonly Config _config;
-    private readonly Callstack _callstack;
-    private readonly TextReader _input;
-    private readonly TextWriter _stdOut;
-    private readonly TextWriter _stdErr;
-    private readonly TextReader _stdIn;
+    public readonly Config _config;
+    public readonly Callstack Callstack;
+    public readonly TextWriter StdOut;
+    public readonly TextWriter StdErr;
+    public readonly TextReader StdIn;
 
-    public Interpreter(Config config, string entryFile, TextReader input, TextWriter stdout, TextWriter stderr, TextReader stdin)
+    public Interpreter(Config config, string entryFile, TextWriter stdout, TextWriter stderr, TextReader stdin)
     {
         _config = config;
-        _callstack = new();
-        _callstack.Push(new(null, entryFile, 0, 0));
-        _input = input;
-        _stdOut = stdout;
-        _stdErr = stderr;
-        _stdIn = stdin;
+        Callstack = new();
+        Callstack.Push(new(null, entryFile, 0, 0));
+        StdOut = stdout;
+        StdErr = stderr;
+        StdIn = stdin;
     }
 
-    public async Task<int> Interpret(CancellationToken cancellationToken = default)
+    public async Task<int> InterpretAsync(IAsyncEnumerable<string> lines, CancellationToken cancellationToken = default)
     {
-        while (await _input.ReadLineAsync() is { } line)
+        var chars = lines.SelectMany(l => l.ToAsyncEnumerable());
+
+        return await InterpretAsync(chars, cancellationToken);
+    }
+
+    public async Task<int> InterpretAsync(IAsyncEnumerable<char> input, CancellationToken cancellationToken = default)
+    {
+        var tokens = Tokenizer.TokenizeAsync(input, cancellationToken);
+        var ast = Parser.ParseAsync(tokens, cancellationToken);
+
+        await foreach (var statement in ast.WithCancellation(cancellationToken))
         {
-            try
-            {
-                await _stdOut.WriteAsync("[");
-                foreach (var token in Tokenizer.Tokenize(line).Where(t => t.Type != TokenType.Whitespace))
-                {
-                    await _stdOut.WriteAsync(token + ", ");
-                }
-                await _stdOut.WriteLineAsync("]");
-            }
-            catch (TokenizerException te)
-            {
-                await _stdErr.WriteLineAsync(" ~>" + te.GetType().Name + ": " + te.Message);
-            }
+            await StdOut.WriteLineAsync(statement.ToString());
+            // await statement.ExecuteAsync(this);
         }
 
         return -1;

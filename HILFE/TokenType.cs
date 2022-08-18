@@ -10,6 +10,7 @@ public enum TokenType
     LiteralString,
     LiteralNumber,
     Whitespace,
+    NewLine,
     IfKeyword,
     ElseKeyword,
     ElseIfKeyword,
@@ -21,54 +22,11 @@ public enum TokenType
     FunctionCall,
     ExpressionOpener,
     ExpressionCloser,
-    StringConcatenationWhitespace,
-    FunctionCallArgumentListOpener,
-    EqualityOperator
+    EqualityOperator,
 }
 
 public static class TokenTypes
 {
-    public static readonly TokenType[] Keywords =
-    {
-        TokenType.IfKeyword,
-        TokenType.ElseKeyword,
-        TokenType.ElseIfKeyword,
-        TokenType.WhileKeyword,
-    };
-
-    public static readonly TokenType[] Literals =
-    {
-        TokenType.LiteralString,
-        TokenType.LiteralNumber,
-    };
-
-    public static readonly TokenType[] Whitespace =
-    {
-        TokenType.Whitespace,
-    };
-
-    public static readonly TokenType[] Types =
-    {
-        TokenType.TypeName,
-    };
-
-    public static readonly TokenType[] Callables =
-    {
-        TokenType.FunctionCall,
-    };
-
-    public static readonly TokenType[] LineStarters =
-        Keywords
-            .Concat(Types)
-            .Concat(Callables)
-            .Concat(Whitespace)
-            .ToArray();
-
-    public static readonly TokenType[] Values =
-        Literals
-            .Concat(Whitespace)
-            .ToArray();
-
     public static bool IsKnownTypeName(this string name)
     {
         return name is "string" or "double" or "int" or "bool";
@@ -111,6 +69,9 @@ public static class TokenTypes
         {
             case ' ':
                 type = TokenType.Whitespace;
+                return true;
+            case '\n':
+                type = TokenType.NewLine;
                 return true;
             case '{':
                 type = TokenType.CodeBlockOpener;

@@ -1,8 +1,8 @@
 ﻿namespace HILFE;
 
-public class UnexpectedTokenException : TokenizerException
+public class UnexpectedTokenException : ParserException
 {
-    public UnexpectedTokenException(IEnumerable<TokenType> allowed, TokenType type, string value) : base($"Got '{type}' but expected one of '{string.Join(", ", allowed)}' (value: '{value}')")
+    public UnexpectedTokenException(IEnumerable<TokenType> allowed, Token token) : base($"Got '{token.Type}' but expected one of '{string.Join(", ", allowed)}' (value: '{token.Value}')")
     {
     }
 }
