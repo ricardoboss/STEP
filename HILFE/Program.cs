@@ -63,9 +63,9 @@ listenCommand.SetHandler(async configFile =>
 runCommand.SetHandler(async (configFile, scriptFile) =>
 {
     var config = configFile != null ? Config.FromFile(configFile) : Config.FromEnvironment();
-    var chars = await File.ReadAllBytesAsync(scriptFile.FullName);
+    var chars = await File.ReadAllTextAsync(scriptFile.FullName);
     var interpreter = new Interpreter(config, scriptFile.FullName, Console.Out, Console.Error, Console.In);
-    Environment.ExitCode = await interpreter.InterpretAsync(chars.Select(b => (char)b).ToAsyncEnumerable());
+    Environment.ExitCode = await interpreter.InterpretAsync(chars.ToAsyncEnumerable());
 }, configOption, fileArgument);
 
 return await rootCommand.InvokeAsync(args);
