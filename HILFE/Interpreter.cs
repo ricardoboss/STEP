@@ -30,10 +30,17 @@ public class Interpreter
         var tokens = Tokenizer.TokenizeAsync(input, cancellationToken);
         var ast = Parser.ParseAsync(tokens, cancellationToken);
 
-        await foreach (var statement in ast.WithCancellation(cancellationToken))
+        try
         {
-            await StdOut.WriteLineAsync(statement.ToString());
-            // await statement.ExecuteAsync(this);
+            await foreach (var statement in ast.WithCancellation(cancellationToken))
+            {
+                await StdOut.WriteLineAsync(statement.ToString());
+                // await statement.ExecuteAsync(this);
+            }
+        }
+        catch (UnexpectedTokenException e)
+        {
+            await StdErr.WriteLineAsync("~>" + e.GetType().Name + ": " + e.Message);
         }
 
         return -1;
