@@ -2,18 +2,18 @@
 string name = "John"
 
 if (name == "John") {
-    print("Hello, $name" EOL)
+    print("Hello, $name", EOL)
 } else {
-    print("Who are you?" EOL)
+    print("Who are you?", EOL)
 }
 
-print("Guess PI: ")
+print("Guess PI: ", EOL)
 string guess
 while (guess = readline()) {
     if (guess == pi) {
-        print("You got it!" EOL)
+        print("You got it!", EOL)
         break
     } else {
-        print("Nope, try again" EOL "Guess PI: ")
+        print("Nope, try again", EOL, "Guess PI: ")
     }
 }

@@ -19,10 +19,9 @@ public enum TokenType
     ContinueKeyword,
     CodeBlockOpener,
     CodeBlockCloser,
-    FunctionCall,
     ExpressionOpener,
     ExpressionCloser,
-    EqualityOperator,
+    ExpressionSeparator,
 }
 
 public static class TokenTypes
@@ -54,9 +53,6 @@ public static class TokenTypes
             case "continue":
                 type = TokenType.ContinueKeyword;
                 return true;
-            case "==":
-                type = TokenType.EqualityOperator;
-                return true;
         }
 
         type = null;
@@ -87,6 +83,9 @@ public static class TokenTypes
                 return true;
             case '=':
                 type = TokenType.EqualsSymbol;
+                return true;
+            case ',':
+                type = TokenType.ExpressionSeparator;
                 return true;
         }
 
