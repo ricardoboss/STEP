@@ -2,7 +2,12 @@
 
 public class UnexpectedTokenException : ParserException
 {
-    public UnexpectedTokenException(IEnumerable<TokenType> allowed, Token token) : base($"Got '{token.Type}' but expected one of '{string.Join(", ", allowed)}' (value: '{token.Value}')")
+    public readonly IReadOnlyCollection<TokenType> Allowed;
+    public readonly Token Token;
+
+    public UnexpectedTokenException(Parser.State state, IReadOnlyCollection<TokenType> allowed, Token token) : base(state, $"Got '{token}' but expected one of '{string.Join(", ", allowed)}' (state: {state})")
     {
+        Allowed = allowed;
+        Token = token;
     }
 }

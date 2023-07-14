@@ -2,7 +2,10 @@
 
 public class ParserException : ApplicationException
 {
-    public ParserException(string message) : base(message)
+    public readonly Parser.State? State;
+
+    public ParserException(Parser.State state, string message) : base(message)
     {
+        State = state;
     }
 }
