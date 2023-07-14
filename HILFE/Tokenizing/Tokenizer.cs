@@ -34,12 +34,21 @@ public static class Tokenizer
 
                     escaped = false;
                 }
-                else if (c == stringQuote && !escaped)
+                else if (c == stringQuote)
                 {
-                    inString = false;
-                    stringQuote = null;
+                    if (escaped)
+                    {
+                        tokenBuilder.Append(c);
 
-                    yield return FinalizeToken(TokenType.LiteralString);
+                        escaped = false;
+                    }
+                    else
+                    {
+                        inString = false;
+                        stringQuote = null;
+
+                        yield return FinalizeToken(TokenType.LiteralString);
+                    }
                 }
                 else if (c is '\\' && !escaped)
                 {
