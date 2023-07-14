@@ -97,7 +97,7 @@ public static class Tokenizer
                     {
                         yield return FinalizeToken(TokenType.Identifier);
                     }
-                    else
+                    else if (double.TryParse(tokenValue, out _))
                     {
                         yield return FinalizeToken(TokenType.LiteralNumber);
                     }
@@ -115,8 +115,11 @@ public static class Tokenizer
         if (double.TryParse(leftoverTokenValue, out _))
             yield return FinalizeToken(TokenType.LiteralNumber);
         else if (leftoverTokenValue.Length > 0)
-            yield return FinalizeToken(TokenType.Identifier);
-        else
-            yield return FinalizeToken(TokenType.NewLine);
+            if (leftoverTokenValue.TryParseKeyword(out var tmpType))
+                yield return FinalizeToken(tmpType.Value);
+            else if (leftoverTokenValue.IsKnownTypeName())
+                yield return FinalizeToken(TokenType.TypeName);
+            else
+                yield return FinalizeToken(TokenType.Identifier);
     }
 }
