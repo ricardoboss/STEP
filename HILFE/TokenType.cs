@@ -67,6 +67,7 @@ public static class TokenTypes
                 type = TokenType.Whitespace;
                 return true;
             case '\n':
+            case '\r':
                 type = TokenType.NewLine;
                 return true;
             case '{':
