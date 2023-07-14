@@ -5,6 +5,11 @@ namespace HILFE.Tokenizing;
 
 public static class Tokenizer
 {
+    public static IAsyncEnumerable<Token> TokenizeAsync(string source, CancellationToken cancellationToken = default)
+    {
+        return TokenizeAsync(source.ToAsyncEnumerable(), cancellationToken);
+    }
+
     public static async IAsyncEnumerable<Token> TokenizeAsync(IAsyncEnumerable<char> characters, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var tokenBuilder = new StringBuilder();
@@ -14,7 +19,7 @@ public static class Tokenizer
 
         Token FinalizeToken(TokenType type, bool clear = true)
         {
-            var value = tokenBuilder.ToString().Trim();
+            var value = tokenBuilder.ToString();
 
             if (clear)
                 tokenBuilder.Clear();
@@ -102,14 +107,12 @@ public static class Tokenizer
             {
                 if (tokenValue.Length > 0)
                 {
-                    if (tokenValue.IsValidIdentifier())
-                    {
-                        yield return FinalizeToken(TokenType.Identifier);
-                    }
-                    else if (double.TryParse(tokenValue, out _))
-                    {
+                    if (double.TryParse(tokenValue, out _))
                         yield return FinalizeToken(TokenType.LiteralNumber);
-                    }
+                    else if (bool.TryParse(tokenValue, out _))
+                        yield return FinalizeToken(TokenType.LiteralBoolean);
+                    else if (tokenValue.IsValidIdentifier())
+                        yield return FinalizeToken(TokenType.Identifier);
                 }
 
                 tokenBuilder.Append(c);
@@ -123,6 +126,8 @@ public static class Tokenizer
         var leftoverTokenValue = tokenBuilder.ToString().Trim();
         if (double.TryParse(leftoverTokenValue, out _))
             yield return FinalizeToken(TokenType.LiteralNumber);
+        else if (bool.TryParse(leftoverTokenValue, out _))
+            yield return FinalizeToken(TokenType.LiteralBoolean);
         else if (leftoverTokenValue.Length > 0)
             if (leftoverTokenValue.TryParseKeyword(out var tmpType))
                 yield return FinalizeToken(tmpType.Value);

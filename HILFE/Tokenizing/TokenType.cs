@@ -9,6 +9,7 @@ public enum TokenType
     EqualsSymbol,
     LiteralString,
     LiteralNumber,
+    LiteralBoolean,
     Whitespace,
     NewLine,
     IfKeyword,

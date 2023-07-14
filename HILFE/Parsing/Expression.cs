@@ -36,6 +36,11 @@ public class Expression
             return double.Parse(token.Value);
         }
 
+        if (token.Type == TokenType.LiteralBoolean)
+        {
+            return bool.Parse(token.Value);
+        }
+
         throw new NotImplementedException($"Expressions with {token.Type} tokens are not implemented");
     }
 }
