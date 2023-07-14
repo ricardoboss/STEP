@@ -16,13 +16,16 @@ public static class Parser
         InitializerLiteralNumber,
         IfStatement,
         IfExpression,
-        IfExpressionEnd,
+        ElseStatement,
+        IfElseStatement,
+        IfElseExpression,
         IdentifierStart,
         IdentifierFunctionArgument,
         IdentifierAssignment,
         IdentifierFunctionArgumentEnd,
         IdentifierFunctionCallEnd,
         WhileStatement,
+        WhileExpression,
     }
 
     private static readonly Dictionary<State, Dictionary<(State, StatementType?), TokenType[]>> Transitions = new()
@@ -35,6 +38,7 @@ public static class Parser
                 { (State.LineStart, StatementType.EmptyLine), new[] { TokenType.NewLine } },
                 { (State.DeclarationType, null), new[] { TokenType.TypeName } },
                 { (State.IfStatement, null), new [] { TokenType.IfKeyword } },
+                { (State.ElseStatement, null), new [] { TokenType.ElseKeyword } },
                 { (State.IdentifierStart, null), new [] { TokenType.Identifier } },
                 { (State.WhileStatement, null), new [] { TokenType.WhileKeyword } },
                 { (State.LineStart, StatementType.CodeBlockStart), new []{ TokenType.CodeBlockOpener } },
@@ -103,15 +107,31 @@ public static class Parser
             new()
             {
                 { (State.IfExpression, null), new [] { TokenType.Whitespace, TokenType.NewLine, TokenType.Identifier, TokenType.EqualsSymbol, TokenType.LiteralString, TokenType.LiteralNumber } },
-                { (State.IfExpressionEnd, null), new [] { TokenType.ExpressionCloser } },
+                { (State.LineStart, StatementType.IfStatement), new [] { TokenType.ExpressionCloser } },
             }
         },
         {
-            State.IfExpressionEnd,
+            State.ElseStatement,
             new()
             {
-                { (State.IfExpressionEnd, null), new [] { TokenType.Whitespace, TokenType.NewLine } },
-                { (State.LineStart, StatementType.IfStatement), new [] { TokenType.CodeBlockOpener } },
+                { (State.LineStart, StatementType.ElseStatement), new [] { TokenType.Whitespace, TokenType.NewLine } },
+                { (State.IfElseStatement, null), new [] { TokenType.IfKeyword } },
+            }
+        },
+        {
+            State.IfElseStatement,
+            new()
+            {
+                { (State.IfElseStatement, null), new [] { TokenType.Whitespace, TokenType.NewLine } },
+                { (State.IfElseExpression, null), new [] { TokenType.ExpressionOpener } },
+            }
+        },
+        {
+            State.IfElseExpression,
+            new()
+            {
+                { (State.IfElseExpression, null), new [] { TokenType.Whitespace, TokenType.NewLine, TokenType.Identifier, TokenType.EqualsSymbol, TokenType.LiteralString, TokenType.LiteralNumber } },
+                { (State.LineStart, StatementType.IfElseStatement), new [] { TokenType.ExpressionCloser } },
             }
         },
         {
@@ -158,9 +178,18 @@ public static class Parser
             State.WhileStatement,
             new()
             {
-                { (State.WhileStatement, null), new [] { TokenType.Whitespace } },
+                { (State.WhileStatement, null), new [] { TokenType.Whitespace, TokenType.NewLine } },
+                { (State.WhileExpression, null), new [] { TokenType.ExpressionOpener } },
             }
-        }
+        },
+        {
+            State.WhileExpression,
+            new()
+            {
+                { (State.WhileExpression, null), new [] { TokenType.Whitespace, TokenType.NewLine, TokenType.Identifier, TokenType.EqualsSymbol, TokenType.LiteralString, TokenType.LiteralNumber } },
+                { (State.LineStart, StatementType.WhileStatement), new [] { TokenType.ExpressionCloser } },
+            }
+        },
     };
 
     public static async IAsyncEnumerable<BaseStatement> ParseAsync(IAsyncEnumerable<Token> tokens, [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -206,8 +235,10 @@ public static class Parser
                 StatementType.VariableDeclaration => new VariableDeclarationStatement(currentStatementTokens),
                 StatementType.EmptyLine => new EmptyLineStatement(currentStatementTokens),
                 StatementType.IfStatement => new IfStatement(currentStatementTokens),
-                StatementType.FunctionCall => new FunctionCallStatement(currentStatementTokens),
                 StatementType.ElseStatement => new ElseStatement(currentStatementTokens),
+                StatementType.IfElseStatement => new IfElseStatement(currentStatementTokens),
+                StatementType.WhileStatement => new WhileStatement(currentStatementTokens),
+                StatementType.FunctionCall => new FunctionCallStatement(currentStatementTokens),
                 StatementType.CodeBlockStart => new CodeBlockStartStatement(currentStatementTokens),
                 StatementType.CodeBlockEnd => new CodeBlockEndStatement(currentStatementTokens),
                 _ => throw new NotImplementedException("Unimplemented StatementType: " + statementType.Value),

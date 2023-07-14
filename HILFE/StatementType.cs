@@ -5,8 +5,10 @@ public enum StatementType
     EmptyLine,
     VariableDeclaration,
     IfStatement,
-    FunctionCall,
     ElseStatement,
+    IfElseStatement,
+    WhileStatement,
+    FunctionCall,
     CodeBlockStart,
     CodeBlockEnd,
 }

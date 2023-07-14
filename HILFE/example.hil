@@ -17,3 +17,5 @@ while (guess = readline()) {
         print("Nope, try again", EOL, "Guess PI: ")
     }
 }
+
+print("Goodbye", EOL)

@@ -93,8 +93,14 @@ public static class Tokenizer
             {
                 if (tokenValue.Length > 0)
                 {
-                    // FIXME: only return identifier if tokenValue only contains valid identifier characters, otherwise it could be a literal (3.123, true, null, etc.)
-                    yield return FinalizeToken(TokenType.Identifier);
+                    if (tokenValue.IsValidIdentifier())
+                    {
+                        yield return FinalizeToken(TokenType.Identifier);
+                    }
+                    else
+                    {
+                        yield return FinalizeToken(TokenType.LiteralNumber);
+                    }
                 }
 
                 tokenBuilder.Append(c);

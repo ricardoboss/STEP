@@ -37,7 +37,7 @@ public class Interpreter
         {
             await foreach (var statement in ast.WithCancellation(cancellationToken))
             {
-                // await StdOut.WriteLineAsync(statement.ToString());
+                await StdOut.WriteLineAsync(statement.ToString());
                 await statement.ExecuteAsync(this);
             }
         }

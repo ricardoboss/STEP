@@ -14,11 +14,25 @@ public class Expression
         if (Tokens.Count == 0)
             throw new TokenizerException("Cannot evaluate empty expression!");
 
-        if (Tokens.Count == 1 && Tokens[0].Type == TokenType.Identifier)
+        if (Tokens.Count != 1)
+            throw new NotImplementedException("Expressions with multiple tokens are not supported yet");
+
+        var token = Tokens[0];
+        if (token.Type == TokenType.Identifier)
         {
-            return interpreter.Scope.CurrentScope.GetByIdentifier(Tokens[0].Value).Value;
+            return interpreter.Scope.CurrentScope.GetByIdentifier(token.Value).Value;
         }
 
-        return null;
+        if (token.Type == TokenType.LiteralString)
+        {
+            return token.Value;
+        }
+
+        if (token.Type == TokenType.LiteralNumber)
+        {
+            return double.Parse(token.Value);
+        }
+
+        throw new NotImplementedException($"Expressions with {token.Type} tokens are not implemented");
     }
 }
