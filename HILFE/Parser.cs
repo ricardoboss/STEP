@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using HILFE.Statements;
 
 namespace HILFE;
 
@@ -16,15 +17,12 @@ public static class Parser
         IfStatement,
         IfExpression,
         IfExpressionEnd,
-        IfCodeBlock,
-        IfCodeBlockLineStart,
-        IfCodeBlockCloser,
-        IfElseBlockStart,
         IdentifierStart,
         IdentifierFunctionArgument,
         IdentifierAssignment,
         IdentifierFunctionArgumentEnd,
-        IdentifierFunctionCallEnd
+        IdentifierFunctionCallEnd,
+        WhileStatement,
     }
 
     private static readonly Dictionary<State, Dictionary<(State, StatementType?), TokenType[]>> Transitions = new()
@@ -38,6 +36,9 @@ public static class Parser
                 { (State.DeclarationType, null), new[] { TokenType.TypeName } },
                 { (State.IfStatement, null), new [] { TokenType.IfKeyword } },
                 { (State.IdentifierStart, null), new [] { TokenType.Identifier } },
+                { (State.WhileStatement, null), new [] { TokenType.WhileKeyword } },
+                { (State.LineStart, StatementType.CodeBlockStart), new []{ TokenType.CodeBlockOpener } },
+                { (State.LineStart, StatementType.CodeBlockEnd), new []{ TokenType.CodeBlockCloser } },
             }
         },
         {
@@ -101,7 +102,7 @@ public static class Parser
             State.IfExpression,
             new()
             {
-                { (State.IfExpression, null), new [] { TokenType.Whitespace, TokenType.Identifier, TokenType.EqualsSymbol, TokenType.LiteralString, TokenType.LiteralNumber } },
+                { (State.IfExpression, null), new [] { TokenType.Whitespace, TokenType.NewLine, TokenType.Identifier, TokenType.EqualsSymbol, TokenType.LiteralString, TokenType.LiteralNumber } },
                 { (State.IfExpressionEnd, null), new [] { TokenType.ExpressionCloser } },
             }
         },
@@ -109,44 +110,8 @@ public static class Parser
             State.IfExpressionEnd,
             new()
             {
-                { (State.IfExpressionEnd, null), new [] { TokenType.Whitespace } },
-                { (State.IfCodeBlock, null), new [] { TokenType.CodeBlockOpener } },
-            }
-        },
-        {
-            State.IfCodeBlock,
-            new()
-            {
-                { (State.IfCodeBlockLineStart, StatementType.IfStatement), new [] { TokenType.NewLine } },
-            }
-        },
-        {
-            State.IfCodeBlockLineStart,
-            new()
-            {
-                { (State.IfCodeBlockLineStart, null), new[] { TokenType.Whitespace } },
-                { (State.IfCodeBlockLineStart, StatementType.EmptyLine), new[] { TokenType.NewLine } },
-                { (State.DeclarationType, null), new[] { TokenType.TypeName } },
-                { (State.IfStatement, null), new [] { TokenType.IfKeyword } },
-                { (State.IdentifierStart, null), new [] { TokenType.Identifier } },
-                { (State.IfCodeBlockCloser, null), new [] { TokenType.CodeBlockCloser } },
-            }
-        },
-        {
-            State.IfCodeBlockCloser,
-            new()
-            {
-                { (State.IfCodeBlockCloser, null), new [] { TokenType.Whitespace } },
-                { (State.LineStart, StatementType.IfBlockEnd), new [] { TokenType.NewLine } },
-                { (State.IfElseBlockStart, null), new [] { TokenType.ElseKeyword } },
-            }
-        },
-        {
-            State.IfElseBlockStart,
-            new()
-            {
-                { (State.IfElseBlockStart, null), new [] { TokenType.Whitespace } },
-                { (State.IfCodeBlockLineStart, StatementType.ElseStatement), new [] { TokenType.CodeBlockOpener } },
+                { (State.IfExpressionEnd, null), new [] { TokenType.Whitespace, TokenType.NewLine } },
+                { (State.LineStart, StatementType.IfStatement), new [] { TokenType.CodeBlockOpener } },
             }
         },
         {
@@ -179,7 +144,7 @@ public static class Parser
             State.IdentifierFunctionCallEnd,
             new()
             {
-                { (State.IfCodeBlockLineStart, StatementType.FunctionCall), new [] { TokenType.NewLine } },
+                { (State.LineStart, StatementType.FunctionCall), new [] { TokenType.NewLine } },
             }
         },
         {
@@ -188,10 +153,17 @@ public static class Parser
             {
                 { (State.IdentifierAssignment, null), new [] { TokenType.Whitespace } },
             }
+        },
+        {
+            State.WhileStatement,
+            new()
+            {
+                { (State.WhileStatement, null), new [] { TokenType.Whitespace } },
+            }
         }
     };
 
-    public static async IAsyncEnumerable<Statement> ParseAsync(IAsyncEnumerable<Token> tokens, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public static async IAsyncEnumerable<BaseStatement> ParseAsync(IAsyncEnumerable<Token> tokens, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var state = State.LineStart;
         var currentStatement = new List<Token>();
@@ -228,7 +200,18 @@ public static class Parser
             if (!statementType.HasValue)
                 continue;
 
-            yield return new(statementType.Value, currentStatement.ToArray());
+            var currentStatementTokens = currentStatement.ToArray();
+            yield return statementType.Value switch
+            {
+                StatementType.VariableDeclaration => new VariableDeclarationStatement(currentStatementTokens),
+                StatementType.EmptyLine => new EmptyLineStatement(currentStatementTokens),
+                StatementType.IfStatement => new IfStatement(currentStatementTokens),
+                StatementType.FunctionCall => new FunctionCallStatement(currentStatementTokens),
+                StatementType.ElseStatement => new ElseStatement(currentStatementTokens),
+                StatementType.CodeBlockStart => new CodeBlockStartStatement(currentStatementTokens),
+                StatementType.CodeBlockEnd => new CodeBlockEndStatement(currentStatementTokens),
+                _ => throw new NotImplementedException("Unimplemented StatementType: " + statementType.Value),
+            };
 
             currentStatement.Clear();
         }

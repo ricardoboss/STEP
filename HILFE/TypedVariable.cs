@@ -2,15 +2,17 @@
 
 public class TypedVariable
 {
-    public readonly string Name;
+    public readonly string Identifier;
+    public readonly string TypeName;
     public readonly dynamic? Value;
-    public readonly Type OriginalType;
+    public readonly Type? OriginalType;
 
-    public TypedVariable(string name, dynamic? value)
+    public TypedVariable(string identifier, string typeName, dynamic? value)
     {
-        Name = name;
+        Identifier = identifier;
+        TypeName = typeName;
         Value = value;
-        OriginalType = value.GetType();
+        OriginalType = value?.GetType();
     }
 
     public TCast? TryConvert<TCast>() where TCast : struct
@@ -24,5 +26,11 @@ public class TypedVariable
             return (TCast?)(object)Value;
 
         return null;
+    }
+
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return $"{Identifier} ({TypeName}): {Value}";
     }
 }

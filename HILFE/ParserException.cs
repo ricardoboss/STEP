@@ -1,6 +1,6 @@
 ﻿namespace HILFE;
 
-public class ParserException : Exception
+public class ParserException : ApplicationException
 {
     public ParserException(string message) : base(message)
     {

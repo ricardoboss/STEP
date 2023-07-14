@@ -3,16 +3,19 @@
 public class Interpreter
 {
     public readonly Config _config;
-    public readonly Callstack Callstack;
+    // public readonly Callstack Callstack;
+    public readonly ScopeManager Scope;
     public readonly TextWriter StdOut;
     public readonly TextWriter StdErr;
     public readonly TextReader StdIn;
+    public int ExitCode = 0;
 
     public Interpreter(Config config, string entryFile, TextWriter stdout, TextWriter stderr, TextReader stdin)
     {
         _config = config;
-        Callstack = new();
-        Callstack.Push(new(null, entryFile, 0, 0));
+        // Callstack = new();
+        // Callstack.Push(new(null, entryFile, 0, 0));
+        Scope = new();
         StdOut = stdout;
         StdErr = stderr;
         StdIn = stdin;
@@ -34,15 +37,15 @@ public class Interpreter
         {
             await foreach (var statement in ast.WithCancellation(cancellationToken))
             {
-                await StdOut.WriteLineAsync(statement.ToString());
-                // await statement.ExecuteAsync(this);
+                // await StdOut.WriteLineAsync(statement.ToString());
+                await statement.ExecuteAsync(this);
             }
         }
-        catch (UnexpectedTokenException e)
+        catch (ApplicationException e) when (e is ParserException or TokenizerException)
         {
-            await StdErr.WriteLineAsync("~>" + e.GetType().Name + ": " + e.Message);
+            await StdErr.WriteLineAsync("~> " + e.GetType().Name + ": " + e.Message);
         }
 
-        return -1;
+        return ExitCode;
     }
 }

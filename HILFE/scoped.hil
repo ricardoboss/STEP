@@ -1,0 +1,12 @@
+double a = 1
+double b = 2
+
+{
+    double a = 3
+
+    print(a, EOL)
+    print(b, EOL)
+}
+
+print(a, EOL)
+print(b, EOL)

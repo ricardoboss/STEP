@@ -14,7 +14,10 @@ public class Expression
         if (Tokens.Count == 0)
             throw new TokenizerException("Cannot evaluate empty expression!");
 
-        // TODO: implement
+        if (Tokens.Count == 1 && Tokens[0].Type == TokenType.Identifier)
+        {
+            return interpreter.Scope.CurrentScope.GetByIdentifier(Tokens[0].Value).Value;
+        }
 
         return null;
     }

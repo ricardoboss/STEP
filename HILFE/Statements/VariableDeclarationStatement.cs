@@ -1,6 +1,6 @@
-﻿namespace HILFE;
+﻿namespace HILFE.Statements;
 
-public class VariableDeclarationStatement : Statement
+public class VariableDeclarationStatement : BaseStatement
 {
     /// <inheritdoc />
     public VariableDeclarationStatement(IReadOnlyList<Token> tokens) : base(StatementType.VariableDeclaration, tokens)
@@ -8,31 +8,35 @@ public class VariableDeclarationStatement : Statement
     }
 
     /// <inheritdoc />
-    public async Task ExecuteAsync(Interpreter interpreter)
+    public override Task ExecuteAsync(Interpreter interpreter)
     {
-        var typeToken = Tokens[0];
+        var meaningfulTokens = Tokens.OnlyMeaningful().ToArray();
+        
+        var typeToken = meaningfulTokens[0];
         if (typeToken.Type != TokenType.TypeName)
             throw new TokenizerException($"Expected {TokenType.TypeName} token, but got {typeToken.Type} instead");
 
         var type = typeToken.Value;
 
-        var identifierToken = Tokens[1];
+        var identifierToken = meaningfulTokens[1];
         if (identifierToken.Type != TokenType.Identifier)
             throw new TokenizerException($"Expected {TokenType.Identifier} token, but got {identifierToken.Type} instead");
 
         var identifier = identifierToken.Value;
 
         dynamic? value = null;
-        if (Tokens.Count > 2)
+        if (meaningfulTokens.Length > 2)
         {
-            var assignmentToken = Tokens[2];
+            var assignmentToken = meaningfulTokens[2];
             if (assignmentToken.Type != TokenType.EqualsSymbol)
                 throw new TokenizerException($"Expected {TokenType.EqualsSymbol} token, but got {assignmentToken.Type} instead");
 
-            var expression = new Expression(Tokens.Skip(3).ToList());
+            var expression = new Expression(meaningfulTokens.Skip(3).ToList());
             value = expression.Evaluate(interpreter);
         }
 
-        interpreter.Callstack.Peek().Variables.Add(identifier, new(type, value));
+        interpreter.Scope.CurrentScope.AddIdentifier(identifier, new(identifier, type, value));
+
+        return Task.CompletedTask;
     }
 }

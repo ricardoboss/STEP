@@ -1,6 +1,6 @@
 ﻿namespace HILFE;
 
-public class TokenizerException : Exception
+public class TokenizerException : ApplicationException
 {
     public TokenizerException(string message) : base(message)
     {

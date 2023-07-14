@@ -17,6 +17,9 @@
       <Content Include="example.hil">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
+      <None Update="scoped.hil">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

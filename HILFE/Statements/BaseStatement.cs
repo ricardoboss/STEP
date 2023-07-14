@@ -1,8 +1,8 @@
-﻿namespace HILFE;
+﻿namespace HILFE.Statements;
 
-public class Statement
+public abstract class BaseStatement
 {
-    public Statement(StatementType type, IReadOnlyList<Token> tokens)
+    public BaseStatement(StatementType type, IReadOnlyList<Token> tokens)
     {
         Type = type;
         Tokens = tokens;
@@ -17,4 +17,6 @@ public class Statement
     {
         return $"[{Type}: {string.Join(", ", Tokens)}]";
     }
+
+    public abstract Task ExecuteAsync(Interpreter interpreter);
 }

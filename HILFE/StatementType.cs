@@ -7,5 +7,6 @@ public enum StatementType
     IfStatement,
     FunctionCall,
     ElseStatement,
-    IfBlockEnd,
+    CodeBlockStart,
+    CodeBlockEnd,
 }
