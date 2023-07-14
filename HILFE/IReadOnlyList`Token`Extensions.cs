@@ -1,6 +1,8 @@
+using HILFE.Tokenizing;
+
 namespace HILFE;
 
-public static class IReadOnlyList_Token_Extensions
+public static class ReadOnlyListTokenExtensions
 {
     public static Token Next(this IEnumerable<Token> tokens, int offset, params TokenType[] except)
     {
