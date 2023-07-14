@@ -5,7 +5,7 @@ namespace HILFE;
 
 public static class Parser
 {
-    private enum State
+    public enum State
     {
         LineStart,
         DeclarationType,
@@ -196,6 +196,7 @@ public static class Parser
     {
         var state = State.LineStart;
         var currentStatement = new List<Token>();
+        var codeBlockDepth = 0;
 
         await foreach (var token in tokens.WithCancellation(cancellationToken))
         {
@@ -213,13 +214,7 @@ public static class Parser
             }
 
             if (!acceptingTransition.HasValue)
-            {
-                #if DEBUG
-                Console.WriteLine($"Processing token {token} in state {state}");
-                #endif
-
-                throw new UnexpectedTokenException(expectedTokenTypes, token);
-            }
+                throw new UnexpectedTokenException(state, expectedTokenTypes, token);
 
             var (nextState, statementType) = acceptingTransition.Value;
 
@@ -230,7 +225,7 @@ public static class Parser
                 continue;
 
             var currentStatementTokens = currentStatement.ToArray();
-            yield return statementType.Value switch
+            BaseStatement statement = statementType.Value switch
             {
                 StatementType.VariableDeclaration => new VariableDeclarationStatement(currentStatementTokens),
                 StatementType.EmptyLine => new EmptyLineStatement(currentStatementTokens),
@@ -244,10 +239,25 @@ public static class Parser
                 _ => throw new NotImplementedException("Unimplemented StatementType: " + statementType.Value),
             };
 
+            switch (statement)
+            {
+                case CodeBlockStartStatement:
+                    codeBlockDepth++;
+                    break;
+                case CodeBlockEndStatement:
+                    codeBlockDepth--;
+                    break;
+            }
+
+            yield return statement;
+
             currentStatement.Clear();
         }
 
         if (currentStatement.Any(t => t.Type is not TokenType.Whitespace and not TokenType.NewLine))
-            throw new InvalidOperationException("Unexpected end of input");
+            throw new InvalidOperationException("Unexpected end of input: expected whitespace or newline");
+
+        if (codeBlockDepth != 0)
+            throw new InvalidOperationException("Unexpected end of input: imbalance code blocks");
     }
 }
