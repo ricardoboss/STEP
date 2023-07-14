@@ -8,7 +8,7 @@ public class FunctionCallStatement : BaseStatement
     }
 
     /// <inheritdoc />
-    public override Task ExecuteAsync(Interpreter interpreter)
+    public override async Task ExecuteAsync(Interpreter interpreter)
     {
         var meaningfulTokens = Tokens.OnlyMeaningful().ToArray();
 
@@ -39,17 +39,15 @@ public class FunctionCallStatement : BaseStatement
         switch (functionDefiniton)
         {
             case "StdIn.ReadLine":
-                var line = interpreter.StdIn.ReadLine();
+                var line = await interpreter.StdIn.ReadLineAsync();
                 interpreter.Scope.CurrentScope.ParentScope?.AddIdentifier("$$RETURN", new("$$RETURN", "string?", line));
                 break;
-            case "StdOut.WriteLine":
+            case "StdOut.Write":
                 var stringArgs = args.Select(a => a?.ToString() ?? string.Empty).Cast<string>().ToList();
-                interpreter.StdOut.WriteLine(string.Join("", stringArgs));
+                await interpreter.StdOut.WriteAsync(string.Join("", stringArgs));
                 break;
             default:
                 throw new InterpreterException("Undefined function: " + functionDefiniton);
         }
-
-        return Task.CompletedTask;
     }
 }

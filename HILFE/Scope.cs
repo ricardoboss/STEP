@@ -16,7 +16,7 @@ public class Scope
         ParentScope = null;
 
         // globally defined identifiers
-        AddIdentifier("print", new("print", "function", "StdOut.WriteLine"));
+        AddIdentifier("print", new("print", "function", "StdOut.Write"));
         AddIdentifier("readline", new("readline", "function", "StdIn.ReadLine"));
 
         AddIdentifier("0", new("0", "int", 0));
