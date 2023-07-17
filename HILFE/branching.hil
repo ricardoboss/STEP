@@ -1,0 +1,6 @@
+﻿string name = "John"
+if (name == "John") {
+    print("Hello, $name", EOL)
+} else {
+    print("Who are you?", EOL)
+}
