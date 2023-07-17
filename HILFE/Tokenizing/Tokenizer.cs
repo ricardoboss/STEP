@@ -15,6 +15,14 @@ public class Tokenizer
         return TokenizeAsync(source.ToAsyncEnumerable(), cancellationToken);
     }
 
+    public void Reset()
+    {
+        tokenBuilder.Clear();
+        inString = false;
+        stringQuote = null;
+        escaped = false;
+    }
+
     private Token FinalizeToken(TokenType type, bool clear = true)
     {
         var value = tokenBuilder.ToString();
@@ -137,7 +145,7 @@ public class Tokenizer
                 yield return FinalizeToken(TokenType.Identifier);
     }
 
-    ~Tokenizer()
+    public void End()
     {
         if (tokenBuilder.Length == 0)
             return;
@@ -147,4 +155,6 @@ public class Tokenizer
 
         throw new TokenizerException("Unexpected end of input");
     }
+
+    ~Tokenizer() => End();
 }

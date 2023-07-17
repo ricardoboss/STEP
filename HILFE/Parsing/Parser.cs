@@ -195,6 +195,11 @@ public class Parser
         this.state = state;
     }
 
+    public IAsyncEnumerable<BaseStatement> ParseAsync(IEnumerable<Token> tokens, CancellationToken cancellationToken = default)
+    {
+        return ParseAsync(tokens.ToAsyncEnumerable(), cancellationToken);
+    }
+
     public async IAsyncEnumerable<BaseStatement> ParseAsync(IAsyncEnumerable<Token> tokens, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         await foreach (var token in tokens.WithCancellation(cancellationToken))
@@ -263,7 +268,7 @@ public class Parser
         return statement;
     }
 
-    ~Parser()
+    public void End()
     {
         if (currentStatement.Any(t => t.Type is not TokenType.Whitespace and not TokenType.NewLine))
             throw new UnexpectedEndOfInputException(state, "Unexpected end of input: expected whitespace or newline");
@@ -271,4 +276,6 @@ public class Parser
         if (codeBlockDepth != 0)
             throw new ImbalancedCodeBlocksException(state, "Unexpected end of input: imbalanced code blocks");
     }
+
+    ~Parser() => End();
 }
