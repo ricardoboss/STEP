@@ -2,7 +2,7 @@ using HILFE.Tokenizing;
 
 namespace HILFE;
 
-public static class ReadOnlyListTokenExtensions
+public static class IEnumerableTokenExtensions
 {
     public static Token Next(this IEnumerable<Token> tokens, int offset, params TokenType[] except)
     {
