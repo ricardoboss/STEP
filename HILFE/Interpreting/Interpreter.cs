@@ -22,8 +22,25 @@ public class Interpreter
     {
         await foreach (var statement in statements.WithCancellation(cancellationToken))
         {
-            // TODO: implement branching and loops
-            await statement.ExecuteAsync(this);
+            switch (statement)
+            {
+                case IExecutableStatement executableStatement:
+                    await executableStatement.ExecuteAsync(this);
+                    break;
+                case ILoopingStatement loopingStatement:
+                    // TODO: collect statements
+
+                    await loopingStatement.InitializeLoop(this);
+                    while (await loopingStatement.ShouldLoop(this))
+                    {
+                        await loopingStatement.ExecuteLoop(Array.Empty<BaseStatement>());
+                    }
+
+                    break;
+                case IBranchingStatement branchingStatement:
+                    await branchingStatement.ShouldBranch(this);
+                    break;
+            }
         }
     }
 }

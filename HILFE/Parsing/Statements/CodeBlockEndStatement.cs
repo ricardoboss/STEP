@@ -3,7 +3,7 @@ using HILFE.Tokenizing;
 
 namespace HILFE.Parsing.Statements;
 
-public class CodeBlockEndStatement : BaseStatement
+public class CodeBlockEndStatement : BaseStatement, IExecutableStatement
 {
     /// <inheritdoc />
     public CodeBlockEndStatement(IReadOnlyList<Token> tokens) : base(StatementType.CodeBlockEnd, tokens)
@@ -11,7 +11,7 @@ public class CodeBlockEndStatement : BaseStatement
     }
 
     /// <inheritdoc />
-    public override Task ExecuteAsync(Interpreter interpreter)
+    public Task ExecuteAsync(Interpreter interpreter)
     {
         interpreter.Scope.Pop();
 

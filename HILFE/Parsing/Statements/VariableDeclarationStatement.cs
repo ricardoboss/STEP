@@ -3,7 +3,7 @@ using HILFE.Tokenizing;
 
 namespace HILFE.Parsing.Statements;
 
-public class VariableDeclarationStatement : BaseStatement
+public class VariableDeclarationStatement : BaseStatement, IExecutableStatement
 {
     /// <inheritdoc />
     public VariableDeclarationStatement(IReadOnlyList<Token> tokens) : base(StatementType.VariableDeclaration, tokens)
@@ -11,7 +11,7 @@ public class VariableDeclarationStatement : BaseStatement
     }
 
     /// <inheritdoc />
-    public override Task ExecuteAsync(Interpreter interpreter)
+    public Task ExecuteAsync(Interpreter interpreter)
     {
         var meaningfulTokens = Tokens.OnlyMeaningful().ToArray();
         

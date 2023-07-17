@@ -9,10 +9,4 @@ public class EmptyLineStatement : BaseStatement
     public EmptyLineStatement(IReadOnlyList<Token> tokens) : base(StatementType.EmptyLine, tokens)
     {
     }
-
-    /// <inheritdoc />
-    public override Task ExecuteAsync(Interpreter interpreter)
-    {
-        return Task.CompletedTask;
-    }
 }

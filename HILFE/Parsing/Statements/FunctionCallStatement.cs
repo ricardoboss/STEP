@@ -3,7 +3,7 @@ using HILFE.Tokenizing;
 
 namespace HILFE.Parsing.Statements;
 
-public class FunctionCallStatement : BaseStatement
+public class FunctionCallStatement : BaseStatement, IExecutableStatement
 {
     /// <inheritdoc />
     public FunctionCallStatement(IReadOnlyList<Token> tokens) : base(StatementType.FunctionCall, tokens)
@@ -11,7 +11,7 @@ public class FunctionCallStatement : BaseStatement
     }
 
     /// <inheritdoc />
-    public override async Task ExecuteAsync(Interpreter interpreter)
+    public async Task ExecuteAsync(Interpreter interpreter)
     {
         var meaningfulTokens = Tokens.OnlyMeaningful().ToArray();
 

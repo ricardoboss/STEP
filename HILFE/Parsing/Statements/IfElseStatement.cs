@@ -6,13 +6,7 @@ namespace HILFE.Parsing.Statements;
 public class IfElseStatement : BaseStatement
 {
     /// <inheritdoc />
-    public IfElseStatement(IReadOnlyList<Token> tokens) : base(StatementType.IfStatement, tokens)
+    public IfElseStatement(IReadOnlyList<Token> tokens) : base(StatementType.IfElseStatement, tokens)
     {
-    }
-
-    /// <inheritdoc />
-    public override Task ExecuteAsync(Interpreter interpreter)
-    {
-        return Task.CompletedTask;
     }
 }

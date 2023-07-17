@@ -20,6 +20,4 @@ public abstract class BaseStatement
     {
         return $"[{Type}: {string.Join(", ", Tokens)}]";
     }
-
-    public abstract Task ExecuteAsync(Interpreter interpreter);
 }
