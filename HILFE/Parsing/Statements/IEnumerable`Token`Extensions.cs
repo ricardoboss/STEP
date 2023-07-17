@@ -1,6 +1,6 @@
 using HILFE.Tokenizing;
 
-namespace HILFE;
+namespace HILFE.Parsing.Statements;
 
 public static class IEnumerableTokenExtensions
 {

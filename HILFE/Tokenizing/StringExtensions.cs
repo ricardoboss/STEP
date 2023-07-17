@@ -1,4 +1,4 @@
-namespace HILFE;
+namespace HILFE.Tokenizing;
 
 public static class StringExtensions
 {

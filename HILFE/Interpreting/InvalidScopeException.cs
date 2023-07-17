@@ -1,6 +1,4 @@
-using HILFE.Interpreting;
-
-namespace HILFE;
+namespace HILFE.Interpreting;
 
 public class InvalidScopeException : InterpreterException
 {
