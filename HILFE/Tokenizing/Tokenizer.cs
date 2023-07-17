@@ -3,30 +3,30 @@ using System.Text;
 
 namespace HILFE.Tokenizing;
 
-public static class Tokenizer
+public class Tokenizer
 {
-    public static IAsyncEnumerable<Token> TokenizeAsync(string source, CancellationToken cancellationToken = default)
+    private readonly StringBuilder tokenBuilder = new();
+    private bool inString;
+    private char? stringQuote;
+    private bool escaped;
+
+    public IAsyncEnumerable<Token> TokenizeAsync(string source, CancellationToken cancellationToken = default)
     {
         return TokenizeAsync(source.ToAsyncEnumerable(), cancellationToken);
     }
 
-    public static async IAsyncEnumerable<Token> TokenizeAsync(IAsyncEnumerable<char> characters, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    private Token FinalizeToken(TokenType type, bool clear = true)
     {
-        var tokenBuilder = new StringBuilder();
-        var inString = false;
-        char? stringQuote = null;
-        var escaped = false;
+        var value = tokenBuilder.ToString();
 
-        Token FinalizeToken(TokenType type, bool clear = true)
-        {
-            var value = tokenBuilder.ToString();
+        if (clear)
+            tokenBuilder.Clear();
 
-            if (clear)
-                tokenBuilder.Clear();
+        return new(type, value);
+    }
 
-            return new(type, value);
-        }
-
+    public async IAsyncEnumerable<Token> TokenizeAsync(IAsyncEnumerable<char> characters, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
         await foreach (var c in characters.WithCancellation(cancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -135,5 +135,16 @@ public static class Tokenizer
                 yield return FinalizeToken(TokenType.TypeName);
             else
                 yield return FinalizeToken(TokenType.Identifier);
+    }
+
+    ~Tokenizer()
+    {
+        if (tokenBuilder.Length == 0)
+            return;
+
+        if (inString)
+            throw new TokenizerException("Unclosed string");
+
+        throw new TokenizerException("Unexpected end of input");
     }
 }

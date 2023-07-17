@@ -1,8 +1,12 @@
 ﻿using System.CommandLine;
-using HILFE;
 using HILFE.Interpreting;
+using HILFE.Parsing;
+using HILFE.Tokenizing;
 
-var configOption = new Option<FileInfo?>(aliases: new[] { "-c", "--config" }, parseArgument: result =>
+var configOption = new Option<FileInfo?>(aliases: new []
+{
+    "-c", "--config",
+}, parseArgument: result =>
 {
     if (result.Tokens.Count == 0)
     {
@@ -16,7 +20,6 @@ var configOption = new Option<FileInfo?>(aliases: new[] { "-c", "--config" }, pa
 
     result.ErrorMessage = $"File not found: {filePath}";
     return null;
-
 }, description: "The configuration file to use.");
 
 var fileArgument = new Argument<FileInfo>(name: "file", description: "The path to a .hil-file")
@@ -36,7 +39,7 @@ rootCommand.AddCommand(listenCommand);
 
 listenCommand.SetHandler(async configFile =>
 {
-    var config = configFile != null ? Config.FromFile(configFile) : Config.FromEnvironment();
+    // var config = configFile != null ? Config.FromFile(configFile) : Config.FromEnvironment();
     var memoryBuffer = new MemoryStream();
     var inputReader = new StreamReader(memoryBuffer);
     var inputWriter = new StreamWriter(memoryBuffer)
@@ -44,7 +47,9 @@ listenCommand.SetHandler(async configFile =>
         AutoFlush = true,
     };
 
-    var interpreter = new Interpreter(config, "<stdin>", Console.Out, Console.Error, inputReader);
+    var tokenizer = new Tokenizer();
+    var parser = new Parser();
+    var interpreter = new Interpreter(Console.Out, Console.Error, inputReader);
 
     Console.WriteLine("Welcome to HILFE REPL! Use Ctrl-C to exit.");
     Console.Write("> ");
@@ -52,7 +57,32 @@ listenCommand.SetHandler(async configFile =>
     {
         inputWriter.WriteLine(line);
 
-        await interpreter.InterpretAsync(line.ToAsyncEnumerable().Concat(new [] { '\n' }.ToAsyncEnumerable()));
+        var chars = line.ToAsyncEnumerable();
+
+        try
+        {
+            var tokens = await tokenizer.TokenizeAsync(chars).ToListAsync();
+            if (tokens.Count == 0)
+            {
+                Console.Write("| ");
+
+                continue;
+            }
+
+            var statements = await parser.ParseAsync(tokens.ToAsyncEnumerable()).ToListAsync();
+            if (statements.Count == 0)
+            {
+                Console.Write("| ");
+
+                continue;
+            }
+
+            await interpreter.InterpretAsync(statements.ToAsyncEnumerable());
+        }
+        catch (ApplicationException e) when (e is ParserException or TokenizerException or InterpreterException)
+        {
+            await Console.Error.WriteLineAsync("~~> " + e.GetType().Name + ": " + e.Message);
+        }
 
         Console.Write("> ");
     }
@@ -63,10 +93,28 @@ listenCommand.SetHandler(async configFile =>
 
 runCommand.SetHandler(async (configFile, scriptFile) =>
 {
-    var config = configFile != null ? Config.FromFile(configFile) : Config.FromEnvironment();
+    // var config = configFile != null ? Config.FromFile(configFile) : Config.FromEnvironment();
+
+    var tokenizer = new Tokenizer();
+    var parser = new Parser();
+    var interpreter = new Interpreter(Console.Out, Console.Error, Console.In);
+
     var chars = await File.ReadAllTextAsync(scriptFile.FullName);
-    var interpreter = new Interpreter(config, scriptFile.FullName, Console.Out, Console.Error, Console.In);
-    Environment.ExitCode = await interpreter.InterpretAsync(chars.ToAsyncEnumerable());
+
+    try
+    {
+        var tokens = tokenizer.TokenizeAsync(chars);
+        var statements = parser.ParseAsync(tokens);
+        await interpreter.InterpretAsync(statements);
+
+        Environment.ExitCode = interpreter.ExitCode;
+    }
+    catch (ApplicationException e) when (e is ParserException or TokenizerException or InterpreterException)
+    {
+        await Console.Error.WriteLineAsync("~~> " + e.GetType().Name + ": " + e.Message);
+
+        Environment.ExitCode = -1;
+    }
 }, configOption, fileArgument);
 
 return await rootCommand.InvokeAsync(args);

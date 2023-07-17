@@ -12,10 +12,10 @@ public class Expression
 
     public readonly IReadOnlyList<Token> Tokens;
 
-    public dynamic? Evaluate(Interpreter interpreter)
+    public ExpressionResult Evaluate(Interpreter interpreter)
     {
         if (Tokens.Count == 0)
-            throw new TokenizerException("Cannot evaluate empty expression!");
+            return new(null, true);
 
         if (Tokens.Count != 1)
             throw new NotImplementedException("Expressions with multiple tokens are not supported yet");
@@ -23,22 +23,22 @@ public class Expression
         var token = Tokens[0];
         if (token.Type == TokenType.Identifier)
         {
-            return interpreter.Scope.CurrentScope.GetByIdentifier(token.Value).Value;
+            return new(interpreter.Scope.CurrentScope.GetByIdentifier(token.Value).Value);
         }
 
         if (token.Type == TokenType.LiteralString)
         {
-            return token.Value;
+            return new(token.Value);
         }
 
         if (token.Type == TokenType.LiteralNumber)
         {
-            return double.Parse(token.Value);
+            return new (double.Parse(token.Value));
         }
 
         if (token.Type == TokenType.LiteralBoolean)
         {
-            return bool.Parse(token.Value);
+            return new(bool.Parse(token.Value));
         }
 
         throw new NotImplementedException($"Expressions with {token.Type} tokens are not implemented");

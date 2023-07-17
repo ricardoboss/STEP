@@ -27,7 +27,7 @@ public class VariableDeclarationStatement : BaseStatement
 
         var identifier = identifierToken.Value;
 
-        dynamic? value = null;
+        ExpressionResult? value = null;
         if (meaningfulTokens.Length > 2)
         {
             var assignmentToken = meaningfulTokens[2];
@@ -38,7 +38,8 @@ public class VariableDeclarationStatement : BaseStatement
             value = expression.Evaluate(interpreter);
         }
 
-        interpreter.Scope.CurrentScope.AddIdentifier(identifier, new(identifier, type, value));
+        if (value is not null or { IsVoid: true })
+            interpreter.Scope.CurrentScope.AddIdentifier(identifier, new(identifier, type, value));
 
         return Task.CompletedTask;
     }

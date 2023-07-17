@@ -43,10 +43,10 @@ public class FunctionCallStatement : BaseStatement
         {
             case "StdIn.ReadLine":
                 var line = await interpreter.StdIn.ReadLineAsync();
-                interpreter.Scope.CurrentScope.ParentScope?.AddIdentifier("$$RETURN", new("$$RETURN", "string?", line));
+                interpreter.Scope.CurrentScope.ParentScope?.AddIdentifier("$$RETURN", new("$$RETURN", "string", line));
                 break;
             case "StdOut.Write":
-                var stringArgs = args.Select(a => a?.ToString() ?? string.Empty).Cast<string>().ToList();
+                var stringArgs = args.Select(a => a.Value?.ToString() ?? string.Empty).Cast<string>().ToList();
                 await interpreter.StdOut.WriteAsync(string.Join("", stringArgs));
                 break;
             default:

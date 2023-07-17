@@ -4,7 +4,7 @@ using HILFE.Tokenizing;
 
 namespace HILFE.Parsing;
 
-public static class Parser
+public class Parser
 {
     public enum State
     {
@@ -138,7 +138,7 @@ public static class Parser
             State.IdentifierStart,
             new()
             {
-                { (State.IdentifierStart, null), new [] { TokenType.Whitespace } },
+                { (State.IdentifierStart, null), new [] { TokenType.Whitespace, TokenType.NewLine } },
                 { (State.IdentifierFunctionArgument, null), new [] { TokenType.ExpressionOpener } },
                 { (State.IdentifierAssignment, null), new [] { TokenType.EqualsSymbol } },
             }
@@ -147,8 +147,8 @@ public static class Parser
             State.IdentifierFunctionArgument,
             new()
             {
-                { (State.IdentifierFunctionArgument, null), new [] { TokenType.Whitespace } },
-                { (State.IdentifierFunctionArgumentEnd, null), new [] { TokenType.LiteralNumber, TokenType.LiteralString, TokenType.Identifier, } },
+                { (State.IdentifierFunctionArgument, null), new [] { TokenType.Whitespace, TokenType.NewLine } },
+                { (State.IdentifierFunctionArgumentEnd, null), new [] { TokenType.LiteralNumber, TokenType.LiteralString, TokenType.LiteralBoolean, TokenType.Identifier } },
                 { (State.LineStart, StatementType.FunctionCall), new [] { TokenType.ExpressionCloser } },
             }
         },
@@ -156,7 +156,7 @@ public static class Parser
             State.IdentifierFunctionArgumentEnd,
             new()
             {
-                { (State.IdentifierFunctionArgumentEnd, null), new [] { TokenType.Whitespace } },
+                { (State.IdentifierFunctionArgumentEnd, null), new [] { TokenType.Whitespace, TokenType.NewLine } },
                 { (State.IdentifierFunctionArgument, null), new [] { TokenType.ExpressionSeparator } },
                 { (State.LineStart, StatementType.FunctionCall), new [] { TokenType.ExpressionCloser } },
             }
@@ -186,73 +186,85 @@ public static class Parser
         },
     };
 
-    public static IAsyncEnumerable<BaseStatement> ParseAsync(IEnumerable<Token> tokens, CancellationToken cancellationToken = default)
+    private readonly List<Token> currentStatement = new();
+    private State state;
+    private int codeBlockDepth;
+
+    public Parser(State state = State.LineStart)
     {
-        return ParseAsync(tokens.ToAsyncEnumerable(), cancellationToken);
+        this.state = state;
     }
 
-    public static async IAsyncEnumerable<BaseStatement> ParseAsync(IAsyncEnumerable<Token> tokens, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<BaseStatement> ParseAsync(IAsyncEnumerable<Token> tokens, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        var state = State.LineStart;
-        var currentStatement = new List<Token>();
-        var codeBlockDepth = 0;
-
         await foreach (var token in tokens.WithCancellation(cancellationToken))
         {
-            var stateTransitions = Transitions[state];
-            (State, StatementType?)? acceptingTransition = null;
-            List<TokenType> expectedTokenTypes = new();
-            foreach (var transition in stateTransitions)
-            {
-                expectedTokenTypes.AddRange(transition.Value);
-                if (!transition.Value.Contains(token.Type))
-                    continue;
-
-                acceptingTransition = transition.Key;
-                break;
-            }
-
-            if (!acceptingTransition.HasValue)
-                throw new UnexpectedTokenException(state, expectedTokenTypes, token);
-
-            var (nextState, statementType) = acceptingTransition.Value;
-
-            state = nextState;
+            var (nextState, statementType) = CalculateAcceptingTransition(token);
 
             currentStatement.Add(token);
-            if (!statementType.HasValue)
+
+            if (statementType.HasValue)
+                yield return BuildStatement(statementType.Value);
+
+            state = nextState;
+        }
+    }
+
+    private (State, StatementType?) CalculateAcceptingTransition(Token token)
+    {
+        var stateTransitions = Transitions[state];
+        (State, StatementType?)? acceptingTransition = null;
+        List<TokenType> expectedTokenTypes = new();
+        foreach (var transition in stateTransitions)
+        {
+            expectedTokenTypes.AddRange(transition.Value);
+            if (!transition.Value.Contains(token.Type))
                 continue;
 
-            var currentStatementTokens = currentStatement.ToArray();
-            BaseStatement statement = statementType.Value switch
-            {
-                StatementType.VariableDeclaration => new VariableDeclarationStatement(currentStatementTokens),
-                StatementType.EmptyLine => new EmptyLineStatement(currentStatementTokens),
-                StatementType.IfStatement => new IfStatement(currentStatementTokens),
-                StatementType.ElseStatement => new ElseStatement(currentStatementTokens),
-                StatementType.IfElseStatement => new IfElseStatement(currentStatementTokens),
-                StatementType.WhileStatement => new WhileStatement(currentStatementTokens),
-                StatementType.FunctionCall => new FunctionCallStatement(currentStatementTokens),
-                StatementType.CodeBlockStart => new CodeBlockStartStatement(currentStatementTokens),
-                StatementType.CodeBlockEnd => new CodeBlockEndStatement(currentStatementTokens),
-                _ => throw new NotImplementedException("Unimplemented StatementType: " + statementType.Value),
-            };
-
-            switch (statement)
-            {
-                case CodeBlockStartStatement:
-                    codeBlockDepth++;
-                    break;
-                case CodeBlockEndStatement:
-                    codeBlockDepth--;
-                    break;
-            }
-
-            yield return statement;
-
-            currentStatement.Clear();
+            acceptingTransition = transition.Key;
+            break;
         }
 
+        if (!acceptingTransition.HasValue)
+            throw new UnexpectedTokenException(state, expectedTokenTypes, token);
+
+        return acceptingTransition.Value;
+    }
+
+    private BaseStatement BuildStatement(StatementType type)
+    {
+        var currentStatementTokens = currentStatement.ToArray();
+        currentStatement.Clear();
+
+        BaseStatement statement = type switch
+        {
+            StatementType.VariableDeclaration => new VariableDeclarationStatement(currentStatementTokens),
+            StatementType.EmptyLine => new EmptyLineStatement(currentStatementTokens),
+            StatementType.IfStatement => new IfStatement(currentStatementTokens),
+            StatementType.ElseStatement => new ElseStatement(currentStatementTokens),
+            StatementType.IfElseStatement => new IfElseStatement(currentStatementTokens),
+            StatementType.WhileStatement => new WhileStatement(currentStatementTokens),
+            StatementType.FunctionCall => new FunctionCallStatement(currentStatementTokens),
+            StatementType.CodeBlockStart => new CodeBlockStartStatement(currentStatementTokens),
+            StatementType.CodeBlockEnd => new CodeBlockEndStatement(currentStatementTokens),
+            _ => throw new NotImplementedException("Unimplemented StatementType: " + type),
+        };
+
+        switch (statement)
+        {
+            case CodeBlockStartStatement:
+                codeBlockDepth++;
+                break;
+            case CodeBlockEndStatement:
+                codeBlockDepth--;
+                break;
+        }
+
+        return statement;
+    }
+
+    ~Parser()
+    {
         if (currentStatement.Any(t => t.Type is not TokenType.Whitespace and not TokenType.NewLine))
             throw new UnexpectedEndOfInputException(state, "Unexpected end of input: expected whitespace or newline");
 

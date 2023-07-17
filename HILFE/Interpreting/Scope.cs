@@ -18,6 +18,7 @@ public class Scope
         // globally defined identifiers
         AddIdentifier("print", new("print", "function", "StdOut.Write"));
         AddIdentifier("readline", new("readline", "function", "StdIn.ReadLine"));
+        AddIdentifier("clear", new("clear", "function", "StdOut.Clear"));
 
         AddIdentifier("0", new("0", "int", 0));
         AddIdentifier("1", new("1", "int", 1));
