@@ -9,10 +9,20 @@ if (name == "John") {
 
 print("Guess PI: ", EOL)
 string guess
+double? parsedGuess
 while (guess = readline()) {
-    if (guess == pi) {
+    parsedGuess = parseDouble(guess)
+    if (parsedGuess == null) {
+        print("Enter a valid double!", EOL)
+
+        continue
+    }
+
+    if (parsedGuess == pi) {
         print("You got it!", EOL)
         break
+    } elseif (guess > 3 || guess < 3) {
+        print("Way off!", EOL, "Guess PI:")
     } else {
         print("Nope, try again", EOL, "Guess PI: ")
     }
