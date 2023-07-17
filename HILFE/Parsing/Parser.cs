@@ -24,7 +24,6 @@ public static class Parser
         IdentifierFunctionArgument,
         IdentifierAssignment,
         IdentifierFunctionArgumentEnd,
-        IdentifierFunctionCallEnd,
         WhileStatement,
         WhileExpression,
     }
@@ -150,6 +149,7 @@ public static class Parser
             {
                 { (State.IdentifierFunctionArgument, null), new [] { TokenType.Whitespace } },
                 { (State.IdentifierFunctionArgumentEnd, null), new [] { TokenType.LiteralNumber, TokenType.LiteralString, TokenType.Identifier, } },
+                { (State.LineStart, StatementType.FunctionCall), new [] { TokenType.ExpressionCloser } },
             }
         },
         {
@@ -158,14 +158,7 @@ public static class Parser
             {
                 { (State.IdentifierFunctionArgumentEnd, null), new [] { TokenType.Whitespace } },
                 { (State.IdentifierFunctionArgument, null), new [] { TokenType.ExpressionSeparator } },
-                { (State.IdentifierFunctionCallEnd, null), new [] { TokenType.ExpressionCloser } },
-            }
-        },
-        {
-            State.IdentifierFunctionCallEnd,
-            new()
-            {
-                { (State.LineStart, StatementType.FunctionCall), new [] { TokenType.NewLine } },
+                { (State.LineStart, StatementType.FunctionCall), new [] { TokenType.ExpressionCloser } },
             }
         },
         {
@@ -192,6 +185,11 @@ public static class Parser
             }
         },
     };
+
+    public static IAsyncEnumerable<BaseStatement> ParseAsync(IEnumerable<Token> tokens, CancellationToken cancellationToken = default)
+    {
+        return ParseAsync(tokens.ToAsyncEnumerable(), cancellationToken);
+    }
 
     public static async IAsyncEnumerable<BaseStatement> ParseAsync(IAsyncEnumerable<Token> tokens, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
@@ -256,9 +254,9 @@ public static class Parser
         }
 
         if (currentStatement.Any(t => t.Type is not TokenType.Whitespace and not TokenType.NewLine))
-            throw new InvalidOperationException("Unexpected end of input: expected whitespace or newline");
+            throw new UnexpectedEndOfInputException(state, "Unexpected end of input: expected whitespace or newline");
 
         if (codeBlockDepth != 0)
-            throw new InvalidOperationException("Unexpected end of input: imbalance code blocks");
+            throw new ImbalancedCodeBlocksException(state, "Unexpected end of input: imbalanced code blocks");
     }
 }
