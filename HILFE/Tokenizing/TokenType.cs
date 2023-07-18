@@ -14,7 +14,6 @@ public enum TokenType
     NewLine,
     IfKeyword,
     ElseKeyword,
-    ElseIfKeyword,
     WhileKeyword,
     BreakKeyword,
     ContinueKeyword,
@@ -23,6 +22,8 @@ public enum TokenType
     ExpressionOpener,
     ExpressionCloser,
     ExpressionSeparator,
+    GreaterThanSymbol,
+    SmallerThanSymbol,
 }
 
 public static class TokenTypes
@@ -41,9 +42,6 @@ public static class TokenTypes
                 return true;
             case "else":
                 type = TokenType.ElseKeyword;
-                return true;
-            case "elseif":
-                type = TokenType.ElseIfKeyword;
                 return true;
             case "while":
                 type = TokenType.WhileKeyword;
@@ -85,6 +83,12 @@ public static class TokenTypes
                 return true;
             case '=':
                 type = TokenType.EqualsSymbol;
+                return true;
+            case '>':
+                type = TokenType.GreaterThanSymbol;
+                return true;
+            case '<':
+                type = TokenType.SmallerThanSymbol;
                 return true;
             case ',':
                 type = TokenType.ExpressionSeparator;

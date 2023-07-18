@@ -103,7 +103,7 @@ runCommand.SetHandler(async (configFile, scriptFile) =>
 
     try
     {
-        var tokens = tokenizer.TokenizeAsync(chars);
+        var tokens = tokenizer.TokenizeAsync(chars.ToAsyncEnumerable());
         var statements = parser.ParseAsync(tokens);
         await interpreter.InterpretAsync(statements);
 

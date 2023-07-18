@@ -10,19 +10,6 @@ public class Tokenizer
     private char? stringQuote;
     private bool escaped;
 
-    public IAsyncEnumerable<Token> TokenizeAsync(string source, CancellationToken cancellationToken = default)
-    {
-        return TokenizeAsync(source.ToAsyncEnumerable(), cancellationToken);
-    }
-
-    public void Reset()
-    {
-        tokenBuilder.Clear();
-        inString = false;
-        stringQuote = null;
-        escaped = false;
-    }
-
     private Token FinalizeToken(TokenType type, bool clear = true)
     {
         var value = tokenBuilder.ToString();
@@ -33,7 +20,8 @@ public class Tokenizer
         return new(type, value);
     }
 
-    public async IAsyncEnumerable<Token> TokenizeAsync(IAsyncEnumerable<char> characters, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<Token> TokenizeAsync(IAsyncEnumerable<char> characters,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         await foreach (var c in characters.WithCancellation(cancellationToken))
         {
@@ -41,36 +29,9 @@ public class Tokenizer
 
             if (inString)
             {
-                if (c is ' ')
-                {
-                    tokenBuilder.Append(c);
-
-                    escaped = false;
-                }
-                else if (c == stringQuote)
-                {
-                    if (escaped)
-                    {
-                        tokenBuilder.Append(c);
-
-                        escaped = false;
-                    }
-                    else
-                    {
-                        inString = false;
-                        stringQuote = null;
-
-                        yield return FinalizeToken(TokenType.LiteralString);
-                    }
-                }
-                else if (c is '\\' && !escaped)
-                {
-                    escaped = true;
-                }
-                else
-                {
-                    tokenBuilder.Append(c);
-                }
+                var token = HandleString(c);
+                if (token is not null)
+                    yield return token;
 
                 continue;
             }
@@ -83,66 +44,119 @@ public class Tokenizer
                 continue;
             }
 
-            TokenType? tmpType;
-            var tokenValue = tokenBuilder.ToString();
-            if (c is ' ')
+            var tokens = HandleChar(c);
+            if (tokens is null)
+                continue;
+
+            foreach (var token in tokens)
+                yield return token;
+        }
+    }
+
+    private Token? HandleString(char c)
+    {
+        if (c is ' ')
+        {
+            tokenBuilder.Append(c);
+
+            escaped = false;
+        }
+        else if (c == stringQuote)
+        {
+            if (escaped)
             {
-                if (tokenValue.IsKnownTypeName())
-                {
-                    yield return FinalizeToken(TokenType.TypeName);
-                }
-                else if (tokenValue.TryParseKeyword(out tmpType))
-                {
-                    yield return FinalizeToken(tmpType.Value);
-                }
-                else if (tokenValue.Length > 0)
-                {
-                    if (tokenValue.Length == 1 && tokenValue[0].TryParseSymbol(out tmpType))
-                    {
-                        yield return FinalizeToken(tmpType.Value);
-
-                        continue;
-                    }
-
-                    yield return FinalizeToken(TokenType.Identifier);
-                }
-
                 tokenBuilder.Append(c);
 
-                yield return FinalizeToken(TokenType.Whitespace);
-            }
-            else if (c.TryParseSymbol(out tmpType))
-            {
-                if (tokenValue.Length > 0)
-                {
-                    if (double.TryParse(tokenValue, out _))
-                        yield return FinalizeToken(TokenType.LiteralNumber);
-                    else if (bool.TryParse(tokenValue, out _))
-                        yield return FinalizeToken(TokenType.LiteralBoolean);
-                    else if (tokenValue.IsValidIdentifier())
-                        yield return FinalizeToken(TokenType.Identifier);
-                }
-
-                tokenBuilder.Append(c);
-
-                yield return FinalizeToken(tmpType.Value);
+                escaped = false;
             }
             else
-                tokenBuilder.Append(c);
+            {
+                inString = false;
+                stringQuote = null;
+
+                return FinalizeToken(TokenType.LiteralString);
+            }
+        }
+        else if (c is '\\' && !escaped)
+            escaped = true;
+        else
+            tokenBuilder.Append(c);
+
+        return null;
+    }
+
+    private Token []? HandleChar(char c)
+    {
+        var addWhitespaceToken = false;
+        string tokenValue;
+        Token? token;
+        var whitespaceToken = new Token(TokenType.Whitespace, " ");
+        if (c is not ' ')
+        {
+            if (c.TryParseSymbol(out var tmpType))
+                return new []
+                {
+                    new Token(tmpType.Value, c.ToString()),
+                };
+
+            tokenBuilder.Append(c);
+        }
+        else
+        {
+            tokenValue = tokenBuilder.ToString();
+            if (tokenValue.IsValidIdentifier())
+                return new []
+                {
+                    FinalizeToken(TokenType.Identifier),
+                    whitespaceToken,
+                };
+
+            addWhitespaceToken = true;
         }
 
-        var leftoverTokenValue = tokenBuilder.ToString().Trim();
-        if (double.TryParse(leftoverTokenValue, out _))
-            yield return FinalizeToken(TokenType.LiteralNumber);
-        else if (bool.TryParse(leftoverTokenValue, out _))
-            yield return FinalizeToken(TokenType.LiteralBoolean);
-        else if (leftoverTokenValue.Length > 0)
-            if (leftoverTokenValue.TryParseKeyword(out var tmpType))
-                yield return FinalizeToken(tmpType.Value);
-            else if (leftoverTokenValue.IsKnownTypeName())
-                yield return FinalizeToken(TokenType.TypeName);
-            else
-                yield return FinalizeToken(TokenType.Identifier);
+        tokenValue = tokenBuilder.ToString();
+        token = HandleTokenValue(tokenValue);
+        if (token is null)
+        {
+            if (addWhitespaceToken)
+            {
+                return new []
+                {
+                    whitespaceToken,
+                };
+            }
+
+            return null;
+        }
+
+        if (addWhitespaceToken)
+            return new []
+            {
+                token,
+                whitespaceToken,
+            };
+
+        return new []
+        {
+            token,
+        };
+    }
+
+    private Token? HandleTokenValue(string tokenValue)
+    {
+        if (tokenValue.IsKnownTypeName())
+            return FinalizeToken(TokenType.TypeName);
+
+        if (tokenValue.TryParseKeyword(out var tmpType))
+            return FinalizeToken(tmpType.Value);
+
+        if (double.TryParse(tokenValue, out _))
+            return FinalizeToken(TokenType.LiteralNumber);
+
+        if (bool.TryParse(tokenValue, out _))
+            return FinalizeToken(TokenType.LiteralBoolean);
+
+        return null;
     }
 
     public void End()
