@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using HILFE.Parsing.Statements;
 using HILFE.Tokenizing;
 
@@ -6,276 +7,116 @@ namespace HILFE.Parsing;
 
 public class Parser
 {
-    public enum State
+    private readonly Queue<Token> tokenQueue = new();
+
+    public void Add(IEnumerable<Token> tokens)
     {
-        LineStart,
-        DeclarationType,
-        DeclarationName,
-        InitializerStart,
-        InitializerIdentifier,
-        InitializerLiteralString,
-        InitializerLiteralNumber,
-        IfStatement,
-        IfExpression,
-        ElseStatement,
-        IfElseStatement,
-        IfElseExpression,
-        IdentifierStart,
-        IdentifierFunctionArgument,
-        IdentifierAssignment,
-        IdentifierFunctionArgumentEnd,
-        WhileStatement,
-        WhileExpression,
+        foreach (var token in tokens)
+            tokenQueue.Enqueue(token);
     }
 
-    private static readonly Dictionary<State, Dictionary<(State, StatementType?), TokenType[]>> Transitions = new()
-    {
-        {
-            State.LineStart,
-            new()
-            {
-                { (State.LineStart, null), new[] { TokenType.Whitespace } },
-                { (State.LineStart, StatementType.EmptyLine), new[] { TokenType.NewLine } },
-                { (State.DeclarationType, null), new[] { TokenType.TypeName } },
-                { (State.IfStatement, null), new [] { TokenType.IfKeyword } },
-                { (State.ElseStatement, null), new [] { TokenType.ElseKeyword } },
-                { (State.IdentifierStart, null), new [] { TokenType.Identifier } },
-                { (State.WhileStatement, null), new [] { TokenType.WhileKeyword } },
-                { (State.LineStart, StatementType.CodeBlockStart), new []{ TokenType.CodeBlockOpener } },
-                { (State.LineStart, StatementType.CodeBlockEnd), new []{ TokenType.CodeBlockCloser } },
-            }
-        },
-        {
-            State.DeclarationType,
-            new()
-            {
-                { (State.DeclarationType, null), new[] { TokenType.Whitespace } },
-                { (State.DeclarationName, null), new[] { TokenType.Identifier } },
-            }
-        },
-        {
-            State.DeclarationName,
-            new()
-            {
-                { (State.DeclarationName, null), new[] { TokenType.Whitespace } },
-                { (State.InitializerStart, null), new[] { TokenType.EqualsSymbol } },
-                { (State.LineStart, StatementType.VariableDeclaration), new[] { TokenType.NewLine } },
-            }
-        },
-        {
-            State.InitializerStart,
-            new()
-            {
-                { (State.InitializerStart, null), new[] { TokenType.Whitespace } },
-                { (State.InitializerIdentifier, null), new[] { TokenType.Identifier } },
-                { (State.InitializerLiteralString, null), new[] { TokenType.LiteralString } },
-                { (State.InitializerLiteralNumber, null), new[] { TokenType.LiteralNumber } },
-            }
-        },
-        {
-            State.InitializerIdentifier,
-            new()
-            {
-                { (State.LineStart, StatementType.VariableDeclaration), new[] { TokenType.NewLine } },
-            }
-        },
-        {
-            State.InitializerLiteralString,
-            new()
-            {
-                { (State.InitializerLiteralString, null), new[] { TokenType.Whitespace } },
-                { (State.LineStart, StatementType.VariableDeclaration), new[] { TokenType.NewLine } },
-            }
-        },
-        {
-            State.InitializerLiteralNumber,
-            new()
-            {
-                { (State.LineStart, StatementType.VariableDeclaration), new[] { TokenType.NewLine } },
-            }
-        },
-        {
-            State.IfStatement,
-            new()
-            {
-                { (State.IfStatement, null), new [] { TokenType.Whitespace } },
-                { (State.IfExpression, null), new [] { TokenType.ExpressionOpener } },
-            }
-        },
-        {
-            State.IfExpression,
-            new()
-            {
-                { (State.IfExpression, null), new [] { TokenType.Whitespace, TokenType.NewLine, TokenType.Identifier, TokenType.EqualsSymbol, TokenType.LiteralString, TokenType.LiteralNumber } },
-                { (State.LineStart, StatementType.IfStatement), new [] { TokenType.ExpressionCloser } },
-            }
-        },
-        {
-            State.ElseStatement,
-            new()
-            {
-                { (State.LineStart, StatementType.ElseStatement), new [] { TokenType.Whitespace, TokenType.NewLine } },
-                { (State.IfElseStatement, null), new [] { TokenType.IfKeyword } },
-            }
-        },
-        {
-            State.IfElseStatement,
-            new()
-            {
-                { (State.IfElseStatement, null), new [] { TokenType.Whitespace, TokenType.NewLine } },
-                { (State.IfElseExpression, null), new [] { TokenType.ExpressionOpener } },
-            }
-        },
-        {
-            State.IfElseExpression,
-            new()
-            {
-                { (State.IfElseExpression, null), new [] { TokenType.Whitespace, TokenType.NewLine, TokenType.Identifier, TokenType.EqualsSymbol, TokenType.LiteralString, TokenType.LiteralNumber } },
-                { (State.LineStart, StatementType.IfElseStatement), new [] { TokenType.ExpressionCloser } },
-            }
-        },
-        {
-            State.IdentifierStart,
-            new()
-            {
-                { (State.IdentifierStart, null), new [] { TokenType.Whitespace, TokenType.NewLine } },
-                { (State.IdentifierFunctionArgument, null), new [] { TokenType.ExpressionOpener } },
-                { (State.IdentifierAssignment, null), new [] { TokenType.EqualsSymbol } },
-            }
-        },
-        {
-            State.IdentifierFunctionArgument,
-            new()
-            {
-                { (State.IdentifierFunctionArgument, null), new [] { TokenType.Whitespace, TokenType.NewLine } },
-                { (State.IdentifierFunctionArgumentEnd, null), new [] { TokenType.LiteralNumber, TokenType.LiteralString, TokenType.LiteralBoolean, TokenType.Identifier } },
-                { (State.LineStart, StatementType.FunctionCall), new [] { TokenType.ExpressionCloser } },
-            }
-        },
-        {
-            State.IdentifierFunctionArgumentEnd,
-            new()
-            {
-                { (State.IdentifierFunctionArgumentEnd, null), new [] { TokenType.Whitespace, TokenType.NewLine } },
-                { (State.IdentifierFunctionArgument, null), new [] { TokenType.ExpressionSeparator } },
-                { (State.LineStart, StatementType.FunctionCall), new [] { TokenType.ExpressionCloser } },
-            }
-        },
-        {
-            State.IdentifierAssignment,
-            new()
-            {
-                { (State.IdentifierAssignment, null), new [] { TokenType.Whitespace } },
-            }
-        },
-        {
-            State.WhileStatement,
-            new()
-            {
-                { (State.WhileStatement, null), new [] { TokenType.Whitespace, TokenType.NewLine } },
-                { (State.WhileExpression, null), new [] { TokenType.ExpressionOpener } },
-            }
-        },
-        {
-            State.WhileExpression,
-            new()
-            {
-                { (State.WhileExpression, null), new [] { TokenType.Whitespace, TokenType.NewLine, TokenType.Identifier, TokenType.EqualsSymbol, TokenType.LiteralString, TokenType.LiteralNumber } },
-                { (State.LineStart, StatementType.WhileStatement), new [] { TokenType.ExpressionCloser } },
-            }
-        },
-    };
-
-    private readonly List<Token> currentStatement = new();
-    private State state;
-    private int codeBlockDepth;
-
-    public Parser(State state = State.LineStart)
-    {
-        this.state = state;
-    }
-
-    public IAsyncEnumerable<BaseStatement> ParseAsync(IEnumerable<Token> tokens, CancellationToken cancellationToken = default)
-    {
-        return ParseAsync(tokens.ToAsyncEnumerable(), cancellationToken);
-    }
-
-    public async IAsyncEnumerable<BaseStatement> ParseAsync(IAsyncEnumerable<Token> tokens, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async Task AddAsync(IAsyncEnumerable<Token> tokens, CancellationToken cancellationToken = default)
     {
         await foreach (var token in tokens.WithCancellation(cancellationToken))
+            tokenQueue.Enqueue(token);
+    }
+
+    public async IAsyncEnumerable<Statement> ParseAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        while (tokenQueue.TryDequeue(out var token))
         {
-            var (nextState, statementType) = CalculateAcceptingTransition(token);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            currentStatement.Add(token);
+            if (token.Type == TokenType.TypeName)
+            {
+                // variable declaration: <type name> <identifier> = <expression>
+                // TODO: add function call evaluation as value
+                var identifier = Expect(TokenType.Identifier);
+                Expect(TokenType.EqualsSymbol);
+                var value = ReadUntil(TokenType.NewLine);
+                Expect(TokenType.NewLine);
 
-            if (statementType.HasValue)
-                yield return BuildStatement(statementType.Value);
+                yield return new VariableDeclarationStatement(token, identifier, value);
+            }
+            else if (token.Type == TokenType.Identifier)
+            {
+                if (IsNext(TokenType.ExpressionOpener))
+                {
+                    // function call: <identifier>([<expression>[, <expression>]*])
+                    Expect(TokenType.ExpressionOpener);
+                    var args = ReadUntil(TokenType.ExpressionCloser);
+                    Expect(TokenType.ExpressionCloser);
 
-            state = nextState;
+                    yield return new FunctionCallStatement(token, args);
+                }
+                else
+                {
+                    // variable assignment: <identifier> = <expression>
+                    // TODO: add function call evaluation as value
+                    Expect(TokenType.EqualsSymbol);
+                    var value = ReadUntil(TokenType.NewLine);
+
+                    yield return new VariableAssignmentStatement(token, value);
+                }
+            }
+            else if (token.Type == TokenType.CodeBlockOpener)
+            {
+                // TODO: scope enter: { [statement]* }
+            }
+            else if (token.Type == TokenType.IfKeyword)
+            {
+                // TODO: branching: if (<expression>) { [statement]* } [else[if (<expression>)] { [statement]* } ]
+            }
+            else if (token.Type == TokenType.WhileKeyword)
+            {
+                // TODO: looping while (<expression>) { [statement]* }
+            }
+            else if (token.Type is TokenType.Whitespace or TokenType.NewLine)
+                yield return new EmptyStatement();
+            else
+                throw new UnexpectedTokenException(token, TokenType.TypeName, TokenType.Identifier, TokenType.Whitespace, TokenType.NewLine, TokenType.IfKeyword, TokenType.WhileKeyword, TokenType.CodeBlockOpener, TokenType.CodeBlockCloser);
         }
     }
 
-    private (State, StatementType?) CalculateAcceptingTransition(Token token)
+    private Token Expect(params TokenType[] allowed)
     {
-        var stateTransitions = Transitions[state];
-        (State, StatementType?)? acceptingTransition = null;
-        List<TokenType> expectedTokenTypes = new();
-        foreach (var transition in stateTransitions)
+        Token? token;
+        do
         {
-            expectedTokenTypes.AddRange(transition.Value);
-            if (!transition.Value.Contains(token.Type))
-                continue;
+            if (!tokenQueue.TryDequeue(out token))
+                throw new UnexpectedEndOfInputException($"Expected token (allowed types: {string.Join(',', allowed)}), but token queue was empty");
+        } while (token.Type == TokenType.Whitespace);
 
-            acceptingTransition = transition.Key;
-            break;
+        if (!allowed.Contains(token.Type))
+            throw new UnexpectedTokenException(token, allowed);
+
+        return token;
+    }
+
+    private IReadOnlyList<Token> ReadUntil(TokenType exitType, bool skipWhitespace = true)
+    {
+        var tokens = new List<Token>();
+
+        while (TryPeekType(out var nextType) && nextType != exitType)
+        {
+            var token = tokenQueue.Dequeue();
+            if (!skipWhitespace || nextType != TokenType.Whitespace)
+                tokens.Add(token);
         }
 
-        if (!acceptingTransition.HasValue)
-            throw new UnexpectedTokenException(state, expectedTokenTypes, token);
-
-        return acceptingTransition.Value;
+        return tokens;
     }
 
-    private BaseStatement BuildStatement(StatementType type)
+    private bool TryPeekType([NotNullWhen(true)] out TokenType? type)
     {
-        var currentStatementTokens = currentStatement.ToArray();
-        currentStatement.Clear();
+        type = null;
 
-        BaseStatement statement = type switch
-        {
-            StatementType.VariableDeclaration => new VariableDeclarationStatement(currentStatementTokens),
-            StatementType.EmptyLine => new EmptyLineStatement(currentStatementTokens),
-            StatementType.IfStatement => new IfStatement(currentStatementTokens),
-            StatementType.ElseStatement => new ElseStatement(currentStatementTokens),
-            StatementType.IfElseStatement => new IfElseStatement(currentStatementTokens),
-            StatementType.WhileStatement => new WhileStatement(currentStatementTokens),
-            StatementType.FunctionCall => new FunctionCallStatement(currentStatementTokens),
-            StatementType.CodeBlockStart => new CodeBlockStartStatement(currentStatementTokens),
-            StatementType.CodeBlockEnd => new CodeBlockEndStatement(currentStatementTokens),
-            _ => throw new NotImplementedException("Unimplemented StatementType: " + type),
-        };
+        if (!tokenQueue.TryPeek(out var token))
+            return false;
 
-        switch (statement)
-        {
-            case CodeBlockStartStatement:
-                codeBlockDepth++;
-                break;
-            case CodeBlockEndStatement:
-                codeBlockDepth--;
-                break;
-        }
-
-        return statement;
+        type = token.Type;
+        return true;
     }
 
-    public void End()
-    {
-        if (currentStatement.Any(t => t.Type is not TokenType.Whitespace and not TokenType.NewLine))
-            throw new UnexpectedEndOfInputException(state, "Unexpected end of input: expected whitespace or newline");
-
-        if (codeBlockDepth != 0)
-            throw new ImbalancedCodeBlocksException(state, "Unexpected end of input: imbalanced code blocks");
-    }
-
-    ~Parser() => End();
+    private bool IsNext(TokenType type) => TryPeekType(out var nextType) && nextType == type;
 }

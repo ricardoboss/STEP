@@ -11,6 +11,7 @@
     <ItemGroup>
       <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
       <PackageReference Include="System.Linq.Async" Version="6.0.1" />
+      <PackageReference Include="ListenableAsyncEnumerable" Version="1.0.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -22,6 +23,12 @@
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
       <None Update="branching.hil">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="assignment.hil">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="call.hil">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>

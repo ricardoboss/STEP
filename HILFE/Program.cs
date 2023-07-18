@@ -49,7 +49,7 @@ listenCommand.SetHandler(async configFile =>
 
     var tokenizer = new Tokenizer();
     var parser = new Parser();
-    var interpreter = new Interpreter(Console.Out, Console.Error, inputReader);
+    var interpreter = new Interpreter(Console.Out, Console.Error, inputReader, Console.Out);
 
     Console.WriteLine("Welcome to HILFE REPL! Use Ctrl-C to exit.");
     Console.Write("> ");
@@ -69,7 +69,8 @@ listenCommand.SetHandler(async configFile =>
                 continue;
             }
 
-            var statements = await parser.ParseAsync(tokens.ToAsyncEnumerable()).ToListAsync();
+            parser.Add(tokens);
+            var statements = await parser.ParseAsync().ToListAsync();
             if (statements.Count == 0)
             {
                 Console.Write("| ");
@@ -97,14 +98,15 @@ runCommand.SetHandler(async (configFile, scriptFile) =>
 
     var tokenizer = new Tokenizer();
     var parser = new Parser();
-    var interpreter = new Interpreter(Console.Out, Console.Error, Console.In);
+    var interpreter = new Interpreter(Console.Out, Console.Error, Console.In, Console.Out);
 
     var chars = await File.ReadAllTextAsync(scriptFile.FullName);
 
     try
     {
         var tokens = tokenizer.TokenizeAsync(chars.ToAsyncEnumerable());
-        var statements = parser.ParseAsync(tokens);
+        await parser.AddAsync(tokens);
+        var statements = parser.ParseAsync();
         await interpreter.InterpretAsync(statements);
 
         Environment.ExitCode = interpreter.ExitCode;

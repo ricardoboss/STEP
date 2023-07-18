@@ -43,4 +43,10 @@ public class Expression
 
         throw new NotImplementedException($"Expressions with {token.Type} tokens are not implemented");
     }
+
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return "(" + string.Join(' ', Tokens) + ")";
+    }
 }

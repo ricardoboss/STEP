@@ -4,7 +4,7 @@ public class TypedVariable
 {
     public readonly string Identifier;
     public readonly string TypeName;
-    public readonly dynamic? Value;
+    public dynamic? Value;
     public readonly Type? OriginalType;
 
     public TypedVariable(string identifier, string typeName, dynamic? value)
@@ -26,6 +26,12 @@ public class TypedVariable
             return (TCast?)(object)Value;
 
         return null;
+    }
+
+    public void Assign(dynamic? newValue)
+    {
+        // TODO: type checks
+        Value = newValue;
     }
 
     /// <inheritdoc />

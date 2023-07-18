@@ -62,4 +62,11 @@ public class Scope
 
         throw new UndefinedIdentifierException(identifier);
     }
+
+    public void SetByIdentifier(string identifier, dynamic? value)
+    {
+        var variable = GetByIdentifier(identifier);
+
+        variable.Assign(value);
+    }
 }

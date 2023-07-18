@@ -8,5 +8,5 @@ public interface ILoopingStatement
 
     Task<bool> ShouldLoop(Interpreter interpreter);
 
-    Task<bool> ExecuteLoop(IReadOnlyList<BaseStatement> statements);
+    Task ExecuteLoop(Interpreter interpreter, CancellationToken cancellationToken = default);
 }

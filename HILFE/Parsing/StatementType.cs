@@ -2,10 +2,9 @@
 
 public enum StatementType
 {
-    EmptyLine,
+    EmptyStatement,
     VariableDeclaration,
     IfStatement,
-    ElseStatement,
     IfElseStatement,
     WhileStatement,
     FunctionCall,

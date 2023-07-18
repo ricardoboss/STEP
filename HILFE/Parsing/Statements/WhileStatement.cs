@@ -1,27 +1,31 @@
 using HILFE.Interpreting;
-using HILFE.Tokenizing;
 
 namespace HILFE.Parsing.Statements;
 
-public class WhileStatement : BaseStatement, ILoopingStatement
+public class WhileStatement : Statement, ILoopingStatement
 {
+    private readonly Expression condition;
+    private readonly IReadOnlyList<Statement> statements;
+
     /// <inheritdoc />
-    public WhileStatement(IReadOnlyList<Token> tokens) : base(StatementType.IfStatement, tokens)
+    public WhileStatement(Expression condition, IReadOnlyList<Statement> statements) : base(StatementType.IfStatement)
     {
+        this.condition = condition;
+        this.statements = statements;
     }
 
     public Task InitializeLoop(Interpreter interpreter)
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public Task<bool> ShouldLoop(Interpreter interpreter)
     {
-        throw new NotImplementedException();
+        return Task.FromResult<bool>(condition.Evaluate(interpreter).Value == true);
     }
 
-    public Task<bool> ExecuteLoop(IReadOnlyList<BaseStatement> statements)
+    public async Task ExecuteLoop(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        await interpreter.InterpretAsync(statements.ToAsyncEnumerable(), cancellationToken);
     }
 }
