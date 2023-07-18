@@ -89,7 +89,6 @@ public class Tokenizer
     {
         var addWhitespaceToken = false;
         string tokenValue;
-        Token? token;
         var whitespaceToken = new Token(TokenType.Whitespace, " ");
         if (c is not ' ')
         {
@@ -115,7 +114,7 @@ public class Tokenizer
         }
 
         tokenValue = tokenBuilder.ToString();
-        token = HandleTokenValue(tokenValue);
+        var token = HandleTokenValue(tokenValue);
         if (token is null)
         {
             if (addWhitespaceToken)
