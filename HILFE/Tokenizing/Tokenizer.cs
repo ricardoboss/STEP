@@ -87,53 +87,29 @@ public class Tokenizer
 
     private Token []? HandleChar(char c)
     {
-        var addWhitespaceToken = false;
         string tokenValue;
-        var whitespaceToken = new Token(TokenType.Whitespace, " ");
-        if (c is not ' ')
-        {
-            if (c.TryParseSymbol(out var tmpType))
-                return new []
-                {
-                    new Token(tmpType.Value, c.ToString()),
-                };
 
-            tokenBuilder.Append(c);
-        }
-        else
+        TokenType? symbolType = TokenType.Whitespace;
+        if (c is ' ' || c.TryParseSymbol(out symbolType))
         {
+            var tokens = new List<Token>();
+
             tokenValue = tokenBuilder.ToString();
             if (tokenValue.IsValidIdentifier())
-                return new []
-                {
-                    FinalizeToken(TokenType.Identifier),
-                    whitespaceToken,
-                };
+                tokens.Add(FinalizeToken(TokenType.Identifier));
+            else if (tokenValue.Length > 0)
+                throw new TokenizerException($"Invalid identifier: {tokenValue}");
 
-            addWhitespaceToken = true;
+            tokens.Add(new(symbolType.Value, c.ToString()));
+
+            return tokens.ToArray();
         }
 
-        tokenValue = tokenBuilder.ToString();
+        tokenValue = tokenBuilder.Append(c).ToString();
+
         var token = HandleTokenValue(tokenValue);
         if (token is null)
-        {
-            if (addWhitespaceToken)
-            {
-                return new []
-                {
-                    whitespaceToken,
-                };
-            }
-
             return null;
-        }
-
-        if (addWhitespaceToken)
-            return new []
-            {
-                token,
-                whitespaceToken,
-            };
 
         return new []
         {

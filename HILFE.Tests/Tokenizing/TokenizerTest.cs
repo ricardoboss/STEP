@@ -118,4 +118,23 @@ public class TokenizerTest
         Assert.Equal(TokenType.ExpressionCloser, tokens[4].Type);
         Assert.Equal(")", tokens[4].Value);
     }
+
+    [Fact]
+    public async Task TestTokenizeFunctionCall()
+    {
+        const string source = "print(\"hello\")";
+
+        var tokenizer = new Tokenizer();
+        var tokens = await tokenizer.TokenizeAsync(source.ToAsyncEnumerable(), CancellationToken.None).ToListAsync();
+
+        Assert.Equal(4, tokens.Count);
+        Assert.Equal(TokenType.Identifier, tokens[0].Type);
+        Assert.Equal("print", tokens[0].Value);
+        Assert.Equal(TokenType.ExpressionOpener, tokens[1].Type);
+        Assert.Equal("(", tokens[1].Value);
+        Assert.Equal(TokenType.LiteralString, tokens[2].Type);
+        Assert.Equal("hello", tokens[2].Value);
+        Assert.Equal(TokenType.ExpressionCloser, tokens[3].Type);
+        Assert.Equal(")", tokens[3].Value);
+    }
 }
