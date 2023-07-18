@@ -19,13 +19,13 @@ public class FunctionCallStatement : Statement, IExecutableStatement
     }
 
     /// <inheritdoc />
-    public async Task ExecuteAsync(Interpreter interpreter)
+    public async Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
         var expressions = new List<Expression>();
         for (var i = 0; i < args.Count; )
         {
             var expressionTokens = args.Skip(i).TakeWhile(t => t.Type != TokenType.ExpressionSeparator && t.Type != TokenType.ExpressionCloser).ToList();
-            var expression = new Expression(expressionTokens);
+            var expression = Parser.ParseExpression(expressionTokens);
             expressions.Add(expression);
             i += expressionTokens.Count + 1;
         }
@@ -37,7 +37,7 @@ public class FunctionCallStatement : Statement, IExecutableStatement
         switch (functionDefiniton)
         {
             case "StdIn.ReadLine":
-                var line = await interpreter.StdIn.ReadLineAsync();
+                var line = await interpreter.StdIn.ReadLineAsync(cancellationToken);
                 interpreter.CurrentScope.ParentScope?.AddIdentifier("$$RETURN", new("$$RETURN", "string", line));
                 break;
             case "StdOut.Write":

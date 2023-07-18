@@ -6,23 +6,22 @@ namespace HILFE.Parsing.Statements;
 public class VariableAssignmentStatement : Statement, IExecutableStatement
 {
     private readonly Token identifier;
-    private readonly Expression valueExpression;
+    private readonly Expression expression;
 
     /// <inheritdoc />
-    public VariableAssignmentStatement(Token identifier, IReadOnlyList<Token> valueExpression) : base(StatementType.VariableDeclaration)
+    public VariableAssignmentStatement(Token identifier, Expression expression) : base(StatementType.VariableAssignment)
     {
         if (identifier.Type != TokenType.Identifier)
             throw new TokenizerException($"Expected {TokenType.Identifier} token, but got {identifier.Type} instead");
 
         this.identifier = identifier;
-
-        this.valueExpression = new(valueExpression);
+        this.expression = expression;
     }
 
     /// <inheritdoc />
-    public Task ExecuteAsync(Interpreter interpreter)
+    public Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
-        var result = valueExpression.Evaluate(interpreter);
+        var result = expression.Evaluate(interpreter);
         if (result is { IsVoid: false })
             interpreter.CurrentScope.SetByIdentifier(identifier.Value, result.Value);
 
@@ -32,6 +31,6 @@ public class VariableAssignmentStatement : Statement, IExecutableStatement
     /// <inheritdoc />
     protected override string DebugRenderContent()
     {
-        return $"{identifier} = {valueExpression}";
+        return $"{identifier} = {expression}";
     }
 }

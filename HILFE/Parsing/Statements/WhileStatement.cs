@@ -8,7 +8,7 @@ public class WhileStatement : Statement, ILoopingStatement
     private readonly IReadOnlyList<Statement> statements;
 
     /// <inheritdoc />
-    public WhileStatement(Expression condition, IReadOnlyList<Statement> statements) : base(StatementType.IfStatement)
+    public WhileStatement(Expression condition, IReadOnlyList<Statement> statements) : base(StatementType.WhileStatement)
     {
         this.condition = condition;
         this.statements = statements;

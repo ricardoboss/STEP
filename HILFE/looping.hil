@@ -1,0 +1,8 @@
+﻿double i = 0
+
+while (i < 10) {
+    print(i, EOL)
+    i = 10
+}
+
+print("done", EOL)

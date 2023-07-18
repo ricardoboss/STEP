@@ -24,6 +24,11 @@ public enum TokenType
     ExpressionSeparator,
     GreaterThanSymbol,
     SmallerThanSymbol,
+    PlusSymbol,
+    MinusSymbol,
+    AsteriskSymbol,
+    SlashSymbol,
+    PercentSymbol,
 }
 
 public static class TokenTypes
@@ -89,6 +94,21 @@ public static class TokenTypes
                 return true;
             case '<':
                 type = TokenType.SmallerThanSymbol;
+                return true;
+            case '+':
+                type = TokenType.PlusSymbol;
+                return true;
+            case '-':
+                type = TokenType.MinusSymbol;
+                return true;
+            case '*':
+                type = TokenType.AsteriskSymbol;
+                return true;
+            case '/':
+                type = TokenType.SlashSymbol;
+                return true;
+            case '%':
+                type = TokenType.PercentSymbol;
                 return true;
             case ',':
                 type = TokenType.ExpressionSeparator;

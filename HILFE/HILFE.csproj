@@ -31,6 +31,9 @@
       <None Update="call.hil">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="looping.hil">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 

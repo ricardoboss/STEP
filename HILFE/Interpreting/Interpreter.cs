@@ -35,31 +35,34 @@ public class Interpreter
             if (DebugOut is not null)
                 await DebugOut.WriteLineAsync(statement.ToString());
 
-            switch (statement)
-            {
-                case IExecutableStatement executableStatement:
-                    await executableStatement.ExecuteAsync(this);
-                    break;
-                case ILoopingStatement loopingStatement:
-                    await loopingStatement.InitializeLoop(this);
-                    while (await loopingStatement.ShouldLoop(this))
-                    {
-                        await loopingStatement.ExecuteLoop(this, cancellationToken);
-                    }
-
-                    break;
-                case IBranchingStatement branchingStatement:
-                    if (await branchingStatement.ShouldBranch(this))
-                    {
-                        await branchingStatement.ExecuteTrueBranch(this, cancellationToken);
-                    }
-                    else
-                    {
-                        await branchingStatement.ExecuteFalseBranch(this, cancellationToken);
-                    }
-
-                    break;
-            }
+            await InterpretStatement(statement, cancellationToken);
         }
+    }
+
+    private async Task InterpretStatement(Statement statement, CancellationToken cancellationToken)
+    {
+        if (statement is IExecutableStatement executableStatement)
+            await executableStatement.ExecuteAsync(this, cancellationToken);
+        else if (statement is ILoopingStatement loopingStatement)
+            await InterpretLoopingStatement(loopingStatement, cancellationToken);
+        else if (statement is IBranchingStatement branchingStatement)
+            await InterpretBranchingStatement(branchingStatement, cancellationToken);
+        else
+            throw new NotImplementedException($"Given statement cannot be interpreted: {statement}");
+    }
+
+    private async Task InterpretLoopingStatement(ILoopingStatement statement, CancellationToken cancellationToken)
+    {
+        await statement.InitializeLoop(this);
+        while (await statement.ShouldLoop(this))
+            await statement.ExecuteLoop(this, cancellationToken);
+    }
+
+    private async Task InterpretBranchingStatement(IBranchingStatement statement, CancellationToken cancellationToken)
+    {
+        if (await statement.ShouldBranch(this))
+            await statement.ExecuteTrueBranch(this, cancellationToken);
+        else
+            await statement.ExecuteFalseBranch(this, cancellationToken);
     }
 }
