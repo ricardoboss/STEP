@@ -37,13 +37,13 @@ public class FunctionCallStatement : BaseStatement, IExecutableStatement
 
         var args = expressions.Select(e => e.Evaluate(interpreter)).ToList();
 
-        var functionVariable = interpreter.Scope.CurrentScope.GetByIdentifier(identifier);
+        var functionVariable = interpreter.CurrentScope.GetByIdentifier(identifier);
         var functionDefiniton = functionVariable.Value as string;
         switch (functionDefiniton)
         {
             case "StdIn.ReadLine":
                 var line = await interpreter.StdIn.ReadLineAsync();
-                interpreter.Scope.CurrentScope.ParentScope?.AddIdentifier("$$RETURN", new("$$RETURN", "string", line));
+                interpreter.CurrentScope.ParentScope?.AddIdentifier("$$RETURN", new("$$RETURN", "string", line));
                 break;
             case "StdOut.Write":
                 var stringArgs = args.Select(a => a.Value?.ToString() ?? string.Empty).Cast<string>().ToList();

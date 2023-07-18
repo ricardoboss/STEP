@@ -23,7 +23,7 @@ public class Expression
         var token = Tokens[0];
         if (token.Type == TokenType.Identifier)
         {
-            return new(interpreter.Scope.CurrentScope.GetByIdentifier(token.Value).Value);
+            return new(interpreter.CurrentScope.GetByIdentifier(token.Value).Value);
         }
 
         if (token.Type == TokenType.LiteralString)

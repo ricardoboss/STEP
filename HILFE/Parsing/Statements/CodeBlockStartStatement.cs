@@ -13,7 +13,7 @@ public class CodeBlockStartStatement : BaseStatement, IExecutableStatement
     /// <inheritdoc />
     public Task ExecuteAsync(Interpreter interpreter)
     {
-        interpreter.Scope.Push();
+        interpreter.PushScope();
 
         return Task.CompletedTask;
     }

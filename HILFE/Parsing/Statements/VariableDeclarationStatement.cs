@@ -39,7 +39,7 @@ public class VariableDeclarationStatement : BaseStatement, IExecutableStatement
         }
 
         if (value is not null or { IsVoid: true })
-            interpreter.Scope.CurrentScope.AddIdentifier(identifier, new(identifier, type, value));
+            interpreter.CurrentScope.AddIdentifier(identifier, new(identifier, type, value));
 
         return Task.CompletedTask;
     }
