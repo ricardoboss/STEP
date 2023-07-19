@@ -105,18 +105,23 @@ public class Parser
                 Expect(TokenType.ExpressionOpener);
                 var expressionTokens = ReadUntil(TokenType.ExpressionCloser);
                 Expect(TokenType.ExpressionCloser);
+
                 Expect(TokenType.CodeBlockOpener);
-                var statements = await ParseAsync(cancellationToken).ToListAsync(cancellationToken);
-                // CodeBlockCloser should have been read already
+                var statementsTokens = ReadUntil(TokenType.CodeBlockCloser);
+                Expect(TokenType.CodeBlockCloser);
 
                 var condition = ParseExpression(expressionTokens);
+                var statements = await ParseStatements(statementsTokens, cancellationToken).ToListAsync(cancellationToken);
+
                 yield return new WhileStatement(condition, statements);
             }
             else if (token.Type == TokenType.CodeBlockOpener)
             {
                 // anonymous code block: { [statement]* }
-                var statements = await ParseAsync(cancellationToken).ToListAsync(cancellationToken);
-                // CodeBlockCloser should have been read already
+                var statementsTokens = ReadUntil(TokenType.CodeBlockCloser);
+                Expect(TokenType.CodeBlockCloser);
+
+                var statements = await ParseStatements(statementsTokens, cancellationToken).ToListAsync(cancellationToken);
 
                 yield return new AnonymousCodeBlockStatement(statements);
             }
@@ -124,6 +129,11 @@ public class Parser
                 yield break;
             else if (token.Type is not TokenType.Whitespace and not TokenType.NewLine)
                 throw new UnexpectedTokenException(token, TokenType.TypeName, TokenType.Identifier, TokenType.Whitespace, TokenType.NewLine, TokenType.IfKeyword, TokenType.WhileKeyword, TokenType.CodeBlockOpener, TokenType.CodeBlockCloser);
+        }
+
+        if (tokenQueue.Count > 0)
+        {
+            throw new ParserException($"Queue was not consumed till the end ({tokenQueue.Count} tokens left)");
         }
     }
 
@@ -156,23 +166,30 @@ public class Parser
     {
         var tokens = new List<Token>();
         var expressionDepth = 0;
+        var codeBlockDepth = 0;
 
         while (TryPeekType(out var nextType))
         {
-            if (expressionDepth == 0 && nextType == exitType)
+            if (expressionDepth == 0 && codeBlockDepth == 0 && nextType == exitType)
                 break;
 
             var token = tokenQueue.Dequeue();
             if (!skipWhitespace || nextType != TokenType.Whitespace)
                 tokens.Add(token);
 
-            switch (token.Type)
+            switch (nextType)
             {
                 case TokenType.ExpressionOpener:
                     expressionDepth++;
                     break;
                 case TokenType.ExpressionCloser:
                     expressionDepth--;
+                    break;
+                case TokenType.CodeBlockOpener:
+                    codeBlockDepth++;
+                    break;
+                case TokenType.CodeBlockCloser:
+                    codeBlockDepth--;
                     break;
             }
         }
@@ -194,6 +211,17 @@ public class Parser
 
         type = token.Type;
         return true;
+    }
+
+    private static IAsyncEnumerable<Statement> ParseStatements(IEnumerable<Token> tokens, CancellationToken cancellationToken)
+    {
+        // TODO: ugly? need to be able to parse tokens after they have been taken out of the queue
+
+        var innerParser = new Parser();
+
+        innerParser.Add(tokens);
+
+        return innerParser.ParseAsync(cancellationToken);
     }
 
     public static Expression ParseExpression(IReadOnlyList<Token> tokens)
