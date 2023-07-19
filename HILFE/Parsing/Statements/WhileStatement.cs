@@ -14,21 +14,30 @@ public class WhileStatement : Statement, ILoopingStatement
         this.statements = statements;
     }
 
-    public Task InitializeLoop(Interpreter interpreter)
+    public Task InitializeLoopAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
+        interpreter.PushScope();
+
         return Task.CompletedTask;
     }
 
-    public async Task<bool> ShouldLoop(Interpreter interpreter)
+    public async Task<bool> ShouldLoopAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
         var result = await condition.EvaluateAsync(interpreter, default);
 
-        return result.Value == true;
+        return result is { ValueType: "bool", Value: true };
     }
 
-    public async Task ExecuteLoop(Interpreter interpreter, CancellationToken cancellationToken = default)
+    public async Task ExecuteLoopAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
         await interpreter.InterpretAsync(statements.ToAsyncEnumerable(), cancellationToken);
+    }
+
+    public Task FinalizeLoopAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
+    {
+        interpreter.PopScope();
+
+        return Task.CompletedTask;
     }
 
     protected override string DebugRenderContent()

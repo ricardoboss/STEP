@@ -59,9 +59,12 @@ public class Interpreter
 
     private async Task InterpretLoopingStatement(ILoopingStatement statement, CancellationToken cancellationToken)
     {
-        await statement.InitializeLoop(this);
-        while (await statement.ShouldLoop(this))
-            await statement.ExecuteLoop(this, cancellationToken);
+        await statement.InitializeLoopAsync(this, cancellationToken);
+
+        while (await statement.ShouldLoopAsync(this, cancellationToken))
+            await statement.ExecuteLoopAsync(this, cancellationToken);
+
+        await statement.FinalizeLoopAsync(this, cancellationToken);
     }
 
     private async Task InterpretBranchingStatement(IBranchingStatement statement, CancellationToken cancellationToken)

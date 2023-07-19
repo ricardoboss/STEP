@@ -4,9 +4,11 @@ namespace HILFE.Parsing.Statements;
 
 public interface ILoopingStatement
 {
-    Task InitializeLoop(Interpreter interpreter);
+    Task InitializeLoopAsync(Interpreter interpreter, CancellationToken cancellationToken = default);
 
-    Task<bool> ShouldLoop(Interpreter interpreter);
+    Task<bool> ShouldLoopAsync(Interpreter interpreter, CancellationToken cancellationToken = default);
 
-    Task ExecuteLoop(Interpreter interpreter, CancellationToken cancellationToken = default);
+    Task ExecuteLoopAsync(Interpreter interpreter, CancellationToken cancellationToken = default);
+
+    Task FinalizeLoopAsync(Interpreter interpreter, CancellationToken cancellationToken = default);
 }
