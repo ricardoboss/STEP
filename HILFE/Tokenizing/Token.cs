@@ -13,6 +13,6 @@ public class Token
 
     public override string ToString()
     {
-        return Value.Length > 0 ? $"<{Type}: '{Value}'>" : $"<{Type}>";
+        return Value.Length > 0 ? $"<{Type}: '{Value.Replace("\n", "\\n").Replace("\r", "\\r")}'>" : $"<{Type}>";
     }
 }

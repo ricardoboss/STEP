@@ -17,9 +17,11 @@ public class IfElseStatement : Statement
         this.falseBranch = falseBranch;
     }
 
-    public Task<bool> ShouldBranch(Interpreter interpreter)
+    public async Task<bool> ShouldBranch(Interpreter interpreter)
     {
-        return condition.Evaluate(interpreter).Value == true;
+        var result = await condition.EvaluateAsync(interpreter, default);
+
+        return result.Value == true;
     }
 
     public async Task ExecuteTrueBranch(Interpreter interpreter, CancellationToken cancellationToken = default)

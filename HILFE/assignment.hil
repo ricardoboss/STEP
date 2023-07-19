@@ -1,1 +1,4 @@
 double a = 1
+double b = 1 + 2
+string c = "Hello"
+string d = c + " World" + EOL

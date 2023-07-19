@@ -57,7 +57,7 @@ listenCommand.SetHandler(async configFile =>
     {
         inputWriter.WriteLine(line);
 
-        var chars = line.ToAsyncEnumerable();
+        var chars = line.ToAsyncEnumerable().Append('\n');
 
         try
         {

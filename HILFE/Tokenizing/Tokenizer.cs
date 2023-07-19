@@ -51,6 +51,12 @@ public class Tokenizer
             foreach (var token in tokens)
                 yield return token;
         }
+
+        if (tokenBuilder.Length == 0)
+            yield break;
+
+        var leftOverToken = HandleTokenValue(tokenBuilder.ToString());
+        if (leftOverToken is not null) yield return leftOverToken;
     }
 
     private Token? HandleString(char c)
@@ -89,24 +95,39 @@ public class Tokenizer
     {
         string tokenValue;
 
-        TokenType? symbolType = TokenType.Whitespace;
-        if (c is ' ' || c.TryParseSymbol(out symbolType))
+        if (c.TryParseSymbol(out var symbolType))
         {
             var tokens = new List<Token>();
-
+        
             tokenValue = tokenBuilder.ToString();
-            if (tokenValue.IsValidIdentifier())
-                tokens.Add(FinalizeToken(TokenType.Identifier));
-            else if (tokenValue.Length > 0)
-                throw new TokenizerException($"Invalid identifier: {tokenValue}");
+            if (tokenValue.Length > 0)
+            {
+                var tempToken = HandleTokenValue(tokenValue);
+                if (tempToken is not null)
+                {
+                    tokens.Add(tempToken);
+                }
+                else
+                {
+                    if (tokenValue.IsValidIdentifier())
+                        tokens.Add(FinalizeToken(TokenType.Identifier));
+                    else
+                        throw new TokenizerException($"Invalid identifier: {tokenValue}");
+                }
+            }
 
             tokens.Add(new(symbolType.Value, c.ToString()));
-
+        
             return tokens.ToArray();
         }
 
-        tokenValue = tokenBuilder.Append(c).ToString();
+        if (IsPartOfLiteralNumber(c))
+        {
+            tokenBuilder.Append(c);
+            return null;
+        }
 
+        tokenValue = tokenBuilder.Append(c).ToString();
         var token = HandleTokenValue(tokenValue);
         if (token is null)
             return null;
@@ -143,6 +164,11 @@ public class Tokenizer
             throw new TokenizerException("Unclosed string");
 
         throw new TokenizerException("Unexpected end of input");
+    }
+    
+    private static bool IsPartOfLiteralNumber(char c)
+    {
+        return char.IsDigit(c) || c == '.' || c == '-' || c == '+';
     }
 
     ~Tokenizer() => End();

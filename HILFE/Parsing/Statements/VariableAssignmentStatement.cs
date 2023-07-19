@@ -19,13 +19,13 @@ public class VariableAssignmentStatement : Statement, IExecutableStatement
     }
 
     /// <inheritdoc />
-    public Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
+    public async Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
-        var result = expression.Evaluate(interpreter);
-        if (result is { IsVoid: false })
-            interpreter.CurrentScope.SetByIdentifier(identifier.Value, result.Value);
+        var result = await expression.EvaluateAsync(interpreter, default);
+        if (result is null or { IsVoid: true })
+            throw new InterpreterException("Cannot assign a void value to a variable");
 
-        return Task.CompletedTask;
+        interpreter.CurrentScope.SetByIdentifier(identifier.Value, result.Value);
     }
 
     /// <inheritdoc />

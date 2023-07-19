@@ -19,9 +19,11 @@ public class WhileStatement : Statement, ILoopingStatement
         return Task.CompletedTask;
     }
 
-    public Task<bool> ShouldLoop(Interpreter interpreter)
+    public async Task<bool> ShouldLoop(Interpreter interpreter)
     {
-        return Task.FromResult<bool>(condition.Evaluate(interpreter).Value == true);
+        var result = await condition.EvaluateAsync(interpreter, default);
+
+        return result.Value == true;
     }
 
     public async Task ExecuteLoop(Interpreter interpreter, CancellationToken cancellationToken = default)

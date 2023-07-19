@@ -1,4 +1,5 @@
-﻿using HILFE.Interpreting;
+﻿using System.Runtime.CompilerServices;
+using HILFE.Interpreting;
 using HILFE.Tokenizing;
 
 namespace HILFE.Parsing;
@@ -7,22 +8,27 @@ public abstract class Expression
 {
     public static Expression Add(Expression left, Expression right)
     {
-        return new EvaluatedExpression(left, right, (a, b) => a + b);
+        return new EvaluatedExpression("+", left, right, (a, b) => new(a.Value + b.Value));
     }
 
     public static Expression Subtract(Expression left, Expression right)
     {
-        return new EvaluatedExpression(left, right, (a, b) => a - b);
+        return new EvaluatedExpression("-", left, right, (a, b) => new(a.Value - b.Value));
     }
-    
+
     public static Expression Multiply(Expression left, Expression right)
     {
-        return new EvaluatedExpression(left, right, (a, b) => a * b);
+        return new EvaluatedExpression("*", left, right, (a, b) => new(a.Value * b.Value));
     }
-    
+
     public static Expression Divide(Expression left, Expression right)
     {
-        return new EvaluatedExpression(left, right, (a, b) => a / b);
+        return new EvaluatedExpression("/", left, right, (a, b) => new(a.Value / b.Value));
+    }
+
+    public static Expression Modulo(Expression left, Expression right)
+    {
+        return new EvaluatedExpression("%", left, right, (a, b) => new(a.Value % b.Value));
     }
 
     public static Expression Constant(double value)
@@ -40,7 +46,19 @@ public abstract class Expression
         return new ConstantExpression(value);
     }
 
-    public abstract ExpressionResult Evaluate(Interpreter interpreter);
+    public abstract Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken);
+
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        var debugDisplay = DebugDisplay();
+        if (debugDisplay.Length > 0)
+            debugDisplay = $": {debugDisplay}";
+
+        return $"<{GetType().Name}{debugDisplay}>";
+    }
+
+    protected virtual string DebugDisplay() => "";
 
     public class ConstantExpression : Expression
     {
@@ -51,32 +69,38 @@ public abstract class Expression
             this.value = value;
         }
 
-        public override ExpressionResult Evaluate(Interpreter interpreter)
+        public override Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken)
         {
-            return new(value);
+            return Task.FromResult<ExpressionResult>(new(value));
         }
+
+        protected override string DebugDisplay() => value?.ToString() ?? "<null>";
     }
 
     public class EvaluatedExpression : Expression
     {
-         private readonly Expression left;
-         private readonly Expression right;
-         private readonly Func<dynamic?, dynamic?, dynamic?> combine;
+        private readonly string debugName;
+        private readonly Expression left;
+        private readonly Expression right;
+        private readonly Func<ExpressionResult, ExpressionResult, ExpressionResult> combine;
 
-         public EvaluatedExpression(Expression left, Expression right, Func<dynamic?, dynamic?, dynamic?> combine)
-         {
-             this.left = left;
-             this.right = right;
-             this.combine = combine;
-         }
-
-         public override ExpressionResult Evaluate(Interpreter interpreter)
+        public EvaluatedExpression(string debugName, Expression left, Expression right, Func<ExpressionResult, ExpressionResult, ExpressionResult> combine)
         {
-            var leftValue = left.Evaluate(interpreter);
-            var rightValue = right.Evaluate(interpreter);
-
-            return new(combine.Invoke(leftValue, rightValue));
+            this.debugName = debugName;
+            this.left = left;
+            this.right = right;
+            this.combine = combine;
         }
+
+        public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken)
+        {
+            var leftValue = await left.EvaluateAsync(interpreter, cancellationToken);
+            var rightValue = await right.EvaluateAsync(interpreter, cancellationToken);
+
+            return combine.Invoke(leftValue, rightValue);
+        }
+
+        protected override string DebugDisplay() => $"({left}) {debugName} ({right})";
     }
 
     public class FunctionCallExpression : Expression
@@ -90,26 +114,63 @@ public abstract class Expression
             this.args = args;
         }
 
-        public override ExpressionResult Evaluate(Interpreter interpreter)
+        public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException("Function calls not implemented yet.");
+            async IAsyncEnumerable<ExpressionResult> EvaluateArgs([EnumeratorCancellation] CancellationToken ct)
+            {
+                foreach (var arg in args)
+                    yield return await arg.EvaluateAsync(interpreter, ct);
+            }
+
+            var functionVariable = interpreter.CurrentScope.GetByIdentifier(identifier.Value);
+            var functionDefiniton = functionVariable.Value as string;
+            switch (functionDefiniton)
+            {
+                case "StdIn.ReadLine":
+                    var line = await interpreter.StdIn.ReadLineAsync(cancellationToken);
+
+                    return new(line);
+
+                case "StdOut.Write":
+                    var stringArgs = await EvaluateArgs(cancellationToken).Select(r => r.Value?.ToString() ?? string.Empty).Cast<string>().ToListAsync(cancellationToken: cancellationToken);
+
+                    await interpreter.StdOut.WriteAsync(string.Join("", stringArgs));
+
+                    return new(IsVoid: true);
+
+                case "Framework.TypeName":
+                    var exp = args.Single();
+                    if (exp is not VariableExpression varExp)
+                        throw new InterpreterException($"Invalid type, expected {nameof(VariableExpression)}, got {exp.GetType().Name}");
+
+                    var variable = interpreter.CurrentScope.GetByIdentifier(varExp.Identifier.Value);
+
+                    return new(variable.TypeName);
+
+                default:
+                    throw new InterpreterException($"Undefined function: {functionDefiniton}");
+            }
         }
+
+        protected override string DebugDisplay() => $"{identifier}({string.Join(',', args)})";
     }
-    
+
     public class VariableExpression : Expression
     {
-        private readonly Token identifier;
+        public readonly Token Identifier;
 
         public VariableExpression(Token identifier)
         {
-            this.identifier = identifier;
+            Identifier = identifier;
         }
 
-        public override ExpressionResult Evaluate(Interpreter interpreter)
+        public override Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken)
         {
-            var variable = interpreter.CurrentScope.GetByIdentifier(identifier.Value);
+            var variable = interpreter.CurrentScope.GetByIdentifier(Identifier.Value);
 
-            return new(variable.Value);
+            return Task.FromResult<ExpressionResult>(new(variable.Value));
         }
+
+        protected override string DebugDisplay() => Identifier.ToString();
     }
 }

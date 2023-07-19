@@ -9,7 +9,7 @@ public class TokenizerTest
     {
         var source = "\"abc\"".ToAsyncEnumerable();
         var tokenizer = new Tokenizer();
-        var tokens = await tokenizer.TokenizeAsync(source, CancellationToken.None).ToArrayAsync();
+        var tokens = await tokenizer.TokenizeAsync(source).ToArrayAsync();
 
         Assert.Single(tokens);
         Assert.Equal(TokenType.LiteralString, tokens[0].Type);
@@ -17,11 +17,23 @@ public class TokenizerTest
     }
 
     [Fact]
+    public async Task TestTokenizeLiteralNumber()
+    {
+        var source = "123".ToAsyncEnumerable();
+        var tokenizer = new Tokenizer();
+        var tokens = await tokenizer.TokenizeAsync(source).ToArrayAsync();
+
+        Assert.Single(tokens);
+        Assert.Equal(TokenType.LiteralNumber, tokens[0].Type);
+        Assert.Equal("123", tokens[0].Value);
+    }
+
+    [Fact]
     public async Task TestTokenizeLiteralStringWithSpaces()
     {
         var source = "\"abc def\"".ToAsyncEnumerable();
         var tokenizer = new Tokenizer();
-        var tokens = await tokenizer.TokenizeAsync(source, CancellationToken.None).ToArrayAsync();
+        var tokens = await tokenizer.TokenizeAsync(source).ToArrayAsync();
 
         Assert.Single(tokens);
         Assert.Equal(TokenType.LiteralString, tokens[0].Type);
@@ -35,7 +47,7 @@ public class TokenizerTest
     {
         var tokenizer = new Tokenizer();
 
-        var tokens = await tokenizer.TokenizeAsync(source.ToAsyncEnumerable(), CancellationToken.None).ToArrayAsync();
+        var tokens = await tokenizer.TokenizeAsync(source.ToAsyncEnumerable()).ToArrayAsync();
 
         Assert.Single(tokens);
         Assert.Equal(TokenType.LiteralString, tokens[0].Type);
@@ -50,7 +62,7 @@ public class TokenizerTest
     public async Task TestTokenizeKnownType(string source)
     {
         var tokenizer = new Tokenizer();
-        var tokens = await tokenizer.TokenizeAsync(source.ToAsyncEnumerable(), CancellationToken.None).ToListAsync();
+        var tokens = await tokenizer.TokenizeAsync(source.ToAsyncEnumerable()).ToListAsync();
 
         Assert.Single(tokens);
         Assert.Equal(TokenType.TypeName, tokens[0].Type);
@@ -66,7 +78,7 @@ public class TokenizerTest
     public async Task TestTokenizeKeyword(string source, TokenType type)
     {
         var tokenizer = new Tokenizer();
-        var tokens = await tokenizer.TokenizeAsync(source.ToAsyncEnumerable(), CancellationToken.None).ToArrayAsync();
+        var tokens = await tokenizer.TokenizeAsync(source.ToAsyncEnumerable()).ToArrayAsync();
 
         Assert.Single(tokens);
         Assert.Equal(type, tokens[0].Type);
@@ -79,7 +91,7 @@ public class TokenizerTest
         const string source = "double identifier = 1";
 
         var tokenizer = new Tokenizer();
-        var tokens = await tokenizer.TokenizeAsync(source.ToAsyncEnumerable(), CancellationToken.None).ToListAsync();
+        var tokens = await tokenizer.TokenizeAsync(source.ToAsyncEnumerable()).ToListAsync();
 
         Assert.Equal(7, tokens.Count);
         Assert.Equal(TokenType.TypeName, tokens[0].Type);
@@ -104,7 +116,7 @@ public class TokenizerTest
         const string source = "if (true)";
 
         var tokenizer = new Tokenizer();
-        var tokens = await tokenizer.TokenizeAsync(source.ToAsyncEnumerable(), CancellationToken.None).ToListAsync();
+        var tokens = await tokenizer.TokenizeAsync(source.ToAsyncEnumerable()).ToListAsync();
 
         Assert.Equal(5, tokens.Count);
         Assert.Equal(TokenType.IfKeyword, tokens[0].Type);
@@ -125,7 +137,7 @@ public class TokenizerTest
         const string source = "print(\"hello\")";
 
         var tokenizer = new Tokenizer();
-        var tokens = await tokenizer.TokenizeAsync(source.ToAsyncEnumerable(), CancellationToken.None).ToListAsync();
+        var tokens = await tokenizer.TokenizeAsync(source.ToAsyncEnumerable()).ToListAsync();
 
         Assert.Equal(4, tokens.Count);
         Assert.Equal(TokenType.Identifier, tokens[0].Type);

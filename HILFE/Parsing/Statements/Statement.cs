@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace HILFE.Parsing.Statements;
+﻿namespace HILFE.Parsing.Statements;
 
 public abstract class Statement
 {
