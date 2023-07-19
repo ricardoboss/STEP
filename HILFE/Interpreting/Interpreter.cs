@@ -41,14 +41,20 @@ public class Interpreter
 
     private async Task InterpretStatement(Statement statement, CancellationToken cancellationToken)
     {
-        if (statement is IExecutableStatement executableStatement)
-            await executableStatement.ExecuteAsync(this, cancellationToken);
-        else if (statement is ILoopingStatement loopingStatement)
-            await InterpretLoopingStatement(loopingStatement, cancellationToken);
-        else if (statement is IBranchingStatement branchingStatement)
-            await InterpretBranchingStatement(branchingStatement, cancellationToken);
-        else
-            throw new NotImplementedException($"Given statement cannot be interpreted: {statement}");
+        switch (statement)
+        {
+            case IExecutableStatement executableStatement:
+                await executableStatement.ExecuteAsync(this, cancellationToken);
+                break;
+            case ILoopingStatement loopingStatement:
+                await InterpretLoopingStatement(loopingStatement, cancellationToken);
+                break;
+            case IBranchingStatement branchingStatement:
+                await InterpretBranchingStatement(branchingStatement, cancellationToken);
+                break;
+            default:
+                throw new NotImplementedException($"Given statement cannot be interpreted: {statement}");
+        }
     }
 
     private async Task InterpretLoopingStatement(ILoopingStatement statement, CancellationToken cancellationToken)

@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using HILFE.Parsing.Statements;
 using HILFE.Tokenizing;
@@ -40,7 +41,8 @@ public class Parser
             }
             else if (token.Type == TokenType.Identifier)
             {
-                if (IsNext(TokenType.ExpressionOpener))
+                var nextType = PeekType();
+                if (nextType is TokenType.ExpressionOpener)
                 {
                     // function call: <identifier>([<expression>[, <expression>]*])
                     Expect(TokenType.ExpressionOpener);
@@ -49,6 +51,37 @@ public class Parser
 
                     var args = ParseExpressions(argsTokens);
                     yield return new FunctionCallStatement(token, args);
+                }
+                else if (nextType.IsMathematicalOperation())
+                {
+                    // shortcut setter: <identifier>++ / <identifier>-- / <identifier> *= <expression> / <identifier> /= <expression>
+                    var variableExp = new Expression.VariableExpression(token);
+                    var operationToken = GetNext();
+                    Expression valueExp;
+
+                    var valueDenominator = Expect(TokenType.PlusSymbol,
+                        TokenType.MinusSymbol, TokenType.AsteriskSymbol, TokenType.SlashSymbol,
+                        TokenType.PercentSymbol, TokenType.EqualsSymbol);
+
+                    if (valueDenominator.Type.IsMathematicalOperation())
+                    {
+                        // mathematical operation must be the same type as the initial operation (i.e. +- or *- is forbidden)
+                        if (operationToken.Type != valueDenominator.Type)
+                            throw new UnexpectedTokenException(valueDenominator, operationToken.Type);
+
+                        valueExp = new Expression.ConstantExpression(1);
+                    }
+                    else
+                    {
+                        Debug.Assert(valueDenominator.Type is TokenType.EqualsSymbol);
+
+                        valueExp = ParseExpression(ReadUntil(TokenType.NewLine));
+                        Expect(TokenType.NewLine);
+                    }
+
+                    var expression = Expression.FromSymbol(operationToken, variableExp, valueExp);
+
+                    yield return new VariableAssignmentStatement(token, expression);
                 }
                 else
                 {
@@ -60,11 +93,6 @@ public class Parser
                     var expression = ParseExpression(expressionTokens);
                     yield return new VariableAssignmentStatement(token, expression);
                 }
-            }
-            else if (token.Type == TokenType.CodeBlockOpener)
-            {
-                // TODO: scope enter: { [statement]* }
-                throw new NotImplementedException("Can't handle CodeBlockOpener yet");
             }
             else if (token.Type == TokenType.IfKeyword)
             {
@@ -88,7 +116,7 @@ public class Parser
             {
                 // anonymous code block: { [statement]* }
                 var statements = await ParseAsync(cancellationToken).ToListAsync(cancellationToken);
-                Expect(TokenType.CodeBlockCloser);
+                // CodeBlockCloser should have been read already
 
                 yield return new AnonymousCodeBlockStatement(statements);
             }
@@ -99,15 +127,25 @@ public class Parser
         }
     }
 
-    private Token Expect(params TokenType[] allowed)
+    private Token GetNext(params TokenType[] allowed)
     {
         Token? token;
         do
         {
-            if (!tokenQueue.TryDequeue(out token))
-                throw new UnexpectedEndOfInputException($"Expected token (allowed types: {string.Join(',', allowed)}), but token queue was empty");
+            if (tokenQueue.TryDequeue(out token))
+                continue;
+
+            var typeInfo = allowed.Length == 0 ? "any token" : $"a token (allowed types: {string.Join(',', allowed)})";
+
+            throw new UnexpectedEndOfInputException($"Expected {typeInfo}, but token queue was empty");
         } while (token.Type is TokenType.Whitespace);
 
+        return token;
+    }
+
+    private Token Expect(params TokenType[] allowed)
+    {
+        var token = GetNext(allowed);
         if (!allowed.Contains(token.Type))
             throw new UnexpectedTokenException(token, allowed);
 
@@ -128,13 +166,23 @@ public class Parser
             if (!skipWhitespace || nextType != TokenType.Whitespace)
                 tokens.Add(token);
 
-            if (token.Type is TokenType.ExpressionOpener)
-                expressionDepth++;
-            else if (token.Type is TokenType.ExpressionCloser)
-                expressionDepth--;
+            switch (token.Type)
+            {
+                case TokenType.ExpressionOpener:
+                    expressionDepth++;
+                    break;
+                case TokenType.ExpressionCloser:
+                    expressionDepth--;
+                    break;
+            }
         }
 
         return tokens;
+    }
+
+    private TokenType PeekType()
+    {
+        return tokenQueue.Peek().Type;
     }
 
     private bool TryPeekType([NotNullWhen(true)] out TokenType? type)
@@ -148,11 +196,12 @@ public class Parser
         return true;
     }
 
-    private bool IsNext(TokenType type) => TryPeekType(out var nextType) && nextType == type;
-
     public static Expression ParseExpression(IReadOnlyList<Token> tokens)
     {
         var currentPosition = 0;
+
+        // Start parsing from the top-level binary expression
+        return ParseBinaryExpression();
 
         Expression ParseBinaryExpression(int parentPrecedence = 0)
         {
@@ -163,27 +212,7 @@ public class Parser
                 var op = tokens[currentPosition++];
                 var right = ParseBinaryExpression(BinaryOperatorPrecedence(op.Type) + 1);
 
-                switch (op.Type)
-                {
-                    case TokenType.PlusSymbol:
-                        left = Expression.Add(left, right);
-                        break;
-                    case TokenType.MinusSymbol:
-                        left = Expression.Subtract(left, right);
-                        break;
-                    case TokenType.AsteriskSymbol:
-                        left = Expression.Multiply(left, right);
-                        break;
-                    case TokenType.SlashSymbol:
-                        left = Expression.Divide(left, right);
-                        break;
-                    case TokenType.PercentSymbol:
-                        left = Expression.Modulo(left, right);
-                        break;
-                    // TODO: Add more binary operators here
-                    default:
-                        throw new InvalidOperationException("Invalid binary operator.");
-                }
+                left = Expression.FromSymbol(op, left, right);
             }
 
             return left;
@@ -251,13 +280,16 @@ public class Parser
         {
             switch (type)
             {
+                case TokenType.LessThanSymbol:
+                case TokenType.GreaterThanSymbol:
+                    return 1;
                 case TokenType.PlusSymbol:
                 case TokenType.MinusSymbol:
-                    return 1;
+                    return 2;
                 case TokenType.AsteriskSymbol:
                 case TokenType.SlashSymbol:
                 case TokenType.PercentSymbol:
-                    return 2;
+                    return 3;
                 // TODO: Add more binary operators and their precedences here
                 default:
                     throw new NotImplementedException($"Undefined operator precedence for token type: {type}");
@@ -278,9 +310,6 @@ public class Parser
                 throw new InvalidOperationException($"Unexpected token {currentToken.Value}, expected {expectedType}.");
             }
         }
-
-        // Start parsing from the top-level binary expression
-        return ParseBinaryExpression();
     }
 
     private static List<Expression> ParseExpressions(IReadOnlyList<Token> tokens)

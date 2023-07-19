@@ -23,7 +23,7 @@ public enum TokenType
     ExpressionCloser,
     ExpressionSeparator,
     GreaterThanSymbol,
-    SmallerThanSymbol,
+    LessThanSymbol,
     PlusSymbol,
     MinusSymbol,
     AsteriskSymbol,
@@ -93,7 +93,7 @@ public static class TokenTypes
                 type = TokenType.GreaterThanSymbol;
                 return true;
             case '<':
-                type = TokenType.SmallerThanSymbol;
+                type = TokenType.LessThanSymbol;
                 return true;
             case '+':
                 type = TokenType.PlusSymbol;
@@ -117,5 +117,23 @@ public static class TokenTypes
 
         type = null;
         return false;
+    }
+
+    public static bool IsMathematicalOperation(this TokenType type)
+    {
+        return type switch
+        {
+            TokenType.PlusSymbol or TokenType.MinusSymbol or TokenType.AsteriskSymbol or TokenType.SlashSymbol or TokenType.PercentSymbol => true,
+            _ => false,
+        };
+    }
+
+    public static bool IsLiteral(this TokenType type)
+    {
+        return type switch
+        {
+            TokenType.LiteralString or TokenType.LiteralNumber or TokenType.LiteralBoolean => true,
+            _ => false,
+        };
     }
 }

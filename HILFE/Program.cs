@@ -98,7 +98,7 @@ runCommand.SetHandler(async (configFile, scriptFile) =>
 
     var tokenizer = new Tokenizer();
     var parser = new Parser();
-    var interpreter = new Interpreter(Console.Out, Console.Error, Console.In, Console.Out);
+    var interpreter = new Interpreter(Console.Out, Console.Error, Console.In);
 
     var chars = await File.ReadAllTextAsync(scriptFile.FullName);
 

@@ -30,4 +30,9 @@ public class WhileStatement : Statement, ILoopingStatement
     {
         await interpreter.InterpretAsync(statements.ToAsyncEnumerable(), cancellationToken);
     }
+
+    protected override string DebugRenderContent()
+    {
+        return $"{condition} {{ [{statements.Count}] }}";
+    }
 }

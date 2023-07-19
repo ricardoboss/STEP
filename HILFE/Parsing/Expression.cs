@@ -6,6 +6,22 @@ namespace HILFE.Parsing;
 
 public abstract class Expression
 {
+    public static Expression FromSymbol(Token symbol, Expression left, Expression right)
+    {
+        return symbol.Type switch
+        {
+            TokenType.PlusSymbol => Add(left, right),
+            TokenType.MinusSymbol => Subtract(left, right),
+            TokenType.AsteriskSymbol => Multiply(left, right),
+            TokenType.SlashSymbol => Divide(left, right),
+            TokenType.PercentSymbol => Modulo(left, right),
+            TokenType.LessThanSymbol => LessThan(left, right),
+            TokenType.GreaterThanSymbol => GreaterThan(left, right),
+            _ => throw new UnexpectedTokenException(symbol, TokenType.PlusSymbol, TokenType.MinusSymbol,
+                TokenType.AsteriskSymbol, TokenType.SlashSymbol, TokenType.PercentSymbol),
+        };
+    }
+
     public static Expression Add(Expression left, Expression right)
     {
         return new EvaluatedExpression("+", left, right, (a, b) => new(a.Value + b.Value));
@@ -29,6 +45,16 @@ public abstract class Expression
     public static Expression Modulo(Expression left, Expression right)
     {
         return new EvaluatedExpression("%", left, right, (a, b) => new(a.Value % b.Value));
+    }
+
+    public static Expression LessThan(Expression left, Expression right)
+    {
+        return new EvaluatedExpression("<", left, right, (a, b) => new(a.Value < b.Value));
+    }
+
+    public static Expression GreaterThan(Expression left, Expression right)
+    {
+        return new EvaluatedExpression(">", left, right, (a, b) => new(a.Value > b.Value));
     }
 
     public static Expression Constant(double value)

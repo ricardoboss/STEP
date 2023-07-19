@@ -2,7 +2,7 @@
 
 while (i < 10) {
     print(i, EOL)
-    i = 10
+    i++
 }
 
 print("done", EOL)
