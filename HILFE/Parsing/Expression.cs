@@ -212,7 +212,7 @@ public abstract class Expression
                     return new("string", line);
 
                 case "StdOut.Write":
-                    var stringArgs = await EvaluateArgs(cancellationToken).Select(r => r.Value?.ToString() ?? string.Empty).Cast<string>().ToListAsync(cancellationToken: cancellationToken);
+                    var stringArgs = await EvaluateArgs(cancellationToken).Select(r => r.Value?.ToString() ?? string.Empty).Cast<string>().ToListAsync(cancellationToken);
 
                     await interpreter.StdOut.WriteAsync(string.Join("", stringArgs));
 
