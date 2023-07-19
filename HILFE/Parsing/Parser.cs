@@ -231,7 +231,7 @@ public class Parser
             {
                 // either 'identifier' or 'function(arg, arg2)'
 
-                if (tokens.Count <= currentPosition || tokens[currentPosition + 1].Type != TokenType.ExpressionOpener)
+                if (tokens.Count <= currentPosition || tokens[currentPosition].Type != TokenType.ExpressionOpener)
                     return new Expression.VariableExpression(currentToken);
 
                 Match(TokenType.ExpressionOpener);
@@ -243,7 +243,6 @@ public class Parser
                 Match(TokenType.ExpressionCloser);
 
                 return new Expression.FunctionCallExpression(currentToken, expressions);
-
             }
 
             if (currentToken.Type == TokenType.LiteralNumber)
