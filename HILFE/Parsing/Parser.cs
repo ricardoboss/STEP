@@ -69,7 +69,7 @@ public class Parser
                         if (operationToken.Type != valueDenominator.Type)
                             throw new UnexpectedTokenException(valueDenominator, operationToken.Type);
 
-                        valueExp = new Expression.ConstantExpression(1);
+                        valueExp = new Expression.ConstantExpression("double", 1);
                     }
                     else
                     {
@@ -210,6 +210,11 @@ public class Parser
             while (currentPosition < tokens.Count && BinaryOperatorPrecedence(tokens[currentPosition].Type) >= parentPrecedence)
             {
                 var op = tokens[currentPosition++];
+
+                // FIXME: this currently prevents >= and <= operators from being implemented
+                if (tokens[currentPosition].Type is TokenType.EqualsSymbol)
+                    currentPosition++;
+
                 var right = ParseBinaryExpression(BinaryOperatorPrecedence(op.Type) + 1);
 
                 left = Expression.FromSymbol(op, left, right);
@@ -258,7 +263,7 @@ public class Parser
                     return Expression.Constant(value);
                 }
 
-                throw new FormatException("Invalid bool format.");
+                throw new FormatException($"Invalid bool format: {currentToken.Value}");
             }
 
             if (currentToken.Type == TokenType.LiteralString)
@@ -273,7 +278,7 @@ public class Parser
                 return expression;
             }
 
-            throw new InvalidOperationException("Invalid expression.");
+            throw new InvalidOperationException($"Invalid expression. Got token: {currentToken}");
         }
 
         int BinaryOperatorPrecedence(TokenType type)
@@ -282,6 +287,7 @@ public class Parser
             {
                 case TokenType.LessThanSymbol:
                 case TokenType.GreaterThanSymbol:
+                case TokenType.EqualsSymbol:
                     return 1;
                 case TokenType.PlusSymbol:
                 case TokenType.MinusSymbol:

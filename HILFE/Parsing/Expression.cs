@@ -17,6 +17,7 @@ public abstract class Expression
             TokenType.PercentSymbol => Modulo(left, right),
             TokenType.LessThanSymbol => LessThan(left, right),
             TokenType.GreaterThanSymbol => GreaterThan(left, right),
+            TokenType.EqualsSymbol => Equals(left, right),
             _ => throw new UnexpectedTokenException(symbol, TokenType.PlusSymbol, TokenType.MinusSymbol,
                 TokenType.AsteriskSymbol, TokenType.SlashSymbol, TokenType.PercentSymbol),
         };
@@ -24,52 +25,105 @@ public abstract class Expression
 
     public static Expression Add(Expression left, Expression right)
     {
-        return new EvaluatedExpression("+", left, right, (a, b) => new(a.Value + b.Value));
+        return new EvaluatedExpression("+", left, right, (a, b) =>
+        {
+            if (a.ValueType != b.ValueType)
+                throw new InterpreterException($"Cannot add values of type {a.ValueType} and {b.ValueType}");
+
+            return new(a.ValueType, a.Value + b.Value);
+        });
     }
 
     public static Expression Subtract(Expression left, Expression right)
     {
-        return new EvaluatedExpression("-", left, right, (a, b) => new(a.Value - b.Value));
+        return new EvaluatedExpression("-", left, right, (a, b) =>
+        {
+            if (a.ValueType != b.ValueType || a.ValueType != "double")
+                throw new InterpreterException($"Cannot subtract values of type {a.ValueType} and {b.ValueType}");
+
+            return new(a.ValueType, a.Value - b.Value);
+        });
     }
 
     public static Expression Multiply(Expression left, Expression right)
     {
-        return new EvaluatedExpression("*", left, right, (a, b) => new(a.Value * b.Value));
+        return new EvaluatedExpression("*", left, right, (a, b) =>
+        {
+            if (a.ValueType != b.ValueType || a.ValueType != "double")
+                throw new InterpreterException($"Cannot multiply values of type {a.ValueType} and {b.ValueType}");
+
+            return new(a.ValueType, a.Value * b.Value);
+        });
     }
 
     public static Expression Divide(Expression left, Expression right)
     {
-        return new EvaluatedExpression("/", left, right, (a, b) => new(a.Value / b.Value));
+        return new EvaluatedExpression("/", left, right, (a, b) =>
+        {
+            if (a.ValueType != b.ValueType || a.ValueType != "double")
+                throw new InterpreterException($"Cannot divide values of type {a.ValueType} and {b.ValueType}");
+
+            return new(a.ValueType, a.Value / b.Value);
+        });
     }
 
     public static Expression Modulo(Expression left, Expression right)
     {
-        return new EvaluatedExpression("%", left, right, (a, b) => new(a.Value % b.Value));
+        return new EvaluatedExpression("%", left, right, (a, b) =>
+        {
+            if (a.ValueType != b.ValueType || a.ValueType != "double")
+                throw new InterpreterException($"Cannot modulo values of type {a.ValueType} and {b.ValueType}");
+
+            return new(a.ValueType, a.Value % b.Value);
+        });
     }
 
     public static Expression LessThan(Expression left, Expression right)
     {
-        return new EvaluatedExpression("<", left, right, (a, b) => new(a.Value < b.Value));
+        return new EvaluatedExpression("<", left, right, (a, b) =>
+        {
+            if (a.ValueType != b.ValueType)
+                throw new InterpreterException($"Cannot compare values of type {a.ValueType} and {b.ValueType}");
+
+            return new("bool", a.Value < b.Value);
+        });
     }
 
     public static Expression GreaterThan(Expression left, Expression right)
     {
-        return new EvaluatedExpression(">", left, right, (a, b) => new(a.Value > b.Value));
+        return new EvaluatedExpression(">", left, right, (a, b) =>
+        {
+            if (a.ValueType != b.ValueType)
+                throw new InterpreterException($"Cannot compare values of type {a.ValueType} and {b.ValueType}");
+
+            return new("bool", a.Value > b.Value);
+        });
+    }
+
+    public static Expression Equals(Expression left, Expression right)
+    {
+        return new EvaluatedExpression("==", left, right, (a, b) =>
+        {
+            if (a.ValueType != b.ValueType)
+                return new("bool", false);
+
+            return new("bool", a.Value == b.Value);
+        });
     }
 
     public static Expression Constant(double value)
     {
-        return new ConstantExpression(value);
+        return new ConstantExpression("double", value);
     }
 
     public static Expression Constant(string value)
     {
-        return new ConstantExpression(value);
+        return new ConstantExpression("string", value);
     }
 
     public static Expression Constant(bool value)
     {
-        return new ConstantExpression(value);
+        return new ConstantExpression("bool", value);
     }
 
     public abstract Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken);
@@ -88,19 +142,19 @@ public abstract class Expression
 
     public class ConstantExpression : Expression
     {
-        private readonly dynamic? value;
+        private readonly ExpressionResult result;
 
-        public ConstantExpression(dynamic? value)
+        public ConstantExpression(string type, dynamic? value)
         {
-            this.value = value;
+            result = new(type, value);
         }
 
         public override Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken)
         {
-            return Task.FromResult<ExpressionResult>(new(value));
+            return Task.FromResult(result);
         }
 
-        protected override string DebugDisplay() => value?.ToString() ?? "<null>";
+        protected override string DebugDisplay() => result.ToString();
     }
 
     public class EvaluatedExpression : Expression
@@ -149,20 +203,20 @@ public abstract class Expression
             }
 
             var functionVariable = interpreter.CurrentScope.GetByIdentifier(identifier.Value);
-            var functionDefiniton = functionVariable.Value as string;
-            switch (functionDefiniton)
+            var functionDefinition = functionVariable.Value as string;
+            switch (functionDefinition)
             {
                 case "StdIn.ReadLine":
                     var line = await interpreter.StdIn.ReadLineAsync(cancellationToken);
 
-                    return new(line);
+                    return new("string", line);
 
                 case "StdOut.Write":
                     var stringArgs = await EvaluateArgs(cancellationToken).Select(r => r.Value?.ToString() ?? string.Empty).Cast<string>().ToListAsync(cancellationToken: cancellationToken);
 
                     await interpreter.StdOut.WriteAsync(string.Join("", stringArgs));
 
-                    return new(IsVoid: true);
+                    return new("void", IsVoid: true);
 
                 case "Framework.TypeName":
                     var exp = args.Single();
@@ -171,10 +225,10 @@ public abstract class Expression
 
                     var variable = interpreter.CurrentScope.GetByIdentifier(varExp.Identifier.Value);
 
-                    return new(variable.TypeName);
+                    return new("string", variable.TypeName);
 
                 default:
-                    throw new InterpreterException($"Undefined function: {functionDefiniton}");
+                    throw new InterpreterException($"Undefined function: {functionDefinition}");
             }
         }
 
@@ -194,7 +248,7 @@ public abstract class Expression
         {
             var variable = interpreter.CurrentScope.GetByIdentifier(Identifier.Value);
 
-            return Task.FromResult<ExpressionResult>(new(variable.Value));
+            return Task.FromResult<ExpressionResult>(new(variable.TypeName, variable.Value));
         }
 
         protected override string DebugDisplay() => Identifier.ToString();
