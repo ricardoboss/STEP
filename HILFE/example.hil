@@ -9,7 +9,7 @@ if (name == "John") {
 
 print("Guess PI: ", EOL)
 string guess
-double? parsedGuess
+double parsedGuess
 while (guess = readline()) {
     parsedGuess = parseDouble(guess)
     if (parsedGuess == null) {

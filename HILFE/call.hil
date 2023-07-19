@@ -1,4 +1,4 @@
 print()
 print('Hello')
 print(" World", EOL)
-print(readline(), EOL)
+print("You said: ", readline(), EOL)
