@@ -29,6 +29,12 @@ public enum TokenType
     AsteriskSymbol,
     SlashSymbol,
     PercentSymbol,
+    PipeSymbol,
+    AmpersandSymbol,
+    ExclamationMarkSymbol,
+    HatSymbol,
+    TildeSymbol,
+    QuestionMarkSymbol
 }
 
 public static class TokenTypes
@@ -88,6 +94,24 @@ public static class TokenTypes
                 return true;
             case '=':
                 type = TokenType.EqualsSymbol;
+                return true;
+            case '|':
+                type = TokenType.PipeSymbol;
+                return true;
+            case '&':
+                type = TokenType.AmpersandSymbol;
+                return true;
+            case '!':
+                type = TokenType.ExclamationMarkSymbol;
+                return true;
+            case '?':
+                type = TokenType.QuestionMarkSymbol;
+                return true;
+            case '^':
+                type = TokenType.HatSymbol;
+                return true;
+            case '~':
+                type = TokenType.TildeSymbol;
                 return true;
             case '>':
                 type = TokenType.GreaterThanSymbol;

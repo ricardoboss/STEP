@@ -21,7 +21,7 @@ public class Scope
         AddIdentifier("clear", new("clear", "function", "StdOut.Clear"));
         AddIdentifier("typeName", new("typeName", "function", "Framework.TypeName"));
 
-        AddIdentifier("null", new("null", "object", null));
+        AddIdentifier("null", new("null", "null", null));
 
         AddIdentifier("EOL", new("EOL", "string", Environment.NewLine));
     }

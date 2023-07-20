@@ -59,31 +59,31 @@ public class Parser
                     case { } maybeMathematicalOperator when maybeMathematicalOperator.IsMathematicalOperation():
                     {
                         // shortcut setter: <identifier>++ / <identifier>-- / <identifier> *= <expression> / <identifier> /= <expression>
-                        var variableExp = new Expression.VariableExpression(token);
                         var operationToken = GetNext();
-                        Expression valueExp;
 
                         var valueDenominator = Expect(TokenType.PlusSymbol,
                             TokenType.MinusSymbol, TokenType.AsteriskSymbol, TokenType.SlashSymbol,
                             TokenType.PercentSymbol, TokenType.EqualsSymbol);
 
+                        IReadOnlyList<Token> valueExpTokens;
                         if (valueDenominator.Type.IsMathematicalOperation())
                         {
                             // mathematical operation must be the same type as the initial operation (i.e. +- or *- is forbidden)
                             if (operationToken.Type != valueDenominator.Type)
                                 throw new UnexpectedTokenException(valueDenominator, operationToken.Type);
 
-                            valueExp = new Expression.ConstantExpression("double", 1);
+                            valueExpTokens = new Token[] { new(TokenType.LiteralNumber, "1") };
                         }
                         else
                         {
                             Debug.Assert(valueDenominator.Type is TokenType.EqualsSymbol);
 
-                            valueExp = ParseExpression(ReadUntil(TokenType.NewLine));
+                            valueExpTokens = ReadUntil(TokenType.NewLine);
                             Expect(TokenType.NewLine);
                         }
 
-                        var expression = Expression.FromSymbol(operationToken, variableExp, valueExp);
+                        // TODO: ugly. Move expression parsing to another class
+                        var expression = ParseExpression(new[] {token, operationToken}.Concat(valueExpTokens).ToArray());
 
                         yield return new VariableAssignmentStatement(token, expression);
 
@@ -282,18 +282,13 @@ public class Parser
         Expression ParseBinaryExpression(int parentPrecedence = 0)
         {
             var left = ParsePrimaryExpression();
+            BinaryExpressionOperator op;
 
-            while (currentPosition < tokens.Count && BinaryOperatorPrecedence(tokens[currentPosition].Type) >= parentPrecedence)
+            while (currentPosition < tokens.Count && (op = ParseOperator()).Precedence() >= parentPrecedence)
             {
-                var op = tokens[currentPosition++];
+                var right = ParseBinaryExpression(op.Precedence() + 1);
 
-                // FIXME: this currently prevents >= and <= operators from being implemented
-                if (tokens[currentPosition].Type is TokenType.EqualsSymbol)
-                    currentPosition++;
-
-                var right = ParseBinaryExpression(BinaryOperatorPrecedence(op.Type) + 1);
-
-                left = Expression.FromSymbol(op, left, right);
+                left = Expression.FromOperator(op, left, right);
             }
 
             return left;
@@ -348,7 +343,10 @@ public class Parser
 
             if (currentToken.Type == TokenType.ExpressionOpener)
             {
-                var expression = ParseBinaryExpression();
+                // TODO: kinda ugly?
+                var innerTokens = tokens.Skip(currentPosition).TakeWhile(t => t.Type != TokenType.ExpressionCloser).ToList();
+                var expression = ParseExpression(innerTokens);
+                currentPosition += innerTokens.Count;
                 Match(TokenType.ExpressionCloser);
                 return expression;
             }
@@ -356,25 +354,102 @@ public class Parser
             throw new InvalidOperationException($"Invalid expression. Got token: {currentToken}");
         }
 
-        int BinaryOperatorPrecedence(TokenType type)
+        BinaryExpressionOperator ParseOperator()
         {
-            switch (type)
+            var currentToken = tokens[currentPosition++];
+
+            if (currentToken.Type == TokenType.PlusSymbol)
             {
-                case TokenType.LessThanSymbol:
-                case TokenType.GreaterThanSymbol:
-                case TokenType.EqualsSymbol:
-                    return 1;
-                case TokenType.PlusSymbol:
-                case TokenType.MinusSymbol:
-                    return 2;
-                case TokenType.AsteriskSymbol:
-                case TokenType.SlashSymbol:
-                case TokenType.PercentSymbol:
-                    return 3;
-                // TODO: Add more binary operators and their precedences here
-                default:
-                    throw new NotImplementedException($"Undefined operator precedence for token type: {type}");
+                return BinaryExpressionOperator.Plus;
             }
+            
+            if (currentToken.Type == TokenType.MinusSymbol)
+            {
+                return BinaryExpressionOperator.Minus;
+            }
+            
+            if (currentToken.Type == TokenType.AsteriskSymbol)
+            {
+                return BinaryExpressionOperator.Multiply;
+            }
+            
+            if (currentToken.Type == TokenType.SlashSymbol)
+            {
+                return BinaryExpressionOperator.Divide;
+            }
+            
+            if (currentToken.Type == TokenType.PercentSymbol)
+            {
+                return BinaryExpressionOperator.Modulo;
+            }
+
+            if (currentToken.Type == TokenType.EqualsSymbol)
+            {
+                Match(TokenType.EqualsSymbol);
+
+                return BinaryExpressionOperator.Equal;
+            }
+
+            if (currentToken.Type == TokenType.ExclamationMarkSymbol)
+            {
+                Match(TokenType.EqualsSymbol);
+
+                return BinaryExpressionOperator.NotEqual;
+            }
+
+            if (currentToken.Type == TokenType.GreaterThanSymbol)
+            {
+                if (Peek() is TokenType.EqualsSymbol)
+                {
+                    return BinaryExpressionOperator.GreaterThanOrEqual;
+                }
+
+                return BinaryExpressionOperator.GreaterThan;
+            }
+            
+            if (currentToken.Type == TokenType.LessThanSymbol)
+            {
+                if (Peek() is TokenType.EqualsSymbol)
+                {
+                    return BinaryExpressionOperator.LessThanOrEqual;
+                }
+                
+                return BinaryExpressionOperator.LessThan;
+            }
+
+            if (currentToken.Type == TokenType.AmpersandSymbol)
+            {
+                Match(TokenType.AmpersandSymbol);
+
+                return BinaryExpressionOperator.LogicalAnd;
+            }
+            
+            if (currentToken.Type == TokenType.PipeSymbol)
+            {
+                Match(TokenType.PipeSymbol);
+
+                return BinaryExpressionOperator.LogicalOr;
+            }
+
+            if (currentToken.Type == TokenType.QuestionMarkSymbol)
+            {
+                Match(TokenType.QuestionMarkSymbol);
+
+                return BinaryExpressionOperator.Coalesce;
+            }
+
+            throw new ParserException("Invalid binary operator: " + currentToken);
+        }
+
+        TokenType? Peek()
+        {
+            if (currentPosition >= tokens.Count)
+            {
+                return null;
+            }
+
+            var nextToken = tokens[currentPosition + 1];
+            return nextToken.Type;
         }
 
         void Match(TokenType expectedType)

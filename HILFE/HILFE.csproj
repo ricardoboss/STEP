@@ -36,5 +36,9 @@
       </None>
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Parsing\TernaryExpressionOperator.cs" />
+    </ItemGroup>
+
 
 </Project>

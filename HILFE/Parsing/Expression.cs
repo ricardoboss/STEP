@@ -6,29 +6,32 @@ namespace HILFE.Parsing;
 
 public abstract class Expression
 {
-    public static Expression FromSymbol(Token symbol, Expression left, Expression right)
+    public static Expression FromOperator(BinaryExpressionOperator op, Expression left, Expression right)
     {
-        return symbol.Type switch
+        return op switch
         {
-            TokenType.PlusSymbol => Add(left, right),
-            TokenType.MinusSymbol => Subtract(left, right),
-            TokenType.AsteriskSymbol => Multiply(left, right),
-            TokenType.SlashSymbol => Divide(left, right),
-            TokenType.PercentSymbol => Modulo(left, right),
-            TokenType.LessThanSymbol => LessThan(left, right),
-            TokenType.GreaterThanSymbol => GreaterThan(left, right),
-            TokenType.EqualsSymbol => Equals(left, right),
-            _ => throw new UnexpectedTokenException(symbol, TokenType.PlusSymbol, TokenType.MinusSymbol,
-                TokenType.AsteriskSymbol, TokenType.SlashSymbol, TokenType.PercentSymbol),
+            BinaryExpressionOperator.Plus => Add(left, right),
+            BinaryExpressionOperator.Minus => Subtract(left, right),
+            BinaryExpressionOperator.Multiply => Multiply(left, right),
+            BinaryExpressionOperator.Divide => Divide(left, right),
+            BinaryExpressionOperator.Modulo => Modulo(left, right),
+            BinaryExpressionOperator.GreaterThan => GreaterThan(left, right),
+            BinaryExpressionOperator.LessThan => LessThan(left, right),
+            BinaryExpressionOperator.Equal => Equals(left, right),
+            BinaryExpressionOperator.NotEqual => Not(Equals(left, right)),
+            BinaryExpressionOperator.LogicalAnd => LogicalAnd(left, right),
+            BinaryExpressionOperator.LogicalOr => LogicalOr(left, right),
+            BinaryExpressionOperator.Coalesce => Coalesce(left, right),
+            _ => throw new NotImplementedException($"The operator {op} is not implemented yet"),
         };
     }
 
     public static Expression Add(Expression left, Expression right)
     {
-        return new EvaluatedExpression("+", left, right, (a, b) =>
+        return new BinaryExpression("+", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType)
-                throw new InterpreterException($"Cannot add values of type {a.ValueType} and {b.ValueType}");
+                throw new InterpreterException($"Cannot add values of types {a.ValueType} and {b.ValueType}");
 
             return new(a.ValueType, a.Value + b.Value);
         });
@@ -36,10 +39,10 @@ public abstract class Expression
 
     public static Expression Subtract(Expression left, Expression right)
     {
-        return new EvaluatedExpression("-", left, right, (a, b) =>
+        return new BinaryExpression("-", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType || a.ValueType != "double")
-                throw new InterpreterException($"Cannot subtract values of type {a.ValueType} and {b.ValueType}");
+                throw new InterpreterException($"Cannot subtract values of types {a.ValueType} and {b.ValueType}");
 
             return new(a.ValueType, a.Value - b.Value);
         });
@@ -47,10 +50,10 @@ public abstract class Expression
 
     public static Expression Multiply(Expression left, Expression right)
     {
-        return new EvaluatedExpression("*", left, right, (a, b) =>
+        return new BinaryExpression("*", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType || a.ValueType != "double")
-                throw new InterpreterException($"Cannot multiply values of type {a.ValueType} and {b.ValueType}");
+                throw new InterpreterException($"Cannot multiply values of types {a.ValueType} and {b.ValueType}");
 
             return new(a.ValueType, a.Value * b.Value);
         });
@@ -58,10 +61,10 @@ public abstract class Expression
 
     public static Expression Divide(Expression left, Expression right)
     {
-        return new EvaluatedExpression("/", left, right, (a, b) =>
+        return new BinaryExpression("/", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType || a.ValueType != "double")
-                throw new InterpreterException($"Cannot divide values of type {a.ValueType} and {b.ValueType}");
+                throw new InterpreterException($"Cannot divide values of types {a.ValueType} and {b.ValueType}");
 
             return new(a.ValueType, a.Value / b.Value);
         });
@@ -69,10 +72,10 @@ public abstract class Expression
 
     public static Expression Modulo(Expression left, Expression right)
     {
-        return new EvaluatedExpression("%", left, right, (a, b) =>
+        return new BinaryExpression("%", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType || a.ValueType != "double")
-                throw new InterpreterException($"Cannot modulo values of type {a.ValueType} and {b.ValueType}");
+                throw new InterpreterException($"Cannot modulo values of types {a.ValueType} and {b.ValueType}");
 
             return new(a.ValueType, a.Value % b.Value);
         });
@@ -80,10 +83,10 @@ public abstract class Expression
 
     public static Expression LessThan(Expression left, Expression right)
     {
-        return new EvaluatedExpression("<", left, right, (a, b) =>
+        return new BinaryExpression("<", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType)
-                throw new InterpreterException($"Cannot compare values of type {a.ValueType} and {b.ValueType}");
+                throw new InterpreterException($"Cannot compare values of types {a.ValueType} and {b.ValueType}");
 
             return new("bool", a.Value < b.Value);
         });
@@ -91,10 +94,10 @@ public abstract class Expression
 
     public static Expression GreaterThan(Expression left, Expression right)
     {
-        return new EvaluatedExpression(">", left, right, (a, b) =>
+        return new BinaryExpression(">", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType)
-                throw new InterpreterException($"Cannot compare values of type {a.ValueType} and {b.ValueType}");
+                throw new InterpreterException($"Cannot compare values of types {a.ValueType} and {b.ValueType}");
 
             return new("bool", a.Value > b.Value);
         });
@@ -102,12 +105,62 @@ public abstract class Expression
 
     public static Expression Equals(Expression left, Expression right)
     {
-        return new EvaluatedExpression("==", left, right, (a, b) =>
+        return new BinaryExpression("==", left, right, (a, b) =>
         {
-            if (a.ValueType != b.ValueType)
-                return new("bool", false);
+            if (a.ValueType == b.ValueType)
+                return new("bool", a.Value == b.Value);
 
-            return new("bool", a.Value == b.Value);
+            if (a.ValueType == "null") return new("bool", b.Value == null);
+            if (b.ValueType == "null") return new("bool", a.Value == null);
+
+            return new("bool", false);
+        });
+    }
+
+    public static Expression LogicalOr(Expression left, Expression right)
+    {
+        return new BinaryExpression("||", left, right, (a, b) =>
+        {
+            if (a.ValueType != b.ValueType || a.ValueType != "bool")
+                throw new InterpreterException($"Cannot apply '||' to values of types {a.ValueType} and {b.ValueType}");
+
+            return new("bool", a.Value || b.Value);
+        });
+    }
+    
+    public static Expression LogicalAnd(Expression left, Expression right)
+    {
+        return new BinaryExpression("&&", left, right, (a, b) =>
+        {
+            if (a.ValueType != b.ValueType || a.ValueType != "bool")
+                throw new InterpreterException($"Cannot apply '&&' to values of types {a.ValueType} and {b.ValueType}");
+            
+            return new("bool", a.Value && b.Value);
+        });
+    }
+    
+    public static Expression Coalesce(Expression left, Expression right)
+    {
+        return new BinaryExpression("??", left, right, (a, b) =>
+        {
+            if (a.ValueType == "null")
+                return b;
+
+            if (a.ValueType != b.ValueType)
+                throw new InterpreterException($"Cannot apply '??' to values of types {a.ValueType} and {b.ValueType}");
+
+            return new(a.ValueType, a.Value ?? b.Value);
+        });
+    }
+
+    public static Expression Not(Expression expression)
+    {
+        return new UnaryExpression("!", expression, result =>
+        {
+            if (result.ValueType != "bool")
+                throw new InterpreterException($"Cannot apply 'not' to values of type {result.ValueType}");
+
+            return new("bool", !result.Value);
         });
     }
 
@@ -157,14 +210,14 @@ public abstract class Expression
         protected override string DebugDisplay() => result.ToString();
     }
 
-    public class EvaluatedExpression : Expression
+    public class BinaryExpression : Expression
     {
         private readonly string debugName;
         private readonly Expression left;
         private readonly Expression right;
         private readonly Func<ExpressionResult, ExpressionResult, ExpressionResult> combine;
 
-        public EvaluatedExpression(string debugName, Expression left, Expression right, Func<ExpressionResult, ExpressionResult, ExpressionResult> combine)
+        public BinaryExpression(string debugName, Expression left, Expression right, Func<ExpressionResult, ExpressionResult, ExpressionResult> combine)
         {
             this.debugName = debugName;
             this.left = left;
@@ -181,6 +234,29 @@ public abstract class Expression
         }
 
         protected override string DebugDisplay() => $"({left}) {debugName} ({right})";
+    }
+
+    public class UnaryExpression : Expression
+    {
+        private readonly string debugName;
+        private readonly Expression expression;
+        private readonly Func<ExpressionResult, ExpressionResult> transform;
+
+        public UnaryExpression(string debugName, Expression expression, Func<ExpressionResult, ExpressionResult> transform)
+        {
+            this.debugName = debugName;
+            this.expression = expression;
+            this.transform = transform;
+        }
+
+        public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken)
+        {
+            var result = await expression.EvaluateAsync(interpreter, cancellationToken);
+
+            return transform.Invoke(result);
+        }
+
+        protected override string DebugDisplay() => $"({debugName} ({expression})";
     }
 
     public class FunctionCallExpression : Expression
