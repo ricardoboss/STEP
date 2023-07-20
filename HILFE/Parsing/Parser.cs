@@ -96,8 +96,44 @@ public class Parser
             }
             else if (token.Type == TokenType.IfKeyword)
             {
-                // TODO: branching: if (<expression>) { [statement]* } [else[if (<expression>)] { [statement]* } ]
-                throw new NotImplementedException("Can't handle IfKeyword yet");
+                // branching: if (<expression>) { [statement]* } [else[if (<expression>)] { [statement]* } ]
+
+                Expect(TokenType.ExpressionOpener);
+                var expressionTokens = ReadUntil(TokenType.ExpressionCloser);
+                Expect(TokenType.ExpressionCloser);
+
+                Expect(TokenType.CodeBlockOpener);
+                var trueBranchTokens = ReadUntil(TokenType.CodeBlockCloser);
+                Expect(TokenType.CodeBlockCloser);
+
+                var condition = ParseExpression(expressionTokens);
+                var statements = await ParseStatements(trueBranchTokens, cancellationToken).ToListAsync(cancellationToken);
+
+                if (PeekType() is TokenType.ElseKeyword)
+                {
+                    Expect(TokenType.ElseKeyword);
+
+                    IReadOnlyList<Token>? elseExpressionTokens = null;
+                    if (PeekType() is TokenType.IfKeyword)
+                    {
+                        Expect(TokenType.ExpressionOpener);
+                        elseExpressionTokens = ReadUntil(TokenType.ExpressionCloser);
+                        Expect(TokenType.ExpressionCloser);
+                    }
+
+                    Expect(TokenType.CodeBlockOpener);
+                    var falseBranchTokens = ReadUntil(TokenType.CodeBlockCloser);
+                    Expect(TokenType.CodeBlockCloser);
+
+                    var elseExpression = elseExpressionTokens is not null ? ParseExpression(elseExpressionTokens) : null;
+                    var elseStatements = await ParseStatements(falseBranchTokens, cancellationToken).ToListAsync(cancellationToken);
+
+                    yield return new IfElseStatement(condition, statements, elseExpression, elseStatements);
+                }
+                else
+                {
+                    yield return new IfStatement(condition, statements);
+                }
             }
             else if (token.Type == TokenType.WhileKeyword)
             {
@@ -197,9 +233,9 @@ public class Parser
         return tokens;
     }
 
-    private TokenType PeekType()
+    private TokenType PeekType(bool skipWhitespace = true)
     {
-        return tokenQueue.Peek().Type;
+        return tokenQueue.SkipWhile(t => skipWhitespace && t.Type is TokenType.Whitespace).First().Type;
     }
 
     private bool TryPeekType([NotNullWhen(true)] out TokenType? type)

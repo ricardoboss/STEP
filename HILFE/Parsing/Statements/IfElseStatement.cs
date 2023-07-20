@@ -1,39 +1,62 @@
 using HILFE.Interpreting;
-using HILFE.Tokenizing;
 
 namespace HILFE.Parsing.Statements;
 
-public class IfElseStatement : Statement
+public class IfElseStatement : Statement, IExecutableStatement
 {
-    private readonly Expression condition;
-    private readonly IReadOnlyList<Statement> trueBranch;
-    private readonly IReadOnlyList<Statement>? falseBranch;
+    private readonly Expression firstCondition;
+    private readonly Expression? secondCondition;
+    private readonly IReadOnlyList<Statement> firstBranch;
+    private readonly IReadOnlyList<Statement> secondBranch;
 
     /// <inheritdoc />
-    public IfElseStatement(Expression condition, IReadOnlyList<Statement> trueBranch, IReadOnlyList<Statement>? falseBranch) : base(StatementType.IfElseStatement)
+    public IfElseStatement(Expression firstCondition, IReadOnlyList<Statement> firstBranch, Expression? secondCondition, IReadOnlyList<Statement> secondBranch) : base(StatementType.IfElseStatement)
     {
-        this.condition = condition;
-        this.trueBranch = trueBranch;
-        this.falseBranch = falseBranch;
+        this.firstCondition = firstCondition;
+        this.firstBranch = firstBranch;
+        this.secondCondition = secondCondition;
+        this.secondBranch = secondBranch;
     }
 
-    public async Task<bool> ShouldBranch(Interpreter interpreter)
+    public async Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
-        var result = await condition.EvaluateAsync(interpreter, default);
+        if (await ShouldExecuteFirstBranch(interpreter, cancellationToken))
+        {
+            await ExecuteFirstBranch(interpreter, cancellationToken);
 
-        return result.Value == true;
-    }
-
-    public async Task ExecuteTrueBranch(Interpreter interpreter, CancellationToken cancellationToken = default)
-    {
-        await interpreter.InterpretAsync(trueBranch.ToAsyncEnumerable(), cancellationToken);
-    }
-
-    public async Task ExecuteFalseBranch(Interpreter interpreter, CancellationToken cancellationToken = default)
-    {
-        if (falseBranch is null)
             return;
+        }
 
-        await interpreter.InterpretAsync(falseBranch.ToAsyncEnumerable(), cancellationToken);
+        if (await ShouldExecuteSecondBranch(interpreter, cancellationToken))
+            await ExecuteSecondBranch(interpreter, cancellationToken);
+    }
+
+    private async Task<bool> ShouldExecuteFirstBranch(Interpreter interpreter,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await firstCondition.EvaluateAsync(interpreter, cancellationToken);
+
+        return result is { ValueType: "bool", Value: true };
+    }
+
+    private async Task<bool> ShouldExecuteSecondBranch(Interpreter interpreter,
+        CancellationToken cancellationToken = default)
+    {
+        if (secondCondition is null)
+            return true;
+
+        var result = await secondCondition.EvaluateAsync(interpreter, cancellationToken);
+
+        return result is { ValueType: "bool", Value: true };
+    }
+
+    private async Task ExecuteFirstBranch(Interpreter interpreter, CancellationToken cancellationToken = default)
+    {
+        await interpreter.InterpretAsync(firstBranch.ToAsyncEnumerable(), cancellationToken);
+    }
+
+    private async Task ExecuteSecondBranch(Interpreter interpreter, CancellationToken cancellationToken = default)
+    {
+        await interpreter.InterpretAsync(secondBranch.ToAsyncEnumerable(), cancellationToken);
     }
 }

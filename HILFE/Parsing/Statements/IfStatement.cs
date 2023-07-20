@@ -1,39 +1,36 @@
 using HILFE.Interpreting;
-using HILFE.Tokenizing;
 
 namespace HILFE.Parsing.Statements;
 
-public class IfStatement : Statement, IBranchingStatement
+public class IfStatement : Statement, IExecutableStatement
 {
     private readonly Expression condition;
-    private readonly IReadOnlyList<Statement> trueBranch;
-    private readonly IReadOnlyList<Statement>? falseBranch;
+    private readonly IReadOnlyList<Statement> statements;
 
     /// <inheritdoc />
-    public IfStatement(Expression condition, IReadOnlyList<Statement> trueBranch, IReadOnlyList<Statement>? falseBranch) : base(StatementType.IfStatement)
+    public IfStatement(Expression condition, IReadOnlyList<Statement> statements) : base(StatementType.IfStatement)
     {
         this.condition = condition;
-        this.trueBranch = trueBranch;
-        this.falseBranch = falseBranch;
+        this.statements = statements;
     }
 
-    public async Task<bool> ShouldBranch(Interpreter interpreter)
+    private async Task<bool> ShouldEnterBranch(Interpreter interpreter, CancellationToken cancellationToken)
     {
-        var result = await condition.EvaluateAsync(interpreter, default);
+        var result = await condition.EvaluateAsync(interpreter, cancellationToken);
 
-        return result.Value == true;
+        return result is { ValueType: "bool", Value: true };
     }
 
-    public async Task ExecuteTrueBranch(Interpreter interpreter, CancellationToken cancellationToken = default)
+    private async Task ExecuteBranch(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
-        await interpreter.InterpretAsync(trueBranch.ToAsyncEnumerable(), cancellationToken);
+        await interpreter.InterpretAsync(statements.ToAsyncEnumerable(), cancellationToken);
     }
 
-    public async Task ExecuteFalseBranch(Interpreter interpreter, CancellationToken cancellationToken = default)
+    public async Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
-        if (falseBranch is null)
+        if (!await ShouldEnterBranch(interpreter, cancellationToken))
             return;
 
-        await interpreter.InterpretAsync(falseBranch.ToAsyncEnumerable(), cancellationToken);
+        await ExecuteBranch(interpreter, cancellationToken);
     }
 }

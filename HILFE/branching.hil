@@ -1,6 +1,12 @@
-﻿string name = "John"
-if (true) {
-    print("Hello, $name", EOL)
+﻿print("State your name: ")
+string name = readline()
+
+if (typeName(name) == "string") {
+    print("Name is a string", EOL)
+}
+
+if (name == "John") {
+    print("Hello John", EOL)
 } else {
-    print("Who are you?", EOL)
+    print("Welcome back, ", name, EOL)
 }

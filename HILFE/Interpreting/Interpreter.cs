@@ -49,9 +49,6 @@ public class Interpreter
             case ILoopingStatement loopingStatement:
                 await InterpretLoopingStatement(loopingStatement, cancellationToken);
                 break;
-            case IBranchingStatement branchingStatement:
-                await InterpretBranchingStatement(branchingStatement, cancellationToken);
-                break;
             default:
                 throw new NotImplementedException($"Given statement cannot be interpreted: {statement}");
         }
@@ -65,13 +62,5 @@ public class Interpreter
             await statement.ExecuteLoopAsync(this, cancellationToken);
 
         await statement.FinalizeLoopAsync(this, cancellationToken);
-    }
-
-    private async Task InterpretBranchingStatement(IBranchingStatement statement, CancellationToken cancellationToken)
-    {
-        if (await statement.ShouldBranch(this))
-            await statement.ExecuteTrueBranch(this, cancellationToken);
-        else
-            await statement.ExecuteFalseBranch(this, cancellationToken);
     }
 }
