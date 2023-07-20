@@ -272,7 +272,7 @@ public class Parser
         return innerParser.ParseAsync(cancellationToken);
     }
 
-    public static Expression ParseExpression(IReadOnlyList<Token> tokens)
+    private static Expression ParseExpression(IReadOnlyList<Token> tokens)
     {
         var currentPosition = 0;
 
