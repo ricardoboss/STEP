@@ -109,7 +109,11 @@ public class Parser
                 var condition = ParseExpression(expressionTokens);
                 var statements = await ParseStatements(trueBranchTokens, cancellationToken).ToListAsync(cancellationToken);
 
-                if (PeekType() is TokenType.ElseKeyword)
+                if (PeekType() is not TokenType.ElseKeyword)
+                {
+                    yield return new IfStatement(condition, statements);
+                }
+                else
                 {
                     Expect(TokenType.ElseKeyword);
 
@@ -125,14 +129,13 @@ public class Parser
                     var falseBranchTokens = ReadUntil(TokenType.CodeBlockCloser);
                     Expect(TokenType.CodeBlockCloser);
 
-                    var elseExpression = elseExpressionTokens is not null ? ParseExpression(elseExpressionTokens) : null;
-                    var elseStatements = await ParseStatements(falseBranchTokens, cancellationToken).ToListAsync(cancellationToken);
+                    var elseExpression =
+                        elseExpressionTokens is not null ? ParseExpression(elseExpressionTokens) : null;
+
+                    var elseStatements = await ParseStatements(falseBranchTokens, cancellationToken)
+                        .ToListAsync(cancellationToken);
 
                     yield return new IfElseStatement(condition, statements, elseExpression, elseStatements);
-                }
-                else
-                {
-                    yield return new IfStatement(condition, statements);
                 }
             }
             else if (token.Type == TokenType.WhileKeyword)
