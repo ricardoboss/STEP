@@ -42,56 +42,65 @@ public class Parser
             else if (token.Type == TokenType.Identifier)
             {
                 var nextType = PeekType();
-                if (nextType is TokenType.ExpressionOpener)
+                switch (nextType)
                 {
-                    // function call: <identifier>([<expression>[, <expression>]*])
-                    Expect(TokenType.ExpressionOpener);
-                    var argsTokens = ReadUntil(TokenType.ExpressionCloser);
-                    Expect(TokenType.ExpressionCloser);
-
-                    var args = ParseExpressions(argsTokens);
-                    yield return new FunctionCallStatement(token, args);
-                }
-                else if (nextType.IsMathematicalOperation())
-                {
-                    // shortcut setter: <identifier>++ / <identifier>-- / <identifier> *= <expression> / <identifier> /= <expression>
-                    var variableExp = new Expression.VariableExpression(token);
-                    var operationToken = GetNext();
-                    Expression valueExp;
-
-                    var valueDenominator = Expect(TokenType.PlusSymbol,
-                        TokenType.MinusSymbol, TokenType.AsteriskSymbol, TokenType.SlashSymbol,
-                        TokenType.PercentSymbol, TokenType.EqualsSymbol);
-
-                    if (valueDenominator.Type.IsMathematicalOperation())
+                    case TokenType.ExpressionOpener:
                     {
-                        // mathematical operation must be the same type as the initial operation (i.e. +- or *- is forbidden)
-                        if (operationToken.Type != valueDenominator.Type)
-                            throw new UnexpectedTokenException(valueDenominator, operationToken.Type);
+                        // function call: <identifier>([<expression>[, <expression>]*])
+                        Expect(TokenType.ExpressionOpener);
+                        var argsTokens = ReadUntil(TokenType.ExpressionCloser);
+                        Expect(TokenType.ExpressionCloser);
 
-                        valueExp = new Expression.ConstantExpression("double", 1);
+                        var args = ParseExpressions(argsTokens);
+                        yield return new FunctionCallStatement(token, args);
+
+                        break;
                     }
-                    else
+                    case { } maybeMathematicalOperator when maybeMathematicalOperator.IsMathematicalOperation():
                     {
-                        Debug.Assert(valueDenominator.Type is TokenType.EqualsSymbol);
+                        // shortcut setter: <identifier>++ / <identifier>-- / <identifier> *= <expression> / <identifier> /= <expression>
+                        var variableExp = new Expression.VariableExpression(token);
+                        var operationToken = GetNext();
+                        Expression valueExp;
 
-                        valueExp = ParseExpression(ReadUntil(TokenType.NewLine));
+                        var valueDenominator = Expect(TokenType.PlusSymbol,
+                            TokenType.MinusSymbol, TokenType.AsteriskSymbol, TokenType.SlashSymbol,
+                            TokenType.PercentSymbol, TokenType.EqualsSymbol);
+
+                        if (valueDenominator.Type.IsMathematicalOperation())
+                        {
+                            // mathematical operation must be the same type as the initial operation (i.e. +- or *- is forbidden)
+                            if (operationToken.Type != valueDenominator.Type)
+                                throw new UnexpectedTokenException(valueDenominator, operationToken.Type);
+
+                            valueExp = new Expression.ConstantExpression("double", 1);
+                        }
+                        else
+                        {
+                            Debug.Assert(valueDenominator.Type is TokenType.EqualsSymbol);
+
+                            valueExp = ParseExpression(ReadUntil(TokenType.NewLine));
+                            Expect(TokenType.NewLine);
+                        }
+
+                        var expression = Expression.FromSymbol(operationToken, variableExp, valueExp);
+
+                        yield return new VariableAssignmentStatement(token, expression);
+
+                        break;
+                    }
+                    default:
+                    {
+                        // variable assignment: <identifier> = <expression>
+                        Expect(TokenType.EqualsSymbol);
+                        var expressionTokens = ReadUntil(TokenType.NewLine);
                         Expect(TokenType.NewLine);
+
+                        var expression = ParseExpression(expressionTokens);
+                        yield return new VariableAssignmentStatement(token, expression);
+
+                        break;
                     }
-
-                    var expression = Expression.FromSymbol(operationToken, variableExp, valueExp);
-
-                    yield return new VariableAssignmentStatement(token, expression);
-                }
-                else
-                {
-                    // variable assignment: <identifier> = <expression>
-                    Expect(TokenType.EqualsSymbol);
-                    var expressionTokens = ReadUntil(TokenType.NewLine);
-                    Expect(TokenType.NewLine);
-
-                    var expression = ParseExpression(expressionTokens);
-                    yield return new VariableAssignmentStatement(token, expression);
                 }
             }
             else if (token.Type == TokenType.IfKeyword)
@@ -236,9 +245,9 @@ public class Parser
         return tokens;
     }
 
-    private TokenType PeekType(bool skipWhitespace = true)
+    private TokenType? PeekType(bool skipWhitespace = true)
     {
-        return tokenQueue.SkipWhile(t => skipWhitespace && t.Type is TokenType.Whitespace).First().Type;
+        return tokenQueue.SkipWhile(t => skipWhitespace && t.Type is TokenType.Whitespace).FirstOrDefault(defaultValue: null)?.Type;
     }
 
     private bool TryPeekType([NotNullWhen(true)] out TokenType? type)
