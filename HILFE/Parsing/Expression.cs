@@ -288,9 +288,13 @@ public abstract class Expression
                     return new("string", line);
 
                 case "StdOut.Write":
+                case "StdOut.WriteLine":
                     var stringArgs = await EvaluateArgs(cancellationToken).Select(r => r.Value?.ToString() ?? string.Empty).Cast<string>().ToListAsync(cancellationToken);
 
-                    await interpreter.StdOut.WriteAsync(string.Join("", stringArgs));
+                    if (functionDefinition == "StdOut.WriteLine")
+                        await interpreter.StdOut.WriteLineAsync(string.Join("", stringArgs));
+                    else
+                        await interpreter.StdOut.WriteAsync(string.Join("", stringArgs));
 
                     return new("void", IsVoid: true);
 
