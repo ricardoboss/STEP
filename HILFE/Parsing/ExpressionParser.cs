@@ -54,6 +54,9 @@ public class ExpressionParser
 
         while (tokenQueue.IsNotEmpty)
         {
+            if (tokenQueue.PeekType() is TokenType.ExpressionCloser)
+                return left;
+
             if (!TryPeekOperator(out var op, out var opLength))
                 throw new ParserException("Unexpected end of expression.");
 
