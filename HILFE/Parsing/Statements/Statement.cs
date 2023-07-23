@@ -2,12 +2,12 @@
 
 public abstract class Statement
 {
-    public Statement(StatementType type)
+    protected Statement(StatementType type)
     {
         Type = type;
     }
 
-    public readonly StatementType Type;
+    public StatementType Type { get; }
 
     /// <inheritdoc />
     public override string ToString()

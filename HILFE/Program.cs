@@ -3,25 +3,6 @@ using HILFE.Interpreting;
 using HILFE.Parsing;
 using HILFE.Tokenizing;
 
-var configOption = new Option<FileInfo?>(aliases: new []
-{
-    "-c", "--config",
-}, parseArgument: result =>
-{
-    if (result.Tokens.Count == 0)
-    {
-        result.ErrorMessage = "Expected file name";
-        return null;
-    }
-
-    var filePath = result.Tokens.Single().Value;
-    if (File.Exists(filePath))
-        return new(filePath);
-
-    result.ErrorMessage = $"File not found: {filePath}";
-    return null;
-}, description: "The configuration file to use.");
-
 var fileArgument = new Argument<FileInfo>(name: "file", description: "The path to a .hil-file")
 {
     Arity = ArgumentArity.ExactlyOne,
@@ -33,11 +14,10 @@ runCommand.AddArgument(fileArgument);
 var listenCommand = new Command(name: "listen", description: "Enter REPL mode");
 
 var rootCommand = new RootCommand("HILFE - HILFE Interpreted Language For Education");
-rootCommand.AddGlobalOption(configOption);
 rootCommand.AddCommand(runCommand);
 rootCommand.AddCommand(listenCommand);
 
-listenCommand.SetHandler(async configFile =>
+listenCommand.SetHandler(async () =>
 {
     // var config = configFile != null ? Config.FromFile(configFile) : Config.FromEnvironment();
     var memoryBuffer = new MemoryStream();
@@ -55,7 +35,7 @@ listenCommand.SetHandler(async configFile =>
     Console.Write("> ");
     while (Console.ReadLine() is { } line)
     {
-        inputWriter.WriteLine(line);
+        await inputWriter.WriteLineAsync(line);
 
         var chars = line.ToAsyncEnumerable().Append('\n');
 
@@ -80,7 +60,7 @@ listenCommand.SetHandler(async configFile =>
 
             await interpreter.InterpretAsync(statements.ToAsyncEnumerable());
         }
-        catch (ApplicationException e) when (e is ParserException or TokenizerException or InterpreterException)
+        catch (Exception e) when (e is ParserException or TokenizerException or InterpreterException)
         {
             await Console.Error.WriteLineAsync("~~> " + e.GetType().Name + ": " + e.Message);
         }
@@ -88,14 +68,12 @@ listenCommand.SetHandler(async configFile =>
         Console.Write("> ");
     }
 
-    inputWriter.WriteLine("exit 0");
+    await inputWriter.WriteLineAsync("exit 0");
     Console.WriteLine("Bye!");
-}, configOption);
+});
 
-runCommand.SetHandler(async (configFile, scriptFile) =>
+runCommand.SetHandler(async (scriptFile) =>
 {
-    // var config = configFile != null ? Config.FromFile(configFile) : Config.FromEnvironment();
-
     var tokenizer = new Tokenizer();
     var parser = new Parser();
     var interpreter = new Interpreter(Console.Out, Console.Error, Console.In);
@@ -111,12 +89,12 @@ runCommand.SetHandler(async (configFile, scriptFile) =>
 
         Environment.ExitCode = interpreter.ExitCode;
     }
-    catch (ApplicationException e) when (e is ParserException or TokenizerException or InterpreterException)
+    catch (Exception e) when (e is ParserException or TokenizerException or InterpreterException)
     {
         await Console.Error.WriteLineAsync("~~> " + e.GetType().Name + ": " + e.Message);
 
         Environment.ExitCode = -1;
     }
-}, configOption, fileArgument);
+}, fileArgument);
 
 return await rootCommand.InvokeAsync(args);

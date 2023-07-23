@@ -4,6 +4,7 @@ using HILFE.Tokenizing;
 
 namespace HILFE.Parsing;
 
+[SuppressMessage("Naming", "CA1711:Identifiers should not have incorrect suffix")]
 public class TokenQueue
 {
     private readonly LinkedList<Token> tokenList = new();
@@ -30,7 +31,7 @@ public class TokenQueue
     public Token Dequeue()
     {
         if (!TryDequeue(out var token))
-            throw new($"Unexpected end of {nameof(TokenQueue)}");
+            throw new ParserException($"Unexpected end of {nameof(TokenQueue)}");
 
         return token;
     }
@@ -96,7 +97,7 @@ public class TokenQueue
 
     public IEnumerable<Token> Consume() => new ConsumingTokenQueue(this);
 
-    private class ConsumingTokenQueue : IEnumerable<Token>
+    private sealed class ConsumingTokenQueue : IEnumerable<Token>
     {
         private readonly TokenQueue tokenQueue;
 
@@ -109,7 +110,7 @@ public class TokenQueue
         IEnumerator IEnumerable.GetEnumerator() => new TokenQueueConsumer(tokenQueue);
     }
 
-    private class TokenQueueConsumer : IEnumerator<Token>
+    private sealed class TokenQueueConsumer : IEnumerator<Token>
     {
         private readonly TokenQueue tokenQueue;
 

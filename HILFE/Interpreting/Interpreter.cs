@@ -4,20 +4,21 @@ namespace HILFE.Interpreting;
 
 public class Interpreter
 {
-    public readonly TextWriter? StdOut;
-    public readonly TextWriter? StdErr;
-    public readonly TextReader? StdIn;
-    public readonly TextWriter? DebugOut;
-    public int ExitCode = 0;
+    public TextWriter? StdOut { get; }
+    public TextWriter? StdErr { get; }
+    public TextReader? StdIn { get; }
+    public int ExitCode { get; set; }
 
+    private readonly TextWriter? debugOut;
     private readonly Stack<Scope> scopes = new();
 
-    public Interpreter(TextWriter? stdOut = null, TextWriter? stdErr = null, TextReader? stdIn = null, TextWriter? debugOut = null)
+    public Interpreter(TextWriter? stdOut = null, TextWriter? stdErr = null, TextReader? stdIn = null,
+        TextWriter? debugOut = null)
     {
         StdOut = stdOut;
         StdErr = stdErr;
         StdIn = stdIn;
-        DebugOut = debugOut;
+        this.debugOut = debugOut;
 
         scopes.Push(Scope.GlobalScope);
     }
@@ -28,12 +29,13 @@ public class Interpreter
 
     public void PopScope() => scopes.Pop();
 
-    public async Task InterpretAsync(IAsyncEnumerable<Statement> statements, CancellationToken cancellationToken = default)
+    public async Task InterpretAsync(IAsyncEnumerable<Statement> statements,
+        CancellationToken cancellationToken = default)
     {
         await foreach (var statement in statements.WithCancellation(cancellationToken))
         {
-            if (DebugOut is not null)
-                await DebugOut.WriteLineAsync(statement.ToString());
+            if (debugOut is not null)
+                await debugOut.WriteLineAsync(statement.ToString());
 
             await InterpretStatement(statement, cancellationToken);
         }

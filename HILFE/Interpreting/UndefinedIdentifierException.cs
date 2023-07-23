@@ -2,10 +2,15 @@ namespace HILFE.Interpreting;
 
 public class UndefinedIdentifierException : InterpreterException
 {
-    public readonly string Name;
+    public UndefinedIdentifierException()
+    {
+    }
 
     public UndefinedIdentifierException(string name) : base("Undefined variable: " + name)
     {
-        Name = name;
+    }
+
+    public UndefinedIdentifierException(string message, Exception innerException) : base(message, innerException)
+    {
     }
 }

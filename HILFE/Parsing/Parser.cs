@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using HILFE.Parsing.Expressions;
 using HILFE.Parsing.Statements;
@@ -56,7 +55,7 @@ public class Parser
 
                         break;
                     }
-                    case { } maybeMathematicalOperator when maybeMathematicalOperator.IsMathematicalOperation():
+                    case { } when nextType.IsMathematicalOperation():
                     {
                         // shortcut setter: <identifier>++ / <identifier>-- / <identifier> *= <expression> / <identifier> /= <expression>
                         var operationToken = GetNext();

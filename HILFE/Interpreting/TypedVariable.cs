@@ -2,10 +2,10 @@
 
 public class TypedVariable
 {
-    public readonly string Identifier;
-    public readonly string TypeName;
-    public dynamic? Value;
-    public readonly Type? OriginalType;
+    public string Identifier { get; }
+    public string TypeName { get; }
+    public dynamic? Value { get; private set; }
+    public Type? OriginalType { get; }
 
     public TypedVariable(string identifier, string typeName, dynamic? value)
     {

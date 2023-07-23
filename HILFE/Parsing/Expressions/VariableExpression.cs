@@ -5,7 +5,7 @@ namespace HILFE.Parsing.Expressions;
 
 public class VariableExpression : Expression
 {
-    public readonly Token Identifier;
+    public Token Identifier { get; }
 
     public VariableExpression(Token identifier)
     {

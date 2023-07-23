@@ -2,8 +2,8 @@
 
 public class Token
 {
-    public readonly TokenType Type;
-    public readonly string Value;
+    public TokenType Type { get; }
+    public string Value { get; }
 
     public Token(TokenType type, string value)
     {
@@ -13,6 +13,10 @@ public class Token
 
     public override string ToString()
     {
-        return Value.Length > 0 ? $"<{Type}: '{Value.Replace("\n", "\\n").Replace("\r", "\\r")}'>" : $"<{Type}>";
+        var printableValue = Value
+            .Replace("\n", "\\n", StringComparison.InvariantCulture)
+            .Replace("\r", "\\r", StringComparison.InvariantCulture);
+
+        return Value.Length > 0 ? $"<{Type}: '{printableValue}'>" : $"<{Type}>";
     }
 }
