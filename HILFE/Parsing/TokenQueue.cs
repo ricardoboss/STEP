@@ -81,24 +81,13 @@ public class TokenQueue
         return type.Value;
     }
 
-    public Token Ensure(TokenType type, int offset = 0)
-    {
-        var token = Peek(offset);
-        if (token.Type != type)
-            throw new ParserException($"Unexpected token {token}, expected {type}");
-
-        return token;
-    }
-
-    public Token Expect(TokenType type)
+    public void Expect(TokenType type)
     {
         if (!TryDequeue(out var token))
             throw new ParserException("Unexpected end of token queue");
 
         if (token.Type != type)
             throw new ParserException($"Unexpected token {token}, expected {type}");
-
-        return token;
     }
 
     public bool IsEmpty => tokenList.Count == 0;
