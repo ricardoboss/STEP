@@ -1,4 +1,4 @@
-namespace HILFE.Parsing;
+namespace HILFE.Parsing.Expressions;
 
 public record ExpressionResult(string ValueType, dynamic? Value = null, bool IsVoid = false)
 {

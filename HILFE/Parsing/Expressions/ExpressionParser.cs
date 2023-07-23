@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using HILFE.Tokenizing;
 
-namespace HILFE.Parsing;
+namespace HILFE.Parsing.Expressions;
 
 public class ExpressionParser
 {
@@ -85,7 +85,7 @@ public class ExpressionParser
             case TokenType.Identifier when
                 tokenQueue.IsEmpty ||
                 tokenQueue.PeekType() != TokenType.ExpressionOpener:
-                return new Expression.VariableExpression(currentToken);
+                return new VariableExpression(currentToken);
             case TokenType.Identifier:
                 tokenQueue.Expect(TokenType.ExpressionOpener);
 
@@ -100,7 +100,7 @@ public class ExpressionParser
 
                 tokenQueue.Expect(TokenType.ExpressionCloser);
 
-                return new Expression.FunctionCallExpression(currentToken, expressions);
+                return new FunctionCallExpression(currentToken, expressions);
             case TokenType.LiteralNumber when double.TryParse(currentToken.Value, out var value):
                 return Expression.Constant(value);
             case TokenType.LiteralNumber:

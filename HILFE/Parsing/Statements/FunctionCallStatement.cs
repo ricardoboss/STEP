@@ -1,4 +1,5 @@
 using HILFE.Interpreting;
+using HILFE.Parsing.Expressions;
 using HILFE.Tokenizing;
 
 namespace HILFE.Parsing.Statements;
@@ -21,9 +22,9 @@ public class FunctionCallStatement : Statement, IExecutableStatement
     /// <inheritdoc />
     public async Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
-        var functionExpression = new Expression.FunctionCallExpression(identifier, args);
+        var functionExpression = new FunctionCallExpression(identifier, args);
 
-        var result = await functionExpression.EvaluateAsync(interpreter, default);
+        var result = await functionExpression.EvaluateAsync(interpreter, cancellationToken);
 
         if (!result.IsVoid)
             throw new InterpreterException($"function call returned non-void value: {result}");

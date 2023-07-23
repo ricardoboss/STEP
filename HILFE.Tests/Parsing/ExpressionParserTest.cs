@@ -1,5 +1,6 @@
 using HILFE.Interpreting;
 using HILFE.Parsing;
+using HILFE.Parsing.Expressions;
 using HILFE.Tokenizing;
 
 namespace HILFE.Tests.Parsing;
