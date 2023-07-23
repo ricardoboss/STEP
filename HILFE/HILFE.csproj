@@ -37,6 +37,9 @@
       <None Update="expressions.hil">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="functions.hil">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
     <ItemGroup>

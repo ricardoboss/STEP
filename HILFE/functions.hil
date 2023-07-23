@@ -1,0 +1,28 @@
+﻿bool is_even = (int number) {
+    return number % 2 == 0
+}
+
+float calculate_circle_area = (float radius) {
+    if (radius <= 0.0) {
+        println("Error: The radius must be greater than zero")
+        return 0.0
+    } else {
+        return pi * radius ^ 2
+    }
+}
+
+void print_even_numbers = (int limit) {
+    int i = 1
+    while (i <= limit) {
+        if (is_even(i)) {
+            println(i, "is even")
+        }
+        i = i + 1
+    }
+}
+
+float radius = 5.0
+float area = calculate_circle_area(radius)
+println("The area of the circle with radius", radius, "is", area)
+
+print_even_numbers(10)
