@@ -54,7 +54,7 @@ public class ExpressionParser
 
         while (tokenQueue.IsNotEmpty)
         {
-            if (tokenQueue.PeekType() == TokenType.ExpressionCloser)
+            if (tokenQueue.PeekType() is TokenType.ExpressionCloser)
                 return left;
 
             if (!TryPeekOperator(out var op, out var opLength))
