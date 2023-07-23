@@ -9,12 +9,11 @@ namespace HILFE.Parsing;
 
 public class Parser
 {
-    private readonly Queue<Token> tokenQueue = new();
+    private readonly TokenQueue tokenQueue = new();
 
     public void Add(IEnumerable<Token> tokens)
     {
-        foreach (var token in tokens)
-            tokenQueue.Enqueue(token);
+        tokenQueue.Enqueue(tokens);
     }
 
     public async Task AddAsync(IAsyncEnumerable<Token> tokens, CancellationToken cancellationToken = default)
@@ -42,7 +41,7 @@ public class Parser
             }
             else if (token.Type == TokenType.Identifier)
             {
-                var nextType = PeekType();
+                var nextType = tokenQueue.PeekType();
                 switch (nextType)
                 {
                     case TokenType.ExpressionOpener:
@@ -119,7 +118,7 @@ public class Parser
                 var condition = ExpressionParser.Parse(expressionTokens);
                 var statements = await ParseStatements(trueBranchTokens, cancellationToken).ToListAsync(cancellationToken);
 
-                if (PeekType() is not TokenType.ElseKeyword)
+                if (tokenQueue.PeekType() is not TokenType.ElseKeyword)
                 {
                     yield return new IfStatement(condition, statements);
                 }
@@ -128,7 +127,7 @@ public class Parser
                     Expect(TokenType.ElseKeyword);
 
                     IReadOnlyList<Token>? elseExpressionTokens = null;
-                    if (PeekType() is TokenType.IfKeyword)
+                    if (tokenQueue.PeekType() is TokenType.IfKeyword)
                     {
                         Expect(TokenType.ExpressionOpener);
                         elseExpressionTokens = ReadUntil(TokenType.ExpressionCloser);
@@ -180,9 +179,9 @@ public class Parser
                 throw new UnexpectedTokenException(token, TokenType.TypeName, TokenType.Identifier, TokenType.Whitespace, TokenType.NewLine, TokenType.IfKeyword, TokenType.WhileKeyword, TokenType.CodeBlockOpener, TokenType.CodeBlockCloser);
         }
 
-        if (tokenQueue.Count > 0)
+        if (tokenQueue.IsNotEmpty)
         {
-            throw new ParserException($"Queue was not consumed till the end ({tokenQueue.Count} tokens left)");
+            throw new ParserException("Queue was not consumed till the end");
         }
     }
 
@@ -217,7 +216,7 @@ public class Parser
         var expressionDepth = 0;
         var codeBlockDepth = 0;
 
-        while (TryPeekType(out var nextType))
+        while (tokenQueue.TryPeekType(out var nextType))
         {
             if (expressionDepth == 0 && codeBlockDepth == 0 && nextType == exitType)
                 break;
@@ -244,22 +243,6 @@ public class Parser
         }
 
         return tokens;
-    }
-
-    private TokenType? PeekType(bool skipWhitespace = true)
-    {
-        return tokenQueue.SkipWhile(t => skipWhitespace && t.Type is TokenType.Whitespace).FirstOrDefault(defaultValue: null)?.Type;
-    }
-
-    private bool TryPeekType([NotNullWhen(true)] out TokenType? type)
-    {
-        type = null;
-
-        if (!tokenQueue.TryPeek(out var token))
-            return false;
-
-        type = token.Type;
-        return true;
     }
 
     private static IAsyncEnumerable<Statement> ParseStatements(IEnumerable<Token> tokens, CancellationToken cancellationToken)
