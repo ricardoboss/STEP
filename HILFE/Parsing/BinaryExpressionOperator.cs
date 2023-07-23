@@ -29,17 +29,17 @@ public static class BinaryExpressionOperatorExtensions
 {
     public static int Precedence(this BinaryExpressionOperator op)
     {
-        const int multiplicative = 1;
-        const int additive = 2;
-        const int shiftAndRotate = 3;
-        const int relational = 4;
-        const int equality = 5;
+        const int multiplicative = 11;
+        const int additive = 10;
+        const int shiftAndRotate = 9;
+        const int relational = 8;
+        const int equality = 7;
         const int bitwiseAnd = 6;
-        const int bitwiseXor = 7;
-        const int bitwiseOr = 8;
-        const int logicalAnd = 9;
-        const int logicalOr = 10;
-        const int coalesce = 11;
+        const int bitwiseXor = 5;
+        const int bitwiseOr = 4;
+        const int logicalAnd = 3;
+        const int logicalOr = 2;
+        const int coalesce = 1;
 
         return op switch
         {
