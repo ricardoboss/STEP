@@ -5,12 +5,11 @@ namespace HILFE.Parsing;
 
 public class ExpressionParser
 {
-    private readonly Queue<Token> tokenQueue = new();
+    private readonly TokenQueue tokenQueue = new();
 
     public void Add(IEnumerable<Token> tokens)
     {
-        foreach (var token in tokens)
-            tokenQueue.Enqueue(token);
+        tokenQueue.Enqueue(tokens);
     }
 
     public static Expression Parse(IEnumerable<Token> tokens)
@@ -37,7 +36,9 @@ public class ExpressionParser
                 yield return parser.ParseBinaryExpression();
 
                 currentGroup = new();
-            } else {
+            }
+            else
+            {
                 currentGroup.Add(token);
             }
         }
@@ -51,21 +52,17 @@ public class ExpressionParser
     {
         var left = ParsePrimaryExpression();
 
-        while (tokenQueue.Count > 0)
+        while (tokenQueue.IsNotEmpty)
         {
-            if (!TryParseOperator(out var token, out var op))
-            {
-                if (token == null)
-                    throw new ParserException("Unexpected end of expression.");
-
-                // FIXME: insert token in front of tokenQueue
-
-                break;
-            }
+            if (!TryPeekOperator(out var op, out var opLength))
+                throw new ParserException("Unexpected end of expression.");
 
             var precedence = op.Value.Precedence();
-            if (precedence >= parentPrecedence)
-                continue;
+            if (precedence < parentPrecedence)
+                break;
+
+            // dequeue operator token
+            _ = tokenQueue.Dequeue(opLength.Value);
 
             var right = ParseBinaryExpression(precedence + 1);
 
@@ -82,19 +79,23 @@ public class ExpressionParser
 
         switch (currentTokenType)
         {
-            case TokenType.Identifier when tokenQueue.Count == 0 || PeekType() != TokenType.ExpressionOpener:
+            case TokenType.Identifier when
+                tokenQueue.IsEmpty ||
+                tokenQueue.PeekType() != TokenType.ExpressionOpener:
                 return new Expression.VariableExpression(currentToken);
             case TokenType.Identifier:
-                Match(TokenType.ExpressionOpener);
+                tokenQueue.Expect(TokenType.ExpressionOpener);
 
                 var innerExpressionTokens = tokenQueue
+                    .Consume()
                     .Reverse()
                     .SkipWhile(t => t.Type != TokenType.ExpressionCloser)
                     .Reverse()
                     .ToList();
+
                 var expressions = ParseExpressions(innerExpressionTokens).ToList();
 
-                Match(TokenType.ExpressionCloser);
+                tokenQueue.Expect(TokenType.ExpressionCloser);
 
                 return new Expression.FunctionCallExpression(currentToken, expressions);
             case TokenType.LiteralNumber when double.TryParse(currentToken.Value, out var value):
@@ -110,7 +111,7 @@ public class ExpressionParser
             case TokenType.ExpressionOpener:
                 var expression = ParseBinaryExpression();
 
-                Match(TokenType.ExpressionCloser);
+                tokenQueue.Expect(TokenType.ExpressionCloser);
 
                 return expression;
             default:
@@ -118,87 +119,73 @@ public class ExpressionParser
         }
     }
 
-    private bool TryParseOperator(out Token? currentToken, [NotNullWhen(true)] out BinaryExpressionOperator? op)
+    private bool TryPeekOperator([NotNullWhen(true)] out BinaryExpressionOperator? op, [NotNullWhen(true)] out int? opLength)
     {
         op = null;
-        if (!tokenQueue.TryDequeue(out currentToken))
+        opLength = null;
+        if (!tokenQueue.TryPeekType(out var currentTokenType))
             return false;
-
-        var currentTokenType = currentToken.Type;
 
         switch (currentTokenType)
         {
             case TokenType.PlusSymbol:
                 op = BinaryExpressionOperator.Plus;
+                opLength = 1;
                 return true;
             case TokenType.MinusSymbol:
                 op = BinaryExpressionOperator.Minus;
+                opLength = 1;
                 return true;
             case TokenType.AsteriskSymbol:
                 op = BinaryExpressionOperator.Multiply;
+                opLength = 1;
                 return true;
             case TokenType.SlashSymbol:
                 op = BinaryExpressionOperator.Divide;
+                opLength = 1;
                 return true;
             case TokenType.PercentSymbol:
                 op = BinaryExpressionOperator.Modulo;
+                opLength = 1;
                 return true;
-            case TokenType.EqualsSymbol:
-                Match(TokenType.EqualsSymbol);
-
+            case TokenType.EqualsSymbol when tokenQueue.PeekType(1) is TokenType.EqualsSymbol:
                 op = BinaryExpressionOperator.Equal;
+                opLength = 2;
                 return true;
-            case TokenType.ExclamationMarkSymbol:
-                Match(TokenType.EqualsSymbol);
-
+            case TokenType.ExclamationMarkSymbol when tokenQueue.PeekType(1) is TokenType.EqualsSymbol:
                 op = BinaryExpressionOperator.NotEqual;
+                opLength = 2;
                 return true;
-            case TokenType.GreaterThanSymbol when PeekType() is TokenType.EqualsSymbol:
+            case TokenType.GreaterThanSymbol when tokenQueue.PeekType(1) is TokenType.EqualsSymbol:
                 op = BinaryExpressionOperator.GreaterThanOrEqual;
+                opLength = 2;
                 return true;
             case TokenType.GreaterThanSymbol:
                 op = BinaryExpressionOperator.GreaterThan;
+                opLength = 1;
                 return true;
-            case TokenType.LessThanSymbol when PeekType() is TokenType.EqualsSymbol:
+            case TokenType.LessThanSymbol when tokenQueue.PeekType(1) is TokenType.EqualsSymbol:
                 op = BinaryExpressionOperator.LessThanOrEqual;
+                opLength = 2;
                 return true;
             case TokenType.LessThanSymbol:
                 op = BinaryExpressionOperator.LessThan;
+                opLength = 1;
                 return true;
-            case TokenType.AmpersandSymbol:
-                Match(TokenType.AmpersandSymbol);
-
+            case TokenType.AmpersandSymbol when tokenQueue.PeekType(1) is TokenType.AmpersandSymbol:
                 op = BinaryExpressionOperator.LogicalAnd;
+                opLength = 2;
                 return true;
-            case TokenType.PipeSymbol:
-                Match(TokenType.PipeSymbol);
-
+            case TokenType.PipeSymbol when tokenQueue.PeekType(1) is TokenType.PipeSymbol:
                 op = BinaryExpressionOperator.LogicalOr;
+                opLength = 2;
                 return true;
-            case TokenType.QuestionMarkSymbol:
-                Match(TokenType.QuestionMarkSymbol);
-
+            case TokenType.QuestionMarkSymbol when tokenQueue.PeekType(1) is TokenType.QuestionMarkSymbol:
                 op = BinaryExpressionOperator.Coalesce;
+                opLength = 2;
                 return true;
             default:
-                return false;
+                throw new ParserException($"Unexpected operator: {tokenQueue.Peek()}");
         }
-    }
-
-    private TokenType? PeekType()
-    {
-        if (!tokenQueue.TryPeek(out var currentToken))
-            return null;
-
-        return currentToken.Type;
-    }
-
-    private void Match(TokenType expectedType)
-    {
-        if (!tokenQueue.TryPeek(out var currentToken))
-            throw new ParserException("Unexpected end of expression.");
-
-        if (currentToken.Type != expectedType)
-            throw new ParserException($"Unexpected token {currentToken}, expected {expectedType}.");
     }
 }

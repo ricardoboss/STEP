@@ -16,22 +16,22 @@ public class Scope
         ParentScope = null;
 
         // globally defined identifiers
-        AddIdentifier("print", new("print", "function", "StdOut.Write"));
-        AddIdentifier("println", new("println", "function", "StdOut.WriteLine"));
-        AddIdentifier("readline", new("readline", "function", "StdIn.ReadLine"));
-        AddIdentifier("clear", new("clear", "function", "StdOut.Clear"));
-        AddIdentifier("typeName", new("typeName", "function", "Framework.TypeName"));
+        SetVariable(new("print", "function", "StdOut.Write"));
+        SetVariable(new("println", "function", "StdOut.WriteLine"));
+        SetVariable(new("readline", "function", "StdIn.ReadLine"));
+        SetVariable(new("clear", "function", "StdOut.Clear"));
+        SetVariable(new("typeName", "function", "Framework.TypeName"));
 
-        AddIdentifier("null", new("null", "null", null));
+        SetVariable(new("null", "null", null));
 
-        AddIdentifier("EOL", new("EOL", "string", Environment.NewLine));
+        SetVariable(new("EOL", "string", Environment.NewLine));
     }
 
     public Scope? ParentScope { get; }
 
-    public void AddIdentifier(string identifier, TypedVariable variable)
+    public void SetVariable(TypedVariable variable)
     {
-        identifiers[identifier] = variable;
+        identifiers[variable.Identifier] = variable;
     }
 
     public bool HasIdentifier(string identifier) => identifiers.ContainsKey(identifier) || (ParentScope?.HasIdentifier(identifier) ?? false);

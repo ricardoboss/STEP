@@ -31,7 +31,7 @@ public class VariableDeclarationStatement : Statement, IExecutableStatement
         if (result is null or { IsVoid: true })
             throw new InterpreterException("Cannot assign a void value to a variable");
 
-        interpreter.CurrentScope.AddIdentifier(identifier.Value, new(identifier.Value, type.Value, result.Value));
+        interpreter.CurrentScope.SetVariable(new(identifier.Value, type.Value, result.Value));
     }
 
     /// <inheritdoc />

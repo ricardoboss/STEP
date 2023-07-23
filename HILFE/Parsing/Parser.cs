@@ -36,7 +36,7 @@ public class Parser
                 var expressionTokens = ReadUntil(TokenType.NewLine);
                 Expect(TokenType.NewLine);
 
-                var expression = ParseExpression(expressionTokens);
+                var expression = ExpressionParser.Parse(expressionTokens);
                 yield return new VariableDeclarationStatement(token, identifier, expression);
             }
             else if (token.Type == TokenType.Identifier)
@@ -51,7 +51,7 @@ public class Parser
                         var argsTokens = ReadUntil(TokenType.ExpressionCloser);
                         Expect(TokenType.ExpressionCloser);
 
-                        var args = ParseExpressions(argsTokens);
+                        var args = ExpressionParser.ParseExpressions(argsTokens).ToList();
                         yield return new FunctionCallStatement(token, args);
 
                         break;
@@ -83,7 +83,7 @@ public class Parser
                         }
 
                         // TODO: ugly. Move expression parsing to another class
-                        var expression = ParseExpression(new[] {token, operationToken}.Concat(valueExpTokens).ToArray());
+                        var expression = ExpressionParser.Parse(new[] {token, operationToken}.Concat(valueExpTokens).ToArray());
 
                         yield return new VariableAssignmentStatement(token, expression);
 
@@ -96,7 +96,7 @@ public class Parser
                         var expressionTokens = ReadUntil(TokenType.NewLine);
                         Expect(TokenType.NewLine);
 
-                        var expression = ParseExpression(expressionTokens);
+                        var expression = ExpressionParser.Parse(expressionTokens);
                         yield return new VariableAssignmentStatement(token, expression);
 
                         break;
@@ -115,7 +115,7 @@ public class Parser
                 var trueBranchTokens = ReadUntil(TokenType.CodeBlockCloser);
                 Expect(TokenType.CodeBlockCloser);
 
-                var condition = ParseExpression(expressionTokens);
+                var condition = ExpressionParser.Parse(expressionTokens);
                 var statements = await ParseStatements(trueBranchTokens, cancellationToken).ToListAsync(cancellationToken);
 
                 if (PeekType() is not TokenType.ElseKeyword)
@@ -139,7 +139,7 @@ public class Parser
                     Expect(TokenType.CodeBlockCloser);
 
                     var elseExpression =
-                        elseExpressionTokens is not null ? ParseExpression(elseExpressionTokens) : null;
+                        elseExpressionTokens is not null ? ExpressionParser.Parse(elseExpressionTokens) : null;
 
                     var elseStatements = await ParseStatements(falseBranchTokens, cancellationToken)
                         .ToListAsync(cancellationToken);
@@ -158,7 +158,7 @@ public class Parser
                 var statementsTokens = ReadUntil(TokenType.CodeBlockCloser);
                 Expect(TokenType.CodeBlockCloser);
 
-                var condition = ParseExpression(expressionTokens);
+                var condition = ExpressionParser.Parse(expressionTokens);
                 var statements = await ParseStatements(statementsTokens, cancellationToken).ToListAsync(cancellationToken);
 
                 yield return new WhileStatement(condition, statements);
@@ -270,233 +270,5 @@ public class Parser
         innerParser.Add(tokens);
 
         return innerParser.ParseAsync(cancellationToken);
-    }
-
-    private static Expression ParseExpression(IReadOnlyList<Token> tokens)
-    {
-        var currentPosition = 0;
-
-        // Start parsing from the top-level binary expression
-        return ParseBinaryExpression();
-
-        Expression ParseBinaryExpression(int parentPrecedence = 0)
-        {
-            var left = ParsePrimaryExpression();
-            BinaryExpressionOperator op;
-
-            while (currentPosition < tokens.Count && (op = ParseOperator()).Precedence() >= parentPrecedence)
-            {
-                var right = ParseBinaryExpression(op.Precedence() + 1);
-
-                left = Expression.FromOperator(op, left, right);
-            }
-
-            return left;
-        }
-
-        Expression ParsePrimaryExpression()
-        {
-            var currentToken = tokens[currentPosition++];
-
-            if (currentToken.Type == TokenType.Identifier)
-            {
-                // either 'identifier' or 'function(arg, arg2)'
-
-                if (tokens.Count <= currentPosition || tokens[currentPosition].Type != TokenType.ExpressionOpener)
-                    return new Expression.VariableExpression(currentToken);
-
-                Match(TokenType.ExpressionOpener);
-
-                var innerExpressionTokens = tokens.Skip(currentPosition).TakeWhile(t => t.Type != TokenType.ExpressionCloser).ToList();
-                var expressions = ParseExpressions(innerExpressionTokens);
-                currentPosition += innerExpressionTokens.Count;
-
-                Match(TokenType.ExpressionCloser);
-
-                return new Expression.FunctionCallExpression(currentToken, expressions);
-            }
-
-            if (currentToken.Type == TokenType.LiteralNumber)
-            {
-                if (double.TryParse(currentToken.Value, out var value))
-                {
-                    return Expression.Constant(value);
-                }
-
-                throw new FormatException("Invalid number format.");
-            }
-
-            if (currentToken.Type == TokenType.LiteralBoolean)
-            {
-                if (bool.TryParse(currentToken.Value, out var value))
-                {
-                    return Expression.Constant(value);
-                }
-
-                throw new FormatException($"Invalid bool format: {currentToken.Value}");
-            }
-
-            if (currentToken.Type == TokenType.LiteralString)
-            {
-                return Expression.Constant(currentToken.Value);
-            }
-
-            if (currentToken.Type == TokenType.ExpressionOpener)
-            {
-                // TODO: kinda ugly?
-                var innerTokens = tokens.Skip(currentPosition).TakeWhile(t => t.Type != TokenType.ExpressionCloser).ToList();
-                var expression = ParseExpression(innerTokens);
-                currentPosition += innerTokens.Count;
-                Match(TokenType.ExpressionCloser);
-                return expression;
-            }
-
-            throw new InvalidOperationException($"Invalid expression. Got token: {currentToken}");
-        }
-
-        BinaryExpressionOperator ParseOperator()
-        {
-            var currentToken = tokens[currentPosition++];
-
-            if (currentToken.Type == TokenType.PlusSymbol)
-            {
-                return BinaryExpressionOperator.Plus;
-            }
-            
-            if (currentToken.Type == TokenType.MinusSymbol)
-            {
-                return BinaryExpressionOperator.Minus;
-            }
-            
-            if (currentToken.Type == TokenType.AsteriskSymbol)
-            {
-                return BinaryExpressionOperator.Multiply;
-            }
-            
-            if (currentToken.Type == TokenType.SlashSymbol)
-            {
-                return BinaryExpressionOperator.Divide;
-            }
-            
-            if (currentToken.Type == TokenType.PercentSymbol)
-            {
-                return BinaryExpressionOperator.Modulo;
-            }
-
-            if (currentToken.Type == TokenType.EqualsSymbol)
-            {
-                Match(TokenType.EqualsSymbol);
-
-                return BinaryExpressionOperator.Equal;
-            }
-
-            if (currentToken.Type == TokenType.ExclamationMarkSymbol)
-            {
-                Match(TokenType.EqualsSymbol);
-
-                return BinaryExpressionOperator.NotEqual;
-            }
-
-            if (currentToken.Type == TokenType.GreaterThanSymbol)
-            {
-                if (Peek() is TokenType.EqualsSymbol)
-                {
-                    return BinaryExpressionOperator.GreaterThanOrEqual;
-                }
-
-                return BinaryExpressionOperator.GreaterThan;
-            }
-            
-            if (currentToken.Type == TokenType.LessThanSymbol)
-            {
-                if (Peek() is TokenType.EqualsSymbol)
-                {
-                    return BinaryExpressionOperator.LessThanOrEqual;
-                }
-                
-                return BinaryExpressionOperator.LessThan;
-            }
-
-            if (currentToken.Type == TokenType.AmpersandSymbol)
-            {
-                Match(TokenType.AmpersandSymbol);
-
-                return BinaryExpressionOperator.LogicalAnd;
-            }
-            
-            if (currentToken.Type == TokenType.PipeSymbol)
-            {
-                Match(TokenType.PipeSymbol);
-
-                return BinaryExpressionOperator.LogicalOr;
-            }
-
-            if (currentToken.Type == TokenType.QuestionMarkSymbol)
-            {
-                Match(TokenType.QuestionMarkSymbol);
-
-                return BinaryExpressionOperator.Coalesce;
-            }
-
-            throw new ParserException("Invalid binary operator: " + currentToken);
-        }
-
-        TokenType? Peek()
-        {
-            if (currentPosition >= tokens.Count)
-            {
-                return null;
-            }
-
-            var nextToken = tokens[currentPosition + 1];
-            return nextToken.Type;
-        }
-
-        void Match(TokenType expectedType)
-        {
-            if (currentPosition >= tokens.Count)
-            {
-                throw new InvalidOperationException("Unexpected end of expression.");
-            }
-
-            var currentToken = tokens[currentPosition++];
-
-            if (currentToken.Type != expectedType)
-            {
-                throw new InvalidOperationException($"Unexpected token {currentToken.Value}, expected {expectedType}.");
-            }
-        }
-    }
-
-    private static List<Expression> ParseExpressions(IReadOnlyList<Token> tokens)
-    {
-        var outputList = new List<Expression>();
-        if (tokens.Count == 0)
-        {
-            return outputList;
-        }
-
-        var currentGroup = new List<Token> { tokens[0] };
-        Expression currentExpression;
-
-        for (var i = 1; i < tokens.Count; i++)
-        {
-            if (tokens[i].Type == TokenType.ExpressionSeparator)
-            {
-                currentExpression = ParseExpression(currentGroup);
-
-                outputList.Add(currentExpression);
-
-                currentGroup = new();
-            } else {
-                currentGroup.Add(tokens[i]);
-            }
-        }
-
-        currentExpression = ParseExpression(currentGroup);
-
-        outputList.Add(currentExpression);
-
-        return outputList;
     }
 }

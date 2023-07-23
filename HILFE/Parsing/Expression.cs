@@ -179,7 +179,7 @@ public abstract class Expression
         return new ConstantExpression("bool", value);
     }
 
-    public abstract Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken);
+    public abstract Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken = default);
 
     /// <inheritdoc />
     public override string ToString()
@@ -202,7 +202,7 @@ public abstract class Expression
             result = new(type, value);
         }
 
-        public override Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken)
+        public override Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(result);
         }
@@ -225,7 +225,7 @@ public abstract class Expression
             this.combine = combine;
         }
 
-        public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken)
+        public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
         {
             var leftValue = await left.EvaluateAsync(interpreter, cancellationToken);
             var rightValue = await right.EvaluateAsync(interpreter, cancellationToken);
@@ -249,7 +249,7 @@ public abstract class Expression
             this.transform = transform;
         }
 
-        public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken)
+        public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
         {
             var result = await expression.EvaluateAsync(interpreter, cancellationToken);
 
@@ -270,7 +270,7 @@ public abstract class Expression
             this.args = args;
         }
 
-        public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken)
+        public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
         {
             async IAsyncEnumerable<ExpressionResult> EvaluateArgs([EnumeratorCancellation] CancellationToken ct)
             {
@@ -283,18 +283,24 @@ public abstract class Expression
             switch (functionDefinition)
             {
                 case "StdIn.ReadLine":
-                    var line = await interpreter.StdIn.ReadLineAsync(cancellationToken);
+                    if (interpreter.StdIn is not { } stdIn)
+                        return new("null");
+
+                    var line = await stdIn.ReadLineAsync(cancellationToken);
 
                     return new("string", line);
 
                 case "StdOut.Write":
                 case "StdOut.WriteLine":
+                    if (interpreter.StdOut is not { } stdOut)
+                        return new("void", IsVoid: true);
+
                     var stringArgs = await EvaluateArgs(cancellationToken).Select(r => r.Value?.ToString() ?? string.Empty).Cast<string>().ToListAsync(cancellationToken);
 
                     if (functionDefinition == "StdOut.WriteLine")
-                        await interpreter.StdOut.WriteLineAsync(string.Join("", stringArgs));
+                        await stdOut.WriteLineAsync(string.Join("", stringArgs));
                     else
-                        await interpreter.StdOut.WriteAsync(string.Join("", stringArgs));
+                        await stdOut.WriteAsync(string.Join("", stringArgs));
 
                     return new("void", IsVoid: true);
 
@@ -324,7 +330,7 @@ public abstract class Expression
             Identifier = identifier;
         }
 
-        public override Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken)
+        public override Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
         {
             var variable = interpreter.CurrentScope.GetByIdentifier(Identifier.Value);
 

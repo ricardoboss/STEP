@@ -4,15 +4,15 @@ namespace HILFE.Interpreting;
 
 public class Interpreter
 {
-    public readonly TextWriter StdOut;
-    public readonly TextWriter StdErr;
-    public readonly TextReader StdIn;
+    public readonly TextWriter? StdOut;
+    public readonly TextWriter? StdErr;
+    public readonly TextReader? StdIn;
     public readonly TextWriter? DebugOut;
     public int ExitCode = 0;
 
     private readonly Stack<Scope> scopes = new();
 
-    public Interpreter(TextWriter stdOut, TextWriter stdErr, TextReader stdIn, TextWriter? debugOut = null)
+    public Interpreter(TextWriter? stdOut = null, TextWriter? stdErr = null, TextReader? stdIn = null, TextWriter? debugOut = null)
     {
         StdOut = stdOut;
         StdErr = stdErr;

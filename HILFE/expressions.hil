@@ -2,8 +2,8 @@
 
 println(a)
 println(2 + 3)
-println(1 + 2 * 3)
 println(1 * 2 + 3)
+println(1 + 2 * 3)
 println(1 * 2 + 3 * 4)
 println((1 + 2) * 3)
 println(1 + (2 + 3) * 4)
