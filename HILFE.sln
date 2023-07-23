@@ -5,6 +5,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4EC278E0-B181-49AF-BCC1-F1F4D7133B24}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		global.json = global.json
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HILFE.Tests", "HILFE.Tests\HILFE.Tests.csproj", "{CB5E44DF-C1D2-4DA9-8175-FD76F8D95A42}"
