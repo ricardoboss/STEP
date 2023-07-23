@@ -124,37 +124,22 @@ public class TokenQueue
     {
         private readonly TokenQueue tokenQueue;
 
-        public TokenQueueConsumer(TokenQueue tokenQueue)
-        {
-            this.tokenQueue = tokenQueue;
-        }
+        public TokenQueueConsumer(TokenQueue tokenQueue) => this.tokenQueue = tokenQueue;
 
         /// <inheritdoc />
-        public bool MoveNext()
-        {
-            if (!tokenQueue.TryDequeue(out var token))
-                return false;
+        public bool MoveNext() => tokenQueue.TryDequeue(out _);
 
-            Current = token;
+        /// <inheritdoc />
+        public Token Current => tokenQueue.Peek();
 
-            return true;
-        }
+        /// <inheritdoc />
+        object IEnumerator.Current => Current;
 
         /// <inheritdoc />
         public void Reset()
         {
             // do nothing
         }
-
-        /// <inheritdoc />
-        public Token Current
-        {
-            get;
-            private set;
-        }
-
-        /// <inheritdoc />
-        object IEnumerator.Current => Current;
 
         /// <inheritdoc />
         public void Dispose()
