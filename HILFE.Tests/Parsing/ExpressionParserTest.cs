@@ -71,4 +71,17 @@ public class ExpressionParserTest
         Assert.Equal(7, result.Value);
         Assert.Equal("double", result.ValueType);
     }
+
+    [Fact]
+    public async Task TestAdditiveMultiplicativePrecedencesWithParentheses()
+    {
+        var interpreter = new Interpreter();
+        var expression = ExpressionParser.Parse(new [] { new Token(TokenType.ExpressionOpener, "("), new Token(TokenType.LiteralNumber, "1"), new Token(TokenType.PlusSymbol, "+"), new Token(TokenType.LiteralNumber, "2"), new Token(TokenType.ExpressionCloser, ")"), new Token(TokenType.AsteriskSymbol, "*"), new Token(TokenType.LiteralNumber, "3") });
+
+        var result = await expression.EvaluateAsync(interpreter, CancellationToken.None);
+
+        Assert.False(result.IsVoid);
+        Assert.Equal(9, result.Value);
+        Assert.Equal("double", result.ValueType);
+    }
 }
