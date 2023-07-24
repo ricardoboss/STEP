@@ -23,7 +23,7 @@ public class VariableAssignmentStatement : Statement
     public override async Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
         var result = await expression.EvaluateAsync(interpreter, default);
-        if (result is null or { IsVoid: true })
+        if (result is { IsVoid: true })
             throw new InterpreterException("Cannot assign a void value to a variable");
 
         interpreter.CurrentScope.SetByIdentifier(identifier.Value, result.Value);

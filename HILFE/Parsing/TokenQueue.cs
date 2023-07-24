@@ -78,8 +78,14 @@ public class TokenQueue
 
     public TokenType PeekType(int offset = 0)
     {
-        if (!TryPeekType(offset, out var type))
-            throw new ParserException("Unexpected end of token queue");
+        TokenType? type;
+        do
+        {
+            if (!TryPeekType(offset, out type))
+                throw new ParserException("Unexpected end of token queue");
+
+            offset++;
+        } while (type is TokenType.Whitespace);
 
         return type.Value;
     }

@@ -22,6 +22,7 @@ public class Scope
         SetVariable(new("println", "function", new PrintlnFunction()));
         SetVariable(new("readline", "function", new ReadlineFunction()));
         SetVariable(new("typename", "function", new TypenameFunction()));
+        SetVariable(new("parse", "function", new ParseFunction()));
 
         SetVariable(new("null", "null", null));
 

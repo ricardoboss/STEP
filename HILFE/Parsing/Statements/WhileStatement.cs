@@ -28,7 +28,16 @@ public class WhileStatement : Statement
         interpreter.PushScope();
 
         while (await ShouldLoopAsync(interpreter, cancellationToken))
+        {
             await interpreter.InterpretAsync(statements.ToAsyncEnumerable(), cancellationToken);
+
+            if (interpreter.BreakDepth <= 0)
+                continue;
+
+            interpreter.BreakDepth--;
+
+            break;
+        }
 
         interpreter.PopScope();
     }

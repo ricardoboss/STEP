@@ -1,7 +1,7 @@
 ﻿<component name="ProjectRunConfigurationManager">
   <configuration default="false" name="HILFE functions.hil" type="DotNetProject" factoryName=".NET Project">
     <option name="EXE_PATH" value="$PROJECT_DIR$/HILFE/bin/Debug/net7.0/HILFE.exe" />
-    <option name="PROGRAM_PARAMETERS" value="run functions.hil" />
+    <option name="PROGRAM_PARAMETERS" value="run Examples/functions.hil" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/HILFE/bin/Debug/net7.0" />
     <option name="PASS_PARENT_ENVS" value="1" />
     <option name="USE_EXTERNAL_CONSOLE" value="0" />
