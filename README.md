@@ -3,37 +3,46 @@
 Behold, a new programming language arrives:
 
 ```
-double pi = 3.1415
-string name = "John"
+number pi = 3.141592
 
+string name = "John"
 if (name == "John") {
-    print("Hello, $name", EOL)
+    println("Hello, $name")
 } else {
-    print("Who are you?", EOL)
+    println("Who are you?")
 }
 
-print("Guess PI: ", EOL)
 string guess
-double parsedGuess
-while (guess = readline()) {
-    parsedGuess = parseDouble(guess)
+number parsedGuess
+number tries = 0
+while (tries <= 3) {
+    print("Guess PI: ")
+    guess = readline()
+    parsedGuess = parse("number", guess)
     if (parsedGuess == null) {
-        print("Enter a valid double!", EOL)
+        println("Enter a valid number!")
+
+        tries++
 
         continue
     }
 
     if (parsedGuess == pi) {
-        print("You got it!", EOL)
+        println("Close enough!")
         break
-    } elseif (guess > 3 || guess < 3) {
-        print("Way off!", EOL, "Guess PI:")
     } else {
-        print("Nope, try again", EOL, "Guess PI: ")
+        if (parsedGuess > 4 || parsedGuess < 3) {
+            println("Way off! ", 3 - tries, " tries left.")
+        } else {
+            println("Nope, try again. ", 3 - tries, " tries left.")
+        }
     }
+
+    tries++
 }
 
 print("Goodbye", EOL)
+
 ```
 
 # FAQ
