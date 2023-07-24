@@ -7,7 +7,7 @@ number pi = 3.141592
 
 string name = "John"
 if (name == "John") {
-    println("Hello, $name")
+    println("Hello, ", name)
 } else {
     println("Who are you?")
 }
@@ -42,7 +42,6 @@ while (tries <= 3) {
 }
 
 print("Goodbye", EOL)
-
 ```
 
 # FAQ
