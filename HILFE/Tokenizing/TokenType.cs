@@ -79,6 +79,7 @@ public static class TokenTypes
         switch (symbol)
         {
             case ' ':
+            case '\t':
                 type = TokenType.Whitespace;
                 return true;
             case '\n':
