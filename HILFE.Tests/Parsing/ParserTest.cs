@@ -1,4 +1,5 @@
 using HILFE.Parsing;
+using HILFE.Parsing.Statements;
 using HILFE.Tokenizing;
 
 namespace HILFE.Tests.Parsing;
@@ -8,12 +9,12 @@ public class ParserTest
     [Fact]
     public async Task TestParseFunctionCallNoParams()
     {
-        var parser = new Parser();
+        var parser = new StatementParser();
         parser.Add(new Token []
         {
             new(TokenType.Identifier, "function"),
-            new(TokenType.ExpressionOpener, "("),
-            new(TokenType.ExpressionCloser, ")"),
+            new(TokenType.OpeningParentheses, "("),
+            new(TokenType.ClosingParentheses, ")"),
         });
 
         var statements = await parser.ParseAsync().ToListAsync();
@@ -25,7 +26,7 @@ public class ParserTest
     [Fact]
     public async Task TestParseUnexpectedTokenThrows()
     {
-        var parser = new Parser();
+        var parser = new StatementParser();
         parser.Add(new Token []
         {
             new(TokenType.BreakKeyword, "break")
@@ -39,11 +40,11 @@ public class ParserTest
     // {
     //     await Assert.ThrowsAsync<ImbalancedCodeBlocksException>(async () =>
     //     {
-    //         var parser = new Parser();
+    //         var parser = new StatementParser();
     //         parser.Add(new Token []
     //         {
-    //             new(TokenType.CodeBlockOpener, "{"), new(TokenType.CodeBlockOpener, "{"),
-    //             new(TokenType.CodeBlockCloser, "}"),
+    //             new(TokenType.OpeningCurlyBracket, "{"), new(TokenType.OpeningCurlyBracket, "{"),
+    //             new(TokenType.ClosingCurlyBracket, "}"),
     //         });
     //
     //         var statements = await parser.ParseAsync().ToListAsync();
@@ -55,11 +56,11 @@ public class ParserTest
     // [Fact]
     // public async Task TestParseMultipleParseCalls()
     // {
-    //     var parser = new Parser();
+    //     var parser = new StatementParser();
     //     var statements = await parser.ParseAsync(new Token []
     //     {
-    //         new(TokenType.CodeBlockOpener, "{"), new(TokenType.CodeBlockOpener, "{"),
-    //         new(TokenType.CodeBlockCloser, "}"),
+    //         new(TokenType.OpeningCurlyBracket, "{"), new(TokenType.OpeningCurlyBracket, "{"),
+    //         new(TokenType.ClosingCurlyBracket, "}"),
     //     }).ToListAsync();
     //
     //     Assert.Equal(3, statements.Count);
@@ -69,7 +70,7 @@ public class ParserTest
     //
     //     var statements2 = await parser.ParseAsync(new Token []
     //     {
-    //         new(TokenType.CodeBlockCloser, "}"),
+    //         new(TokenType.ClosingCurlyBracket, "}"),
     //     }).ToListAsync();
     //
     //     Assert.Single(statements2);

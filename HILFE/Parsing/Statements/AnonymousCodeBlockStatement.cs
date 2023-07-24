@@ -2,7 +2,7 @@ using HILFE.Interpreting;
 
 namespace HILFE.Parsing.Statements;
 
-public class AnonymousCodeBlockStatement : Statement, IExecutableStatement
+public class AnonymousCodeBlockStatement : Statement
 {
     private readonly IReadOnlyList<Statement> statements;
 
@@ -12,7 +12,7 @@ public class AnonymousCodeBlockStatement : Statement, IExecutableStatement
     }
 
     /// <inheritdoc />
-    public async Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
+    public override async Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
         interpreter.PushScope();
 

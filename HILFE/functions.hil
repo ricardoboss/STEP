@@ -1,8 +1,8 @@
-﻿bool is_even = (int number) {
-    return number % 2 == 0
+﻿function isEven = (number n) {
+    return n % 2 == 0
 }
 
-float calculate_circle_area = (float radius) {
+function calculateCircleArea = (number radius) {
     if (radius <= 0.0) {
         println("Error: The radius must be greater than zero")
         return 0.0
@@ -11,18 +11,29 @@ float calculate_circle_area = (float radius) {
     }
 }
 
-void print_even_numbers = (int limit) {
-    int i = 1
+function printEvenNumbers = (number limit) {
+    number i = 1
     while (i <= limit) {
-        if (is_even(i)) {
-            println(i, "is even")
+        if (isEven(i)) {
+            println(i, " is even")
         }
         i = i + 1
     }
 }
 
-float radius = 5.0
-float area = calculate_circle_area(radius)
-println("The area of the circle with radius", radius, "is", area)
+println("Inline function definition and call:")
+println((number a, number b) {
+    return a + b
+}(1, 2))
+println()
 
-print_even_numbers(10)
+number radius = 5.0
+number pi = 3.141592653589793238462643383279502884197169399375105820974944592307816406286
+number area = calculateCircleArea(radius)
+println("The area of the circle with radius ", radius, " is ", area)
+println()
+
+println("Even numbers from 1 to 10:")
+printEvenNumbers(10)
+
+_ = isEven(12)

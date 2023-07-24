@@ -1,4 +1,6 @@
-﻿namespace HILFE.Parsing.Statements;
+﻿using HILFE.Interpreting;
+
+namespace HILFE.Parsing.Statements;
 
 public abstract class Statement
 {
@@ -20,4 +22,6 @@ public abstract class Statement
     }
 
     protected virtual string DebugRenderContent() => "";
+
+    public abstract Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default);
 }

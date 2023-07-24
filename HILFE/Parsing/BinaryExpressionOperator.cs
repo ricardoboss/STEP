@@ -7,6 +7,7 @@ public enum BinaryExpressionOperator
     Multiply,
     Divide,
     Modulo,
+    Power,
     GreaterThan,
     LessThan,
     GreaterThanOrEqual,
@@ -29,6 +30,7 @@ public static class BinaryExpressionOperatorExtensions
 {
     public static int Precedence(this BinaryExpressionOperator op)
     {
+        const int power = 12;
         const int multiplicative = 11;
         const int additive = 10;
         const int shiftAndRotate = 9;
@@ -43,6 +45,7 @@ public static class BinaryExpressionOperatorExtensions
 
         return op switch
         {
+            BinaryExpressionOperator.Power => power,
             BinaryExpressionOperator.Multiply or BinaryExpressionOperator.Divide or BinaryExpressionOperator.Modulo => multiplicative,
             BinaryExpressionOperator.Plus or BinaryExpressionOperator.Minus => additive,
             BinaryExpressionOperator.BitwiseShiftLeft or BinaryExpressionOperator.BitwiseShiftRight or BinaryExpressionOperator.BitwiseRotateLeft or BinaryExpressionOperator.BitwiseRotateRight => shiftAndRotate,

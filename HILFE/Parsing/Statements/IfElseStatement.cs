@@ -3,7 +3,7 @@ using HILFE.Parsing.Expressions;
 
 namespace HILFE.Parsing.Statements;
 
-public class IfElseStatement : Statement, IExecutableStatement
+public class IfElseStatement : Statement
 {
     private readonly Expression firstCondition;
     private readonly Expression? secondCondition;
@@ -19,7 +19,7 @@ public class IfElseStatement : Statement, IExecutableStatement
         this.secondBranch = secondBranch;
     }
 
-    public async Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
+    public override async Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
         if (await ShouldExecuteFirstBranch(interpreter, cancellationToken))
         {
@@ -59,5 +59,12 @@ public class IfElseStatement : Statement, IExecutableStatement
     private async Task ExecuteSecondBranch(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
         await interpreter.InterpretAsync(secondBranch.ToAsyncEnumerable(), cancellationToken);
+    }
+
+    /// <inheritdoc />
+    protected override string DebugRenderContent()
+    {
+        var secondStr = secondCondition is null ? "" : $"if ({secondCondition})";
+        return $"if ({firstCondition}) {{ [{firstBranch.Count} statements] }} else{secondStr} {{ [{secondBranch.Count} statements] }}";
     }
 }

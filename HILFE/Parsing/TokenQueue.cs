@@ -17,6 +17,8 @@ public class TokenQueue
             tokenList.AddLast(token);
     }
 
+    public void Prepend(Token token) => tokenList.AddFirst(token);
+
     public bool TryDequeue([NotNullWhen(true)] out Token? token)
     {
         token = tokenList.First?.Value;
@@ -82,13 +84,58 @@ public class TokenQueue
         return type.Value;
     }
 
-    public void Expect(TokenType type)
+    public Token Expect(params TokenType[] allowed)
     {
-        if (!TryDequeue(out var token))
-            throw new ParserException("Unexpected end of token queue");
+        Token? token;
+        do
+        {
+            if (TryDequeue(out token))
+                continue;
 
-        if (token.Type != type)
-            throw new ParserException($"Unexpected token {token}, expected {type}");
+            var typeInfo = allowed.Length == 0 ? "any token" : $"a token (allowed types: {string.Join(',', allowed)})";
+
+            throw new UnexpectedEndOfInputException($"Expected {typeInfo}, but token queue was empty");
+        } while (token.Type is TokenType.Whitespace);
+
+        if (!allowed.Contains(token.Type))
+            throw new UnexpectedTokenException(token, allowed);
+
+        return token;
+    }
+
+    public IReadOnlyList<Token> ReadUntil(TokenType exitType, bool skipWhitespace = true)
+    {
+        var tokens = new List<Token>();
+        var expressionDepth = 0;
+        var codeBlockDepth = 0;
+
+        while (TryPeekType(out var nextType))
+        {
+            if (expressionDepth == 0 && codeBlockDepth == 0 && nextType == exitType)
+                break;
+
+            var token = Dequeue();
+            if (!skipWhitespace || nextType != TokenType.Whitespace)
+                tokens.Add(token);
+
+            switch (nextType)
+            {
+                case TokenType.OpeningParentheses:
+                    expressionDepth++;
+                    break;
+                case TokenType.ClosingParentheses:
+                    expressionDepth--;
+                    break;
+                case TokenType.OpeningCurlyBracket:
+                    codeBlockDepth++;
+                    break;
+                case TokenType.ClosingCurlyBracket:
+                    codeBlockDepth--;
+                    break;
+            }
+        }
+
+        return tokens;
     }
 
     public bool IsEmpty => tokenList.Count == 0;

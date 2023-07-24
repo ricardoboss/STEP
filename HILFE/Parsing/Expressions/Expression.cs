@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using HILFE.Interpreting;
-using HILFE.Tokenizing;
+﻿using HILFE.Interpreting;
 
 namespace HILFE.Parsing.Expressions;
 
@@ -10,13 +8,16 @@ public abstract class Expression
     {
         return op switch
         {
+            BinaryExpressionOperator.Power => Power(left, right),
             BinaryExpressionOperator.Plus => Add(left, right),
             BinaryExpressionOperator.Minus => Subtract(left, right),
             BinaryExpressionOperator.Multiply => Multiply(left, right),
             BinaryExpressionOperator.Divide => Divide(left, right),
             BinaryExpressionOperator.Modulo => Modulo(left, right),
             BinaryExpressionOperator.GreaterThan => GreaterThan(left, right),
+            BinaryExpressionOperator.GreaterThanOrEqual => GreaterThanOrEqual(left, right),
             BinaryExpressionOperator.LessThan => LessThan(left, right),
+            BinaryExpressionOperator.LessThanOrEqual => LessThanOrEqual(left, right),
             BinaryExpressionOperator.Equal => Equals(left, right),
             BinaryExpressionOperator.NotEqual => Not(Equals(left, right)),
             BinaryExpressionOperator.LogicalAnd => LogicalAnd(left, right),
@@ -24,6 +25,17 @@ public abstract class Expression
             BinaryExpressionOperator.Coalesce => Coalesce(left, right),
             _ => throw new NotImplementedException($"The operator {op} is not implemented yet"),
         };
+    }
+
+    public static Expression Power(Expression left, Expression right)
+    {
+        return new BinaryExpression("^", left, right, (a, b) =>
+        {
+            if (a.ValueType != b.ValueType)
+                throw new InterpreterException($"Cannot pow values of types {a.ValueType} with {b.ValueType}");
+
+            return new(a.ValueType, Math.Pow(a.Value, b.Value));
+        });
     }
 
     public static Expression Add(Expression left, Expression right)
@@ -41,7 +53,7 @@ public abstract class Expression
     {
         return new BinaryExpression("-", left, right, (a, b) =>
         {
-            if (a.ValueType != b.ValueType || a.ValueType != "double")
+            if (a.ValueType != b.ValueType || a.ValueType != "number")
                 throw new InterpreterException($"Cannot subtract values of types {a.ValueType} and {b.ValueType}");
 
             return new(a.ValueType, a.Value - b.Value);
@@ -52,7 +64,7 @@ public abstract class Expression
     {
         return new BinaryExpression("*", left, right, (a, b) =>
         {
-            if (a.ValueType != b.ValueType || a.ValueType != "double")
+            if (a.ValueType != b.ValueType || a.ValueType != "number")
                 throw new InterpreterException($"Cannot multiply values of types {a.ValueType} and {b.ValueType}");
 
             return new(a.ValueType, a.Value * b.Value);
@@ -63,7 +75,7 @@ public abstract class Expression
     {
         return new BinaryExpression("/", left, right, (a, b) =>
         {
-            if (a.ValueType != b.ValueType || a.ValueType != "double")
+            if (a.ValueType != b.ValueType || a.ValueType != "number")
                 throw new InterpreterException($"Cannot divide values of types {a.ValueType} and {b.ValueType}");
 
             return new(a.ValueType, a.Value / b.Value);
@@ -74,7 +86,7 @@ public abstract class Expression
     {
         return new BinaryExpression("%", left, right, (a, b) =>
         {
-            if (a.ValueType != b.ValueType || a.ValueType != "double")
+            if (a.ValueType != b.ValueType || a.ValueType != "number")
                 throw new InterpreterException($"Cannot modulo values of types {a.ValueType} and {b.ValueType}");
 
             return new(a.ValueType, a.Value % b.Value);
@@ -92,6 +104,17 @@ public abstract class Expression
         });
     }
 
+    public static Expression LessThanOrEqual(Expression left, Expression right)
+    {
+        return new BinaryExpression("<=", left, right, (a, b) =>
+        {
+            if (a.ValueType != b.ValueType)
+                throw new InterpreterException($"Cannot compare values of types {a.ValueType} and {b.ValueType}");
+
+            return new("bool", a.Value <= b.Value);
+        });
+    }
+
     public static Expression GreaterThan(Expression left, Expression right)
     {
         return new BinaryExpression(">", left, right, (a, b) =>
@@ -100,6 +123,17 @@ public abstract class Expression
                 throw new InterpreterException($"Cannot compare values of types {a.ValueType} and {b.ValueType}");
 
             return new("bool", a.Value > b.Value);
+        });
+    }
+
+    public static Expression GreaterThanOrEqual(Expression left, Expression right)
+    {
+        return new BinaryExpression(">=", left, right, (a, b) =>
+        {
+            if (a.ValueType != b.ValueType)
+                throw new InterpreterException($"Cannot compare values of types {a.ValueType} and {b.ValueType}");
+
+            return new("bool", a.Value >= b.Value);
         });
     }
 
@@ -166,7 +200,7 @@ public abstract class Expression
 
     public static Expression Constant(double value)
     {
-        return new ConstantExpression("double", value);
+        return new ConstantExpression("number", value);
     }
 
     public static Expression Constant(string value)

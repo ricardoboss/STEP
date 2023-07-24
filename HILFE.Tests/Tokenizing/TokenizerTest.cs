@@ -56,7 +56,7 @@ public class TokenizerTest
 
     [Theory]
     [InlineData("string")]
-    [InlineData("double")]
+    [InlineData("number")]
     [InlineData("int")]
     [InlineData("bool")]
     public async Task TestTokenizeKnownType(string source)
@@ -88,14 +88,14 @@ public class TokenizerTest
     [Fact]
     public async Task TestTokenizeMultipleTokens()
     {
-        const string source = "double identifier = 1";
+        const string source = "number identifier = 1";
 
         var tokenizer = new Tokenizer();
         var tokens = await tokenizer.TokenizeAsync(source.ToAsyncEnumerable()).ToListAsync();
 
         Assert.Equal(7, tokens.Count);
         Assert.Equal(TokenType.TypeName, tokens[0].Type);
-        Assert.Equal("double", tokens[0].Value);
+        Assert.Equal("number", tokens[0].Value);
         Assert.Equal(TokenType.Whitespace, tokens[1].Type);
         Assert.Equal(" ", tokens[1].Value);
         Assert.Equal(TokenType.Identifier, tokens[2].Type);
@@ -123,11 +123,11 @@ public class TokenizerTest
         Assert.Equal("if", tokens[0].Value);
         Assert.Equal(TokenType.Whitespace, tokens[1].Type);
         Assert.Equal(" ", tokens[1].Value);
-        Assert.Equal(TokenType.ExpressionOpener, tokens[2].Type);
+        Assert.Equal(TokenType.OpeningParentheses, tokens[2].Type);
         Assert.Equal("(", tokens[2].Value);
         Assert.Equal(TokenType.LiteralBoolean, tokens[3].Type);
         Assert.Equal("true", tokens[3].Value);
-        Assert.Equal(TokenType.ExpressionCloser, tokens[4].Type);
+        Assert.Equal(TokenType.ClosingParentheses, tokens[4].Type);
         Assert.Equal(")", tokens[4].Value);
     }
 
@@ -142,11 +142,11 @@ public class TokenizerTest
         Assert.Equal(4, tokens.Count);
         Assert.Equal(TokenType.Identifier, tokens[0].Type);
         Assert.Equal("print", tokens[0].Value);
-        Assert.Equal(TokenType.ExpressionOpener, tokens[1].Type);
+        Assert.Equal(TokenType.OpeningParentheses, tokens[1].Type);
         Assert.Equal("(", tokens[1].Value);
         Assert.Equal(TokenType.LiteralString, tokens[2].Type);
         Assert.Equal("hello", tokens[2].Value);
-        Assert.Equal(TokenType.ExpressionCloser, tokens[3].Type);
+        Assert.Equal(TokenType.ClosingParentheses, tokens[3].Type);
         Assert.Equal(")", tokens[3].Value);
     }
 }

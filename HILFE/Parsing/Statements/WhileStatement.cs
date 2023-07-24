@@ -3,7 +3,7 @@ using HILFE.Parsing.Expressions;
 
 namespace HILFE.Parsing.Statements;
 
-public class WhileStatement : Statement, ILoopingStatement
+public class WhileStatement : Statement
 {
     private readonly Expression condition;
     private readonly IReadOnlyList<Statement> statements;
@@ -15,34 +15,26 @@ public class WhileStatement : Statement, ILoopingStatement
         this.statements = statements;
     }
 
-    public Task InitializeLoopAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
-    {
-        interpreter.PushScope();
-
-        return Task.CompletedTask;
-    }
-
     public async Task<bool> ShouldLoopAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
-        var result = await condition.EvaluateAsync(interpreter, default);
+        var result = await condition.EvaluateAsync(interpreter, cancellationToken);
 
         return result is { ValueType: "bool", Value: true };
     }
 
-    public async Task ExecuteLoopAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
+    /// <inheritdoc />
+    public override async Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
-        await interpreter.InterpretAsync(statements.ToAsyncEnumerable(), cancellationToken);
-    }
+        interpreter.PushScope();
 
-    public Task FinalizeLoopAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
-    {
+        while (await ShouldLoopAsync(interpreter, cancellationToken))
+            await interpreter.InterpretAsync(statements.ToAsyncEnumerable(), cancellationToken);
+
         interpreter.PopScope();
-
-        return Task.CompletedTask;
     }
-
+    
     protected override string DebugRenderContent()
     {
-        return $"{condition} {{ [{statements.Count}] }}";
+        return $"{condition} {{ [{statements.Count} statements] }}";
     }
 }

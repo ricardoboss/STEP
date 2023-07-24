@@ -1,6 +1,7 @@
 ﻿using System.CommandLine;
 using HILFE.Interpreting;
 using HILFE.Parsing;
+using HILFE.Parsing.Statements;
 using HILFE.Tokenizing;
 
 var fileArgument = new Argument<FileInfo>(name: "file", description: "The path to a .hil-file")
@@ -28,7 +29,7 @@ listenCommand.SetHandler(async () =>
     };
 
     var tokenizer = new Tokenizer();
-    var parser = new Parser();
+    var parser = new StatementParser();
     var interpreter = new Interpreter(Console.Out, Console.Error, inputReader, Console.Out);
 
     Console.WriteLine("Welcome to HILFE REPL! Use Ctrl-C to exit.");
@@ -75,7 +76,7 @@ listenCommand.SetHandler(async () =>
 runCommand.SetHandler(async (scriptFile) =>
 {
     var tokenizer = new Tokenizer();
-    var parser = new Parser();
+    var parser = new StatementParser();
     var interpreter = new Interpreter(Console.Out, Console.Error, Console.In);
 
     var chars = await File.ReadAllTextAsync(scriptFile.FullName);

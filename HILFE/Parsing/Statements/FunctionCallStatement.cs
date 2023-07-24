@@ -4,7 +4,7 @@ using HILFE.Tokenizing;
 
 namespace HILFE.Parsing.Statements;
 
-public class FunctionCallStatement : Statement, IExecutableStatement
+public class FunctionCallStatement : Statement
 {
     private readonly Token identifier;
     private readonly IReadOnlyList<Expression> args;
@@ -20,9 +20,9 @@ public class FunctionCallStatement : Statement, IExecutableStatement
     }
 
     /// <inheritdoc />
-    public async Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
+    public override async Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
-        var functionExpression = new FunctionCallExpression(identifier, args);
+        var functionExpression = new IdentifierFunctionCallExpression(identifier, args);
 
         var result = await functionExpression.EvaluateAsync(interpreter, cancellationToken);
 

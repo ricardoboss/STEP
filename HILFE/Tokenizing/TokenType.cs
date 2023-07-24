@@ -17,11 +17,11 @@ public enum TokenType
     WhileKeyword,
     BreakKeyword,
     ContinueKeyword,
-    CodeBlockOpener,
-    CodeBlockCloser,
-    ExpressionOpener,
-    ExpressionCloser,
-    ExpressionSeparator,
+    OpeningCurlyBracket,
+    ClosingCurlyBracket,
+    OpeningParentheses,
+    ClosingParentheses,
+    CommaSymbol,
     GreaterThanSymbol,
     LessThanSymbol,
     PlusSymbol,
@@ -34,14 +34,16 @@ public enum TokenType
     ExclamationMarkSymbol,
     HatSymbol,
     TildeSymbol,
-    QuestionMarkSymbol
+    QuestionMarkSymbol,
+    ReturnKeyword,
+    UnderscoreSymbol,
 }
 
 public static class TokenTypes
 {
     public static bool IsKnownTypeName(this string name)
     {
-        return name is "string" or "double" or "int" or "bool";
+        return name is "string" or "number" or "bool" or "function";
     }
 
     public static bool TryParseKeyword(this string name, [NotNullWhen(true)] out TokenType? type)
@@ -63,6 +65,9 @@ public static class TokenTypes
             case "continue":
                 type = TokenType.ContinueKeyword;
                 return true;
+            case "return":
+                type = TokenType.ReturnKeyword;
+                return true;
         }
 
         type = null;
@@ -81,16 +86,16 @@ public static class TokenTypes
                 type = TokenType.NewLine;
                 return true;
             case '{':
-                type = TokenType.CodeBlockOpener;
+                type = TokenType.OpeningCurlyBracket;
                 return true;
             case '}':
-                type = TokenType.CodeBlockCloser;
+                type = TokenType.ClosingCurlyBracket;
                 return true;
             case '(':
-                type = TokenType.ExpressionOpener;
+                type = TokenType.OpeningParentheses;
                 return true;
             case ')':
-                type = TokenType.ExpressionCloser;
+                type = TokenType.ClosingParentheses;
                 return true;
             case '=':
                 type = TokenType.EqualsSymbol;
@@ -135,7 +140,10 @@ public static class TokenTypes
                 type = TokenType.PercentSymbol;
                 return true;
             case ',':
-                type = TokenType.ExpressionSeparator;
+                type = TokenType.CommaSymbol;
+                return true;
+            case '_':
+                type = TokenType.UnderscoreSymbol;
                 return true;
         }
 

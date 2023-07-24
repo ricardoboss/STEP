@@ -4,7 +4,7 @@ using HILFE.Tokenizing;
 
 namespace HILFE.Parsing.Statements;
 
-public class VariableDeclarationStatement : Statement, IExecutableStatement
+public class VariableDeclarationStatement : Statement
 {
     private readonly Token type;
     private readonly Token identifier;
@@ -26,7 +26,7 @@ public class VariableDeclarationStatement : Statement, IExecutableStatement
     }
 
     /// <inheritdoc />
-    public async Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
+    public override async Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
         var result = await expression.EvaluateAsync(interpreter, cancellationToken);
         if (result is null or { IsVoid: true })

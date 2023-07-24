@@ -1,4 +1,4 @@
-﻿namespace HILFE.Parsing;
+﻿namespace HILFE.Parsing.Statements;
 
 public enum StatementType
 {
@@ -10,4 +10,6 @@ public enum StatementType
     IfElseStatement,
     WhileStatement,
     AnonymousCodeBlock,
+    ReturnStatement,
+    DiscardAssignment,
 }
