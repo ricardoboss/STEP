@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using HILFE.Parsing.Statements;
 using HILFE.Tokenizing;
@@ -116,7 +117,7 @@ public class ExpressionParser
                 var expressions = await ParseExpressionsAsync(innerExpressionTokens, cancellationToken).ToListAsync(cancellationToken);
 
                 return new IdentifierFunctionCallExpression(currentToken, expressions);
-            case TokenType.LiteralNumber when double.TryParse(currentToken.Value, out var value):
+            case TokenType.LiteralNumber when double.TryParse(currentToken.Value, NumberStyles.Any, CultureInfo.InvariantCulture, out var value):
                 return Expression.Constant(value);
             case TokenType.LiteralNumber:
                 throw new FormatException("Invalid number format.");

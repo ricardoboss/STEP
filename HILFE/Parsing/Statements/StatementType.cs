@@ -2,7 +2,6 @@
 
 public enum StatementType
 {
-    EmptyStatement,
     VariableDeclaration,
     VariableAssignment,
     FunctionCall,
@@ -12,4 +11,6 @@ public enum StatementType
     AnonymousCodeBlock,
     ReturnStatement,
     DiscardAssignment,
+    BreakStatement,
+    ContinueStatement,
 }

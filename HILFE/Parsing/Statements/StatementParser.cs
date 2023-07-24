@@ -43,6 +43,10 @@ public class StatementParser
                 yield return await ParseWhileLoop(cancellationToken);
             else if (type is TokenType.ReturnKeyword)
                 yield return await ParseReturnStatement(cancellationToken);
+            else if (type is TokenType.BreakKeyword)
+                yield return await ParseBreakStatement(cancellationToken);
+            else if (type is TokenType.ContinueKeyword)
+                yield return await ParseContinueStatement(cancellationToken);
             else if (type is TokenType.OpeningCurlyBracket)
                 yield return await ParseAnonymousCodeBlock(cancellationToken);
             else if (type is TokenType.ClosingCurlyBracket)
@@ -50,6 +54,40 @@ public class StatementParser
             else if (type is not TokenType.Whitespace and not TokenType.NewLine)
                 throw new UnexpectedTokenException(token, TokenType.TypeName, TokenType.Identifier, TokenType.UnderscoreSymbol, TokenType.Whitespace, TokenType.NewLine, TokenType.IfKeyword, TokenType.WhileKeyword, TokenType.ReturnKeyword, TokenType.OpeningCurlyBracket, TokenType.ClosingCurlyBracket);
         }
+    }
+
+    private async Task<Statement> ParseContinueStatement(CancellationToken cancellationToken = default)
+    {
+        // continue: continue [expression]
+
+        var expressionTokens = tokenQueue.ReadUntil(TokenType.NewLine);
+
+        tokenQueue.Expect(TokenType.NewLine);
+
+        Expression expression;
+        if (expressionTokens.Count == 0)
+            expression = Expression.Constant(1);
+        else
+            expression = await ExpressionParser.ParseAsync(expressionTokens, cancellationToken);
+
+        return new ContinueStatement(expression);
+    }
+
+    private async Task<Statement> ParseBreakStatement(CancellationToken cancellationToken = default)
+    {
+        // break: break [expression]
+
+        var expressionTokens = tokenQueue.ReadUntil(TokenType.NewLine);
+
+        tokenQueue.Expect(TokenType.NewLine);
+
+        Expression expression;
+        if (expressionTokens.Count == 0)
+            expression = Expression.Constant(1);
+        else
+            expression = await ExpressionParser.ParseAsync(expressionTokens, cancellationToken);
+
+        return new BreakStatement(expression);
     }
 
     private async Task<Statement> ParseReturnStatement(CancellationToken cancellationToken = default)
@@ -228,6 +266,9 @@ public class StatementParser
         // variable declaration: <type name> <identifier> = <expression>
 
         var identifier = tokenQueue.Expect(TokenType.Identifier);
+
+        if (!tokenQueue.TryPeekType(out var nextType) || nextType is TokenType.NewLine)
+            return new VariableDeclarationStatement(typeToken, identifier, null);
 
         tokenQueue.Expect(TokenType.EqualsSymbol);
 

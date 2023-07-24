@@ -29,7 +29,7 @@ public class ParserTest
         var parser = new StatementParser();
         parser.Add(new Token []
         {
-            new(TokenType.BreakKeyword, "break")
+            new(TokenType.LiteralString, "string"),
         });
 
         await Assert.ThrowsAsync<UnexpectedTokenException>(async () => await parser.ParseAsync().ToListAsync());

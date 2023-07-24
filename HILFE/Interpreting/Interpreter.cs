@@ -10,6 +10,10 @@ public class Interpreter
     public TextWriter? DebugOut { get; }
     public int ExitCode { get; set; }
 
+    public int BreakDepth { get; set; }
+
+    public int ContinueDepth { get; set; }
+
     private readonly Stack<Scope> scopes = new();
 
     public Interpreter(TextWriter? stdOut = null, TextWriter? stdErr = null, TextReader? stdIn = null,
@@ -50,6 +54,13 @@ public class Interpreter
         {
             if (DebugOut is not null)
                 await DebugOut.WriteLineAsync(statement.ToString());
+
+            if (ContinueDepth > 0)
+            {
+                ContinueDepth--;
+
+                break;
+            }
 
             await statement.ExecuteAsync(this, cancellationToken);
         }

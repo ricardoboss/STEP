@@ -1,7 +1,7 @@
 ﻿print("State your name: ")
 string name = readline()
 
-print("name is a ", typeName(name))
+print("name is a ", typename(name))
 
 if ((name ?? "") != "") {
     print(" and is not empty", EOL)
