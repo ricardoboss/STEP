@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace HILFE.Tokenizing;
@@ -146,7 +147,7 @@ public class Tokenizer
         if (tokenValue.TryParseKeyword(out var tmpType))
             return FinalizeToken(tmpType.Value);
 
-        if (double.TryParse(tokenValue, out _))
+        if (double.TryParse(tokenValue, NumberStyles.Any, CultureInfo.InvariantCulture, out _))
             return FinalizeToken(TokenType.LiteralNumber);
 
         if (bool.TryParse(tokenValue, out _))
