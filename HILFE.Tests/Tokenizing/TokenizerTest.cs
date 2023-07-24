@@ -57,8 +57,8 @@ public class TokenizerTest
     [Theory]
     [InlineData("string")]
     [InlineData("number")]
-    [InlineData("int")]
     [InlineData("bool")]
+    [InlineData("function")]
     public async Task TestTokenizeKnownType(string source)
     {
         var tokenizer = new Tokenizer();
