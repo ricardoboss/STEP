@@ -108,11 +108,11 @@ public class ExpressionParser
                 tokenQueue.PeekType() != TokenType.OpeningParentheses:
                 return new VariableExpression(currentToken);
             case TokenType.Identifier:
-                tokenQueue.Expect(TokenType.OpeningParentheses);
+                tokenQueue.Dequeue(TokenType.OpeningParentheses);
 
-                var innerExpressionTokens = tokenQueue.ReadUntil(TokenType.ClosingParentheses);
+                var innerExpressionTokens = tokenQueue.DequeueUntil(TokenType.ClosingParentheses);
 
-                tokenQueue.Expect(TokenType.ClosingParentheses);
+                tokenQueue.Dequeue(TokenType.ClosingParentheses);
 
                 var expressions = await ParseExpressionsAsync(innerExpressionTokens, cancellationToken).ToListAsync(cancellationToken);
 
@@ -154,7 +154,7 @@ public class ExpressionParser
 
                 var innerExpression = await ParseBinaryExpression(cancellationToken: cancellationToken);
 
-                tokenQueue.Expect(TokenType.ClosingParentheses);
+                tokenQueue.Dequeue(TokenType.ClosingParentheses);
 
                 return innerExpression;
             default:
@@ -166,12 +166,12 @@ public class ExpressionParser
     {
         var parameters = new List<(Token, Token)>(); // (type, name)
 
-        tokenQueue.Expect(TokenType.OpeningParentheses);
+        tokenQueue.Dequeue(TokenType.OpeningParentheses);
 
         while (tokenQueue.TryPeekType(out var tokenType) && tokenType is TokenType.TypeName)
         {
-            var type = tokenQueue.Expect(TokenType.TypeName);
-            var name = tokenQueue.Expect(TokenType.Identifier);
+            var type = tokenQueue.Dequeue(TokenType.TypeName);
+            var name = tokenQueue.Dequeue(TokenType.Identifier);
             
             parameters.Add((type, name));
 
@@ -179,8 +179,8 @@ public class ExpressionParser
                 _ = tokenQueue.Dequeue();
         }
 
-        tokenQueue.Expect(TokenType.ClosingParentheses);
-        tokenQueue.Expect(TokenType.OpeningCurlyBracket);
+        tokenQueue.Dequeue(TokenType.ClosingParentheses);
+        tokenQueue.Dequeue(TokenType.OpeningCurlyBracket);
         
         var statementParser = new StatementParser();
         var codeBlockDepth = 0;
@@ -195,18 +195,18 @@ public class ExpressionParser
         }
         var body = await statementParser.ParseAsync(cancellationToken).ToListAsync(cancellationToken);
 
-        tokenQueue.Expect(TokenType.ClosingCurlyBracket);
+        tokenQueue.Dequeue(TokenType.ClosingCurlyBracket);
 
         var definitionExpression = new FunctionDefinitionExpression(parameters, body);
 
         if (!tokenQueue.TryPeekType(out var nextNextType) || nextNextType is not TokenType.OpeningParentheses)
             return definitionExpression;
 
-        tokenQueue.Expect(TokenType.OpeningParentheses);
+        tokenQueue.Dequeue(TokenType.OpeningParentheses);
 
-        var innerExpressionTokens = tokenQueue.ReadUntil(TokenType.ClosingParentheses);
+        var innerExpressionTokens = tokenQueue.DequeueUntil(TokenType.ClosingParentheses);
 
-        tokenQueue.Expect(TokenType.ClosingParentheses);
+        tokenQueue.Dequeue(TokenType.ClosingParentheses);
 
         var args = await ParseExpressionsAsync(innerExpressionTokens, cancellationToken).ToListAsync(cancellationToken);
 

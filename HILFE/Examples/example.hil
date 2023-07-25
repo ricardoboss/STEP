@@ -1,6 +1,7 @@
-﻿number pi = 3.141592
+﻿// this is not exactly pi (not even possible since its irrational, duh)
+number pi = 3.141592 // close enough
 
-string name = "John"
+string name = readline()
 if (name == "John") {
     println("Hello, ", name)
 } else {
@@ -17,14 +18,14 @@ while (tries <= 3) {
     if (parsedGuess == null) {
         println("Enter a valid number!")
 
-        tries++
+        tries++ // increases by one
 
-        continue
+        continue //restarts the loop
     }
 
     if (parsedGuess == pi) {
         println("Close enough!")
-        break
+        break // breaks out of the while loop
     } else {
         if (parsedGuess > 4 || parsedGuess < 3) {
             println("Way off! ", 3 - tries, " tries left.")

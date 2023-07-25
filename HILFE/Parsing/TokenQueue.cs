@@ -85,12 +85,12 @@ public class TokenQueue
                 throw new ParserException("Unexpected end of token queue");
 
             offset++;
-        } while (type is TokenType.Whitespace);
+        } while (type is TokenType.Whitespace or TokenType.LineComment);
 
         return type.Value;
     }
 
-    public Token Expect(params TokenType[] allowed)
+    public Token Dequeue(params TokenType[] allowed)
     {
         Token? token;
         do
@@ -101,7 +101,7 @@ public class TokenQueue
             var typeInfo = allowed.Length == 0 ? "any token" : $"a token (allowed types: {string.Join(',', allowed)})";
 
             throw new UnexpectedEndOfInputException($"Expected {typeInfo}, but token queue was empty");
-        } while (token.Type is TokenType.Whitespace);
+        } while (token.Type is TokenType.Whitespace or TokenType.LineComment);
 
         if (!allowed.Contains(token.Type))
             throw new UnexpectedTokenException(token, allowed);
@@ -109,7 +109,7 @@ public class TokenQueue
         return token;
     }
 
-    public IReadOnlyList<Token> ReadUntil(TokenType exitType, bool skipWhitespace = true)
+    public IReadOnlyList<Token> DequeueUntil(TokenType exitType)
     {
         var tokens = new List<Token>();
         var expressionDepth = 0;
@@ -121,7 +121,7 @@ public class TokenQueue
                 break;
 
             var token = Dequeue();
-            if (!skipWhitespace || nextType != TokenType.Whitespace)
+            if (nextType is not TokenType.Whitespace and not TokenType.LineComment)
                 tokens.Add(token);
 
             switch (nextType)

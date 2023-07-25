@@ -1,57 +1,83 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
+using HILFE.Parsing;
 
 namespace HILFE.Tokenizing;
 
 public class Tokenizer
 {
     private readonly StringBuilder tokenBuilder = new();
+    private readonly CharacterQueue characterQueue = new();
+
     private bool inString;
     private char? stringQuote;
     private bool escaped;
 
-    private Token FinalizeToken(TokenType type, bool clear = true)
+    public void Add(char character) => characterQueue.Enqueue(character);
+
+    public void Add(IEnumerable<char> characters) => characterQueue.Enqueue(characters);
+
+    public async Task AddAsync(IAsyncEnumerable<char> characters, CancellationToken cancellationToken = default)
     {
-        var value = tokenBuilder.ToString();
-
-        if (clear)
-            tokenBuilder.Clear();
-
-        return new(type, value);
+        await foreach(var character in characters.WithCancellation(cancellationToken))
+            characterQueue.Enqueue(character);
     }
 
-    public async IAsyncEnumerable<Token> TokenizeAsync(IAsyncEnumerable<char> characters,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<Token> TokenizeAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        await foreach (var c in characters.WithCancellation(cancellationToken))
+        while (characterQueue.TryDequeue(out var character))
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             if (inString)
             {
-                var token = HandleString(c);
+                var token = HandleString(character);
                 if (token is not null)
                     yield return token;
 
                 continue;
             }
 
-            if (c is '"' or '\'')
+            if (character is '"' or '\'')
             {
-                stringQuote = c;
+                stringQuote = character;
                 inString = true;
 
                 continue;
             }
 
-            var tokens = HandleChar(c);
+            if (character is '/' && characterQueue.TryPeek(out var nextCharacter) && nextCharacter is '/')
+            {
+                if (tokenBuilder.Length > 0)
+                {
+                    var token = HandleTokenValue(tokenBuilder.ToString());
+                    if (token is not null)
+                        yield return token;
+                    
+                    Debug.Assert(tokenBuilder.Length == 0);
+                }
+
+                tokenBuilder.Append(character);
+                foreach (var commentCharacter in characterQueue.DequeueUntil('\n'))
+                    tokenBuilder.Append(commentCharacter);
+
+                yield return FinalizeToken(TokenType.LineComment);
+
+                continue;
+            }
+
+            var tokens = HandleChar(character);
             if (tokens is null)
                 continue;
 
             foreach (var token in tokens)
                 yield return token;
         }
+
+        if (inString)
+            throw new TokenizerException("Unclosed string");
 
         if (tokenBuilder.Length == 0)
             yield break;
@@ -161,15 +187,21 @@ public class Tokenizer
         if (tokenBuilder.Length == 0)
             return;
 
-        if (inString)
-            throw new TokenizerException("Unclosed string");
-
         throw new TokenizerException("Unexpected end of input");
     }
-    
+
     private static bool IsPartOfLiteralNumber(char c)
     {
         return char.IsDigit(c) || c == '.' || c == '-' || c == '+';
+    }
+
+    private Token FinalizeToken(TokenType type)
+    {
+        var value = tokenBuilder.ToString();
+
+        tokenBuilder.Clear();
+
+        return new(type, value);
     }
 
     ~Tokenizer() => End();

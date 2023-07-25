@@ -17,7 +17,9 @@ public class ExamplesIntegrationTest
 
         var chars = await File.ReadAllTextAsync(exampleFilePath);
 
-        var tokens = tokenizer.TokenizeAsync(chars.ToAsyncEnumerable());
+        tokenizer.Add(chars);
+
+        var tokens = tokenizer.TokenizeAsync();
 
         await parser.AddAsync(tokens);
 

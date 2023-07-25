@@ -9,15 +9,9 @@ public class StatementParser
 {
     private readonly TokenQueue tokenQueue = new();
 
-    public void Add(Token token)
-    {
-        tokenQueue.Enqueue(token);
-    }
+    public void Add(Token token) => tokenQueue.Enqueue(token);
 
-    public void Add(IEnumerable<Token> tokens)
-    {
-        tokenQueue.Enqueue(tokens);
-    }
+    public void Add(IEnumerable<Token> tokens) => tokenQueue.Enqueue(tokens);
 
     public async Task AddAsync(IAsyncEnumerable<Token> tokens, CancellationToken cancellationToken = default)
     {
@@ -51,8 +45,8 @@ public class StatementParser
                 yield return await ParseAnonymousCodeBlock(cancellationToken);
             else if (type is TokenType.ClosingCurlyBracket)
                 yield break;
-            else if (type is not TokenType.Whitespace and not TokenType.NewLine)
-                throw new UnexpectedTokenException(token, TokenType.TypeName, TokenType.Identifier, TokenType.UnderscoreSymbol, TokenType.Whitespace, TokenType.NewLine, TokenType.IfKeyword, TokenType.WhileKeyword, TokenType.ReturnKeyword, TokenType.OpeningCurlyBracket, TokenType.ClosingCurlyBracket);
+            else if (type is not TokenType.Whitespace and not TokenType.NewLine and not TokenType.LineComment)
+                throw new UnexpectedTokenException(token, TokenType.TypeName, TokenType.Identifier, TokenType.UnderscoreSymbol, TokenType.Whitespace, TokenType.NewLine, TokenType.LineComment, TokenType.IfKeyword, TokenType.WhileKeyword, TokenType.ReturnKeyword, TokenType.OpeningCurlyBracket, TokenType.ClosingCurlyBracket);
         }
     }
 
@@ -60,9 +54,9 @@ public class StatementParser
     {
         // continue: continue [expression]
 
-        var expressionTokens = tokenQueue.ReadUntil(TokenType.NewLine);
+        var expressionTokens = tokenQueue.DequeueUntil(TokenType.NewLine);
 
-        tokenQueue.Expect(TokenType.NewLine);
+        tokenQueue.Dequeue(TokenType.NewLine);
 
         Expression expression;
         if (expressionTokens.Count == 0)
@@ -77,9 +71,9 @@ public class StatementParser
     {
         // break: break [expression]
 
-        var expressionTokens = tokenQueue.ReadUntil(TokenType.NewLine);
+        var expressionTokens = tokenQueue.DequeueUntil(TokenType.NewLine);
 
-        tokenQueue.Expect(TokenType.NewLine);
+        tokenQueue.Dequeue(TokenType.NewLine);
 
         Expression expression;
         if (expressionTokens.Count == 0)
@@ -94,9 +88,9 @@ public class StatementParser
     {
         // return: return <expression>
         
-        var expressionTokens = tokenQueue.ReadUntil(TokenType.NewLine);
+        var expressionTokens = tokenQueue.DequeueUntil(TokenType.NewLine);
         
-        tokenQueue.Expect(TokenType.NewLine);
+        tokenQueue.Dequeue(TokenType.NewLine);
         
         var expression = await ExpressionParser.ParseAsync(expressionTokens, cancellationToken);
         
@@ -107,8 +101,8 @@ public class StatementParser
     {
         // anonymous code block: { [statement]* }
 
-        var statementsTokens = tokenQueue.ReadUntil(TokenType.ClosingCurlyBracket);
-        tokenQueue.Expect(TokenType.ClosingCurlyBracket);
+        var statementsTokens = tokenQueue.DequeueUntil(TokenType.ClosingCurlyBracket);
+        tokenQueue.Dequeue(TokenType.ClosingCurlyBracket);
 
         var statements = await ParseStatements(statementsTokens, cancellationToken).ToListAsync(cancellationToken);
 
@@ -119,13 +113,13 @@ public class StatementParser
     {
         // looping: while (<expression>) { [statement]* }
 
-        tokenQueue.Expect(TokenType.OpeningParentheses);
-        var expressionTokens = tokenQueue.ReadUntil(TokenType.ClosingParentheses);
-        tokenQueue.Expect(TokenType.ClosingParentheses);
+        tokenQueue.Dequeue(TokenType.OpeningParentheses);
+        var expressionTokens = tokenQueue.DequeueUntil(TokenType.ClosingParentheses);
+        tokenQueue.Dequeue(TokenType.ClosingParentheses);
 
-        tokenQueue.Expect(TokenType.OpeningCurlyBracket);
-        var statementsTokens = tokenQueue.ReadUntil(TokenType.ClosingCurlyBracket);
-        tokenQueue.Expect(TokenType.ClosingCurlyBracket);
+        tokenQueue.Dequeue(TokenType.OpeningCurlyBracket);
+        var statementsTokens = tokenQueue.DequeueUntil(TokenType.ClosingCurlyBracket);
+        tokenQueue.Dequeue(TokenType.ClosingCurlyBracket);
 
         var condition = await ExpressionParser.ParseAsync(expressionTokens, cancellationToken);
         var statements = await ParseStatements(statementsTokens, cancellationToken).ToListAsync(cancellationToken);
@@ -137,13 +131,13 @@ public class StatementParser
     {
         // branching: if (<expression>) { [statement]* } [else[if (<expression>)] { [statement]* } ]
 
-        tokenQueue.Expect(TokenType.OpeningParentheses);
-        var expressionTokens = tokenQueue.ReadUntil(TokenType.ClosingParentheses);
-        tokenQueue.Expect(TokenType.ClosingParentheses);
+        tokenQueue.Dequeue(TokenType.OpeningParentheses);
+        var expressionTokens = tokenQueue.DequeueUntil(TokenType.ClosingParentheses);
+        tokenQueue.Dequeue(TokenType.ClosingParentheses);
 
-        tokenQueue.Expect(TokenType.OpeningCurlyBracket);
-        var trueBranchTokens = tokenQueue.ReadUntil(TokenType.ClosingCurlyBracket);
-        tokenQueue.Expect(TokenType.ClosingCurlyBracket);
+        tokenQueue.Dequeue(TokenType.OpeningCurlyBracket);
+        var trueBranchTokens = tokenQueue.DequeueUntil(TokenType.ClosingCurlyBracket);
+        tokenQueue.Dequeue(TokenType.ClosingCurlyBracket);
 
         var condition = await ExpressionParser.ParseAsync(expressionTokens, cancellationToken);
         var statements = await ParseStatements(trueBranchTokens, cancellationToken).ToListAsync(cancellationToken);
@@ -151,19 +145,19 @@ public class StatementParser
         if (tokenQueue.PeekType() is not TokenType.ElseKeyword)
             return new IfStatement(condition, statements);
 
-        tokenQueue.Expect(TokenType.ElseKeyword);
+        tokenQueue.Dequeue(TokenType.ElseKeyword);
 
         IReadOnlyList<Token>? elseExpressionTokens = null;
         if (tokenQueue.PeekType() is TokenType.IfKeyword)
         {
-            tokenQueue.Expect(TokenType.OpeningParentheses);
-            elseExpressionTokens = tokenQueue.ReadUntil(TokenType.ClosingParentheses);
-            tokenQueue.Expect(TokenType.ClosingParentheses);
+            tokenQueue.Dequeue(TokenType.OpeningParentheses);
+            elseExpressionTokens = tokenQueue.DequeueUntil(TokenType.ClosingParentheses);
+            tokenQueue.Dequeue(TokenType.ClosingParentheses);
         }
 
-        tokenQueue.Expect(TokenType.OpeningCurlyBracket);
-        var falseBranchTokens = tokenQueue.ReadUntil(TokenType.ClosingCurlyBracket);
-        tokenQueue.Expect(TokenType.ClosingCurlyBracket);
+        tokenQueue.Dequeue(TokenType.OpeningCurlyBracket);
+        var falseBranchTokens = tokenQueue.DequeueUntil(TokenType.ClosingCurlyBracket);
+        tokenQueue.Dequeue(TokenType.ClosingCurlyBracket);
 
         var elseExpression =
             elseExpressionTokens is not null ? await ExpressionParser.ParseAsync(elseExpressionTokens, cancellationToken) : null;
@@ -190,7 +184,7 @@ public class StatementParser
     {
         // variable assignment: <identifier> = <expression>
 
-        tokenQueue.Expect(TokenType.EqualsSymbol);
+        tokenQueue.Dequeue(TokenType.EqualsSymbol);
         
         var expression = await ParseValueExpression(cancellationToken);
 
@@ -203,9 +197,9 @@ public class StatementParser
     private async Task<Expression> ParseValueExpression(CancellationToken cancellationToken)
     {
         // FIXME: this does not work with multi-line values like function definitions
-        var expressionTokens = tokenQueue.ReadUntil(TokenType.NewLine);
+        var expressionTokens = tokenQueue.DequeueUntil(TokenType.NewLine);
 
-        tokenQueue.Expect(TokenType.NewLine);
+        tokenQueue.Dequeue(TokenType.NewLine);
 
         return await ExpressionParser.ParseAsync(expressionTokens, cancellationToken);
     }
@@ -215,7 +209,7 @@ public class StatementParser
         // shortcut setter: <identifier>++ / <identifier>-- / <identifier> *= <expression> / <identifier> /= <expression>
 
         var operationToken = tokenQueue.Dequeue();
-        var valueDenominator = tokenQueue.Expect(TokenType.PlusSymbol,
+        var valueDenominator = tokenQueue.Dequeue(TokenType.PlusSymbol,
             TokenType.MinusSymbol, TokenType.AsteriskSymbol, TokenType.SlashSymbol,
             TokenType.PercentSymbol, TokenType.EqualsSymbol);
 
@@ -235,8 +229,8 @@ public class StatementParser
         {
             Debug.Assert(valueDenominator.Type is TokenType.EqualsSymbol);
 
-            valueExpTokens = tokenQueue.ReadUntil(TokenType.NewLine);
-            tokenQueue.Expect(TokenType.NewLine);
+            valueExpTokens = tokenQueue.DequeueUntil(TokenType.NewLine);
+            tokenQueue.Dequeue(TokenType.NewLine);
         }
 
         // TODO: ugly. Move expression parsing to another class
@@ -252,9 +246,9 @@ public class StatementParser
     {
         // function call: <identifier>([<expression>[, <expression>]*])
 
-        tokenQueue.Expect(TokenType.OpeningParentheses);
-        var argsTokens = tokenQueue.ReadUntil(TokenType.ClosingParentheses);
-        tokenQueue.Expect(TokenType.ClosingParentheses);
+        tokenQueue.Dequeue(TokenType.OpeningParentheses);
+        var argsTokens = tokenQueue.DequeueUntil(TokenType.ClosingParentheses);
+        tokenQueue.Dequeue(TokenType.ClosingParentheses);
 
         var args = await ExpressionParser.ParseExpressionsAsync(argsTokens, cancellationToken).ToListAsync(cancellationToken);
 
@@ -265,12 +259,12 @@ public class StatementParser
     {
         // variable declaration: <type name> <identifier> = <expression>
 
-        var identifier = tokenQueue.Expect(TokenType.Identifier);
+        var identifier = tokenQueue.Dequeue(TokenType.Identifier);
 
         if (!tokenQueue.TryPeekType(out var nextType) || nextType is TokenType.NewLine)
             return new VariableDeclarationStatement(typeToken, identifier, null);
 
-        tokenQueue.Expect(TokenType.EqualsSymbol);
+        tokenQueue.Dequeue(TokenType.EqualsSymbol);
 
         var expression = await ParseValueExpression(cancellationToken);
         

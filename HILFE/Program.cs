@@ -20,7 +20,6 @@ rootCommand.AddCommand(listenCommand);
 
 listenCommand.SetHandler(async () =>
 {
-    // var config = configFile != null ? Config.FromFile(configFile) : Config.FromEnvironment();
     var memoryBuffer = new MemoryStream();
     var inputReader = new StreamReader(memoryBuffer);
     var inputWriter = new StreamWriter(memoryBuffer)
@@ -38,11 +37,12 @@ listenCommand.SetHandler(async () =>
     {
         await inputWriter.WriteLineAsync(line);
 
-        var chars = line.ToAsyncEnumerable().Append('\n');
-
         try
         {
-            var tokens = await tokenizer.TokenizeAsync(chars).ToListAsync();
+            var chars = line.Append('\n');
+
+            tokenizer.Add(chars);
+            var tokens = await tokenizer.TokenizeAsync().ToListAsync();
             if (tokens.Count == 0)
             {
                 Console.Write("| ");
@@ -73,7 +73,7 @@ listenCommand.SetHandler(async () =>
     Console.WriteLine("Bye!");
 });
 
-runCommand.SetHandler(async (scriptFile) =>
+runCommand.SetHandler(async scriptFile =>
 {
     var tokenizer = new Tokenizer();
     var parser = new StatementParser();
@@ -83,7 +83,8 @@ runCommand.SetHandler(async (scriptFile) =>
 
     try
     {
-        var tokens = tokenizer.TokenizeAsync(chars.ToAsyncEnumerable());
+        tokenizer.Add(chars);
+        var tokens = tokenizer.TokenizeAsync();
         await parser.AddAsync(tokens);
         var statements = parser.ParseAsync();
         await interpreter.InterpretAsync(statements);

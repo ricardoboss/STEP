@@ -37,6 +37,7 @@ public enum TokenType
     QuestionMarkSymbol,
     ReturnKeyword,
     UnderscoreSymbol,
+    LineComment,
 }
 
 public static class TokenTypes
