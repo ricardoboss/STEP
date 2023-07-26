@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using HILFE.Interpreting;
 using HILFE.Parsing.Expressions;
@@ -24,5 +25,6 @@ public class JsonEncodeFunction : NativeFunction
     }
 
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     protected override string DebugParamsString => "any value";
 }
