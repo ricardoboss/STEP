@@ -24,7 +24,7 @@ public class ParseFunction : NativeFunction
         if (targetType == sourceType)
             return new(targetType, sourceValue);
 
-        string stringValue = sourceValue?.ToString() ?? string.Empty;
+        string stringValue = sourceValue?.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
         return sourceType switch
         {
             "string" => targetType switch
