@@ -11,6 +11,14 @@ public record ExpressionResult(string ValueType, dynamic? Value = null, bool IsV
     public static ExpressionResult True { get; } = new("bool", true);
 
     public static ExpressionResult False { get; } = new("bool", false);
+    
+    public static ExpressionResult Number(double value) => new("number", value);
+    
+    public static ExpressionResult String(string value) => new("string", value);
+
+    public static ExpressionResult Bool(bool value) => new("bool", value);
+
+    public static ExpressionResult Function(FunctionDefinition definition) => new("function", definition);
 
     /// <inheritdoc />
     public virtual bool Equals(ExpressionResult? other)
