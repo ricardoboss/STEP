@@ -13,7 +13,7 @@ public class ReadlineFunction : NativeFunction
             throw new InterpreterException("readline takes no arguments");
         
         if (interpreter.StdIn is not { } stdIn)
-            return new("null");
+            return ExpressionResult.Null;
 
         var line = await stdIn.ReadLineAsync(cancellationToken);
 

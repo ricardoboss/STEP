@@ -13,32 +13,40 @@ public class ParseFunction : NativeFunction
             throw new InterpreterException($"Invalid number of arguments, expected 2, got {arguments.Count}");
 
         var type = await arguments[0].EvaluateAsync(interpreter, cancellationToken);
-        var value = await arguments[1].EvaluateAsync(interpreter, cancellationToken);
-
-         if (type.ValueType is not "string")
+        if (type is not { ValueType: "string", Value: string targetType })
             throw new InterpreterException($"Invalid type, expected string, got {type.ValueType}");
 
-        if (value.ValueType is not "string")
-            throw new InterpreterException($"Invalid value, expected string, got {value.ValueType}");
+        var (sourceType, sourceValue, isVoid) = await arguments[1].EvaluateAsync(interpreter, cancellationToken);
+        if (isVoid)
+            throw new InterpreterException("Cannot parse void result");
 
-        var typeString = type.Value as string;
-        switch (typeString)
+        if (targetType == sourceType)
+            return new(targetType, sourceValue);
+
+        string stringValue = sourceValue?.ToString() ?? string.Empty;
+        return sourceType switch
         {
-            case "number":
-                if (!double.TryParse(value.Value as string, NumberStyles.Any, CultureInfo.InvariantCulture, out var doubleValue))
-                    return new("null");
-
-                return new("number", doubleValue);
-            case "bool":
-                if (!bool.TryParse(value.Value as string, out var boolValue))
-                    return new("null");
-
-                return new("bool", boolValue);
-            case "string":
-                return new("string", value.Value?.ToString() ?? string.Empty);
-            default:
-                return new("null");
-        }
+            "string" => targetType switch
+            {
+                "number" when double.TryParse(stringValue, NumberStyles.Any, CultureInfo.InvariantCulture, out var doubleValue) => new("number", doubleValue),
+                "bool" when bool.TryParse(stringValue, out var boolValue) => new("bool", boolValue),
+                "bool" when stringValue is "1" or "0" => new("bool", stringValue is "1"),
+                _ => ExpressionResult.Null,
+            },
+            "number" => targetType switch
+            {
+                "string" => new("string", stringValue),
+                "bool" => new("bool", sourceValue is not 0.0),
+                _ => ExpressionResult.Null,
+            },
+            "bool" => targetType switch
+            {
+                "string" => new("string", stringValue),
+                "number" => new("number", sourceValue is true ? 1 : 0),
+                _ => ExpressionResult.Null,
+            },
+            _ => ExpressionResult.Null,
+        };
     }
 
     /// <inheritdoc />

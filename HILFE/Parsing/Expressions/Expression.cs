@@ -198,20 +198,11 @@ public abstract class Expression
         });
     }
 
-    public static Expression Constant(double value)
-    {
-        return new ConstantExpression("number", value);
-    }
+    public static Expression Constant(double value) => ConstantExpression.Number(value);
 
-    public static Expression Constant(string value)
-    {
-        return new ConstantExpression("string", value);
-    }
+    public static Expression Constant(string value) => ConstantExpression.String(value);
 
-    public static Expression Constant(bool value)
-    {
-        return new ConstantExpression("bool", value);
-    }
+    public static Expression Constant(bool value) => ConstantExpression.Bool(value);
 
     public abstract Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken = default);
 
