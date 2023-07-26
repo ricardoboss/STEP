@@ -6,6 +6,8 @@ namespace HILFE.Framework.Conversion;
 
 public class JsonEncodeFunction : NativeFunction
 {
+    public const string Identifier = "jsonEncode";
+
     /// <inheritdoc />
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {

@@ -6,13 +6,14 @@ namespace HILFE.Framework.Conversion;
 
 public class JsonDecodeFunction : NativeFunction
 {
+    public const string Identifier = "jsonDecode";
+
     /// <inheritdoc />
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
         var source = arguments.Single();
         var result = await source.EvaluateAsync(interpreter, cancellationToken);
-        if (result is not { ValueType: "string", Value: string json })
-            throw new InterpreterException($"Invalid type, expected string, got {result.ValueType}");
+        var json = result.ExpectString();
 
         var value = JsonSerializer.Deserialize<dynamic>(json);
         var valueType = value switch
@@ -21,6 +22,7 @@ public class JsonDecodeFunction : NativeFunction
             int or double or float => "number",
             bool => "bool",
             null => "null",
+            List<dynamic> => "array",
             _ => "object",
         };
 
