@@ -21,7 +21,7 @@ public class FunctionDefinitionExpression : Expression
     {
         var function = new UserDefinedFunctionDefintion(parameters, body);
 
-        return new("function", function);
+        return ExpressionResult.Function(function);
     }
 
     /// <inheritdoc />

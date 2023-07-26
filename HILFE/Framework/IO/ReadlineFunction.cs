@@ -19,7 +19,7 @@ public class ReadlineFunction : NativeFunction
 
         var line = await stdIn.ReadLineAsync(cancellationToken);
 
-        return new("string", line);
+        return line is null ? ExpressionResult.Null : ExpressionResult.String(line);
     }
 
     /// <inheritdoc />

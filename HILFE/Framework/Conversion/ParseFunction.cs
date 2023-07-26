@@ -19,31 +19,31 @@ public class ParseFunction : NativeFunction
 
         var source = await arguments[1].EvaluateAsync(interpreter, cancellationToken);
         source.ThrowIfVoid();
-        var (sourceType, sourceValue, _) = source;
+        var (sourceType, sourceValue) = source;
 
         if (targetType == sourceType)
-            return new(targetType, sourceValue);
+            return ExpressionResult.From(targetType, sourceValue);
 
         string stringValue = sourceValue?.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
         return sourceType switch
         {
             "string" => targetType switch
             {
-                "number" when double.TryParse(stringValue, NumberStyles.Any, CultureInfo.InvariantCulture, out var doubleValue) => new("number", doubleValue),
-                "bool" when bool.TryParse(stringValue, out var boolValue) => new("bool", boolValue),
-                "bool" when stringValue is "1" or "0" => new("bool", stringValue is "1"),
+                "number" when double.TryParse(stringValue, NumberStyles.Any, CultureInfo.InvariantCulture, out var doubleValue) => ExpressionResult.Number(doubleValue),
+                "bool" when bool.TryParse(stringValue, out var boolValue) => ExpressionResult.Bool(boolValue),
+                "bool" when stringValue is "1" or "0" => ExpressionResult.Bool(stringValue is "1"),
                 _ => ExpressionResult.Null,
             },
             "number" => targetType switch
             {
-                "string" => new("string", stringValue),
-                "bool" => new("bool", sourceValue is not 0.0),
+                "string" => ExpressionResult.String(stringValue),
+                "bool" => ExpressionResult.Bool(sourceValue is not 0.0),
                 _ => ExpressionResult.Null,
             },
             "bool" => targetType switch
             {
-                "string" => new("string", stringValue),
-                "number" => new("number", sourceValue is true ? 1 : 0),
+                "string" => ExpressionResult.String(stringValue),
+                "number" => ExpressionResult.Number(sourceValue is true ? 1 : 0),
                 _ => ExpressionResult.Null,
             },
             _ => ExpressionResult.Null,

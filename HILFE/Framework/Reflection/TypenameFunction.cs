@@ -20,7 +20,7 @@ public class TypenameFunction : NativeFunction
 
         var variable = interpreter.CurrentScope.GetVariable(varExp.Identifier.Value);
 
-        return new("string", variable.Value.ValueType);
+        return ExpressionResult.String(variable.Value.ValueType);
     }
 
     /// <inheritdoc />

@@ -33,7 +33,7 @@ public class VariableDeclarationStatement : Statement
         {
             // only declare, no value assigned
 
-            interpreter.CurrentScope.SetVariable(identifier.Value, new(type.Value));
+            interpreter.CurrentScope.SetVariable(identifier.Value, ExpressionResult.From(type.Value));
 
             return;
         }

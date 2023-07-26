@@ -2,18 +2,18 @@ using HILFE.Interpreting;
 
 namespace HILFE.Parsing.Expressions;
 
-public record ExpressionResult(string ValueType, dynamic? Value = null, bool IsVoid = false)
+public sealed class ExpressionResult : IEquatable<ExpressionResult>
 {
-    public static ExpressionResult Void { get; } = new("void", IsVoid: true);
+    public static ExpressionResult Void { get; } = new("void", isVoid: true);
 
     public static ExpressionResult Null { get; } = new("null");
 
     public static ExpressionResult True { get; } = new("bool", true);
 
     public static ExpressionResult False { get; } = new("bool", false);
-    
+
     public static ExpressionResult Number(double value) => new("number", value);
-    
+
     public static ExpressionResult String(string value) => new("string", value);
 
     public static ExpressionResult Bool(bool value) => new("bool", value);
@@ -22,8 +22,25 @@ public record ExpressionResult(string ValueType, dynamic? Value = null, bool IsV
 
     public static ExpressionResult Array(IEnumerable<ExpressionResult> items) => new("array", items);
 
-    /// <inheritdoc />
-    public virtual bool Equals(ExpressionResult? other)
+    public static ExpressionResult From(string type, dynamic? value = null) => new(type, value);
+
+    private ExpressionResult(string valueType, dynamic? value = null, bool isVoid = false)
+    {
+        ValueType = valueType;
+        Value = value;
+        IsVoid = isVoid;
+    }
+
+    public string ValueType { get; init; }
+    public dynamic? Value { get; init; }
+    public bool IsVoid { get; init; }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is ExpressionResult other && Equals(other);
+    }
+
+    public bool Equals(ExpressionResult? other)
     {
         if (other is null)
             return false;
@@ -32,6 +49,12 @@ public record ExpressionResult(string ValueType, dynamic? Value = null, bool IsV
             return true;
 
         return ValueType == other.ValueType && Value == other.Value && IsVoid == other.IsVoid;
+    }
+
+    public void Deconstruct(out string valueType, out dynamic? value)
+    {
+        valueType = ValueType;
+        value = Value;
     }
 
     /// <inheritdoc />
@@ -53,7 +76,10 @@ public record ExpressionResult(string ValueType, dynamic? Value = null, bool IsV
         if (ValueType is not "string")
             throw new InvalidResultTypeException("string", ValueType);
 
-        return Value?.ToString() ?? string.Empty;
+        if (Value is not string stringValue)
+            throw new InvalidResultTypeException("string", Value?.GetType().Name ?? "<null>");
+
+        return stringValue;
     }
 
     public bool ExpectBool()
@@ -61,13 +87,19 @@ public record ExpressionResult(string ValueType, dynamic? Value = null, bool IsV
         if (ValueType is not "bool")
             throw new InvalidResultTypeException("bool", ValueType);
 
-        return Value is true;
+        if (Value is not bool boolValue)
+            throw new InvalidResultTypeException("bool", Value?.GetType().Name ?? "<null>");
+
+        return boolValue;
     }
 
     public FunctionDefinition ExpectFunction()
     {
-        if (ValueType is not "function" || Value is not FunctionDefinition definition)
+        if (ValueType is not "function")
             throw new InvalidResultTypeException("function", ValueType);
+
+        if (Value is not FunctionDefinition definition)
+            throw new InvalidResultTypeException("function", Value?.GetType().Name ?? "<null>");
 
         return definition;
     }

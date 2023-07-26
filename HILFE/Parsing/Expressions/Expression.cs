@@ -32,10 +32,10 @@ public abstract class Expression
     {
         return new BinaryExpression("^", left, right, (a, b) =>
         {
-            if (a.ValueType != b.ValueType)
+            if (a.ValueType != b.ValueType || a.ValueType != "number")
                 throw new IncompatibleTypesException(a.ValueType, b.Value, "pow");
 
-            return new(a.ValueType, Math.Pow(a.Value, b.Value));
+            return ExpressionResult.Number(Math.Pow(a.Value, b.Value));
         });
     }
 
@@ -46,7 +46,7 @@ public abstract class Expression
             if (a.ValueType != b.ValueType)
                 throw new IncompatibleTypesException(a.ValueType, b.Value, "add");
 
-            return new(a.ValueType, a.Value + b.Value);
+            return ExpressionResult.From(a.ValueType, a.Value + b.Value);
         });
     }
 
@@ -57,7 +57,7 @@ public abstract class Expression
             if (a.ValueType != b.ValueType || a.ValueType != "number")
                 throw new IncompatibleTypesException(a.ValueType, b.Value, "subtract");
 
-            return new(a.ValueType, a.Value - b.Value);
+            return ExpressionResult.Number(a.Value - b.Value);
         });
     }
 
@@ -68,7 +68,7 @@ public abstract class Expression
             if (a.ValueType != b.ValueType || a.ValueType != "number")
                 throw new IncompatibleTypesException(a.ValueType, b.Value, "multiply");
 
-            return new(a.ValueType, a.Value * b.Value);
+            return ExpressionResult.Number(a.Value * b.Value);
         });
     }
 
@@ -79,7 +79,7 @@ public abstract class Expression
             if (a.ValueType != b.ValueType || a.ValueType != "number")
                 throw new IncompatibleTypesException(a.ValueType, b.Value, "divide");
 
-            return new(a.ValueType, a.Value / b.Value);
+            return ExpressionResult.Number(a.Value / b.Value);
         });
     }
 
@@ -90,7 +90,7 @@ public abstract class Expression
             if (a.ValueType != b.ValueType || a.ValueType != "number")
                 throw new IncompatibleTypesException(a.ValueType, b.Value, "modulo");
 
-            return new(a.ValueType, a.Value % b.Value);
+            return ExpressionResult.Number(a.Value % b.Value);
         });
     }
 
@@ -101,7 +101,7 @@ public abstract class Expression
             if (a.ValueType != b.ValueType)
                 throw new IncompatibleTypesException(a.ValueType, b.Value, "compare");
 
-            return new("bool", a.Value < b.Value);
+            return ExpressionResult.Bool(a.Value < b.Value);
         });
     }
 
@@ -112,7 +112,7 @@ public abstract class Expression
             if (a.ValueType != b.ValueType)
                 throw new IncompatibleTypesException(a.ValueType, b.Value, "compare");
 
-            return new("bool", a.Value <= b.Value);
+            return ExpressionResult.Bool(a.Value <= b.Value);
         });
     }
 
@@ -123,7 +123,7 @@ public abstract class Expression
             if (a.ValueType != b.ValueType)
                 throw new IncompatibleTypesException(a.ValueType, b.Value, "compare");
 
-            return new("bool", a.Value > b.Value);
+            return ExpressionResult.Bool(a.Value > b.Value);
         });
     }
 
@@ -134,7 +134,7 @@ public abstract class Expression
             if (a.ValueType != b.ValueType)
                 throw new IncompatibleTypesException(a.ValueType, b.Value, "compare");
 
-            return new("bool", a.Value >= b.Value);
+            return ExpressionResult.Bool(a.Value >= b.Value);
         });
     }
 
@@ -143,12 +143,12 @@ public abstract class Expression
         return new BinaryExpression("==", left, right, (a, b) =>
         {
             if (a.ValueType == b.ValueType)
-                return new("bool", a.Value == b.Value);
+                return ExpressionResult.Bool(a.Value == b.Value);
 
-            if (a.ValueType == "null") return new("bool", b.Value == null);
-            if (b.ValueType == "null") return new("bool", a.Value == null);
+            if (a.ValueType == "null") return ExpressionResult.Bool(b.Value == null);
+            if (b.ValueType == "null") return ExpressionResult.Bool(a.Value == null);
 
-            return new("bool", false);
+            return ExpressionResult.False;
         });
     }
 
@@ -159,7 +159,7 @@ public abstract class Expression
             if (a.ValueType != b.ValueType || a.ValueType != "bool")
                 throw new IncompatibleTypesException(a.ValueType, b.Value, "compare");
 
-            return new("bool", a.Value || b.Value);
+            return ExpressionResult.Bool(a.Value || b.Value);
         });
     }
     
@@ -170,7 +170,7 @@ public abstract class Expression
             if (a.ValueType != b.ValueType || a.ValueType != "bool")
                 throw new IncompatibleTypesException(a.ValueType, b.Value, "compare");
             
-            return new("bool", a.Value && b.Value);
+            return ExpressionResult.Bool(a.Value && b.Value);
         });
     }
     
@@ -184,7 +184,7 @@ public abstract class Expression
             if (a.ValueType != b.ValueType)
                 throw new IncompatibleTypesException(a.ValueType, b.Value, "coalesce");
 
-            return new(a.ValueType, a.Value ?? b.Value);
+            return ExpressionResult.From(a.ValueType, a.Value ?? b.Value);
         });
     }
 
@@ -194,7 +194,7 @@ public abstract class Expression
         {
             var value = result.ExpectBool();
 
-            return new("bool", !value);
+            return ExpressionResult.Bool(!value);
         });
     }
 

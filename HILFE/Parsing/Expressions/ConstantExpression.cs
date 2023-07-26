@@ -8,22 +8,17 @@ public class ConstantExpression : Expression
 
     public static ConstantExpression Void { get; } = new(ExpressionResult.Void);
 
-    public static ConstantExpression True { get; } = new("bool", true);
+    public static ConstantExpression True { get; } = new(ExpressionResult.True);
     
-    public static ConstantExpression False { get; } = new("bool", false);
+    public static ConstantExpression False { get; } = new(ExpressionResult.False);
 
-    public static ConstantExpression Number(double value) => new("number", value);
+    public static ConstantExpression Number(double value) => new(ExpressionResult.Number(value));
 
-    public static ConstantExpression String(string value) => new("string", value);
+    public static ConstantExpression String(string value) => new(ExpressionResult.String(value));
 
-    public static ConstantExpression Bool(bool value) => new("bool", value);
+    public static ConstantExpression Bool(bool value) => new(ExpressionResult.Bool(value));
 
     private readonly ExpressionResult result;
-
-    public ConstantExpression(string type, dynamic? value)
-    {
-        result = new(type, value);
-    }
 
     public ConstantExpression(ExpressionResult result)
     {

@@ -18,7 +18,7 @@ internal class ArrayExpression : Expression
             .EvaluateAsync(interpreter, cancellationToken)
             .ToArrayAsync(cancellationToken);
 
-        return new("array", values);
+        return ExpressionResult.Array(values);
     }
 
     /// <inheritdoc />

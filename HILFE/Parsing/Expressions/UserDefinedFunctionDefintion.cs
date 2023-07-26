@@ -30,7 +30,7 @@ public class UserDefinedFunctionDefintion : FunctionDefinition
             if (argument.ValueType != parameterType.Value)
                 throw new IncompatibleTypesException(argument.ValueType, parameterType.Value, "assign");
 
-            interpreter.CurrentScope.SetVariable(parameterName.Value, new (parameterType.Value, argument.Value));
+            interpreter.CurrentScope.SetVariable(parameterName.Value, ExpressionResult.From(parameterType.Value, argument.Value));
         }
 
         interpreter.PushScope();

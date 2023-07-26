@@ -30,19 +30,19 @@ public class ParseFunctionTest
     {
         public ParseData()
         {
-            Add("number", ConstantExpression.String("1.3"), new("number", 1.3));
-            Add("number", ConstantExpression.True, new("number", 1));
-            Add("number", ConstantExpression.False, new("number", 0));
+            Add("number", ConstantExpression.String("1.3"), ExpressionResult.Number(1.3));
+            Add("number", ConstantExpression.True, ExpressionResult.Number(1));
+            Add("number", ConstantExpression.False, ExpressionResult.Number(0));
 
-            Add("string", ConstantExpression.Number(123.456), new("string", "123.456"));
-            Add("string", ConstantExpression.True, new("string", "True"));
+            Add("string", ConstantExpression.Number(123.456), ExpressionResult.String("123.456"));
+            Add("string", ConstantExpression.True, ExpressionResult.String("True"));
 
-            Add("bool", ConstantExpression.String("true"), new("bool", true));
-            Add("bool", ConstantExpression.String("false"), new("bool", false));
-            Add("bool", ConstantExpression.String("1"), new("bool", true));
-            Add("bool", ConstantExpression.String("0"), new("bool", false));
-            Add("bool", ConstantExpression.Number(1), new("bool", true));
-            Add("bool", ConstantExpression.Number(0), new("bool", false));
+            Add("bool", ConstantExpression.String("true"), ExpressionResult.Bool(true));
+            Add("bool", ConstantExpression.String("false"), ExpressionResult.Bool(false));
+            Add("bool", ConstantExpression.String("1"), ExpressionResult.Bool(true));
+            Add("bool", ConstantExpression.String("0"), ExpressionResult.Bool(false));
+            Add("bool", ConstantExpression.Number(1), ExpressionResult.Bool(true));
+            Add("bool", ConstantExpression.Number(0), ExpressionResult.Bool(false));
 
             Add("null", ConstantExpression.String("abc"), ExpressionResult.Null);
             Add("null", ConstantExpression.Number(123), ExpressionResult.Null);
@@ -52,9 +52,9 @@ public class ParseFunctionTest
             Add("number", ConstantExpression.Null, ExpressionResult.Null);
             Add("bool", ConstantExpression.Null, ExpressionResult.Null);
 
-            Add("bool", ConstantExpression.True, new("bool", true));
-            Add("number", ConstantExpression.Number(123), new("number", 123));
-            Add("string", ConstantExpression.String("abc"), new("string", "abc"));
+            Add("bool", ConstantExpression.True, ExpressionResult.Bool(true));
+            Add("number", ConstantExpression.Number(123), ExpressionResult.Number(123));
+            Add("string", ConstantExpression.String("abc"), ExpressionResult.String("abc"));
         }
     }
 }
