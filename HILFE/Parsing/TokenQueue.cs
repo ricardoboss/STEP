@@ -113,11 +113,11 @@ public class TokenQueue
         var tokens = new List<Token>();
         var expressionDepth = 0;
         var codeBlockDepth = 0;
-        var arrayDepth = 0;
+        var listDepth = 0;
 
         while (TryPeekType(out var nextType))
         {
-            if (expressionDepth == 0 && codeBlockDepth == 0 && arrayDepth == 0 && nextType == exitType)
+            if (expressionDepth == 0 && codeBlockDepth == 0 && listDepth == 0 && nextType == exitType)
                 break;
 
             var token = Dequeue();
@@ -139,10 +139,10 @@ public class TokenQueue
                     codeBlockDepth--;
                     break;
                 case TokenType.OpeningSquareBracket:
-                    arrayDepth++;
+                    listDepth++;
                     break;
                 case TokenType.ClosingSquareBracket:
-                    arrayDepth--;
+                    listDepth--;
                     break;
             }
         }

@@ -33,7 +33,7 @@ public class PrintFunction : NativeFunction
             "number" when result.Value is double numberValue => numberValue.ToString(CultureInfo.InvariantCulture),
             "bool" when result.Value is bool boolValue => boolValue.ToString(),
             "null" when result.Value is null => "null",
-            "array" when result.Value is IEnumerable<ExpressionResult> array => $"[{string.Join(", ", array.Select(RenderValue))}]",
+            "list" when result.Value is IEnumerable<ExpressionResult> values => $"[{string.Join(", ", values.Select(RenderValue))}]",
             _ => $"[{result.ValueType}]",
         };
     }

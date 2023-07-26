@@ -20,7 +20,7 @@ public sealed class ExpressionResult : IEquatable<ExpressionResult>
 
     public static ExpressionResult Function(FunctionDefinition definition) => new("function", definition);
 
-    public static ExpressionResult Array(IEnumerable<ExpressionResult> items) => new("array", items);
+    public static ExpressionResult List(IEnumerable<ExpressionResult> items) => new("list", items);
 
     public static ExpressionResult From(string type, dynamic? value = null) => new(type, value);
 

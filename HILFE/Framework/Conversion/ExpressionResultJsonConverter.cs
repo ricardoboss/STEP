@@ -18,7 +18,7 @@ public class ExpressionResultJsonConverter : JsonConverter<ExpressionResult>
             JsonTokenType.Null => ExpressionResult.Null,
             JsonTokenType.Number => ExpressionResult.Number(reader.GetDouble()),
             JsonTokenType.String => ExpressionResult.String(reader.GetString() ?? string.Empty),
-            JsonTokenType.StartArray => ExpressionResult.Array(ReadArray(ref reader, options)),
+            JsonTokenType.StartArray => ExpressionResult.List(ReadArray(ref reader, options)),
             _ => throw new NotImplementedException($"Conversion of {reader.TokenType} to ExpressionResult is not implemented"),
         };
     }
@@ -57,9 +57,9 @@ public class ExpressionResultJsonConverter : JsonConverter<ExpressionResult>
             case "null":
                 writer.WriteNullValue();
                 break;
-            case "array" when value.Value is IEnumerable<ExpressionResult> arrayValue:
+            case "list" when value.Value is IEnumerable<ExpressionResult> listValue:
                 writer.WriteStartArray();
-                foreach (var item in arrayValue)
+                foreach (var item in listValue)
                 {
                     Write(writer, item, options);
                 }

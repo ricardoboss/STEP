@@ -46,7 +46,7 @@ public static class TokenTypes
 {
     public static bool IsKnownTypeName(this string name)
     {
-        return name is "string" or "number" or "bool" or "function" or "array";
+        return name is "string" or "number" or "bool" or "function" or "list";
     }
 
     public static bool TryParseKeyword(this string name, [NotNullWhen(true)] out TokenType? type)

@@ -1,0 +1,14 @@
+list nums = [1, 2, 3, 4]
+println(nums)
+
+list strs = ["a", "b", "c", "d"]
+println(strs)
+
+list mixed = [1, "a", 2, "b", true, null]
+println(mixed)
+
+list empty = []
+println(empty)
+
+list nested = [[1, 2], [3, 4]]
+println(nested)
