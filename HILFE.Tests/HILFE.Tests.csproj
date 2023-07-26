@@ -26,4 +26,17 @@
       <ProjectReference Include="..\HILFE\HILFE.csproj" />
     </ItemGroup>
 
+
+    <ItemGroup>
+      <None Update="Examples\*.hil.out">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Examples\*.hil.in">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Examples\*.hil.exit">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

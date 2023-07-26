@@ -1,20 +1,21 @@
 ﻿print("State your name: ")
 string name = readline()
 
+println()
 print("name is a ", typename(name))
 
 if ((name ?? "") != "") {
-    print(" and is not empty", EOL)
+    println(" and is not empty")
 } else {
-    print(" and is empty", EOL)
+    println(" and is empty")
 }
 
 if (name == "John") {
-    print("Hello John", EOL)
+    println("Hello John")
 } else {
     if (name != "") {
-        print("Welcome back, ", name, EOL)
+        println("Welcome back, ", name)
     } else {
-        print("Welcome", EOL)
+        println("Welcome")
     }
 }
