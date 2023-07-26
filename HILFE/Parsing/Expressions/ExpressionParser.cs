@@ -31,10 +31,11 @@ public class ExpressionParser
         var currentGroup = new List<Token>();
         var expressionDepth = 0;
         var codeBlockDepth = 0;
+        var arrayDepth = 0;
 
         foreach (var token in tokens)
         {
-            if (token.Type is TokenType.CommaSymbol && expressionDepth == 0 && codeBlockDepth == 0)
+            if (token.Type is TokenType.CommaSymbol && expressionDepth == 0 && codeBlockDepth == 0 && arrayDepth == 0)
             {
                 parser.Add(currentGroup);
 
@@ -59,6 +60,12 @@ public class ExpressionParser
                         break;
                     case TokenType.ClosingCurlyBracket:
                         codeBlockDepth--;
+                        break;
+                    case TokenType.OpeningSquareBracket:
+                        arrayDepth++;
+                        break;
+                    case TokenType.ClosingSquareBracket:
+                        arrayDepth--;
                         break;
                 }
             }
@@ -157,6 +164,14 @@ public class ExpressionParser
                 tokenQueue.Dequeue(TokenType.ClosingParentheses);
 
                 return innerExpression;
+            case TokenType.OpeningSquareBracket:
+                var arrayExpressionTokens = tokenQueue.DequeueUntil(TokenType.ClosingSquareBracket);
+
+                tokenQueue.Dequeue(TokenType.ClosingSquareBracket);
+
+                var arrayExpressions = await ParseExpressionsAsync(arrayExpressionTokens, cancellationToken).ToListAsync(cancellationToken);
+
+                return new ArrayExpression(arrayExpressions);
             default:
                 throw new InvalidOperationException($"Invalid expression. Got token: {currentToken}");
         }

@@ -38,13 +38,15 @@ public enum TokenType
     ReturnKeyword,
     UnderscoreSymbol,
     LineComment,
+    OpeningSquareBracket,
+    ClosingSquareBracket
 }
 
 public static class TokenTypes
 {
     public static bool IsKnownTypeName(this string name)
     {
-        return name is "string" or "number" or "bool" or "function";
+        return name is "string" or "number" or "bool" or "function" or "array";
     }
 
     public static bool TryParseKeyword(this string name, [NotNullWhen(true)] out TokenType? type)
@@ -98,6 +100,12 @@ public static class TokenTypes
                 return true;
             case ')':
                 type = TokenType.ClosingParentheses;
+                return true;
+            case '[':
+                type = TokenType.OpeningSquareBracket;
+                return true;
+            case ']':
+                type = TokenType.ClosingSquareBracket;
                 return true;
             case '=':
                 type = TokenType.EqualsSymbol;
