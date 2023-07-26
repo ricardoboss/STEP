@@ -35,7 +35,9 @@ public class Scope
 
     public void SetVariable(string identifier, ExpressionResult value)
     {
-        if (TryGetVariable(identifier, out var variable))
+        // only look for variable in the current scope for assigning
+        // this enables use to shadow variables from parent scopes
+        if (identifiers.TryGetValue(identifier, out var variable))
         {
             variable.Assign(value);
         }
