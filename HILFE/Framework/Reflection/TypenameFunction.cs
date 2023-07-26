@@ -25,5 +25,5 @@ public class TypenameFunction : NativeFunction
 
     /// <inheritdoc />
     [ExcludeFromCodeCoverage]
-    protected override string DebugParamsString => "variable";
+    protected override string DebugParamsString => "any value";
 }

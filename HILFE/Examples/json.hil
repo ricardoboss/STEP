@@ -1,0 +1,8 @@
+string body = '"text"'
+println(jsonDecode(body))
+println(jsonEncode(true))
+println(jsonEncode(null))
+println(jsonEncode("text"))
+println(jsonEncode(123))
+println(jsonEncode(123.4563))
+println(jsonEncode([1,2,3]))
