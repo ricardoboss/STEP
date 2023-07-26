@@ -40,7 +40,7 @@ public class UserDefinedFunctionDefintion : FunctionDefinition
 
         await interpreter.InterpretAsync(body.ToAsyncEnumerable(), cancellationToken);
 
-        return interpreter.PopScope().TryGetResult(out var result) ? result : new("void", IsVoid: true);
+        return interpreter.PopScope().TryGetResult(out var result) ? result : ExpressionResult.Void;
     }
 
     protected override string DebugParamsString => string.Join(", ", parameters.Select(t => $"{t.type} {t.identifier}"));

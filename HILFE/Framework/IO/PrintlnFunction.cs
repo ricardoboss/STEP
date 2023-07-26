@@ -1,27 +1,8 @@
-using HILFE.Interpreting;
-using HILFE.Parsing.Expressions;
-
 namespace HILFE.Framework.IO;
 
-public class PrintlnFunction : NativeFunction
+public class PrintlnFunction : PrintFunction
 {
     /// <inheritdoc />
-    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
-    {
-        if (interpreter.StdOut is not { } stdOut)
-            return new("void", IsVoid: true);
-
-        var stringArgs = await arguments
-            .EvaluateAsync(interpreter, cancellationToken)
-            .Select(r => r.Value?.ToString() ?? string.Empty)
-            .Cast<string>()
-            .ToListAsync(cancellationToken);
-
-        await stdOut.WriteLineAsync(string.Join("", stringArgs));
-
-        return new("void", IsVoid: true);
-    }
-
-    /// <inheritdoc />
-    protected override string DebugParamsString => "string ...args";
+    protected override async Task Print(TextWriter output, string value, CancellationToken cancellationToken = default)
+        => await output.WriteLineAsync(value.AsMemory(), cancellationToken);
 }
