@@ -1,4 +1,5 @@
-﻿using HILFE.Interpreting;
+﻿using System.Diagnostics.CodeAnalysis;
+using HILFE.Interpreting;
 
 namespace HILFE.Parsing.Statements;
 
@@ -12,6 +13,7 @@ public abstract class Statement
     public StatementType Type { get; }
 
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     public override string ToString()
     {
         var content = DebugRenderContent();
@@ -21,6 +23,7 @@ public abstract class Statement
         return $"[{Type}{content}]";
     }
 
+    [ExcludeFromCodeCoverage]
     protected virtual string DebugRenderContent() => "";
 
     public abstract Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default);

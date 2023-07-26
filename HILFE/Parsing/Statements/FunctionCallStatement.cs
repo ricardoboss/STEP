@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using HILFE.Interpreting;
 using HILFE.Parsing.Expressions;
 using HILFE.Tokenizing;
@@ -31,6 +32,7 @@ public class FunctionCallStatement : Statement
     }
 
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     protected override string DebugRenderContent()
     {
         return $"{identifier}({string.Join(',', args)})";

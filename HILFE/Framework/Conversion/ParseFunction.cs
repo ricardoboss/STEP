@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using HILFE.Interpreting;
 using HILFE.Parsing.Expressions;
 
@@ -41,5 +42,6 @@ public class ParseFunction : NativeFunction
     }
 
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     protected override string DebugParamsString => "string type, any value";
 }

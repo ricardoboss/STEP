@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using HILFE.Interpreting;
 using HILFE.Parsing.Expressions;
 
@@ -35,6 +36,7 @@ public class IfStatement : Statement
     }
 
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     protected override string DebugRenderContent()
     {
         return $"if ({condition}) {{ [{statements.Count} statements] }}";

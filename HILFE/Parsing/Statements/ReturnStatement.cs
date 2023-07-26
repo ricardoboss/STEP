@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using HILFE.Interpreting;
 using HILFE.Parsing.Expressions;
 
@@ -23,5 +24,6 @@ public class ReturnStatement : Statement
     }
 
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     protected override string DebugRenderContent() => expression.ToString();
 }

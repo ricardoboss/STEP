@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using HILFE.Interpreting;
 using HILFE.Parsing.Expressions;
 
@@ -62,6 +63,7 @@ public class IfElseStatement : Statement
     }
 
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     protected override string DebugRenderContent()
     {
         var secondStr = secondCondition is null ? "" : $"if ({secondCondition})";

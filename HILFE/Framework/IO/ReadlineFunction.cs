@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using HILFE.Interpreting;
 using HILFE.Parsing.Expressions;
 
@@ -20,5 +21,6 @@ public class ReadlineFunction : NativeFunction
     }
 
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     protected override string DebugParamsString => string.Empty;
 }

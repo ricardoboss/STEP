@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using HILFE.Interpreting;
 using HILFE.Parsing.Expressions;
@@ -38,5 +39,6 @@ public class PrintFunction : NativeFunction
         => await output.WriteAsync(value.AsMemory(), cancellationToken);
 
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     protected override string DebugParamsString => "string ...args";
 }

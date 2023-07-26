@@ -1,4 +1,5 @@
-﻿using HILFE.Interpreting;
+﻿using System.Diagnostics.CodeAnalysis;
+using HILFE.Interpreting;
 using HILFE.Parsing.Expressions;
 using HILFE.Tokenizing;
 
@@ -30,6 +31,7 @@ public class VariableAssignmentStatement : Statement
     }
 
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     protected override string DebugRenderContent()
     {
         return $"{identifier} = {expression}";

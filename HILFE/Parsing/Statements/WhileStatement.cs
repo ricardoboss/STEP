@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using HILFE.Interpreting;
 using HILFE.Parsing.Expressions;
 
@@ -41,7 +42,9 @@ public class WhileStatement : Statement
 
         interpreter.PopScope();
     }
-    
+
+    /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     protected override string DebugRenderContent()
     {
         return $"{condition} {{ [{statements.Count} statements] }}";
