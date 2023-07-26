@@ -1,9 +1,9 @@
 using HILFE.Interpreting;
 using HILFE.Parsing.Expressions;
 
-namespace HILFE.Framework.Functions;
+namespace HILFE.Framework.Reflection;
 
-public class TypenameFunction : FunctionDefinition
+public class TypenameFunction : NativeFunction
 {
     /// <inheritdoc />
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
@@ -18,8 +18,5 @@ public class TypenameFunction : FunctionDefinition
     }
 
     /// <inheritdoc />
-    protected override string DebugBodyString => "[native code]";
-
-    /// <inheritdoc />
-    protected override string DebugParamsString => "object variable";
+    protected override string DebugParamsString => "variable";
 }

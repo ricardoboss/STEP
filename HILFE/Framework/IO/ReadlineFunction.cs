@@ -1,9 +1,9 @@
 using HILFE.Interpreting;
 using HILFE.Parsing.Expressions;
 
-namespace HILFE.Framework.Functions;
+namespace HILFE.Framework.IO;
 
-public class ReadlineFunction : FunctionDefinition
+public class ReadlineFunction : NativeFunction
 {
     /// <inheritdoc />
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
@@ -20,5 +20,5 @@ public class ReadlineFunction : FunctionDefinition
     }
 
     /// <inheritdoc />
-    protected override string DebugBodyString => "[native code]";
+    protected override string DebugParamsString => string.Empty;
 }

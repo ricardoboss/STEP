@@ -2,9 +2,9 @@
 using HILFE.Interpreting;
 using HILFE.Parsing.Expressions;
 
-namespace HILFE.Framework.Functions;
+namespace HILFE.Framework.Conversion;
 
-public class ParseFunction : FunctionDefinition
+public class ParseFunction : NativeFunction
 {
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
@@ -39,9 +39,6 @@ public class ParseFunction : FunctionDefinition
                 return new("null");
         }
     }
-
-    /// <inheritdoc />
-    protected override string DebugBodyString => "[native code]";
 
     /// <inheritdoc />
     protected override string DebugParamsString => "string type, any value";

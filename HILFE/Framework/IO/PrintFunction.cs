@@ -1,9 +1,9 @@
 using HILFE.Interpreting;
 using HILFE.Parsing.Expressions;
 
-namespace HILFE.Framework.Functions;
+namespace HILFE.Framework.IO;
 
-public class PrintlnFunction : FunctionDefinition
+public class PrintFunction : NativeFunction
 {
     /// <inheritdoc />
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
@@ -17,13 +17,10 @@ public class PrintlnFunction : FunctionDefinition
             .Cast<string>()
             .ToListAsync(cancellationToken);
 
-        await stdOut.WriteLineAsync(string.Join("", stringArgs));
+        await stdOut.WriteAsync(string.Join("", stringArgs));
 
         return new("void", IsVoid: true);
     }
-
-    /// <inheritdoc />
-    protected override string DebugBodyString => "[native code]";
 
     /// <inheritdoc />
     protected override string DebugParamsString => "string ...args";

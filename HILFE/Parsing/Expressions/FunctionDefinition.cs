@@ -6,10 +6,10 @@ public abstract class FunctionDefinition
 {
     public abstract Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default);
 
-    protected virtual string DebugParamsString => string.Empty;
+    protected abstract string DebugParamsString { get; }
 
-    protected virtual string DebugBodyString => string.Empty;
-    
+    protected abstract string DebugBodyString { get; }
+
     /// <inheritdoc />
     public override string ToString()
     {
