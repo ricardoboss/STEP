@@ -33,7 +33,7 @@ public abstract class Expression
         return new BinaryExpression("^", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType)
-                throw new InterpreterException($"Cannot pow values of types {a.ValueType} with {b.ValueType}");
+                throw new IncompatibleTypesException(a.ValueType, b.Value, "pow");
 
             return new(a.ValueType, Math.Pow(a.Value, b.Value));
         });
@@ -44,7 +44,7 @@ public abstract class Expression
         return new BinaryExpression("+", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType)
-                throw new InterpreterException($"Cannot add values of types {a.ValueType} and {b.ValueType}");
+                throw new IncompatibleTypesException(a.ValueType, b.Value, "add");
 
             return new(a.ValueType, a.Value + b.Value);
         });
@@ -55,7 +55,7 @@ public abstract class Expression
         return new BinaryExpression("-", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType || a.ValueType != "number")
-                throw new InterpreterException($"Cannot subtract values of types {a.ValueType} and {b.ValueType}");
+                throw new IncompatibleTypesException(a.ValueType, b.Value, "subtract");
 
             return new(a.ValueType, a.Value - b.Value);
         });
@@ -66,7 +66,7 @@ public abstract class Expression
         return new BinaryExpression("*", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType || a.ValueType != "number")
-                throw new InterpreterException($"Cannot multiply values of types {a.ValueType} and {b.ValueType}");
+                throw new IncompatibleTypesException(a.ValueType, b.Value, "multiply");
 
             return new(a.ValueType, a.Value * b.Value);
         });
@@ -77,7 +77,7 @@ public abstract class Expression
         return new BinaryExpression("/", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType || a.ValueType != "number")
-                throw new InterpreterException($"Cannot divide values of types {a.ValueType} and {b.ValueType}");
+                throw new IncompatibleTypesException(a.ValueType, b.Value, "divide");
 
             return new(a.ValueType, a.Value / b.Value);
         });
@@ -88,7 +88,7 @@ public abstract class Expression
         return new BinaryExpression("%", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType || a.ValueType != "number")
-                throw new InterpreterException($"Cannot modulo values of types {a.ValueType} and {b.ValueType}");
+                throw new IncompatibleTypesException(a.ValueType, b.Value, "modulo");
 
             return new(a.ValueType, a.Value % b.Value);
         });
@@ -99,7 +99,7 @@ public abstract class Expression
         return new BinaryExpression("<", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType)
-                throw new InterpreterException($"Cannot compare values of types {a.ValueType} and {b.ValueType}");
+                throw new IncompatibleTypesException(a.ValueType, b.Value, "compare");
 
             return new("bool", a.Value < b.Value);
         });
@@ -110,7 +110,7 @@ public abstract class Expression
         return new BinaryExpression("<=", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType)
-                throw new InterpreterException($"Cannot compare values of types {a.ValueType} and {b.ValueType}");
+                throw new IncompatibleTypesException(a.ValueType, b.Value, "compare");
 
             return new("bool", a.Value <= b.Value);
         });
@@ -121,7 +121,7 @@ public abstract class Expression
         return new BinaryExpression(">", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType)
-                throw new InterpreterException($"Cannot compare values of types {a.ValueType} and {b.ValueType}");
+                throw new IncompatibleTypesException(a.ValueType, b.Value, "compare");
 
             return new("bool", a.Value > b.Value);
         });
@@ -132,7 +132,7 @@ public abstract class Expression
         return new BinaryExpression(">=", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType)
-                throw new InterpreterException($"Cannot compare values of types {a.ValueType} and {b.ValueType}");
+                throw new IncompatibleTypesException(a.ValueType, b.Value, "compare");
 
             return new("bool", a.Value >= b.Value);
         });
@@ -157,7 +157,7 @@ public abstract class Expression
         return new BinaryExpression("||", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType || a.ValueType != "bool")
-                throw new InterpreterException($"Cannot apply '||' to values of types {a.ValueType} and {b.ValueType}");
+                throw new IncompatibleTypesException(a.ValueType, b.Value, "compare");
 
             return new("bool", a.Value || b.Value);
         });
@@ -168,7 +168,7 @@ public abstract class Expression
         return new BinaryExpression("&&", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType || a.ValueType != "bool")
-                throw new InterpreterException($"Cannot apply '&&' to values of types {a.ValueType} and {b.ValueType}");
+                throw new IncompatibleTypesException(a.ValueType, b.Value, "compare");
             
             return new("bool", a.Value && b.Value);
         });
@@ -182,7 +182,7 @@ public abstract class Expression
                 return b;
 
             if (a.ValueType != b.ValueType)
-                throw new InterpreterException($"Cannot apply '??' to values of types {a.ValueType} and {b.ValueType}");
+                throw new IncompatibleTypesException(a.ValueType, b.Value, "coalesce");
 
             return new(a.ValueType, a.Value ?? b.Value);
         });
@@ -192,10 +192,9 @@ public abstract class Expression
     {
         return new UnaryExpression("!", expression, result =>
         {
-            if (result.ValueType != "bool")
-                throw new InterpreterException($"Cannot apply 'not' to values of type {result.ValueType}");
+            var value = result.ExpectBool();
 
-            return new("bool", !result.Value);
+            return new("bool", !value);
         });
     }
 

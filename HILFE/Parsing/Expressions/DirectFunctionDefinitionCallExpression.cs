@@ -16,9 +16,9 @@ public class DirectFunctionDefinitionCallExpression : Expression
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
         var definition = await definitionExpression.EvaluateAsync(interpreter, cancellationToken);
-        if (definition.ValueType != "function" || definition.Value is not FunctionDefinition functionDefinition)
-            throw new InterpreterException($"Expected a function definition, but got {definition}");
-        
+        if (definition is not { ValueType: "function", Value: FunctionDefinition functionDefinition })
+            throw new InvalidResultTypeException("function", definition.ValueType);
+
         return await functionDefinition.EvaluateAsync(interpreter, args, cancellationToken);
     }
 

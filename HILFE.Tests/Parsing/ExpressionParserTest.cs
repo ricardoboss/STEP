@@ -1,5 +1,4 @@
 using HILFE.Interpreting;
-using HILFE.Parsing;
 using HILFE.Parsing.Expressions;
 using HILFE.Tokenizing;
 
@@ -11,8 +10,9 @@ public class ExpressionParserTest
     public async Task TestParseVariableExpression()
     {
         var interpreter = new Interpreter();
-        interpreter.CurrentScope.SetVariable(new("variable", "bool", true));
+        interpreter.CurrentScope.SetVariable("variable", ExpressionResult.True);
         var expression = await ExpressionParser.ParseAsync(new [] { new Token(TokenType.Identifier, "variable") });
+
 
         var result = await expression.EvaluateAsync(interpreter);
 

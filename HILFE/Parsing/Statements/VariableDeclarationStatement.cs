@@ -33,16 +33,17 @@ public class VariableDeclarationStatement : Statement
         {
             // only declare, no value assigned
 
-            interpreter.CurrentScope.SetVariable(new(identifier.Value, type.Value, null));
+            interpreter.CurrentScope.SetVariable(identifier.Value, new(type.Value));
 
             return;
         }
 
         var result = await expression.EvaluateAsync(interpreter, cancellationToken);
-        if (result is null or { IsVoid: true })
-            throw new InterpreterException("Cannot assign a void value to a variable");
 
-        interpreter.CurrentScope.SetVariable(new(identifier.Value, type.Value, result.Value));
+        if (result.ValueType != type.Value)
+            throw new IncompatibleTypesException(result.ValueType, type.Value, "assign");
+
+        interpreter.CurrentScope.SetVariable(identifier.Value, result);
     }
 
     /// <inheritdoc />

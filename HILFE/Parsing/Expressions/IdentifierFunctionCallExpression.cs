@@ -16,13 +16,8 @@ public class IdentifierFunctionCallExpression : Expression
 
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
-        var functionVariable = interpreter.CurrentScope.GetByIdentifier(identifier.Value);
-        if (functionVariable.TypeName != "function")
-            throw new InterpreterException($"Cannot call non-function variable {identifier.Value} (type {functionVariable.TypeName}))");
-        
-        if (functionVariable.Value is not FunctionDefinition definition)
-            throw new InterpreterException($"Function variable does not contain a {nameof(FunctionDefinition)}, instead it contains a {functionVariable.Value?.GetType().Name}");
-
+        var functionVariable = interpreter.CurrentScope.GetVariable(identifier.Value);
+        var definition = functionVariable.Value.ExpectFunction();
         return await definition.EvaluateAsync(interpreter, args, cancellationToken);
     }
 

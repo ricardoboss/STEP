@@ -10,15 +10,14 @@ public class ParseFunction : NativeFunction
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
         if (arguments.Count != 2)
-            throw new InterpreterException($"Invalid number of arguments, expected 2, got {arguments.Count}");
+            throw new InvalidArgumentCountException(2, arguments.Count);
 
         var type = await arguments[0].EvaluateAsync(interpreter, cancellationToken);
-        if (type is not { ValueType: "string", Value: string targetType })
-            throw new InterpreterException($"Invalid type, expected string, got {type.ValueType}");
+        var targetType = type.ExpectString();
 
-        var (sourceType, sourceValue, isVoid) = await arguments[1].EvaluateAsync(interpreter, cancellationToken);
-        if (isVoid)
-            throw new InterpreterException("Cannot parse void result");
+        var source = await arguments[1].EvaluateAsync(interpreter, cancellationToken);
+        source.ThrowIfVoid();
+        var (sourceType, sourceValue, _) = source;
 
         if (targetType == sourceType)
             return new(targetType, sourceValue);

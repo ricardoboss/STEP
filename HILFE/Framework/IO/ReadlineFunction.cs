@@ -10,8 +10,8 @@ public class ReadlineFunction : NativeFunction
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
         if (arguments.Count is not 0)
-            throw new InterpreterException("readline takes no arguments");
-        
+            throw new InvalidArgumentCountException(0, arguments.Count);
+
         if (interpreter.StdIn is not { } stdIn)
             return ExpressionResult.Null;
 

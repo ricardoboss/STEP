@@ -1,11 +1,16 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace HILFE.Interpreting;
 
-[SuppressMessage("Design", "CA1032:Implement standard exception constructors")]
-public class InterpreterException : Exception
+public abstract class InterpreterException : Exception
 {
-    public InterpreterException(string message) : base(message)
+    protected InterpreterException()
+    {
+    }
+
+    protected InterpreterException(string message) : base(message)
+    {
+    }
+
+    protected InterpreterException(string message, Exception innerException) : base(message, innerException)
     {
     }
 }

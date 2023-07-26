@@ -6,9 +6,9 @@ namespace HILFE.Parsing.Statements;
 
 public class ReturnStatement : Statement
 {
-    private readonly Expression expression;
+    private readonly Expression? expression;
     
-    public ReturnStatement(Expression expression) : base(StatementType.ReturnStatement)
+    public ReturnStatement(Expression? expression) : base(StatementType.ReturnStatement)
     {
         this.expression = expression;
     }
@@ -16,14 +16,15 @@ public class ReturnStatement : Statement
     /// <inheritdoc />
     public override async Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
-        var result = await expression.EvaluateAsync(interpreter, cancellationToken);
-        if (result is null or { IsVoid: true })
-            throw new InterpreterException("Cannot assign a void value to a variable");
+        var result = ExpressionResult.Void;
+
+        if (expression is not null)
+            result = await expression.EvaluateAsync(interpreter, cancellationToken);
 
         interpreter.CurrentScope.SetResult(result);
     }
 
     /// <inheritdoc />
     [ExcludeFromCodeCoverage]
-    protected override string DebugRenderContent() => expression.ToString();
+    protected override string DebugRenderContent() => expression?.ToString() ?? ExpressionResult.Void.ToString();
 }

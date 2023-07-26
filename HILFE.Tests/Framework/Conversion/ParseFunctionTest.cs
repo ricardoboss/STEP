@@ -23,7 +23,7 @@ public class ParseFunctionTest
         var interpreter = new Interpreter();
         var function = new ParseFunction();
 
-        await Assert.ThrowsAsync<InterpreterException>(() => function.EvaluateAsync(interpreter, new[] { ConstantExpression.String("text"), ConstantExpression.Void }));
+        await Assert.ThrowsAsync<InvalidResultTypeException>(() => function.EvaluateAsync(interpreter, new[] { ConstantExpression.String("text"), ConstantExpression.Void }));
     }
 
     private class ParseData : TheoryData<string, Expression, ExpressionResult>

@@ -16,7 +16,7 @@ internal class ContinueStatement : Statement
     {
         var continueDepthResult = await expression.EvaluateAsync(interpreter, cancellationToken);
         if (continueDepthResult is not { ValueType: "number" } or { Value: <= 0 })
-            throw new InterpreterException($"Continue depth must be a positive number, got {continueDepthResult}");
+            throw new InvalidDepthResult("continue", continueDepthResult);
 
         interpreter.ContinueDepth += continueDepthResult.Value;
     }

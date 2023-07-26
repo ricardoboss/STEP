@@ -16,7 +16,7 @@ public class BreakStatement: Statement
     {
         var breakDepthResult = await expression.EvaluateAsync(interpreter, cancellationToken);
         if (breakDepthResult is not { ValueType: "number" } or { Value: <= 0 })
-            throw new InterpreterException($"Break depth must be a positive number, got {breakDepthResult}");
+            throw new InvalidDepthResult("break", breakDepthResult);
 
         interpreter.BreakDepth += breakDepthResult.Value;
     }

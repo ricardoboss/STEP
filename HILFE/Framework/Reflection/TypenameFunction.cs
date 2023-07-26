@@ -9,13 +9,16 @@ public class TypenameFunction : NativeFunction
     /// <inheritdoc />
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
+        if (arguments.Count is not 1)
+            throw new InvalidArgumentCountException(1, arguments.Count);
+
         var exp = arguments.Single();
         if (exp is not VariableExpression varExp)
-            throw new InterpreterException($"Invalid type, expected {nameof(VariableExpression)}, got {exp.GetType().Name}");
+            throw new InvalidExpressionTypeException(nameof(VariableExpression), exp.GetType().Name);
 
-        var variable = interpreter.CurrentScope.GetByIdentifier(varExp.Identifier.Value);
+        var variable = interpreter.CurrentScope.GetVariable(varExp.Identifier.Value);
 
-        return new("string", variable.TypeName);
+        return new("string", variable.Value.ValueType);
     }
 
     /// <inheritdoc />

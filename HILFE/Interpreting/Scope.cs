@@ -10,7 +10,7 @@ public class Scope
 {
     public static readonly Scope GlobalScope = new();
 
-    private readonly Dictionary<string, TypedVariable> identifiers = new();
+    private readonly Dictionary<string, Variable> identifiers = new();
     private readonly Scope? parentScope;
 
     public Scope(Scope parent) => parentScope = parent;
@@ -20,58 +20,65 @@ public class Scope
         parentScope = null;
 
         // globally defined identifiers
-        SetVariable(new("print", "function", new PrintFunction()));
-        SetVariable(new("println", "function", new PrintlnFunction()));
-        SetVariable(new("readline", "function", new ReadlineFunction()));
-        SetVariable(new("typename", "function", new TypenameFunction()));
-        SetVariable(new("parse", "function", new ParseFunction()));
+        SetVariable("print", new("function", new PrintFunction()));
+        SetVariable("println", new("function", new PrintlnFunction()));
+        SetVariable("readline", new("function", new ReadlineFunction()));
+        SetVariable("typename", new("function", new TypenameFunction()));
+        SetVariable("parse", new("function", new ParseFunction()));
 
-        SetVariable(new("null", "null", null));
+        SetVariable("null", ExpressionResult.Null);
 
-        SetVariable(new("EOL", "string", Environment.NewLine));
+        SetVariable("EOL", new("string", Environment.NewLine));
     }
 
-    public void SetVariable(TypedVariable variable)
+    public void SetVariable(string identifier, ExpressionResult value)
     {
-        identifiers[variable.Identifier] = variable;
+        if (TryGetVariable(identifier, out var variable))
+        {
+            variable.Assign(value);
+        }
+        else
+        {
+            identifiers[identifier] = new(identifier, value);
+        }
     }
 
-    private bool TryGetByIdentifier(string identifier, [NotNullWhen(true)] out TypedVariable? variable)
+    private bool TryGetVariable(string identifier, [NotNullWhen(true)] out Variable? variable)
     {
         if (identifiers.TryGetValue(identifier, out variable))
             return true;
 
         if (parentScope != null)
-            return parentScope.TryGetByIdentifier(identifier, out variable);
+            return parentScope.TryGetVariable(identifier, out variable);
 
         variable = null;
         return false;
     }
 
-    public TypedVariable GetByIdentifier(string identifier)
+    public Variable GetVariable(string identifier)
     {
-        if (TryGetByIdentifier(identifier, out var variable))
+        if (TryGetVariable(identifier, out var variable))
             return variable;
 
         throw new UndefinedIdentifierException(identifier);
     }
 
-    public void SetByIdentifier(string identifier, dynamic? value)
+    public void UpdateValue(string identifier, ExpressionResult value)
     {
-        var variable = GetByIdentifier(identifier);
+        var variable = GetVariable(identifier);
 
         variable.Assign(value);
     }
 
-    public void SetResult(ExpressionResult result) => SetVariable(new("$$RETURN", result.ValueType, result.Value));
+    public void SetResult(ExpressionResult result) => SetVariable("$$RETURN", result);
 
     public bool TryGetResult([NotNullWhen(true)] out ExpressionResult? result)
     {
         result = null;
-        if (!TryGetByIdentifier("$$RETURN", out var resultVar))
+        if (!TryGetVariable("$$RETURN", out var resultVar))
             return false;
 
-        result = new(resultVar.TypeName, resultVar.Value, IsVoid: resultVar.TypeName == "void");
+        result = resultVar.Value;
         return true;
     }
 }

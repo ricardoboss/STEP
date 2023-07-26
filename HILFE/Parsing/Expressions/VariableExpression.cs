@@ -14,9 +14,9 @@ public class VariableExpression : Expression
 
     public override Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
-        var variable = interpreter.CurrentScope.GetByIdentifier(Identifier.Value);
+        var variable = interpreter.CurrentScope.GetVariable(Identifier.Value);
 
-        return Task.FromResult<ExpressionResult>(new(variable.TypeName, variable.Value));
+        return Task.FromResult(variable.Value);
     }
 
     protected override string DebugDisplay() => Identifier.ToString();

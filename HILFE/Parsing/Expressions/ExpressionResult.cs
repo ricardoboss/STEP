@@ -1,3 +1,5 @@
+using HILFE.Interpreting;
+
 namespace HILFE.Parsing.Expressions;
 
 public record ExpressionResult(string ValueType, dynamic? Value = null, bool IsVoid = false)
@@ -5,6 +7,10 @@ public record ExpressionResult(string ValueType, dynamic? Value = null, bool IsV
     public static ExpressionResult Void { get; } = new("void", IsVoid: true);
 
     public static ExpressionResult Null { get; } = new("null");
+
+    public static ExpressionResult True { get; } = new("bool", true);
+
+    public static ExpressionResult False { get; } = new("bool", false);
 
     /// <inheritdoc />
     public virtual bool Equals(ExpressionResult? other)
@@ -30,5 +36,41 @@ public record ExpressionResult(string ValueType, dynamic? Value = null, bool IsV
         var display = IsVoid ? "<void>" : Value is not null ? $"({ValueType}) {Value}" : "<null>";
 
         return $"<{nameof(ExpressionResult)}: {display}>";
+    }
+
+    public string ExpectString()
+    {
+        if (ValueType is not "string")
+            throw new InvalidResultTypeException("string", ValueType);
+
+        return Value?.ToString() ?? string.Empty;
+    }
+
+    public bool ExpectBool()
+    {
+        if (ValueType is not "bool")
+            throw new InvalidResultTypeException("bool", ValueType);
+
+        return Value is true;
+    }
+
+    public FunctionDefinition ExpectFunction()
+    {
+        if (ValueType is not "function" || Value is not FunctionDefinition definition)
+            throw new InvalidResultTypeException("function", ValueType);
+
+        return definition;
+    }
+
+    public void ThrowIfVoid(string? expected = null)
+    {
+        if (ValueType is "void" || IsVoid)
+            throw new InvalidResultTypeException(expected ?? "non-void", "void");
+    }
+
+    public void ThrowIfNotVoid()
+    {
+        if (ValueType is not "void" || !IsVoid)
+            throw new InvalidResultTypeException("void", ValueType);
     }
 }
