@@ -14,19 +14,13 @@ public class JsonDecodeFunction : NativeFunction
         var source = arguments.Single();
         var result = await source.EvaluateAsync(interpreter, cancellationToken);
         var json = result.ExpectString();
-
-        var value = JsonSerializer.Deserialize<dynamic>(json);
-        var valueType = value switch
+        return JsonSerializer.Deserialize<ExpressionResult>(json, new JsonSerializerOptions
         {
-            string => "string",
-            int or double or float => "number",
-            bool => "bool",
-            null => "null",
-            List<dynamic> => "array",
-            _ => "object",
-        };
-
-        return new(valueType, value);
+            Converters =
+            {
+                new ExpressionResultJsonConverter(),
+            },
+        }) ?? ExpressionResult.Null;
     }
 
     /// <inheritdoc />

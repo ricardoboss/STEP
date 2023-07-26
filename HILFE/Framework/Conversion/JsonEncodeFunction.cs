@@ -13,9 +13,12 @@ public class JsonEncodeFunction : NativeFunction
     {
         var exp = arguments.Single();
         var result = await exp.EvaluateAsync(interpreter, cancellationToken);
-        var json = JsonSerializer.Serialize(result.Value, new JsonSerializerOptions
+        var json = JsonSerializer.Serialize(result, new JsonSerializerOptions
         {
-            WriteIndented = true,
+            Converters =
+            {
+                new ExpressionResultJsonConverter(),
+            },
         });
         return new("string", json);
     }

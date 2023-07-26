@@ -20,6 +20,8 @@ public record ExpressionResult(string ValueType, dynamic? Value = null, bool IsV
 
     public static ExpressionResult Function(FunctionDefinition definition) => new("function", definition);
 
+    public static ExpressionResult Array(IEnumerable<ExpressionResult> items) => new("array", items);
+
     /// <inheritdoc />
     public virtual bool Equals(ExpressionResult? other)
     {
