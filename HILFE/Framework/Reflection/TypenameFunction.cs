@@ -6,6 +6,8 @@ namespace HILFE.Framework.Reflection;
 
 public class TypenameFunction : NativeFunction
 {
+    public const string Identifier = "typename";
+
     /// <inheritdoc />
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {

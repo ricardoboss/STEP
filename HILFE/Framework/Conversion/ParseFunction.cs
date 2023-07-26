@@ -7,6 +7,8 @@ namespace HILFE.Framework.Conversion;
 
 public class ParseFunction : NativeFunction
 {
+    public const string Identifier = "parse";
+
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
         if (arguments.Count != 2)

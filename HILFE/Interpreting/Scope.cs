@@ -20,11 +20,11 @@ public class Scope
         parentScope = null;
 
         // globally defined identifiers
-        SetVariable("print", new("function", new PrintFunction()));
-        SetVariable("println", new("function", new PrintlnFunction()));
-        SetVariable("readline", new("function", new ReadlineFunction()));
-        SetVariable("typename", new("function", new TypenameFunction()));
-        SetVariable("parse", new("function", new ParseFunction()));
+        SetVariable(PrintFunction.Identifier, new("function", new PrintFunction()));
+        SetVariable(PrintlnFunction.Identifier, new("function", new PrintlnFunction()));
+        SetVariable(ReadlineFunction.Identifier, new("function", new ReadlineFunction()));
+        SetVariable(TypenameFunction.Identifier, new("function", new TypenameFunction()));
+        SetVariable(ParseFunction.Identifier, new("function", new ParseFunction()));
 
         SetVariable("null", ExpressionResult.Null);
 
