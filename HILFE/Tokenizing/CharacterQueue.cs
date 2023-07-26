@@ -28,27 +28,6 @@ public class CharacterQueue
         return character;
     }
 
-    public char[] Dequeue(int count)
-    {
-        var characters = new char[count];
-
-        for (var i = 0; i < count; i++)
-            characters[i] = Dequeue();
-
-        return characters;
-    }
-
-    public char Dequeue(params char[] allowed)
-    {
-        if (!TryDequeue(out var character))
-            throw new TokenizerException($"Unexpected end of {nameof(CharacterQueue)}");
-
-        if (!allowed.Contains(character))
-            throw new TokenizerException($"Unexpected character '{character}'");
-
-        return character;
-    }
-
     public bool TryPeek(int offset, out char character)
     {
         character = charQueue.Skip(offset).FirstOrDefault();
@@ -58,7 +37,7 @@ public class CharacterQueue
 
     public bool TryPeek(out char character) => TryPeek(0, out character);
 
-    public IReadOnlyList<char> DequeueUntil(char c)
+    public IEnumerable<char> DequeueUntil(char c)
     {
         var characters = new List<char>();
 

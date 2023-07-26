@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using HILFE.Interpreting;
 
 namespace HILFE.Parsing.Expressions;
@@ -11,6 +12,7 @@ public abstract class FunctionDefinition
     protected abstract string DebugBodyString { get; }
 
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     public override string ToString()
     {
         var paramStr = DebugParamsString;

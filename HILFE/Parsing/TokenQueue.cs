@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using HILFE.Tokenizing;
 
@@ -147,47 +146,4 @@ public class TokenQueue
     public bool IsEmpty => tokenList.Count == 0;
 
     public bool IsNotEmpty => tokenList.Count > 0;
-
-    public IEnumerable<Token> Consume() => new ConsumingTokenQueue(this);
-
-    private sealed class ConsumingTokenQueue : IEnumerable<Token>
-    {
-        private readonly TokenQueue tokenQueue;
-
-        public ConsumingTokenQueue(TokenQueue tokenQueue) => this.tokenQueue = tokenQueue;
-
-        /// <inheritdoc />
-        public IEnumerator<Token> GetEnumerator() => new TokenQueueConsumer(tokenQueue);
-
-        /// <inheritdoc />
-        IEnumerator IEnumerable.GetEnumerator() => new TokenQueueConsumer(tokenQueue);
-    }
-
-    private sealed class TokenQueueConsumer : IEnumerator<Token>
-    {
-        private readonly TokenQueue tokenQueue;
-
-        public TokenQueueConsumer(TokenQueue tokenQueue) => this.tokenQueue = tokenQueue;
-
-        /// <inheritdoc />
-        public bool MoveNext() => tokenQueue.TryDequeue(out _);
-
-        /// <inheritdoc />
-        public Token Current => tokenQueue.Peek();
-
-        /// <inheritdoc />
-        object IEnumerator.Current => Current;
-
-        /// <inheritdoc />
-        public void Reset()
-        {
-            // do nothing
-        }
-
-        /// <inheritdoc />
-        public void Dispose()
-        {
-            // do nothing
-        }
-    }
 }

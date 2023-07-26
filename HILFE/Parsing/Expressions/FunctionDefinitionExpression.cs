@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using HILFE.Interpreting;
 using HILFE.Parsing.Statements;
 using HILFE.Tokenizing;
@@ -24,6 +25,7 @@ public class FunctionDefinitionExpression : Expression
     }
 
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     protected override string DebugDisplay()
     {
         var paramsString = string.Join(", ", parameters.Select(t => $"{t.type} {t.identifier}"));

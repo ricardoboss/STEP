@@ -1,4 +1,5 @@
-﻿using HILFE.Interpreting;
+﻿using System.Diagnostics.CodeAnalysis;
+using HILFE.Interpreting;
 
 namespace HILFE.Parsing.Expressions;
 
@@ -207,6 +208,7 @@ public abstract class Expression
     public abstract Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken = default);
 
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     public override string ToString()
     {
         var debugDisplay = DebugDisplay();
@@ -216,5 +218,6 @@ public abstract class Expression
         return $"<{GetType().Name}{debugDisplay}>";
     }
 
+    [ExcludeFromCodeCoverage]
     protected virtual string DebugDisplay() => "";
 }
