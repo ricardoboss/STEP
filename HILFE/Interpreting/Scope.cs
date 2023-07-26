@@ -20,17 +20,17 @@ public class Scope
         parentScope = null;
 
         // globally defined identifiers
-        SetVariable(PrintFunction.Identifier, new("function", new PrintFunction()));
-        SetVariable(PrintlnFunction.Identifier, new("function", new PrintlnFunction()));
-        SetVariable(ReadlineFunction.Identifier, new("function", new ReadlineFunction()));
-        SetVariable(TypenameFunction.Identifier, new("function", new TypenameFunction()));
-        SetVariable(ParseFunction.Identifier, new("function", new ParseFunction()));
-        SetVariable(new("jsonEncode", "function", new JsonEncodeFunction()));
-        SetVariable(new("jsonDecode", "function", new JsonDecodeFunction()));
+        SetVariable(PrintFunction.Identifier, ExpressionResult.Function(new PrintFunction()));
+        SetVariable(PrintlnFunction.Identifier, ExpressionResult.Function(new PrintlnFunction()));
+        SetVariable(ReadlineFunction.Identifier, ExpressionResult.Function(new ReadlineFunction()));
+        SetVariable(TypenameFunction.Identifier, ExpressionResult.Function(new TypenameFunction()));
+        SetVariable(ParseFunction.Identifier, ExpressionResult.Function(new ParseFunction()));
+        SetVariable(JsonEncodeFunction.Identifier, ExpressionResult.Function(new JsonEncodeFunction()));
+        SetVariable(JsonDecodeFunction.Identifier, ExpressionResult.Function(new JsonDecodeFunction()));
 
         SetVariable("null", ExpressionResult.Null);
 
-        SetVariable("EOL", new("string", Environment.NewLine));
+        SetVariable("EOL", ExpressionResult.String(Environment.NewLine));
     }
 
     public void SetVariable(string identifier, ExpressionResult value)
