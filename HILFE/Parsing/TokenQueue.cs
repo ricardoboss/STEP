@@ -33,7 +33,7 @@ public class TokenQueue
     public Token Dequeue()
     {
         if (!TryDequeue(out var token))
-            throw new ParserException($"Unexpected end of {nameof(TokenQueue)}");
+            throw new UnexpectedEndOfInputException("Expected a token, but token queue was empty");
 
         return token;
     }
