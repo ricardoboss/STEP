@@ -39,14 +39,15 @@ public enum TokenType
     UnderscoreSymbol,
     LineComment,
     OpeningSquareBracket,
-    ClosingSquareBracket
+    ClosingSquareBracket,
+    ColonSymbol,
 }
 
 public static class TokenTypes
 {
     public static bool IsKnownTypeName(this string name)
     {
-        return name is "string" or "number" or "bool" or "function" or "list";
+        return name is "string" or "number" or "bool" or "function" or "list" or "map";
     }
 
     public static bool TryParseKeyword(this string name, [NotNullWhen(true)] out TokenType? type)
@@ -154,6 +155,9 @@ public static class TokenTypes
                 return true;
             case '_':
                 type = TokenType.UnderscoreSymbol;
+                return true;
+            case ':':
+                type = TokenType.ColonSymbol;
                 return true;
         }
 

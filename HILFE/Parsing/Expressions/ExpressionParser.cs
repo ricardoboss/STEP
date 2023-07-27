@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using HILFE.Parsing.Statements;
@@ -74,6 +75,11 @@ public class ExpressionParser
         parser.Add(currentGroup);
 
         yield return await parser.ParseBinaryExpression(cancellationToken: cancellationToken);
+    }
+
+    private static async IAsyncEnumerable<KeyValuePair<string, ExpressionResult>> ParseMapTokens(IReadOnlyList<Token> tokens, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+
     }
 
     private async Task<Expression> ParseBinaryExpression(int parentPrecedence = 0, CancellationToken cancellationToken = default)
@@ -175,6 +181,15 @@ public class ExpressionParser
                 var listExpressions = await ParseExpressionsAsync(listExpressionTokens, cancellationToken).ToListAsync(cancellationToken);
 
                 return new ListExpression(listExpressions);
+            case TokenType.OpeningCurlyBracket:
+                var mapExpressionTokens = tokenQueue.DequeueUntil(TokenType.ClosingCurlyBracket);
+
+                tokenQueue.Dequeue(TokenType.ClosingCurlyBracket);
+
+                var mapExpressions = await ParseMapTokens(mapExpressionTokens, cancellationToken).ToListAsync(cancellationToken);
+                var map = mapExpressions.ToImmutableSortedDictionary();
+
+                return new MapExpression(map);
             case var _ when currentTokenType.IsMathematicalOperation():
                 throw new NotImplementedException("Cannot parse mathematical operation as expression");
             default:
