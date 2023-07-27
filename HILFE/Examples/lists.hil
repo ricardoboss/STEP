@@ -1,5 +1,7 @@
 list nums = [1, 2, 3, 4]
 println(nums)
+println(nums[0])
+println(nums[1])
 
 list strs = ["a", "b", "c", "d"]
 println(strs)

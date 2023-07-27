@@ -24,6 +24,7 @@ public abstract class Expression
             BinaryExpressionOperator.LogicalAnd => LogicalAnd(left, right),
             BinaryExpressionOperator.LogicalOr => LogicalOr(left, right),
             BinaryExpressionOperator.Coalesce => Coalesce(left, right),
+            BinaryExpressionOperator.Index => Index(left, right),
             _ => throw new NotImplementedException($"The operator {op} is not implemented yet"),
         };
     }
@@ -173,7 +174,7 @@ public abstract class Expression
             return ExpressionResult.Bool(a.Value && b.Value);
         });
     }
-    
+
     public static Expression Coalesce(Expression left, Expression right)
     {
         return new BinaryExpression("??", left, right, (a, b) =>
@@ -185,6 +186,25 @@ public abstract class Expression
                 throw new IncompatibleTypesException(a.ValueType, b.Value, "coalesce");
 
             return ExpressionResult.From(a.ValueType, a.Value ?? b.Value);
+        });
+    }
+
+    public static Expression Index(Expression left, Expression right)
+    {
+        return new BinaryExpression("[]", left, right, (a, b) =>
+        {
+            var values = a.ExpectList();
+            var doubleIndex = b.ExpectNumber();
+
+            if (doubleIndex < 0 || doubleIndex >= values.Count)
+                throw new ListIndexOutOfRangeException(doubleIndex, values.Count);
+
+            if (Math.Abs(Math.Round(doubleIndex) - doubleIndex) > double.Epsilon)
+                throw new ListIndexOutOfRangeException(doubleIndex, values.Count);
+
+            var index = (int)doubleIndex;
+
+            return values[index];
         });
     }
 

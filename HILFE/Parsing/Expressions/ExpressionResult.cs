@@ -93,6 +93,17 @@ public sealed class ExpressionResult : IEquatable<ExpressionResult>
         return boolValue;
     }
 
+    public double ExpectNumber()
+    {
+        if (ValueType is not "number")
+            throw new InvalidResultTypeException("number", ValueType);
+
+        if (Value is not double doubleValue)
+            throw new InvalidResultTypeException("number", Value?.GetType().Name ?? "<null>");
+
+        return doubleValue;
+    }
+
     public FunctionDefinition ExpectFunction()
     {
         if (ValueType is not "function")
@@ -102,6 +113,23 @@ public sealed class ExpressionResult : IEquatable<ExpressionResult>
             throw new InvalidResultTypeException("function", Value?.GetType().Name ?? "<null>");
 
         return definition;
+    }
+
+    public IReadOnlyList<ExpressionResult> ExpectList()
+    {
+        if (ValueType is not "list")
+            throw new InvalidResultTypeException("list", ValueType);
+
+        if (Value is not IEnumerable<ExpressionResult> enumerable)
+            throw new InvalidResultTypeException("list", Value?.GetType().Name ?? "<null>");
+
+        IReadOnlyList<ExpressionResult> values;
+        if (enumerable is IReadOnlyList<ExpressionResult> list)
+            values = list;
+        else
+            values = enumerable.ToList();
+
+        return values;
     }
 
     public void ThrowIfVoid(string? expected = null)
