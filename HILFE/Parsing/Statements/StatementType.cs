@@ -13,4 +13,5 @@ public enum StatementType
     DiscardAssignment,
     BreakStatement,
     ContinueStatement,
+    IndexAssignment,
 }

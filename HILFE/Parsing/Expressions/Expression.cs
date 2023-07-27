@@ -194,15 +194,7 @@ public abstract class Expression
         return new BinaryExpression("[]", left, right, (a, b) =>
         {
             var values = a.ExpectList();
-            var doubleIndex = b.ExpectNumber();
-
-            if (doubleIndex < 0 || doubleIndex >= values.Count)
-                throw new ListIndexOutOfRangeException(doubleIndex, values.Count);
-
-            if (Math.Abs(Math.Round(doubleIndex) - doubleIndex) > double.Epsilon)
-                throw new ListIndexOutOfRangeException(doubleIndex, values.Count);
-
-            var index = (int)doubleIndex;
+            var index = b.ExpectListIndex(values.Count);
 
             return values[index];
         });

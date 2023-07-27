@@ -182,7 +182,10 @@ public class StatementParser
 
     private async Task<Statement> ParseVariableAssignment(Token identifierToken, CancellationToken cancellationToken = default)
     {
-        // variable assignment: <identifier> = <expression>
+        // variable assignment: <identifier> = <expression> / _ = <expression> / <list variable>[<expression>] = <expression>
+
+        if (tokenQueue.PeekType() is TokenType.OpeningSquareBracket)
+            return await ParseIndexAssignment(identifierToken, cancellationToken);
 
         tokenQueue.Dequeue(TokenType.EqualsSymbol);
         
@@ -192,6 +195,24 @@ public class StatementParser
             return new DiscardAssignmentStatement(expression);
 
         return new VariableAssignmentStatement(identifierToken, expression);
+    }
+
+    private async Task<Statement> ParseIndexAssignment(Token identifierToken, CancellationToken cancellationToken = default)
+    {
+        // index assignment: <list variable>[<expression>] = <expression>
+
+        _ = tokenQueue.Dequeue(TokenType.OpeningSquareBracket);
+
+        var indexExpressionTokens = tokenQueue.DequeueUntil(TokenType.ClosingSquareBracket);
+
+        _ = tokenQueue.Dequeue(TokenType.ClosingSquareBracket);
+        
+        tokenQueue.Dequeue(TokenType.EqualsSymbol);
+
+        var indexExpression = await ExpressionParser.ParseAsync(indexExpressionTokens, cancellationToken);
+        var valueExpression = await ParseValueExpression(cancellationToken);
+
+        return new IndexAssignmentStatement(identifierToken, indexExpression, valueExpression);
     }
 
     private async Task<Expression> ParseValueExpression(CancellationToken cancellationToken)

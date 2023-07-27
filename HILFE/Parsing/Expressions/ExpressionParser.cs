@@ -175,6 +175,8 @@ public class ExpressionParser
                 var listExpressions = await ParseExpressionsAsync(listExpressionTokens, cancellationToken).ToListAsync(cancellationToken);
 
                 return new ListExpression(listExpressions);
+            case var _ when currentTokenType.IsMathematicalOperation():
+                throw new NotImplementedException("Cannot parse mathematical operation as expression");
             default:
                 throw new InvalidOperationException($"Invalid expression. Got token: {currentToken}");
         }

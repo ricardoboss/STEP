@@ -104,6 +104,19 @@ public sealed class ExpressionResult : IEquatable<ExpressionResult>
         return doubleValue;
     }
 
+    public int ExpectListIndex(int max)
+    {
+        var doubleIndex = ExpectNumber();
+
+        if (doubleIndex < 0 || doubleIndex >= max)
+            throw new ListIndexOutOfRangeException(doubleIndex, max);
+
+        if (Math.Abs(Math.Round(doubleIndex) - doubleIndex) > double.Epsilon)
+            throw new ListIndexOutOfRangeException(doubleIndex, max);
+
+        return (int)doubleIndex;
+    }
+
     public FunctionDefinition ExpectFunction()
     {
         if (ValueType is not "function")
@@ -115,7 +128,7 @@ public sealed class ExpressionResult : IEquatable<ExpressionResult>
         return definition;
     }
 
-    public IReadOnlyList<ExpressionResult> ExpectList()
+    public IList<ExpressionResult> ExpectList()
     {
         if (ValueType is not "list")
             throw new InvalidResultTypeException("list", ValueType);
@@ -123,8 +136,8 @@ public sealed class ExpressionResult : IEquatable<ExpressionResult>
         if (Value is not IEnumerable<ExpressionResult> enumerable)
             throw new InvalidResultTypeException("list", Value?.GetType().Name ?? "<null>");
 
-        IReadOnlyList<ExpressionResult> values;
-        if (enumerable is IReadOnlyList<ExpressionResult> list)
+        IList<ExpressionResult> values;
+        if (enumerable is IList<ExpressionResult> list)
             values = list;
         else
             values = enumerable.ToList();

@@ -1,7 +1,15 @@
 list nums = [1, 2, 3, 4]
-println(nums)
 println(nums[0])
 println(nums[1])
+
+nums[0] = 5
+
+number idx = 2
+
+println(nums[idx])
+idx++
+nums[idx] = 6
+println(nums)
 
 list strs = ["a", "b", "c", "d"]
 println(strs)
