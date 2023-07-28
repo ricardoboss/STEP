@@ -19,6 +19,7 @@ public class ExpressionResultJsonConverter : JsonConverter<ExpressionResult>
             JsonTokenType.Number => ExpressionResult.Number(reader.GetDouble()),
             JsonTokenType.String => ExpressionResult.String(reader.GetString() ?? string.Empty),
             JsonTokenType.StartArray => ExpressionResult.List(ReadArray(ref reader, options)),
+            JsonTokenType.StartObject => ExpressionResult.Map(ReadObject(ref reader, options)),
             _ => throw new NotImplementedException($"Conversion of {reader.TokenType} to ExpressionResult is not implemented"),
         };
     }
@@ -39,6 +40,30 @@ public class ExpressionResultJsonConverter : JsonConverter<ExpressionResult>
         }
 
         throw new JsonException("Unexpected end of JSON while reading array.");
+    }
+
+    private static IDictionary<string, ExpressionResult> ReadObject(ref Utf8JsonReader reader, JsonSerializerOptions options)
+    {
+        var results = new Dictionary<string, ExpressionResult>();
+        while (reader.Read())
+        {
+            switch (reader.TokenType)
+            {
+                case JsonTokenType.EndObject:
+                    return results;
+                case JsonTokenType.PropertyName:
+                    var key = reader.GetString() ?? string.Empty;
+                    var value = JsonSerializer.Deserialize<ExpressionResult>(ref reader, options)!;
+
+                    results.Add(key, value);
+
+                    break;
+                default:
+                    throw new JsonException("Unexpected token when reading object.");
+            }
+        }
+
+        throw new JsonException("Unexpected end of JSON while reading object.");
     }
 
     public override void Write(Utf8JsonWriter writer, ExpressionResult value, JsonSerializerOptions options)
@@ -64,6 +89,15 @@ public class ExpressionResultJsonConverter : JsonConverter<ExpressionResult>
                     Write(writer, item, options);
                 }
                 writer.WriteEndArray();
+                break;
+            case "map" when value.Value is IDictionary<string, ExpressionResult> mapValue:
+                writer.WriteStartObject();
+                foreach (var (key, item) in mapValue)
+                {
+                    writer.WritePropertyName(key);
+                    Write(writer, item, options);
+                }
+                writer.WriteEndObject();
                 break;
             default:
                 throw new NotImplementedException($"Conversion of {value} to JSON is not implemented");
