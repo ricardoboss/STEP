@@ -6,4 +6,8 @@ map nested = { "a": { "b": { "c": 1, "d": { "z": 99, "v": true } } } }
 
 println(nested)
 
+map a = nested["a"]
+map b = a["b"]
+map d = b["d"]
+d["z"] = 100
 println(nested["a"]["b"]["d"]["z"])

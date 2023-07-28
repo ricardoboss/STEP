@@ -23,15 +23,27 @@ public class IndexAssignmentStatement : Statement
     /// <inheritdoc />
     public override async Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
-        var listVariable = interpreter.CurrentScope.GetVariable(identifier.Value);
-        var list = listVariable.Value.ExpectList();
-
+        var indexedVariable = interpreter.CurrentScope.GetVariable(identifier.Value);
         var indexResult = await indexExpression.EvaluateAsync(interpreter, cancellationToken);
-        var index = indexResult.ExpectListIndex(list.Count);
-
         var valueResult = await valueExpression.EvaluateAsync(interpreter, cancellationToken);
 
-        list[index] = valueResult;
+        switch (indexedVariable.Value.ValueType)
+        {
+            case "list":
+                var list = indexedVariable.Value.ExpectList();
+                var index = indexResult.ExpectListIndex(list.Count);
+
+                list[index] = valueResult;
+                break;
+            case "map":
+                var map = indexedVariable.Value.ExpectMap();
+                var key = indexResult.ExpectString();
+
+                map[key] = valueResult;
+                break;
+            default:
+                throw new InvalidIndexOperatorException(indexedVariable.Value.ValueType);
+        }
     }
 
     /// <inheritdoc />

@@ -247,10 +247,3 @@ public abstract class Expression
     [ExcludeFromCodeCoverage]
     protected virtual string DebugDisplay() => "";
 }
-
-public class InvalidIndexOperatorException : InterpreterException
-{
-    public InvalidIndexOperatorException(string valueType) : base($"Invalid index expression: Cannot index into a value of type {valueType}")
-    {
-    }
-}
