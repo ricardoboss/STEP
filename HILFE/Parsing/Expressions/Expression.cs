@@ -193,10 +193,25 @@ public abstract class Expression
     {
         return new BinaryExpression("[]", left, right, (a, b) =>
         {
-            var values = a.ExpectList();
-            var index = b.ExpectListIndex(values.Count);
+            switch (a.ValueType)
+            {
+                case "list":
+                {
+                    var values = a.ExpectList();
+                    var index = b.ExpectListIndex(values.Count);
 
-            return values[index];
+                    return values[index];
+                }
+                case "map":
+                {
+                    var pairs = a.ExpectMap();
+                    var key = b.ExpectString();
+
+                    return pairs[key];
+                }
+                default:
+                    throw new InvalidIndexOperatorException(a.ValueType);
+            }
         });
     }
 
@@ -231,4 +246,11 @@ public abstract class Expression
 
     [ExcludeFromCodeCoverage]
     protected virtual string DebugDisplay() => "";
+}
+
+public class InvalidIndexOperatorException : InterpreterException
+{
+    public InvalidIndexOperatorException(string valueType) : base($"Invalid index expression: Cannot index into a value of type {valueType}")
+    {
+    }
 }

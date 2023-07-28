@@ -81,8 +81,8 @@ public sealed class ExpressionResult : IEquatable<ExpressionResult>
                 double doubleValue => doubleValue.ToString(CultureInfo.InvariantCulture),
                 bool boolValue => boolValue.ToString(),
                 FunctionDefinition function => function.ToString(),
-                IList<ExpressionResult> list => $"[{string.Join(", ", list.Select(RenderValue))}]",
-                IDictionary<string, ExpressionResult> map => $"{{{string.Join(", ", map.Select(e => e.Key + ": " + RenderValue(e.Value)))}}}",
+                IEnumerable<ExpressionResult> list => $"[{string.Join(", ", list.Select(RenderValue))}]",
+                IEnumerable<KeyValuePair<string, ExpressionResult>> map => $"{{{string.Join(", ", map.Select(e => e.Key + ": " + RenderValue(e.Value)))}}}",
                 _ => "[not implemented]",
             };
         }
@@ -158,6 +158,23 @@ public sealed class ExpressionResult : IEquatable<ExpressionResult>
             values = list;
         else
             values = enumerable.ToList();
+
+        return values;
+    }
+
+    public IDictionary<string, ExpressionResult> ExpectMap()
+    {
+        if (ValueType is not "map")
+            throw new InvalidResultTypeException("map", ValueType);
+
+        if (Value is not IEnumerable<KeyValuePair<string, ExpressionResult>> enumerable)
+            throw new InvalidResultTypeException("map", Value?.GetType().Name ?? "<null>");
+
+        IDictionary<string, ExpressionResult> values;
+        if (enumerable is IDictionary<string, ExpressionResult> map)
+            values = map;
+        else
+            values = enumerable.ToDictionary(p => p.Key, p => p.Value);
 
         return values;
     }

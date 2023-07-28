@@ -5,3 +5,5 @@ println(m)
 map nested = { "a": { "b": { "c": 1, "d": { "z": 99, "v": true } } } }
 
 println(nested)
+
+println(nested["a"]["b"]["d"]["z"])
