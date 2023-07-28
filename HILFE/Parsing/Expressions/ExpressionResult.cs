@@ -1,3 +1,4 @@
+using System.Globalization;
 using HILFE.Interpreting;
 
 namespace HILFE.Parsing.Expressions;
@@ -20,7 +21,9 @@ public sealed class ExpressionResult : IEquatable<ExpressionResult>
 
     public static ExpressionResult Function(FunctionDefinition definition) => new("function", definition);
 
-    public static ExpressionResult List(IEnumerable<ExpressionResult> items) => new("list", items);
+    public static ExpressionResult List(IList<ExpressionResult> items) => new("list", items);
+
+    public static ExpressionResult Map(IDictionary<string, ExpressionResult> map) => new("map", map);
 
     public static ExpressionResult From(string type, dynamic? value = null) => new(type, value);
 
@@ -66,9 +69,23 @@ public sealed class ExpressionResult : IEquatable<ExpressionResult>
     /// <inheritdoc />
     public override string ToString()
     {
-        var display = IsVoid ? "<void>" : Value is not null ? $"({ValueType}) {Value}" : "<null>";
+        var display = IsVoid ? "<void>" : Value is not null ? $"({ValueType}) {RenderValue(Value)}" : "<null>";
 
         return $"<{nameof(ExpressionResult)}: {display}>";
+
+        string RenderValue(dynamic value)
+        {
+            return value switch
+            {
+                string strValue => strValue,
+                double doubleValue => doubleValue.ToString(CultureInfo.InvariantCulture),
+                bool boolValue => boolValue.ToString(),
+                FunctionDefinition function => function.ToString(),
+                IList<ExpressionResult> list => $"[{string.Join(", ", list.Select(RenderValue))}]",
+                IDictionary<string, ExpressionResult> map => $"{{{string.Join(", ", map.Select(e => e.Key + ": " + RenderValue(e.Value)))}}}",
+                _ => "[not implemented]",
+            };
+        }
     }
 
     public string ExpectString()

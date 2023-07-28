@@ -30,5 +30,7 @@ public class ConstantExpression : Expression
         return Task.FromResult(result);
     }
 
+    public dynamic? Value => result.Value;
+
     protected override string DebugDisplay() => result.ToString();
 }

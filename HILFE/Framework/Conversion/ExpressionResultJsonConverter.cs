@@ -23,7 +23,7 @@ public class ExpressionResultJsonConverter : JsonConverter<ExpressionResult>
         };
     }
 
-    private static IEnumerable<ExpressionResult> ReadArray(ref Utf8JsonReader reader, JsonSerializerOptions options)
+    private static IList<ExpressionResult> ReadArray(ref Utf8JsonReader reader, JsonSerializerOptions options)
     {
         var results = new List<ExpressionResult>();
         while (reader.Read())
@@ -57,7 +57,7 @@ public class ExpressionResultJsonConverter : JsonConverter<ExpressionResult>
             case "null":
                 writer.WriteNullValue();
                 break;
-            case "list" when value.Value is IEnumerable<ExpressionResult> listValue:
+            case "list" when value.Value is IList<ExpressionResult> listValue:
                 writer.WriteStartArray();
                 foreach (var item in listValue)
                 {

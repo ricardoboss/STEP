@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.CompilerServices;
@@ -77,9 +78,62 @@ public class ExpressionParser
         yield return await parser.ParseBinaryExpression(cancellationToken: cancellationToken);
     }
 
-    private static async IAsyncEnumerable<KeyValuePair<string, ExpressionResult>> ParseMapTokens(IReadOnlyList<Token> tokens, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    private static async IAsyncEnumerable<KeyValuePair<string, Expression>> ParseMapTokens(IReadOnlyCollection<Token> tokens, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
+        if (tokens.Count == 0)
+            yield break;
 
+        var currentGroup = new TokenQueue();
+        var expressionDepth = 0;
+        var codeBlockDepth = 0;
+        var listDepth = 0;
+
+        foreach (var token in tokens)
+        {
+            if (token.Type is TokenType.CommaSymbol && expressionDepth == 0 && codeBlockDepth == 0 && listDepth == 0)
+            {
+                var keyTokens = currentGroup.DequeueUntil(TokenType.ColonSymbol);
+                _ = currentGroup.Dequeue(TokenType.ColonSymbol);
+                var valueTokens = currentGroup.DequeueUntil(TokenType.CommaSymbol);
+
+                var keyExpression = await ParseAsync(keyTokens, cancellationToken);
+
+                if (keyExpression is not ConstantExpression { Value: string key })
+                    throw new UnexpectedTokenException(keyTokens[0], TokenType.LiteralString);
+
+                var valueExpression = await ParseAsync(valueTokens, cancellationToken);
+
+                yield return new(key, valueExpression);
+
+                Debug.Assert(currentGroup.IsEmpty);
+            }
+            else
+            {
+                currentGroup.Enqueue(token);
+
+                switch (token.Type)
+                {
+                    case TokenType.OpeningParentheses:
+                        expressionDepth++;
+                        break;
+                    case TokenType.ClosingParentheses:
+                        expressionDepth--;
+                        break;
+                    case TokenType.OpeningCurlyBracket:
+                        codeBlockDepth++;
+                        break;
+                    case TokenType.ClosingCurlyBracket:
+                        codeBlockDepth--;
+                        break;
+                    case TokenType.OpeningSquareBracket:
+                        listDepth++;
+                        break;
+                    case TokenType.ClosingSquareBracket:
+                        listDepth--;
+                        break;
+                }
+            }
+        }
     }
 
     private async Task<Expression> ParseBinaryExpression(int parentPrecedence = 0, CancellationToken cancellationToken = default)

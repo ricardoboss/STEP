@@ -5,13 +5,25 @@ namespace HILFE.Parsing.Expressions;
 
 public class MapExpression : Expression
 {
-    public MapExpression(ImmutableSortedDictionary<string,ExpressionResult> map)
+    private readonly ImmutableSortedDictionary<string, Expression> map;
+
+    public MapExpression(ImmutableSortedDictionary<string, Expression> map)
     {
-        throw new NotImplementedException();
+        this.map = map;
     }
 
-    public override Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
+    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var pairs = await map.EvaluateAsync(interpreter, cancellationToken)
+            .ToDictionaryAsync(
+                p => p.Key,
+                p => p.Value,
+                cancellationToken
+            );
+
+        return ExpressionResult.Map(pairs);
     }
+
+    /// <inheritdoc />
+    protected override string DebugDisplay() => $"{{ {string.Join(", ", map.Select(e => e.Key + ": " + e.Value))} }}";
 }
