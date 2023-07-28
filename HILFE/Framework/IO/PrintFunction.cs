@@ -27,16 +27,32 @@ public class PrintFunction : NativeFunction
 
     private static string RenderValue(ExpressionResult result)
     {
-        return result.ValueType switch
+        switch (result.ValueType)
         {
-            "string" when result.Value is string stringValue => stringValue,
-            "number" when result.Value is double numberValue => numberValue.ToString(CultureInfo.InvariantCulture),
-            "bool" when result.Value is bool boolValue => boolValue.ToString(),
-            "null" when result.Value is null => "null",
-            "list" when result.Value is IList<ExpressionResult> values => $"[{string.Join(", ", values.Select(RenderValue))}]",
-            "map" when result.Value is IDictionary<string, ExpressionResult> pairs => $"{{{string.Join(", ", pairs.Select(pair => $"{pair.Key}: {RenderValue(pair.Value)}"))}}}",
-            _ => $"[{result.ValueType}]",
-        };
+            case "string" when result.Value is string stringValue:
+                return stringValue;
+            case "number" when result.Value is double numberValue:
+                return numberValue.ToString(CultureInfo.InvariantCulture);
+            case "bool" when result.Value is bool boolValue:
+                return boolValue.ToString();
+            case "null" when result.Value is null:
+                return "null";
+            case "list" when result.Value is IList<ExpressionResult> values:
+                return $"[{string.Join(", ", values.Select(RenderValue))}]";
+            case "map" when result.Value is IDictionary<string, ExpressionResult> pairs:
+                var renderedPairs = pairs.Select(pair =>
+                {
+                    var renderedValue = RenderValue(pair.Value);
+                    if (pair.Value.ValueType is "string")
+                        renderedValue = $"\"{renderedValue}\"";
+
+                    return $"\"{pair.Key}\": {renderedValue}";
+                });
+                var mapContents = string.Join(", ", renderedPairs);
+                return $"{{{mapContents}}}";
+            default:
+                return $"[{result.ValueType}]";
+        }
     }
 
     protected virtual async Task Print(TextWriter output, string value, CancellationToken cancellationToken = default)
