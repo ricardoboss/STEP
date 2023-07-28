@@ -108,7 +108,7 @@ public class TokenQueue
         return token;
     }
 
-    public IReadOnlyList<Token> DequeueUntil(TokenType exitType)
+    public IReadOnlyList<Token> DequeueUntil(params TokenType[] exitTypes)
     {
         var tokens = new List<Token>();
         var expressionDepth = 0;
@@ -117,7 +117,7 @@ public class TokenQueue
 
         while (TryPeekType(out var nextType))
         {
-            if (expressionDepth == 0 && codeBlockDepth == 0 && listDepth == 0 && nextType == exitType)
+            if (expressionDepth == 0 && codeBlockDepth == 0 && listDepth == 0 && exitTypes.Contains(nextType.Value))
                 break;
 
             var token = Dequeue();

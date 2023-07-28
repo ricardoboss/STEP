@@ -220,7 +220,8 @@ public class StatementParser
         // FIXME: this does not work with multi-line values like function definitions
         var expressionTokens = tokenQueue.DequeueUntil(TokenType.NewLine);
 
-        tokenQueue.Dequeue(TokenType.NewLine);
+        if (tokenQueue.IsNotEmpty)
+            _ = tokenQueue.Dequeue(TokenType.NewLine);
 
         return await ExpressionParser.ParseAsync(expressionTokens, cancellationToken);
     }

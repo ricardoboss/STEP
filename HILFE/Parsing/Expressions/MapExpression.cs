@@ -1,13 +1,13 @@
-﻿using System.Collections.Immutable;
+﻿using System.Diagnostics.CodeAnalysis;
 using HILFE.Interpreting;
 
 namespace HILFE.Parsing.Expressions;
 
 public class MapExpression : Expression
 {
-    private readonly ImmutableSortedDictionary<string, Expression> map;
+    private readonly IEnumerable<KeyValuePair<string, Expression>> map;
 
-    public MapExpression(ImmutableSortedDictionary<string, Expression> map)
+    public MapExpression(IEnumerable<KeyValuePair<string, Expression>> map)
     {
         this.map = map;
     }
@@ -25,5 +25,6 @@ public class MapExpression : Expression
     }
 
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     protected override string DebugDisplay() => $"{{ {string.Join(", ", map.Select(e => e.Key + ": " + e.Value))} }}";
 }

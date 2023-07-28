@@ -92,18 +92,7 @@ public class ExpressionParser
         {
             if (token.Type is TokenType.CommaSymbol && expressionDepth == 0 && codeBlockDepth == 0 && listDepth == 0)
             {
-                var keyTokens = currentGroup.DequeueUntil(TokenType.ColonSymbol);
-                _ = currentGroup.Dequeue(TokenType.ColonSymbol);
-                var valueTokens = currentGroup.DequeueUntil(TokenType.CommaSymbol);
-
-                var keyExpression = await ParseAsync(keyTokens, cancellationToken);
-
-                if (keyExpression is not ConstantExpression { Value: string key })
-                    throw new UnexpectedTokenException(keyTokens[0], TokenType.LiteralString);
-
-                var valueExpression = await ParseAsync(valueTokens, cancellationToken);
-
-                yield return new(key, valueExpression);
+                yield return await FinalizeGroup();
 
                 Debug.Assert(currentGroup.IsEmpty);
             }
@@ -133,6 +122,26 @@ public class ExpressionParser
                         break;
                 }
             }
+        }
+
+        yield return await FinalizeGroup();
+
+        yield break;
+
+        async Task<KeyValuePair<string, Expression>> FinalizeGroup()
+        {
+            var keyTokens = currentGroup.DequeueUntil(TokenType.ColonSymbol);
+            _ = currentGroup.Dequeue(TokenType.ColonSymbol);
+            var valueTokens = currentGroup.DequeueUntil(TokenType.CommaSymbol);
+
+            var keyExpression = await ParseAsync(keyTokens, cancellationToken);
+
+            if (keyExpression is not ConstantExpression { Value: string key })
+                throw new UnexpectedTokenException(keyTokens[0], TokenType.LiteralString);
+
+            var valueExpression = await ParseAsync(valueTokens, cancellationToken);
+
+            return new(key, valueExpression);
         }
     }
 
@@ -241,7 +250,7 @@ public class ExpressionParser
                 tokenQueue.Dequeue(TokenType.ClosingCurlyBracket);
 
                 var mapExpressions = await ParseMapTokens(mapExpressionTokens, cancellationToken).ToListAsync(cancellationToken);
-                var map = mapExpressions.ToImmutableSortedDictionary();
+                var map = mapExpressions.ToDictionary(p => p.Key, p => p.Value);
 
                 return new MapExpression(map);
             case var _ when currentTokenType.IsMathematicalOperation():

@@ -13,11 +13,13 @@ public static class ExpressionEvaluationExtensions
         }
     }
 
-    public static async IAsyncEnumerable<KeyValuePair<string, ExpressionResult>> EvaluateAsync(this IDictionary<string, Expression> expressions, Interpreter interpreter, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public static async IAsyncEnumerable<KeyValuePair<string, ExpressionResult>> EvaluateAsync(this IEnumerable<KeyValuePair<string, Expression>> expressions, Interpreter interpreter, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         foreach (var (key, expression) in expressions)
         {
-            yield return new(key, await expression.EvaluateAsync(interpreter, cancellationToken));
+            var value = await expression.EvaluateAsync(interpreter, cancellationToken);
+
+            yield return new(key, value);
         }
     }
 }
