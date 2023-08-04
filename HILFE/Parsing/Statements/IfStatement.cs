@@ -25,14 +25,14 @@ public class IfStatement : Statement
 
     public override async Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
-        if (!await ShouldEnterBranch(interpreter, cancellationToken))
-            return;
-
         interpreter.PushScope();
 
-        await interpreter.InterpretAsync(statements.ToAsyncEnumerable(), cancellationToken);
+        if (await ShouldEnterBranch(interpreter, cancellationToken))
+            await interpreter.InterpretAsync(statements.ToAsyncEnumerable(), cancellationToken);
 
-        interpreter.PopScope();
+        var previousScope = interpreter.PopScope();
+        if (previousScope.TryGetResult(out var result))
+            interpreter.CurrentScope.SetResult(result);
     }
 
     /// <inheritdoc />

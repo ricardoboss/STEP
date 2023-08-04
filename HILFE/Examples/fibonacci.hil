@@ -1,0 +1,25 @@
+﻿function fibonacci = (number n) {
+    if (n == 0) {
+        return 0
+    }
+
+    if (n == 1) {
+        return 1
+    }
+
+    number left = fibonacci(n - 1)
+    number right = fibonacci(n - 2)
+
+    return left + right
+}
+
+while (true) {
+    print("Fibonacci of: ")
+    string input = readline()
+    if (input == null) {
+        break
+    }
+
+    number n = parse("number", input)
+    println(fibonacci(n))
+}

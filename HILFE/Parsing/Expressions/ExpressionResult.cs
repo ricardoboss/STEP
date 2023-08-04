@@ -69,9 +69,7 @@ public sealed class ExpressionResult : IEquatable<ExpressionResult>
     /// <inheritdoc />
     public override string ToString()
     {
-        var display = IsVoid ? "<void>" : Value is not null ? $"({ValueType}) {RenderValue(Value)}" : "<null>";
-
-        return $"<{nameof(ExpressionResult)}: {display}>";
+        return IsVoid ? "<void>" : Value is not null ? $"({ValueType}) {RenderValue(Value)}" : "<null>";
 
         string RenderValue(dynamic value)
         {
@@ -83,7 +81,7 @@ public sealed class ExpressionResult : IEquatable<ExpressionResult>
                 FunctionDefinition function => function.ToString(),
                 IEnumerable<ExpressionResult> list => $"[{string.Join(", ", list.Select(RenderValue))}]",
                 IEnumerable<KeyValuePair<string, ExpressionResult>> map => $"{{{string.Join(", ", map.Select(e => e.Key + ": " + RenderValue(e.Value)))}}}",
-                _ => "[not implemented]",
+                _ => $"[not implemented for {value.GetType().Name}]",
             };
         }
     }

@@ -21,6 +21,14 @@ function printEvenNumbers = (number limit) {
     }
 }
 
+function factorial = (number n) {
+    if (n == 0) {
+        return 1
+    } else {
+        return n * factorial(n - 1)
+    }
+}
+
 println("Inline function definition and call:")
 println((number a, number b) {
     return a + b
@@ -35,5 +43,8 @@ println()
 
 println("Even numbers from 1 to 10:")
 printEvenNumbers(10)
+
+println("Factorial of 5:")
+println(factorial(5))
 
 _ = isEven(12)

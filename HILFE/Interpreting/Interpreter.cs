@@ -63,6 +63,9 @@ public class Interpreter
             }
 
             await statement.ExecuteAsync(this, cancellationToken);
+
+            if (CurrentScope.TryGetResult(out _))
+                break;
         }
     }
 }

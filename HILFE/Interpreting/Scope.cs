@@ -85,4 +85,9 @@ public class Scope
         result = resultVar.Value;
         return true;
     }
+
+    public override string ToString()
+    {
+        return $"Scope: {{{string.Join(", ", identifiers.Select(kvp => kvp.Value.ToString()))}}}";
+    }
 }

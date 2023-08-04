@@ -26,6 +26,6 @@ public class Variable
     /// <inheritdoc />
     public override string ToString()
     {
-        return $"{Identifier} ({Value})";
+        return $"{Identifier} = {Value}";
     }
 }
