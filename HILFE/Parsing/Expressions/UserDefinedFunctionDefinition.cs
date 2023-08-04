@@ -4,12 +4,12 @@ using HILFE.Tokenizing;
 
 namespace HILFE.Parsing.Expressions;
 
-public class UserDefinedFunctionDefintion : FunctionDefinition
+public class UserDefinedFunctionDefinition : FunctionDefinition
 {
     private readonly IReadOnlyList<(Token type, Token identifier)> parameters;
     private readonly IReadOnlyList<Statement> body;
 
-    public UserDefinedFunctionDefintion(IReadOnlyList<(Token type, Token identifier)> parameters, IReadOnlyList<Statement> body)
+    public UserDefinedFunctionDefinition(IReadOnlyList<(Token type, Token identifier)> parameters, IReadOnlyList<Statement> body)
     {
         this.parameters = parameters;
         this.body = body;
