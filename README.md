@@ -1,4 +1,6 @@
-﻿> HILFE = HILFE Interpreted Language For Education
+﻿# STEP
+
+Simple Transition to Elevated Programming.
 
 Behold, a new programming language arrives:
 
