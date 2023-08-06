@@ -1,4 +1,4 @@
-﻿<img src="docs/logo.svg" align="left" alt="STEP" width="80" height="80">
+﻿<img src="docs/logo.svg" align="left" alt="STEP" width="120" height="120">
 
 <p>
   <h1>STEP</h1>
