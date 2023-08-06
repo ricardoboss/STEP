@@ -84,7 +84,7 @@ Why should it be private?
 
 Probably not. Its just a small project to learn about programming languages.
 
-# License
+# License (MIT)
 
 Copyright 2023 Ricardo Boss
 
