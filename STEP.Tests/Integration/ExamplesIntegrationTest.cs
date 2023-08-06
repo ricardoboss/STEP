@@ -52,7 +52,7 @@ public class ExamplesIntegrationTest
     private class ExampleFiles : IEnumerable<object []>
     {
         public IEnumerator<object []> GetEnumerator() => Directory
-            .EnumerateFiles("Examples", "*.hil")
+            .EnumerateFiles("Examples", "*.step")
             .Select(path => new object[] { path })
             .GetEnumerator();
 

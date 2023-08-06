@@ -13,13 +13,7 @@
     return left + right
 }
 
-while (true) {
-    print("Fibonacci of: ")
-    string input = readline()
-    if (input == null) {
-        break
-    }
-
-    number n = parse("number", input)
-    println(fibonacci(n))
-}
+print("Fibonacci of: ")
+string input = readline()
+number n = parse("number", input)
+println(fibonacci(n))

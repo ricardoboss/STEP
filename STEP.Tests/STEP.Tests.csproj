@@ -28,13 +28,7 @@
 
 
     <ItemGroup>
-      <None Update="Examples\*.hil.out">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="Examples\*.hil.in">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="Examples\*.hil.exit">
+      <None Update="Examples\*.step.*">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>
