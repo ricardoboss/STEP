@@ -1,6 +1,15 @@
-﻿# STEP
+﻿<img src="docs/logo.svg" align="left" alt="STEP" width="80" height="80">
 
-Simple Transition to Elevated Programming.
+<p>
+  <h1>STEP</h1>
+  <span>
+    <strong>S</strong><span>imple</span>
+    <strong>T</strong><span>ransition</span>
+    <span>to</span>
+    <strong>E</strong><span>levated</span>
+    <strong>P</strong><span>rogramming</span>
+  </span>
+</p>
 
 Behold, a new programming language arrives:
 
