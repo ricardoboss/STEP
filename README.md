@@ -13,7 +13,7 @@
 
 Behold, a new programming language arrives:
 
-```
+```step
 number pi = 3.141592
 
 string name = "John"
@@ -55,45 +55,41 @@ while (tries <= 3) {
 print("Goodbye", EOL)
 ```
 
-# FAQ
-
 ## What is this?
 
-A programming language.
+This repository contains an interpreter and command line interface for the STEP programming language.
+
+## What is STEP?
+
+STEP is a programming language designed to be simple and easy to learn.
+Is is a statically typed language with a C-like syntax.
 
 ## Why is this?
 
-I want to learn how to create a programming language.
+The main reason this exists is because I want to learn about programming languages and how they are designed.
+Another reason was my desire to create a language that can be taught to people who have never programmed before.
 
 ## What does it do better than other languages?
 
-Nothing. It's probably worse than existing ones too.
+It uses very little keywords and not many symbols, so new programmers can focus on the important stuff.
+Like many other languages, it also uses C-like syntax, which is very common and prepares new programmers for other,
+more advanced languages.
 
-## What can it do?
+## How can I learn it?
 
-At the moment, not much. Although it is Turing complete, meaning you _could_ do anything with it.
-
-## Can I use it?
-
-Sure. But you should probably use a real programming language, designed by people who know what they do.
-
-## Is it fast?
-
-No.
+Take a look at the [`STEP/Examples`](./STEP/Examples) folder.
+It contains a few examples of STEP code, which you can run using the interpreter.
 
 ## Can I contribute?
 
-Sure, open a PR with your feature and tests.
-If its something I want to develop myself however, I might not merge it.
+Sure, open a PR with your feature and corresponding tests.
+If it's something I want to develop myself however, I might not merge it.
 This is because, well, I want to learn it myself.
-
-## Why is this open source?
-
-Why should it be private?
 
 ## Are you going to maintain it?
 
-Probably not. Its just a small project to learn about programming languages.
+It's just a small project to learn about programming languages.
+If there are bugs, I'll try to fix them, but I'm not promising new features or anything like that.
 
 # License (MIT)
 
@@ -104,5 +100,3 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-
