@@ -1,5 +1,7 @@
 ﻿using System.CommandLine;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
+using Pastel;
 using STEP.Interpreting;
 using STEP.Parsing;
 using STEP.Parsing.Statements;
@@ -29,14 +31,21 @@ internal static class Program
 
     private static async Task<int> Run(FileSystemInfo scriptFile)
     {
-        var tokenizer = new Tokenizer();
-        var parser = new StatementParser();
-        var interpreter = new Interpreter(Console.Out, Console.Error, Console.In);
+        if (!scriptFile.Exists)
+        {
+            await Console.Error.WriteLineAsync(FormatError("File Not Found", $"The file '{scriptFile.FullName.Pastel(Color.Aqua)}' does not exist."));
 
-        var chars = await File.ReadAllTextAsync(scriptFile.FullName);
+            return -1;
+        }
 
         try
         {
+            var chars = await File.ReadAllTextAsync(scriptFile.FullName);
+
+            var tokenizer = new Tokenizer();
+            var parser = new StatementParser();
+            var interpreter = new Interpreter(Console.Out, Console.Error, Console.In);
+
             tokenizer.Add(chars);
             var tokens = tokenizer.TokenizeAsync();
             await parser.AddAsync(tokens);
@@ -45,11 +54,15 @@ internal static class Program
 
             return interpreter.ExitCode;
         }
-        catch (Exception e) when (e is ParserException or TokenizerException or InterpreterException)
+        catch (Exception e) when (e is ParserException or TokenizerException or InterpreterException or IOException)
         {
-            await Console.Error.WriteLineAsync("~~> " + e.GetType().Name + ": " + e.Message);
+            await Console.Error.WriteLineAsync(FormatError(e));
 
             return -1;
         }
     }
+
+    private static string FormatError(string type, string message) => ("! " + type + ": ").Pastel(Color.OrangeRed) + message;
+
+    private static string FormatError(Exception e) => FormatError(e.GetType().Name, e.Message + Environment.NewLine + e.StackTrace.Pastel(Color.DarkGray));
 }
