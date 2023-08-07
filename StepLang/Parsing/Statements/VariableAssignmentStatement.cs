@@ -14,7 +14,7 @@ public class VariableAssignmentStatement : Statement
     public VariableAssignmentStatement(Token identifier, Expression expression) : base(StatementType.VariableAssignment)
     {
         if (identifier.Type != TokenType.Identifier)
-            throw new TokenizerException($"Expected {TokenType.Identifier} token, but got {identifier.Type} instead");
+            throw new UnexpectedTokenException(identifier, TokenType.Identifier);
 
         this.identifier = identifier;
         this.expression = expression;

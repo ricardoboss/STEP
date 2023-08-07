@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.CompilerServices;
@@ -155,7 +154,7 @@ public class ExpressionParser
                 return left;
 
             if (!TryPeekOperator(out var op, out var opPreLength, out var opPostLength))
-                throw new ParserException("Unexpected end of expression.");
+                throw new UnexpectedEndOfExpressionException(tokenQueue.TryPeek(out var next) ? next : null);
 
             var precedence = op.Value.Precedence();
             if (precedence < parentPrecedence)
@@ -211,7 +210,7 @@ public class ExpressionParser
                 if (nextType is TokenType.ClosingParentheses)
                 {
                     if (tokenQueue.PeekType(1) is not TokenType.OpeningCurlyBracket)
-                        throw new ParserException("Empty pair of parentheses is not a valid expression.");
+                        throw new InvalidExpressionException(null, "Empty pair of parentheses is not a valid expression.");
 
                     // function declaration
 
@@ -270,7 +269,7 @@ public class ExpressionParser
         {
             var type = tokenQueue.Dequeue(TokenType.TypeName);
             var name = tokenQueue.Dequeue(TokenType.Identifier);
-            
+
             parameters.Add((type, name));
 
             if (tokenQueue.TryPeekType(out var nextTokenType) && nextTokenType is TokenType.CommaSymbol)
@@ -279,7 +278,7 @@ public class ExpressionParser
 
         tokenQueue.Dequeue(TokenType.ClosingParentheses);
         tokenQueue.Dequeue(TokenType.OpeningCurlyBracket);
-        
+
         var statementParser = new StatementParser();
         var codeBlockDepth = 0;
         while (tokenQueue.PeekType() is not TokenType.ClosingCurlyBracket || codeBlockDepth > 0)
@@ -291,6 +290,7 @@ public class ExpressionParser
             else if (token.Type is TokenType.ClosingCurlyBracket)
                 codeBlockDepth--;
         }
+
         var body = await statementParser.ParseAsync(cancellationToken).ToListAsync(cancellationToken);
 
         tokenQueue.Dequeue(TokenType.ClosingCurlyBracket);
@@ -380,7 +380,7 @@ public class ExpressionParser
                 opPostLength = 1;
                 return true;
             default:
-                throw new ParserException($"Unexpected operator: {tokenQueue.Peek()}");
+                throw new UnexpectedOperatorException(tokenQueue.Peek(), "Unexpected operator");
         }
     }
 }

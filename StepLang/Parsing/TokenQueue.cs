@@ -32,7 +32,7 @@ public class TokenQueue
     public Token Dequeue()
     {
         if (!TryDequeue(out var token))
-            throw new UnexpectedEndOfInputException("Expected a token, but token queue was empty");
+            throw new UnexpectedEndOfTokensException("Expected a token, but token queue was empty");
 
         return token;
     }
@@ -46,6 +46,8 @@ public class TokenQueue
 
         return tokens;
     }
+
+    public bool TryPeek([NotNullWhen(true)] out Token? token) => TryPeek(0, out token);
 
     public bool TryPeek(int offset, [NotNullWhen(true)] out Token? token)
     {
@@ -70,7 +72,7 @@ public class TokenQueue
     public Token Peek(int offset = 0)
     {
         if (!TryPeek(offset, out var token))
-            throw new ParserException("Unexpected end of token queue");
+            throw new UnexpectedEndOfTokensException();
 
         return token;
     }
@@ -81,7 +83,7 @@ public class TokenQueue
         do
         {
             if (!TryPeekType(offset, out type))
-                throw new ParserException("Unexpected end of token queue");
+                throw new UnexpectedEndOfTokensException();
 
             offset++;
         } while (type is TokenType.Whitespace or TokenType.LineComment);
@@ -99,7 +101,7 @@ public class TokenQueue
 
             var typeInfo = allowed.Length == 0 ? "any token" : $"a token (allowed types: {string.Join(',', allowed)})";
 
-            throw new UnexpectedEndOfInputException($"Expected {typeInfo}, but token queue was empty");
+            throw new UnexpectedEndOfTokensException($"Expected {typeInfo}, but token queue was empty");
         } while (token.Type is TokenType.Whitespace or TokenType.LineComment);
 
         if (!allowed.Contains(token.Type))

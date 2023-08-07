@@ -10,8 +10,8 @@ public class TokenQueueTest
     {
         var queue = new TokenQueue();
         
-        Assert.Throws<UnexpectedEndOfInputException>(() => queue.Dequeue());
-        Assert.Throws<UnexpectedEndOfInputException>(() => queue.Dequeue(1));
-        Assert.Throws<UnexpectedEndOfInputException>(() => queue.Dequeue(TokenType.Whitespace));
+        Assert.Throws<UnexpectedEndOfTokensException>(() => queue.Dequeue());
+        Assert.Throws<UnexpectedEndOfTokensException>(() => queue.Dequeue(1));
+        Assert.Throws<UnexpectedEndOfTokensException>(() => queue.Dequeue(TokenType.Whitespace));
     }
 }

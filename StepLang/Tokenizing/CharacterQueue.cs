@@ -41,7 +41,7 @@ public class CharacterQueue
     public char Dequeue()
     {
         if (!TryDequeue(out var character))
-            throw new TokenizerException($"Unexpected end of {nameof(CharacterQueue)}");
+            throw new UnexpectedEndOfCharactersException();
 
         return character;
     }
