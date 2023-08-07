@@ -14,4 +14,5 @@ public enum StatementType
     BreakStatement,
     ContinueStatement,
     IndexAssignment,
+    ImportStatement,
 }
