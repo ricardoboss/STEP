@@ -5,10 +5,19 @@ public class Token
     public TokenType Type { get; }
     public string Value { get; }
 
-    public Token(TokenType type, string value)
+    public TokenLocation? Location { get; }
+
+    public FileSystemInfo? File => Location?.File;
+
+    public int? Line => Location?.Line;
+
+    public int? Column => Location?.Column;
+
+    public Token(TokenType type, string value, TokenLocation? location)
     {
         Type = type;
         Value = value;
+        Location = location;
     }
 
     public override string ToString()

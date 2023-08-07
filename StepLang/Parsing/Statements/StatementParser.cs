@@ -244,7 +244,7 @@ public class StatementParser
 
             valueExpTokens = new Token []
             {
-                new(TokenType.LiteralNumber, "1")
+                new(TokenType.LiteralNumber, "1", null),
             };
         }
         else

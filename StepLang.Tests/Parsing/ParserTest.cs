@@ -12,9 +12,9 @@ public class ParserTest
         var parser = new StatementParser();
         parser.Add(new Token []
         {
-            new(TokenType.Identifier, "function"),
-            new(TokenType.OpeningParentheses, "("),
-            new(TokenType.ClosingParentheses, ")"),
+            new(TokenType.Identifier, "function", null),
+            new(TokenType.OpeningParentheses, "(", null),
+            new(TokenType.ClosingParentheses, ")", null),
         });
 
         var statements = await parser.ParseAsync().ToListAsync();
@@ -29,7 +29,7 @@ public class ParserTest
         var parser = new StatementParser();
         parser.Add(new Token []
         {
-            new(TokenType.LiteralString, "string"),
+            new(TokenType.LiteralString, "string", null),
         });
 
         await Assert.ThrowsAsync<UnexpectedTokenException>(async () => await parser.ParseAsync().ToListAsync());
@@ -43,8 +43,8 @@ public class ParserTest
     //         var parser = new StatementParser();
     //         parser.Add(new Token []
     //         {
-    //             new(TokenType.OpeningCurlyBracket, "{"), new(TokenType.OpeningCurlyBracket, "{"),
-    //             new(TokenType.ClosingCurlyBracket, "}"),
+    //             new(TokenType.OpeningCurlyBracket, "{", null), new(TokenType.OpeningCurlyBracket, "{", null),
+    //             new(TokenType.ClosingCurlyBracket, "}", null),
     //         });
     //
     //         var statements = await parser.ParseAsync().ToListAsync();
@@ -59,8 +59,8 @@ public class ParserTest
     //     var parser = new StatementParser();
     //     var statements = await parser.ParseAsync(new Token []
     //     {
-    //         new(TokenType.OpeningCurlyBracket, "{"), new(TokenType.OpeningCurlyBracket, "{"),
-    //         new(TokenType.ClosingCurlyBracket, "}"),
+    //         new(TokenType.OpeningCurlyBracket, "{", null), new(TokenType.OpeningCurlyBracket, "{", null),
+    //         new(TokenType.ClosingCurlyBracket, "}", null),
     //     }).ToListAsync();
     //
     //     Assert.Equal(3, statements.Count);
@@ -70,7 +70,7 @@ public class ParserTest
     //
     //     var statements2 = await parser.ParseAsync(new Token []
     //     {
-    //         new(TokenType.ClosingCurlyBracket, "}"),
+    //         new(TokenType.ClosingCurlyBracket, "}", null),
     //     }).ToListAsync();
     //
     //     Assert.Single(statements2);

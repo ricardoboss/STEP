@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Globalization;
-using System.Runtime.CompilerServices;
 using System.Text;
-using StepLang.Parsing;
 
 namespace StepLang.Tokenizing;
 
@@ -15,15 +13,11 @@ public class Tokenizer
     private char? stringQuote;
     private bool escaped;
 
-    public void Add(char character) => characterQueue.Enqueue(character);
+    public FileSystemInfo? File { get; set; }
+
+    private TokenLocation? CurrentLocation => File is null ? null : new(File, characterQueue.Line, characterQueue.Column);
 
     public void Add(IEnumerable<char> characters) => characterQueue.Enqueue(characters);
-
-    public async Task AddAsync(IAsyncEnumerable<char> characters, CancellationToken cancellationToken = default)
-    {
-        await foreach(var character in characters.WithCancellation(cancellationToken))
-            characterQueue.Enqueue(character);
-    }
 
     public IEnumerable<Token> TokenizeAsync(CancellationToken cancellationToken = default)
     {
@@ -143,7 +137,7 @@ public class Tokenizer
                 }
             }
 
-            tokens.Add(new(symbolType.Value, c.ToString()));
+            tokens.Add(new(symbolType.Value, c.ToString(), CurrentLocation));
         
             return tokens.ToArray();
         }
@@ -201,7 +195,7 @@ public class Tokenizer
 
         tokenBuilder.Clear();
 
-        return new(type, value);
+        return new(type, value, CurrentLocation);
     }
 
     ~Tokenizer() => End();

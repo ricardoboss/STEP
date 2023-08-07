@@ -6,7 +6,11 @@ namespace StepLang.Tokenizing;
 public class CharacterQueue
 {
     private readonly Queue<char> charQueue = new();
-    
+
+    public int Column { get; private set; }
+
+    public int Line { get; private set; }
+
     public void Enqueue(char c) => charQueue.Enqueue(c);
     
     public void Enqueue(IEnumerable<char> chars)
@@ -17,7 +21,21 @@ public class CharacterQueue
 
     public bool TryDequeue(out char character)
     {
-        return charQueue.TryDequeue(out character);
+        var success = charQueue.TryDequeue(out character);
+        if (!success)
+            return false;
+
+        if (character == '\n')
+        {
+            Line++;
+            Column = 0;
+        }
+        else
+        {
+            Column++;
+        }
+
+        return true;
     }
 
     public char Dequeue()
