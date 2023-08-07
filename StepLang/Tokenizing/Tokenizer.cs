@@ -9,14 +9,16 @@ public class Tokenizer
     private readonly StringBuilder tokenBuilder = new();
     private readonly CharacterQueue characterQueue = new();
 
+    private TokenLocation? stringStartLocation;
     private char? stringQuote;
     private bool escaped;
 
-    public FileSystemInfo? File { get; set; }
-
-    private TokenLocation? CurrentLocation => File is null ? null : new(File, characterQueue.Line + 1, characterQueue.Column + 1);
-
     public void Add(IEnumerable<char> characters) => characterQueue.Enqueue(characters);
+
+    public void UpdateFile(FileSystemInfo file)
+    {
+        characterQueue.File = file;
+    }
 
     public IEnumerable<Token> TokenizeAsync(CancellationToken cancellationToken = default)
     {
@@ -36,6 +38,7 @@ public class Tokenizer
             if (character is '"' or '\'')
             {
                 stringQuote = character;
+                stringStartLocation = characterQueue.CurrentLocation;
 
                 continue;
             }
@@ -44,10 +47,15 @@ public class Tokenizer
             {
                 if (tokenBuilder.Length > 0)
                 {
-                    var token = HandleTokenValue(tokenBuilder.ToString());
+                    var tokenValue = tokenBuilder.ToString();
+                    var token = HandleTokenValue(tokenValue);
                     if (token is not null)
                         yield return token;
-                    
+                    else if (tokenValue.IsValidIdentifier())
+                        yield return FinalizeToken(TokenType.Identifier);
+                    else
+                        throw new InvalidIdentifierException(characterQueue.CurrentLocation, tokenValue);
+
                     Debug.Assert(tokenBuilder.Length == 0);
                 }
 
@@ -69,7 +77,7 @@ public class Tokenizer
         }
 
         if (stringQuote.HasValue)
-            throw new UnclosedStringException(CurrentLocation, stringQuote!.Value);
+            throw new UnclosedStringException(stringStartLocation, stringQuote!.Value);
 
         if (tokenBuilder.Length == 0)
             yield break;
@@ -97,6 +105,7 @@ public class Tokenizer
             else
             {
                 stringQuote = null;
+                stringStartLocation = null;
 
                 return FinalizeToken(TokenType.LiteralString);
             }
@@ -130,11 +139,11 @@ public class Tokenizer
                     if (tokenValue.IsValidIdentifier())
                         tokens.Add(FinalizeToken(TokenType.Identifier));
                     else
-                        throw new InvalidIdentifierException(CurrentLocation, tokenValue);
+                        throw new InvalidIdentifierException(characterQueue.CurrentLocation, tokenValue);
                 }
             }
 
-            tokens.Add(new(symbolType.Value, c.ToString(), CurrentLocation));
+            tokens.Add(new(symbolType.Value, c.ToString(), characterQueue.CurrentLocation));
 
             return tokens.ToArray();
         }
@@ -184,6 +193,6 @@ public class Tokenizer
 
         tokenBuilder.Clear();
 
-        return new(type, value, CurrentLocation);
+        return new(type, value, characterQueue.CurrentLocation);
     }
 }

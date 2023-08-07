@@ -1,26 +1,26 @@
 ﻿using StepLang.Interpreting;
+using StepLang.Tokenizing;
 
 namespace StepLang.Parsing.Expressions;
 
-public class DirectFunctionDefinitionCallExpression : Expression
+public class DirectFunctionDefinitionCallExpression : BaseFunctionCallExpression
 {
     private readonly FunctionDefinitionExpression definitionExpression;
-    private readonly IReadOnlyList<Expression> args;
 
-    public DirectFunctionDefinitionCallExpression(FunctionDefinitionExpression definitionExpression, IReadOnlyList<Expression> args)
+    public DirectFunctionDefinitionCallExpression(FunctionDefinitionExpression definitionExpression, IReadOnlyList<Expression> args) : base(args)
     {
         this.definitionExpression = definitionExpression;
-        this.args = args;
     }
 
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
-        var definition = await definitionExpression.EvaluateAsync(interpreter, cancellationToken);
-        if (definition is not { ValueType: "function", Value: FunctionDefinition functionDefinition })
-            throw new InvalidResultTypeException("function", definition.ValueType);
+        var expressionResult = await definitionExpression.EvaluateAsync(interpreter, cancellationToken);
+        var definition = expressionResult.ExpectFunction();
 
-        return await functionDefinition.EvaluateAsync(interpreter, args, cancellationToken);
+        return await ExecuteFunction(definition, interpreter, cancellationToken);
     }
 
-    protected override string DebugDisplay() => $"({definitionExpression})({string.Join(',', args)})";
+    protected override string DebugDisplay() => $"({definitionExpression})({string.Join(',', Args)})";
+
+    protected override TokenLocation? GetCallLocation() => definitionExpression.Location;
 }

@@ -154,7 +154,16 @@ public class StatementParser
         var trueBranchTokens = tokenQueue.DequeueUntil(TokenType.ClosingCurlyBracket);
         tokenQueue.Dequeue(TokenType.ClosingCurlyBracket);
 
-        var condition = await ExpressionParser.ParseAsync(expressionTokens, cancellationToken);
+        Expression condition;
+        try
+        {
+            condition = await ExpressionParser.ParseAsync(expressionTokens, cancellationToken);
+        }
+        catch (UnexpectedEndOfTokensException e)
+        {
+            throw new MissingConditionExpressionException(ifToken, e);
+        }
+
         var statements = await ParseStatements(trueBranchTokens, cancellationToken).ToListAsync(cancellationToken);
 
         if (tokenQueue.PeekType() is not TokenType.ElseKeyword)
@@ -208,9 +217,17 @@ public class StatementParser
         if (tokenQueue.PeekType() is TokenType.OpeningSquareBracket)
             return await ParseIndexAssignment(identifierToken, cancellationToken);
 
-        tokenQueue.Dequeue(TokenType.EqualsSymbol);
-        
-        var expression = await ParseValueExpression(cancellationToken);
+        var equalsToken = tokenQueue.Dequeue(TokenType.EqualsSymbol);
+
+        Expression expression;
+        try
+        {
+            expression = await ParseValueExpression(cancellationToken);
+        }
+        catch (UnexpectedEndOfTokensException e)
+        {
+            throw new MissingValueExpressionException(equalsToken, e);
+        }
 
         if (identifierToken.Type is TokenType.UnderscoreSymbol)
             return new DiscardAssignmentStatement(expression);
@@ -228,10 +245,19 @@ public class StatementParser
 
         _ = tokenQueue.Dequeue(TokenType.ClosingSquareBracket);
         
-        tokenQueue.Dequeue(TokenType.EqualsSymbol);
+        var equalsToken = tokenQueue.Dequeue(TokenType.EqualsSymbol);
 
         var indexExpression = await ExpressionParser.ParseAsync(indexExpressionTokens, cancellationToken);
-        var valueExpression = await ParseValueExpression(cancellationToken);
+
+        Expression valueExpression;
+        try
+        {
+            valueExpression = await ParseValueExpression(cancellationToken);
+        }
+        catch (UnexpectedEndOfTokensException e)
+        {
+            throw new MissingValueExpressionException(equalsToken, e);
+        }
 
         return new IndexAssignmentStatement(identifierToken, indexExpression, valueExpression)
         {
@@ -312,10 +338,18 @@ public class StatementParser
         if (!tokenQueue.TryPeekType(out var nextType) || nextType is TokenType.NewLine)
             return new VariableDeclarationStatement(typeToken, identifier, null);
 
-        tokenQueue.Dequeue(TokenType.EqualsSymbol);
+        var equalsToken = tokenQueue.Dequeue(TokenType.EqualsSymbol);
 
-        var expression = await ParseValueExpression(cancellationToken);
-        
+        Expression expression;
+        try
+        {
+            expression = await ParseValueExpression(cancellationToken);
+        }
+        catch (UnexpectedEndOfTokensException e)
+        {
+            throw new MissingValueExpressionException(equalsToken, e);
+        }
+
         return new VariableDeclarationStatement(typeToken, identifier, expression);
     }
 
