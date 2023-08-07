@@ -10,6 +10,8 @@ public class FunctionDefinitionExpression : Expression
     private readonly IReadOnlyList<(Token type, Token identifier)> parameters;
     private readonly IReadOnlyList<Statement> body;
 
+    public TokenLocation? Location { get; init; }
+
     public FunctionDefinitionExpression(IReadOnlyList<(Token type, Token identifier)> parameters, IReadOnlyList<Statement> body)
     {
         this.parameters = parameters;

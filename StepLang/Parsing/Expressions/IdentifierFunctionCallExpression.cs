@@ -3,23 +3,24 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Parsing.Expressions;
 
-public class IdentifierFunctionCallExpression : Expression
+public class IdentifierFunctionCallExpression : BaseFunctionCallExpression
 {
     private readonly Token identifier;
-    private readonly IReadOnlyList<Expression> args;
 
-    public IdentifierFunctionCallExpression(Token identifier, IReadOnlyList<Expression> args)
+    public IdentifierFunctionCallExpression(Token identifier, IReadOnlyList<Expression> args) : base(args)
     {
         this.identifier = identifier;
-        this.args = args;
     }
 
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
         var functionVariable = interpreter.CurrentScope.GetVariable(identifier);
         var definition = functionVariable.Value.ExpectFunction();
-        return await definition.EvaluateAsync(interpreter, args, cancellationToken);
+
+        return await ExecuteFunction(definition, interpreter, cancellationToken);
     }
 
-    protected override string DebugDisplay() => $"{identifier}({string.Join(',', args)})";
+    protected override string DebugDisplay() => $"{identifier}({string.Join(',', Args)})";
+
+    protected override TokenLocation? GetCallLocation() => identifier.Location;
 }

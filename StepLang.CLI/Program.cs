@@ -43,11 +43,8 @@ internal static class Program
         {
             var chars = await File.ReadAllTextAsync(scriptFile.FullName);
 
-            var tokenizer = new Tokenizer
-            {
-                File = scriptFile,
-            };
-
+            var tokenizer = new Tokenizer();
+            tokenizer.UpdateFile(scriptFile);
             tokenizer.Add(chars);
             var tokens = tokenizer.TokenizeAsync();
 
@@ -85,19 +82,19 @@ internal static class Program
     private static string FormatGeneralException(Exception e) => FormatError(e.GetType().Name,
         e.Message + Environment.NewLine + e.StackTrace.Pastel(Color.DarkGray));
 
-    private static string FormatParserException(ParserException e)
+    private static string FormatTokenizerException(TokenizerException e)
     {
-        if (e.Token is { Location: not null } token)
-            return FormatTokenLocationException(e, token.Location);
-
         if (e.Location is { } location)
             return FormatTokenLocationException(e, location);
 
         return FormatGeneralException(e);
     }
 
-    private static string FormatTokenizerException(TokenizerException e)
+    private static string FormatParserException(ParserException e)
     {
+        if (e.Token is { Location: not null } token)
+            return FormatTokenLocationException(e, token.Location);
+
         if (e.Location is { } location)
             return FormatTokenLocationException(e, location);
 
@@ -111,6 +108,9 @@ internal static class Program
 
         if (e.Token is { Location: not null } token)
             return FormatTokenLocationException(e, token.Location);
+
+        if (e.Location is { } location)
+            return FormatTokenLocationException(e, location);
 
         return FormatGeneralException(e);
     }

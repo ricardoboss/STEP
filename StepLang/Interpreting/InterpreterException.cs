@@ -9,22 +9,24 @@ public abstract class InterpreterException : Exception
 {
     public Statement? Statement { get; }
     public Token? Token { get; }
+    public TokenLocation? Location { get; }
 
     protected InterpreterException(string message) : base(message)
     {
-        Statement = null;
-        Token = null;
     }
 
-    protected InterpreterException(Statement? statement, string message, Exception inner) : base(message, inner)
+    protected InterpreterException(Statement? statement, string message, Exception? inner = null) : base(message, inner)
     {
         Statement = statement;
-        Token = null;
     }
 
-    protected InterpreterException(Token? token, string message) : base($"{token?.Location?.ToString() ?? "<unknown>"}: {message}")
+    protected InterpreterException(Token? token, string message, Exception? inner = null) : base(message, inner)
     {
-        Statement = null;
         Token = token;
+    }
+
+    protected InterpreterException(TokenLocation? location, string message, Exception? inner = null) : base(message, inner)
+    {
+        Location = location;
     }
 }

@@ -45,6 +45,51 @@ public enum TokenType
 
 public static class TokenTypes
 {
+    public static string ToDisplay(this TokenType type)
+    {
+        return type switch
+        {
+            TokenType.TypeName => "type name",
+            TokenType.Identifier => "identifier",
+            TokenType.EqualsSymbol => "'='",
+            TokenType.LiteralString => "literal string",
+            TokenType.LiteralNumber => "literal number",
+            TokenType.LiteralBoolean => "literal boolean",
+            TokenType.Whitespace => "whitespace",
+            TokenType.NewLine => "new line",
+            TokenType.IfKeyword => "'if'",
+            TokenType.ElseKeyword => "'else'",
+            TokenType.WhileKeyword => "'while'",
+            TokenType.BreakKeyword => "'break'",
+            TokenType.ContinueKeyword => "'continue'",
+            TokenType.OpeningCurlyBracket => "'{'",
+            TokenType.ClosingCurlyBracket => "'}'",
+            TokenType.OpeningParentheses => "'('",
+            TokenType.ClosingParentheses => "')'",
+            TokenType.CommaSymbol => "','",
+            TokenType.GreaterThanSymbol => "'>'",
+            TokenType.LessThanSymbol => "'<'",
+            TokenType.PlusSymbol => "'+'",
+            TokenType.MinusSymbol => "'-'",
+            TokenType.AsteriskSymbol => "'*'",
+            TokenType.SlashSymbol => "'/'",
+            TokenType.PercentSymbol => "'%'",
+            TokenType.PipeSymbol => "'|'",
+            TokenType.AmpersandSymbol => "'&'",
+            TokenType.ExclamationMarkSymbol => "'!'",
+            TokenType.HatSymbol => "'^'",
+            TokenType.TildeSymbol => "'~'",
+            TokenType.QuestionMarkSymbol => "'?'",
+            TokenType.ReturnKeyword => "'return'",
+            TokenType.UnderscoreSymbol => "'_'",
+            TokenType.LineComment => "line comment",
+            TokenType.OpeningSquareBracket => "'['",
+            TokenType.ClosingSquareBracket => "']'",
+            TokenType.ColonSymbol => "':'",
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, "Unknown token type"),
+        };
+    }
+
     public static bool IsKnownTypeName(this string name)
     {
         return name is "string" or "number" or "bool" or "function" or "list" or "map";

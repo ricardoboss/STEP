@@ -1,0 +1,28 @@
+﻿using StepLang.Interpreting;
+using StepLang.Tokenizing;
+
+namespace StepLang.Parsing.Expressions;
+
+public abstract class BaseFunctionCallExpression : Expression
+{
+    protected IReadOnlyList<Expression> Args { get; }
+
+    protected BaseFunctionCallExpression(IReadOnlyList<Expression> args)
+    {
+        Args = args;
+    }
+
+    protected abstract TokenLocation? GetCallLocation();
+
+    protected async Task<ExpressionResult> ExecuteFunction(FunctionDefinition function, Interpreter interpreter, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await function.EvaluateAsync(interpreter, Args, cancellationToken);
+        }
+        catch (Exception e) when (e is InvalidArgumentCountException)
+        {
+            throw new InvalidFunctionCallException(GetCallLocation(), e);
+        }
+    }
+}

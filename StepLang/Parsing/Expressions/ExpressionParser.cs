@@ -216,7 +216,7 @@ public class ExpressionParser
 
                     tokenQueue.Prepend(currentToken);
 
-                    return await ParseFunctionDefinitionExpression(cancellationToken);
+                    return await ParseFunctionDefinitionExpression(currentToken, cancellationToken);
                 }
 
                 if (nextType is TokenType.TypeName)
@@ -225,7 +225,7 @@ public class ExpressionParser
 
                     tokenQueue.Prepend(currentToken);
 
-                    return await ParseFunctionDefinitionExpression(cancellationToken);
+                    return await ParseFunctionDefinitionExpression(currentToken, cancellationToken);
                 }
 
                 // parentheses around expression
@@ -255,11 +255,11 @@ public class ExpressionParser
             case var _ when currentTokenType.IsMathematicalOperation():
                 throw new NotImplementedException("Cannot parse mathematical operation as expression");
             default:
-                throw new InvalidOperationException($"Invalid expression. Got token: {currentToken}");
+                throw new UnexpectedTokenException(currentToken, TokenType.Identifier, TokenType.LiteralNumber, TokenType.LiteralBoolean, TokenType.LiteralString, TokenType.OpeningParentheses, TokenType.OpeningSquareBracket, TokenType.OpeningCurlyBracket);
         }
     }
 
-    private async Task<Expression> ParseFunctionDefinitionExpression(CancellationToken cancellationToken = default)
+    private async Task<Expression> ParseFunctionDefinitionExpression(Token openingParenthesisToken, CancellationToken cancellationToken = default)
     {
         var parameters = new List<(Token, Token)>(); // (type, name)
 
@@ -295,7 +295,10 @@ public class ExpressionParser
 
         tokenQueue.Dequeue(TokenType.ClosingCurlyBracket);
 
-        var definitionExpression = new FunctionDefinitionExpression(parameters, body);
+        var definitionExpression = new FunctionDefinitionExpression(parameters, body)
+        {
+            Location = openingParenthesisToken.Location,
+        };
 
         if (!tokenQueue.TryPeekType(out var nextNextType) || nextNextType is not TokenType.OpeningParentheses)
             return definitionExpression;
@@ -380,7 +383,8 @@ public class ExpressionParser
                 opPostLength = 1;
                 return true;
             default:
-                throw new UnexpectedOperatorException(tokenQueue.Peek(), "Unexpected operator");
+                var nextToken = tokenQueue.Peek();
+                throw new UnexpectedOperatorException(nextToken, $"The operator '{nextToken.Value}' was not recognized or is not supported");
         }
     }
 }

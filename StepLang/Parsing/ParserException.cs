@@ -9,7 +9,7 @@ public abstract class ParserException : Exception
     public Token? Token { get; }
     public TokenLocation? Location { get; }
 
-    protected ParserException(Token? token, string message) : base(message)
+    protected ParserException(Token? token, string message, Exception? inner = null) : base(message, inner)
     {
         Token = token;
     }

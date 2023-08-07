@@ -11,8 +11,20 @@ public class CharacterQueue
 
     public int Line { get; private set; }
 
-    public void Enqueue(char c) => charQueue.Enqueue(c);
-    
+    private FileSystemInfo? file;
+    public FileSystemInfo? File
+    {
+        get => file;
+        set
+        {
+            file = value;
+            Line = 1;
+            Column = 1;
+        }
+    }
+
+    public TokenLocation? CurrentLocation => File is null ? null : new(File, Line, Column);
+
     public void Enqueue(IEnumerable<char> chars)
     {
         foreach (var c in chars)
@@ -28,7 +40,7 @@ public class CharacterQueue
         if (character == '\n')
         {
             Line++;
-            Column = 0;
+            Column = 1;
         }
         else
         {
@@ -41,7 +53,7 @@ public class CharacterQueue
     public char Dequeue()
     {
         if (!TryDequeue(out var character))
-            throw new UnexpectedEndOfCharactersException();
+            throw new UnexpectedEndOfCharactersException(File is null ? null : new(File, Line, Column));
 
         return character;
     }

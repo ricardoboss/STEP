@@ -36,7 +36,7 @@ public class TokenQueue
     public Token Dequeue()
     {
         if (!TryDequeue(out var token))
-            throw new UnexpectedEndOfTokensException(lastToken?.Location,"Expected a token, but token queue was empty");
+            throw new UnexpectedEndOfTokensException(lastToken?.Location);
 
         return token;
     }
@@ -103,9 +103,14 @@ public class TokenQueue
             if (TryDequeue(out token))
                 continue;
 
-            var typeInfo = allowed.Length == 0 ? "any token" : $"a token (allowed types: {string.Join(',', allowed)})";
+            var typeInfo = allowed.Length switch
+            {
+                0 => "any token",
+                1 => $"a {allowed[0].ToDisplay()}",
+                _ => $"any one of {string.Join(',', allowed.Select(TokenTypes.ToDisplay))}",
+            };
 
-            throw new UnexpectedEndOfTokensException(lastToken?.Location, $"Expected {typeInfo}, but token queue was empty");
+            throw new UnexpectedEndOfTokensException(lastToken?.Location, $"Expected {typeInfo}");
         } while (token.Type is TokenType.Whitespace or TokenType.LineComment);
 
         if (!allowed.Contains(token.Type))
