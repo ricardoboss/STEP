@@ -16,7 +16,7 @@ public class IdentifierFunctionCallExpression : Expression
 
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
-        var functionVariable = interpreter.CurrentScope.GetVariable(identifier.Value);
+        var functionVariable = interpreter.CurrentScope.GetVariable(identifier);
         var definition = functionVariable.Value.ExpectFunction();
         return await definition.EvaluateAsync(interpreter, args, cancellationToken);
     }

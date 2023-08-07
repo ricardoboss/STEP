@@ -24,24 +24,27 @@ public class VariableDeclarationStatement : Statement
 
         this.identifier = identifier;
         this.expression = expression;
+
+        Location = type.Location;
     }
 
     /// <inheritdoc />
     public override async Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
+        ExpressionResult result;
         if (expression is null)
         {
             // only declare, no value assigned
 
-            interpreter.CurrentScope.SetVariable(identifier.Value, ExpressionResult.From(type.Value));
-
-            return;
+            result = ExpressionResult.From(type.Value);
         }
+        else
+        {
+            result = await expression.EvaluateAsync(interpreter, cancellationToken);
 
-        var result = await expression.EvaluateAsync(interpreter, cancellationToken);
-
-        if (result.ValueType != type.Value)
-            throw new IncompatibleTypesException(result.ValueType, type.Value, "assign");
+            if (result.ValueType != type.Value)
+                throw new IncompatibleTypesException(result.ValueType, type.Value, "assign");
+        }
 
         interpreter.CurrentScope.SetVariable(identifier.Value, result);
     }

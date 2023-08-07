@@ -18,7 +18,7 @@ public class TypenameFunction : NativeFunction
         if (exp is not VariableExpression varExp)
             throw new InvalidExpressionTypeException(nameof(VariableExpression), exp.GetType().Name);
 
-        var variable = interpreter.CurrentScope.GetVariable(varExp.Identifier.Value);
+        var variable = interpreter.CurrentScope.GetVariable(varExp.Identifier);
         var result = ExpressionResult.String(variable.Value.ValueType);
 
         return Task.FromResult(result);

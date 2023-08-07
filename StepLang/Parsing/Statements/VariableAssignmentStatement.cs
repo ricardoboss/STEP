@@ -18,6 +18,8 @@ public class VariableAssignmentStatement : Statement
 
         this.identifier = identifier;
         this.expression = expression;
+
+        Location = identifier.Location;
     }
 
     /// <inheritdoc />
@@ -25,7 +27,7 @@ public class VariableAssignmentStatement : Statement
     {
         var result = await expression.EvaluateAsync(interpreter, cancellationToken);
 
-        interpreter.CurrentScope.UpdateValue(identifier.Value, result);
+        interpreter.CurrentScope.UpdateValue(identifier, result);
     }
 
     /// <inheritdoc />

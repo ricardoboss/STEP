@@ -32,17 +32,17 @@ public class StatementParser
             else if (type is TokenType.Identifier or TokenType.UnderscoreSymbol)
                 yield return await ParseIdentifierUsage(token, cancellationToken);
             else if (type is TokenType.IfKeyword)
-                yield return await ParseIfStatement(cancellationToken);
+                yield return await ParseIfStatement(token, cancellationToken);
             else if (type is TokenType.WhileKeyword)
-                yield return await ParseWhileLoop(cancellationToken);
+                yield return await ParseWhileLoop(token, cancellationToken);
             else if (type is TokenType.ReturnKeyword)
-                yield return await ParseReturnStatement(cancellationToken);
+                yield return await ParseReturnStatement(token, cancellationToken);
             else if (type is TokenType.BreakKeyword)
-                yield return await ParseBreakStatement(cancellationToken);
+                yield return await ParseBreakStatement(token, cancellationToken);
             else if (type is TokenType.ContinueKeyword)
-                yield return await ParseContinueStatement(cancellationToken);
+                yield return await ParseContinueStatement(token, cancellationToken);
             else if (type is TokenType.OpeningCurlyBracket)
-                yield return await ParseAnonymousCodeBlock(cancellationToken);
+                yield return await ParseAnonymousCodeBlock(token, cancellationToken);
             else if (type is TokenType.ClosingCurlyBracket)
                 yield break;
             else if (type is not TokenType.Whitespace and not TokenType.NewLine and not TokenType.LineComment)
@@ -50,7 +50,7 @@ public class StatementParser
         }
     }
 
-    private async Task<Statement> ParseContinueStatement(CancellationToken cancellationToken = default)
+    private async Task<Statement> ParseContinueStatement(Token continueToken, CancellationToken cancellationToken = default)
     {
         // continue: continue [expression]
 
@@ -64,10 +64,13 @@ public class StatementParser
         else
             expression = await ExpressionParser.ParseAsync(expressionTokens, cancellationToken);
 
-        return new ContinueStatement(expression);
+        return new ContinueStatement(expression)
+        {
+            Location = continueToken.Location,
+        };
     }
 
-    private async Task<Statement> ParseBreakStatement(CancellationToken cancellationToken = default)
+    private async Task<Statement> ParseBreakStatement(Token breakToken, CancellationToken cancellationToken = default)
     {
         // break: break [expression]
 
@@ -81,10 +84,13 @@ public class StatementParser
         else
             expression = await ExpressionParser.ParseAsync(expressionTokens, cancellationToken);
 
-        return new BreakStatement(expression);
+        return new BreakStatement(expression)
+        {
+            Location = breakToken.Location,
+        };
     }
 
-    private async Task<Statement> ParseReturnStatement(CancellationToken cancellationToken = default)
+    private async Task<Statement> ParseReturnStatement(Token returnToken, CancellationToken cancellationToken = default)
     {
         // return: return <expression>
         
@@ -93,11 +99,14 @@ public class StatementParser
         tokenQueue.Dequeue(TokenType.NewLine);
         
         var expression = await ExpressionParser.ParseAsync(expressionTokens, cancellationToken);
-        
-        return new ReturnStatement(expression);
+
+        return new ReturnStatement(expression)
+        {
+            Location = returnToken.Location,
+        };
     }
 
-    private async Task<Statement> ParseAnonymousCodeBlock(CancellationToken cancellationToken)
+    private async Task<Statement> ParseAnonymousCodeBlock(Token openingToken, CancellationToken cancellationToken)
     {
         // anonymous code block: { [statement]* }
 
@@ -106,10 +115,13 @@ public class StatementParser
 
         var statements = await ParseStatements(statementsTokens, cancellationToken).ToListAsync(cancellationToken);
 
-        return new AnonymousCodeBlockStatement(statements);
+        return new AnonymousCodeBlockStatement(statements)
+        {
+            Location = openingToken.Location,
+        };
     }
 
-    private async Task<Statement> ParseWhileLoop(CancellationToken cancellationToken)
+    private async Task<Statement> ParseWhileLoop(Token whileToken, CancellationToken cancellationToken)
     {
         // looping: while (<expression>) { [statement]* }
 
@@ -124,10 +136,13 @@ public class StatementParser
         var condition = await ExpressionParser.ParseAsync(expressionTokens, cancellationToken);
         var statements = await ParseStatements(statementsTokens, cancellationToken).ToListAsync(cancellationToken);
 
-        return new WhileStatement(condition, statements);
+        return new WhileStatement(condition, statements)
+        {
+            Location = whileToken.Location,
+        };
     }
 
-    private async Task<Statement> ParseIfStatement(CancellationToken cancellationToken)
+    private async Task<Statement> ParseIfStatement(Token ifToken, CancellationToken cancellationToken)
     {
         // branching: if (<expression>) { [statement]* } [else[if (<expression>)] { [statement]* } ]
 
@@ -143,7 +158,10 @@ public class StatementParser
         var statements = await ParseStatements(trueBranchTokens, cancellationToken).ToListAsync(cancellationToken);
 
         if (tokenQueue.PeekType() is not TokenType.ElseKeyword)
-            return new IfStatement(condition, statements);
+            return new IfStatement(condition, statements)
+            {
+                Location = ifToken.Location,
+            };
 
         tokenQueue.Dequeue(TokenType.ElseKeyword);
 
@@ -165,7 +183,10 @@ public class StatementParser
         var elseStatements = await ParseStatements(falseBranchTokens, cancellationToken)
             .ToListAsync(cancellationToken);
 
-        return new IfElseStatement(condition, statements, elseExpression, elseStatements);
+        return new IfElseStatement(condition, statements, elseExpression, elseStatements)
+        {
+            Location = ifToken.Location,
+        };
     }
 
     private async Task<Statement> ParseIdentifierUsage(Token identifierToken, CancellationToken cancellationToken = default)
@@ -212,7 +233,10 @@ public class StatementParser
         var indexExpression = await ExpressionParser.ParseAsync(indexExpressionTokens, cancellationToken);
         var valueExpression = await ParseValueExpression(cancellationToken);
 
-        return new IndexAssignmentStatement(identifierToken, indexExpression, valueExpression);
+        return new IndexAssignmentStatement(identifierToken, indexExpression, valueExpression)
+        {
+            Location = identifierToken.Location,
+        };
     }
 
     private async Task<Expression> ParseValueExpression(CancellationToken cancellationToken)
