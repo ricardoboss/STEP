@@ -8,6 +8,8 @@ public class TokenQueue
 {
     private readonly LinkedList<Token> tokenList = new();
 
+    private Token? lastToken;
+
     public void Enqueue(Token token) => tokenList.AddLast(token);
 
     public void Enqueue(IEnumerable<Token> tokens)
@@ -24,6 +26,8 @@ public class TokenQueue
         if (token is null)
             return false;
 
+        lastToken = token;
+
         tokenList.RemoveFirst();
 
         return true;
@@ -32,7 +36,7 @@ public class TokenQueue
     public Token Dequeue()
     {
         if (!TryDequeue(out var token))
-            throw new UnexpectedEndOfTokensException("Expected a token, but token queue was empty");
+            throw new UnexpectedEndOfTokensException(lastToken?.Location,"Expected a token, but token queue was empty");
 
         return token;
     }
@@ -72,7 +76,7 @@ public class TokenQueue
     public Token Peek(int offset = 0)
     {
         if (!TryPeek(offset, out var token))
-            throw new UnexpectedEndOfTokensException();
+            throw new UnexpectedEndOfTokensException(lastToken?.Location);
 
         return token;
     }
@@ -83,7 +87,7 @@ public class TokenQueue
         do
         {
             if (!TryPeekType(offset, out type))
-                throw new UnexpectedEndOfTokensException();
+                throw new UnexpectedEndOfTokensException(lastToken?.Location);
 
             offset++;
         } while (type is TokenType.Whitespace or TokenType.LineComment);
@@ -101,7 +105,7 @@ public class TokenQueue
 
             var typeInfo = allowed.Length == 0 ? "any token" : $"a token (allowed types: {string.Join(',', allowed)})";
 
-            throw new UnexpectedEndOfTokensException($"Expected {typeInfo}, but token queue was empty");
+            throw new UnexpectedEndOfTokensException(lastToken?.Location, $"Expected {typeInfo}, but token queue was empty");
         } while (token.Type is TokenType.Whitespace or TokenType.LineComment);
 
         if (!allowed.Contains(token.Type))
