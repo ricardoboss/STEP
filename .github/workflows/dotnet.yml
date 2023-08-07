@@ -11,14 +11,14 @@ on:
 
 jobs:
   build:
-    name: Build & Test .NET
-
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        version: [7.0.x]
+        version: [7.x]
 
     runs-on: ${{ matrix.os }}
+
+    name: Build & Test on .NET ${{ matrix.version }} (${{ matrix.os }})
 
     steps:
     - uses: actions/checkout@v3
