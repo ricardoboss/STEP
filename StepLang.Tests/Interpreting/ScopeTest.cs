@@ -1,4 +1,5 @@
 using StepLang.Interpreting;
+using StepLang.Tokenizing;
 
 namespace StepLang.Tests.Interpreting;
 
@@ -9,6 +10,6 @@ public class ScopeTest
     {
         var scope = Scope.GlobalScope;
 
-        Assert.Throws<UndefinedIdentifierException>(() => scope.GetVariable("undefined"));
+        Assert.Throws<UndefinedIdentifierException>(() => scope.GetVariable(new(TokenType.Identifier, "undefined", null)));
     }
 }

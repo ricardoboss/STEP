@@ -3,6 +3,7 @@ using StepLang.Framework.Conversion;
 using StepLang.Framework.IO;
 using StepLang.Framework.Reflection;
 using StepLang.Parsing.Expressions;
+using StepLang.Tokenizing;
 
 namespace StepLang.Interpreting;
 
@@ -59,17 +60,17 @@ public class Scope
         return false;
     }
 
-    public Variable GetVariable(string identifier)
+    public Variable GetVariable(Token identifierToken)
     {
-        if (TryGetVariable(identifier, out var variable))
+        if (TryGetVariable(identifierToken.Value, out var variable))
             return variable;
 
-        throw new UndefinedIdentifierException(identifier);
+        throw new UndefinedIdentifierException(identifierToken);
     }
 
-    public void UpdateValue(string identifier, ExpressionResult value)
+    public void UpdateValue(Token identifierToken, ExpressionResult value)
     {
-        var variable = GetVariable(identifier);
+        var variable = GetVariable(identifierToken);
 
         variable.Assign(value);
     }

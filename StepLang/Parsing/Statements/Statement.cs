@@ -1,10 +1,13 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using StepLang.Interpreting;
+using StepLang.Tokenizing;
 
 namespace StepLang.Parsing.Statements;
 
 public abstract class Statement
 {
+    public TokenLocation? Location { get; init; }
+
     protected Statement(StatementType type)
     {
         Type = type;

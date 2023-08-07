@@ -23,7 +23,7 @@ public class IndexAssignmentStatement : Statement
     /// <inheritdoc />
     public override async Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
-        var indexedVariable = interpreter.CurrentScope.GetVariable(identifier.Value);
+        var indexedVariable = interpreter.CurrentScope.GetVariable(identifier);
         var indexResult = await indexExpression.EvaluateAsync(interpreter, cancellationToken);
         var valueResult = await valueExpression.EvaluateAsync(interpreter, cancellationToken);
 

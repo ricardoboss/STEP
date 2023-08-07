@@ -14,7 +14,7 @@ public class Tokenizer
 
     public FileSystemInfo? File { get; set; }
 
-    private TokenLocation? CurrentLocation => File is null ? null : new(File, characterQueue.Line, characterQueue.Column);
+    private TokenLocation? CurrentLocation => File is null ? null : new(File, characterQueue.Line + 1, characterQueue.Column + 1);
 
     public void Add(IEnumerable<char> characters) => characterQueue.Enqueue(characters);
 
@@ -135,7 +135,7 @@ public class Tokenizer
             }
 
             tokens.Add(new(symbolType.Value, c.ToString(), CurrentLocation));
-        
+
             return tokens.ToArray();
         }
 

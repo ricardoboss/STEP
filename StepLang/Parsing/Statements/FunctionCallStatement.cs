@@ -18,6 +18,8 @@ public class FunctionCallStatement : Statement
 
         this.identifier = identifier;
         this.args = args;
+
+        Location = identifier.Location;
     }
 
     /// <inheritdoc />
