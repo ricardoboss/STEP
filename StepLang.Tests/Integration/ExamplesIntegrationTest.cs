@@ -11,12 +11,12 @@ public class ExamplesIntegrationTest
 {
     [Theory]
     [ClassData(typeof(ExampleFiles))]
-    public async Task TestExamplesSucceed(string exampleFilePath)
+    public async Task TestExamplesSucceed(FileInfo exampleFile)
     {
         // arrange
         var stdInText = "";
-        if (File.Exists(exampleFilePath + ".in"))
-            stdInText = await File.ReadAllTextAsync(exampleFilePath + ".in");
+        if (File.Exists(exampleFile.FullName + ".in"))
+            stdInText = await File.ReadAllTextAsync(exampleFile.FullName + ".in");
 
         var stdOut = new StringWriter();
         var stdErr = new StringWriter();
@@ -26,19 +26,22 @@ public class ExamplesIntegrationTest
         var expectedOutput = "";
         var expectedError = "";
 
-        if (File.Exists(exampleFilePath + ".exit"))
-            expectedExitCode = int.Parse(await File.ReadAllTextAsync(exampleFilePath + ".exit"), CultureInfo.InvariantCulture);
-        if (File.Exists(exampleFilePath + ".out"))
-            expectedOutput = await File.ReadAllTextAsync(exampleFilePath + ".out");
-        if (File.Exists(exampleFilePath + ".err"))
-            expectedError = await File.ReadAllTextAsync(exampleFilePath + ".err");
+        if (File.Exists(exampleFile.FullName + ".exit"))
+            expectedExitCode = int.Parse(await File.ReadAllTextAsync(exampleFile.FullName + ".exit"), CultureInfo.InvariantCulture);
+        if (File.Exists(exampleFile.FullName + ".out"))
+            expectedOutput = await File.ReadAllTextAsync(exampleFile.FullName + ".out");
+        if (File.Exists(exampleFile.FullName + ".err"))
+            expectedError = await File.ReadAllTextAsync(exampleFile.FullName + ".err");
 
-        var tokenizer = new Tokenizer();
+        var tokenizer = new Tokenizer
+        {
+            File = exampleFile,
+        };
         var parser = new StatementParser();
         var interpreter = new Interpreter(stdOut, stdErr, stdIn);
 
         // act
-        var chars = await File.ReadAllTextAsync(exampleFilePath);
+        var chars = await File.ReadAllTextAsync(exampleFile.FullName);
         tokenizer.Add(chars);
         var tokens = tokenizer.TokenizeAsync();
         await parser.AddAsync(tokens.ToAsyncEnumerable());
@@ -56,7 +59,7 @@ public class ExamplesIntegrationTest
     {
         public IEnumerator<object []> GetEnumerator() => Directory
             .EnumerateFiles("Examples", "*.step")
-            .Select(path => new object[] { path })
+            .Select(path => new object[] { new FileInfo(path) })
             .GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

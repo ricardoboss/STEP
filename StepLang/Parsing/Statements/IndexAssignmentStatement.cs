@@ -13,7 +13,7 @@ public class IndexAssignmentStatement : Statement
     public IndexAssignmentStatement(Token identifier, Expression indexExpression, Expression valueExpression) : base(StatementType.IndexAssignment)
     {
         if (identifier.Type != TokenType.Identifier)
-            throw new TokenizerException($"Expected {TokenType.Identifier} token, but got {identifier.Type} instead");
+            throw new UnexpectedTokenException(identifier, TokenType.Identifier);
 
         this.identifier = identifier;
         this.indexExpression = indexExpression;

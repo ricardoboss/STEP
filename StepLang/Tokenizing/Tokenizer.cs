@@ -9,7 +9,6 @@ public class Tokenizer
     private readonly StringBuilder tokenBuilder = new();
     private readonly CharacterQueue characterQueue = new();
 
-    private bool inString;
     private char? stringQuote;
     private bool escaped;
 
@@ -25,7 +24,7 @@ public class Tokenizer
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (inString)
+            if (stringQuote.HasValue)
             {
                 var token = HandleString(character);
                 if (token is not null)
@@ -37,7 +36,6 @@ public class Tokenizer
             if (character is '"' or '\'')
             {
                 stringQuote = character;
-                inString = true;
 
                 continue;
             }
@@ -70,8 +68,8 @@ public class Tokenizer
                 yield return token;
         }
 
-        if (inString)
-            throw new TokenizerException("Unclosed string");
+        if (stringQuote.HasValue)
+            throw new UnclosedStringException(CurrentLocation, stringQuote!.Value);
 
         if (tokenBuilder.Length == 0)
             yield break;
@@ -98,7 +96,6 @@ public class Tokenizer
             }
             else
             {
-                inString = false;
                 stringQuote = null;
 
                 return FinalizeToken(TokenType.LiteralString);
@@ -133,7 +130,7 @@ public class Tokenizer
                     if (tokenValue.IsValidIdentifier())
                         tokens.Add(FinalizeToken(TokenType.Identifier));
                     else
-                        throw new TokenizerException($"Invalid identifier: {tokenValue}");
+                        throw new InvalidIdentifierException(CurrentLocation, tokenValue);
                 }
             }
 
@@ -176,14 +173,6 @@ public class Tokenizer
         return null;
     }
 
-    public void End()
-    {
-        if (tokenBuilder.Length == 0)
-            return;
-
-        throw new TokenizerException("Unexpected end of input");
-    }
-
     private static bool IsPartOfLiteralNumber(char c)
     {
         return char.IsDigit(c) || c == '.' || c == '-' || c == '+';
@@ -197,6 +186,4 @@ public class Tokenizer
 
         return new(type, value, CurrentLocation);
     }
-
-    ~Tokenizer() => End();
 }

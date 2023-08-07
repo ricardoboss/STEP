@@ -3,9 +3,12 @@
 namespace StepLang.Tokenizing;
 
 [SuppressMessage("Design", "CA1032:Implement standard exception constructors")]
-public class TokenizerException : Exception
+public abstract class TokenizerException : Exception
 {
-    public TokenizerException(string message) : base(message)
+    public TokenLocation? Location { get; }
+
+    protected TokenizerException(TokenLocation? location, string message) : base($"{location?.ToString() ?? "<unknown>"}: {message}")
     {
+        Location = location;
     }
 }
