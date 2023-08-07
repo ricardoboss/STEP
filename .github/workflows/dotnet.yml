@@ -11,18 +11,40 @@ on:
 
 jobs:
   build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        version: [7.x, 8.x]
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+
+    name: Build & Test on .NET ${{ matrix.version }} (${{ matrix.os }})
 
     steps:
     - uses: actions/checkout@v3
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 7.0.x
+        dotnet-version: ${{ matrix.version }}
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --configuration Release --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
+    - name: Code Coverage Summary Report
+      uses: irongut/CodeCoverageSummary@v1.3.0
+      if: matrix.os == 'ubuntu-latest'
+      with:
+        filename: coverage/**/coverage.cobertura.xml
+        badge: true
+        format: markdown
+        output: both
+        fail_below_min: true
+        thresholds: '30 50'
+    - name: Add Coverage PR Comment
+      uses: marocchino/sticky-pull-request-comment@v2
+      if: github.event_name == 'pull_request' && matrix.os == 'ubuntu-latest'
+      with:
+        recreate: true
+        path: code-coverage-results.md
