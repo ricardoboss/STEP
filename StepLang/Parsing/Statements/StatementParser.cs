@@ -254,7 +254,9 @@ public class StatementParser
     {
         // shortcut setter: <identifier>++ / <identifier>-- / <identifier> *= <expression> / <identifier> /= <expression>
 
-        var operationToken = tokenQueue.Dequeue();
+        var operationToken = tokenQueue.Dequeue(TokenType.PlusSymbol,
+            TokenType.MinusSymbol, TokenType.AsteriskSymbol, TokenType.SlashSymbol,
+            TokenType.PercentSymbol);
         var valueDenominator = tokenQueue.Dequeue(TokenType.PlusSymbol,
             TokenType.MinusSymbol, TokenType.AsteriskSymbol, TokenType.SlashSymbol,
             TokenType.PercentSymbol, TokenType.EqualsSymbol);
