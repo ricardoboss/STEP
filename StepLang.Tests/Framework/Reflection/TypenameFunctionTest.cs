@@ -17,7 +17,7 @@ public class TypenameFunctionTest
         interpreter.CurrentScope.SetVariable(varName, arg);
         
         var function = new TypenameFunction();
-        var result = await function.EvaluateAsync(interpreter, new []{ new VariableExpression(new(TokenType.Identifier, varName)) });
+        var result = await function.EvaluateAsync(interpreter, new []{ new VariableExpression(new(TokenType.Identifier, varName, null)) });
 
         Assert.Equal("string", result.ValueType);
         Assert.Equal(typeName, result.Value as string);

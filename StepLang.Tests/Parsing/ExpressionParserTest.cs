@@ -11,7 +11,7 @@ public class ExpressionParserTest
     {
         var interpreter = new Interpreter();
         interpreter.CurrentScope.SetVariable("variable", ExpressionResult.True);
-        var expression = await ExpressionParser.ParseAsync(new [] { new Token(TokenType.Identifier, "variable") });
+        var expression = await ExpressionParser.ParseAsync(new [] { new Token(TokenType.Identifier, "variable", null) });
 
 
         var result = await expression.EvaluateAsync(interpreter);
@@ -25,7 +25,7 @@ public class ExpressionParserTest
     public async Task TestParseSimpleAddition()
     {
         var interpreter = new Interpreter();
-        var expression = await ExpressionParser.ParseAsync(new [] { new Token(TokenType.LiteralNumber, "123"), new Token(TokenType.PlusSymbol, "+"), new Token(TokenType.LiteralNumber, "456") });
+        var expression = await ExpressionParser.ParseAsync(new [] { new Token(TokenType.LiteralNumber, "123", null), new Token(TokenType.PlusSymbol, "+", null), new Token(TokenType.LiteralNumber, "456", null) });
 
         var result = await expression.EvaluateAsync(interpreter);
 
@@ -38,7 +38,7 @@ public class ExpressionParserTest
     public async Task TestParseAdditionWithMultipleSummands()
     {
         var interpreter = new Interpreter();
-        var expression = await ExpressionParser.ParseAsync(new [] { new Token(TokenType.LiteralNumber, "1"), new Token(TokenType.PlusSymbol, "+"), new Token(TokenType.LiteralNumber, "2"), new Token(TokenType.PlusSymbol, "+"), new Token(TokenType.LiteralNumber, "3"), new Token(TokenType.PlusSymbol, "+"), new Token(TokenType.LiteralNumber, "4") });
+        var expression = await ExpressionParser.ParseAsync(new [] { new Token(TokenType.LiteralNumber, "1", null), new Token(TokenType.PlusSymbol, "+", null), new Token(TokenType.LiteralNumber, "2", null), new Token(TokenType.PlusSymbol, "+", null), new Token(TokenType.LiteralNumber, "3", null), new Token(TokenType.PlusSymbol, "+", null), new Token(TokenType.LiteralNumber, "4", null) });
 
         var result = await expression.EvaluateAsync(interpreter);
 
@@ -51,7 +51,7 @@ public class ExpressionParserTest
     public async Task TestMultiplicativeAdditivePrecedences()
     {
         var interpreter = new Interpreter();
-        var expression = await ExpressionParser.ParseAsync(new [] { new Token(TokenType.LiteralNumber, "1"), new Token(TokenType.AsteriskSymbol, "*"), new Token(TokenType.LiteralNumber, "2"), new Token(TokenType.PlusSymbol, "+"), new Token(TokenType.LiteralNumber, "3") });
+        var expression = await ExpressionParser.ParseAsync(new [] { new Token(TokenType.LiteralNumber, "1", null), new Token(TokenType.AsteriskSymbol, "*", null), new Token(TokenType.LiteralNumber, "2", null), new Token(TokenType.PlusSymbol, "+", null), new Token(TokenType.LiteralNumber, "3", null) });
 
         var result = await expression.EvaluateAsync(interpreter);
 
@@ -64,7 +64,7 @@ public class ExpressionParserTest
     public async Task TestAdditiveMultiplicativePrecedences()
     {
         var interpreter = new Interpreter();
-        var expression = await ExpressionParser.ParseAsync(new [] { new Token(TokenType.LiteralNumber, "1"), new Token(TokenType.PlusSymbol, "+"), new Token(TokenType.LiteralNumber, "2"), new Token(TokenType.AsteriskSymbol, "*"), new Token(TokenType.LiteralNumber, "3") });
+        var expression = await ExpressionParser.ParseAsync(new [] { new Token(TokenType.LiteralNumber, "1", null), new Token(TokenType.PlusSymbol, "+", null), new Token(TokenType.LiteralNumber, "2", null), new Token(TokenType.AsteriskSymbol, "*", null), new Token(TokenType.LiteralNumber, "3", null) });
 
         var result = await expression.EvaluateAsync(interpreter);
 
@@ -77,7 +77,7 @@ public class ExpressionParserTest
     public async Task TestAdditiveMultiplicativePrecedencesWithParentheses()
     {
         var interpreter = new Interpreter();
-        var expression = await ExpressionParser.ParseAsync(new [] { new Token(TokenType.OpeningParentheses, "("), new Token(TokenType.LiteralNumber, "1"), new Token(TokenType.PlusSymbol, "+"), new Token(TokenType.LiteralNumber, "2"), new Token(TokenType.ClosingParentheses, ")"), new Token(TokenType.AsteriskSymbol, "*"), new Token(TokenType.LiteralNumber, "3") });
+        var expression = await ExpressionParser.ParseAsync(new [] { new Token(TokenType.OpeningParentheses, "(", null), new Token(TokenType.LiteralNumber, "1", null), new Token(TokenType.PlusSymbol, "+", null), new Token(TokenType.LiteralNumber, "2", null), new Token(TokenType.ClosingParentheses, ")", null), new Token(TokenType.AsteriskSymbol, "*", null), new Token(TokenType.LiteralNumber, "3", null) });
 
         var result = await expression.EvaluateAsync(interpreter);
 

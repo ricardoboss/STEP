@@ -42,14 +42,20 @@ internal static class Program
         {
             var chars = await File.ReadAllTextAsync(scriptFile.FullName);
 
-            var tokenizer = new Tokenizer();
-            var parser = new StatementParser();
-            var interpreter = new Interpreter(Console.Out, Console.Error, Console.In);
+            var tokenizer = new Tokenizer
+            {
+                File = scriptFile,
+            };
 
             tokenizer.Add(chars);
             var tokens = tokenizer.TokenizeAsync();
+
+            var parser = new StatementParser();
             await parser.AddAsync(tokens.ToAsyncEnumerable());
+
+            var interpreter = new Interpreter(Console.Out, Console.Error, Console.In);
             var statements = parser.ParseAsync();
+
             await interpreter.InterpretAsync(statements);
 
             return interpreter.ExitCode;
