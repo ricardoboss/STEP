@@ -90,6 +90,9 @@ internal static class Program
         if (e.Token is { Location: not null } token)
             return FormatTokenLocationException(e, token.Location);
 
+        if (e.Location is { } location)
+            return FormatTokenLocationException(e, location);
+
         return FormatGeneralException(e);
     }
 
@@ -103,11 +106,11 @@ internal static class Program
 
     private static string FormatInterpreterException(InterpreterException e)
     {
-        if (e.Token is { Location: not null } token)
-            return FormatTokenLocationException(e, token.Location);
-
         if (e.Statement is { Location: not null } statement)
             return FormatTokenLocationException(e, statement.Location);
+
+        if (e.Token is { Location: not null } token)
+            return FormatTokenLocationException(e, token.Location);
 
         return FormatGeneralException(e);
     }
