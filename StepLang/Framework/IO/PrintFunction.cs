@@ -20,9 +20,6 @@ public class PrintFunction : NativeFunction
             .Select(RenderValue)
             .ToListAsync(cancellationToken);
 
-        if (stringArgs.Count == 0)
-            throw new InvalidArgumentCountException(1, 0);
-
         await Print(stdOut, string.Join("", stringArgs), cancellationToken);
 
         return ExpressionResult.Void;
