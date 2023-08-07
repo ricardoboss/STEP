@@ -40,6 +40,7 @@ public enum TokenType
     OpeningSquareBracket,
     ClosingSquareBracket,
     ColonSymbol,
+    ImportKeyword,
 }
 
 public static class TokenTypes
@@ -115,6 +116,9 @@ public static class TokenTypes
                 return true;
             case "return":
                 type = TokenType.ReturnKeyword;
+                return true;
+            case "import":
+                type = TokenType.ImportKeyword;
                 return true;
         }
 

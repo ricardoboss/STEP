@@ -27,7 +27,9 @@ public class StatementParser
 
             var type = token.Type;
 
-            if (type is TokenType.TypeName)
+            if (type is TokenType.ImportKeyword)
+                yield return await ParseImportStatement(cancellationToken);
+            else if (type is TokenType.TypeName)
                 yield return await ParseVariableDeclaration(token, cancellationToken);
             else if (type is TokenType.Identifier or TokenType.UnderscoreSymbol)
                 yield return await ParseIdentifierUsage(token, cancellationToken);
@@ -48,6 +50,15 @@ public class StatementParser
             else if (type is not TokenType.Whitespace and not TokenType.NewLine and not TokenType.LineComment)
                 throw new UnexpectedTokenException(token, TokenType.TypeName, TokenType.Identifier, TokenType.UnderscoreSymbol, TokenType.Whitespace, TokenType.NewLine, TokenType.LineComment, TokenType.IfKeyword, TokenType.WhileKeyword, TokenType.ReturnKeyword, TokenType.OpeningCurlyBracket, TokenType.ClosingCurlyBracket);
         }
+    }
+
+    private Task<Statement> ParseImportStatement(CancellationToken cancellationToken = default)
+    {
+        // import: import <literal string>
+
+        var literalStringToken = tokenQueue.Dequeue(TokenType.LiteralString);
+
+        return Task.FromResult<Statement>(new ImportStatement(literalStringToken));
     }
 
     private async Task<Statement> ParseContinueStatement(Token continueToken, CancellationToken cancellationToken = default)
