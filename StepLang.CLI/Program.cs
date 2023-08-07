@@ -1,6 +1,7 @@
 ﻿using System.CommandLine;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Globalization;
 using Pastel;
 using StepLang.Interpreting;
 using StepLang.Parsing;
@@ -70,5 +71,75 @@ internal static class Program
 
     private static string FormatError(string type, string message) => ("! " + type + ": ").Pastel(Color.OrangeRed) + message;
 
-    private static string FormatError(Exception e) => FormatError(e.GetType().Name, e.Message + Environment.NewLine + e.StackTrace.Pastel(Color.DarkGray));
+    private static string FormatError(Exception e)
+    {
+        return e switch
+        {
+            ParserException pe => FormatParserException(pe),
+            TokenizerException te => FormatTokenizerException(te),
+            InterpreterException ie => FormatInterpreterException(ie),
+            _ => FormatGeneralException(e),
+        };
+    }
+
+    private static string FormatGeneralException(Exception e) => FormatError(e.GetType().Name,
+        e.Message + Environment.NewLine + e.StackTrace.Pastel(Color.DarkGray));
+
+    private static string FormatParserException(ParserException e)
+    {
+        if (e.Token is { Location: not null } token)
+            return FormatTokenLocationException(e, token.Location);
+
+        return FormatGeneralException(e);
+    }
+
+    private static string FormatTokenizerException(TokenizerException e)
+    {
+        if (e.Location is { } location)
+            return FormatTokenLocationException(e, location);
+
+        return FormatGeneralException(e);
+    }
+
+    private static string FormatInterpreterException(InterpreterException e)
+    {
+        if (e.Token is { Location: not null } token)
+            return FormatTokenLocationException(e, token.Location);
+
+        if (e.Statement is { Location: not null } statement)
+            return FormatTokenLocationException(e, statement.Location);
+
+        return FormatGeneralException(e);
+    }
+
+    private static string FormatTokenLocationException(Exception e, TokenLocation location)
+    {
+        const int contextLineCount = 4;
+
+        var sourceCode = location.File.Exists ? File.ReadAllText(location.File.FullName) : "";
+        var lines = sourceCode.ReplaceLineEndings().Split(Environment.NewLine);
+        var contextStartLine = Math.Max(0, location.Line - 1 - contextLineCount);
+        var contextEndLine = Math.Min(lines.Length, location.Line + contextLineCount);
+        var lineNumber = contextStartLine;
+        var lineNumberWidth = contextEndLine.ToString(CultureInfo.InvariantCulture).Length;
+        var contextLines =  lines[contextStartLine..contextEndLine].Select(l =>
+        {
+            var prefix = lineNumber == location.Line - 1 ? $"{">".Pastel(ConsoleColor.Red)} " : "  ";
+
+            var displayLineNumber = (lineNumber + 1).ToString(CultureInfo.InvariantCulture);
+            var line = prefix + $"{(displayLineNumber.PadLeft(lineNumberWidth) + "|").Pastel(ConsoleColor.Gray)} {l}";
+
+            lineNumber++;
+
+            return line;
+        });
+
+        var exceptionName = (" " + e.GetType().Name + " ").Pastel(ConsoleColor.White).PastelBg(ConsoleColor.Red);
+        var message = Environment.NewLine + "\t" + e.Message + Environment.NewLine;
+        var locationString = $"at {location.File.FullName.Pastel(ConsoleColor.Green)}:{location.Line}";
+
+        var outputLines = contextLines.Prepend(locationString).Prepend(message).Prepend(exceptionName);
+
+        return Environment.NewLine + string.Join(Environment.NewLine, outputLines);
+    }
 }
