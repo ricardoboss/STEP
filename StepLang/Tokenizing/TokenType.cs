@@ -86,6 +86,7 @@ public static class TokenTypes
             TokenType.OpeningSquareBracket => "'['",
             TokenType.ClosingSquareBracket => "']'",
             TokenType.ColonSymbol => "':'",
+            TokenType.ImportKeyword => "'import'",
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, "Unknown token type"),
         };
     }

@@ -9,6 +9,8 @@ public class StatementParser
 {
     private readonly TokenQueue tokenQueue = new();
 
+    private bool importsProhibited;
+
     public void Add(Token token) => tokenQueue.Enqueue(token);
 
     public void Add(IEnumerable<Token> tokens) => tokenQueue.Enqueue(tokens);
@@ -27,9 +29,22 @@ public class StatementParser
 
             var type = token.Type;
 
+            if (type is TokenType.Whitespace or TokenType.NewLine or TokenType.LineComment)
+                continue;
+
             if (type is TokenType.ImportKeyword)
-                yield return await ParseImportStatement(cancellationToken);
-            else if (type is TokenType.TypeName)
+            {
+                if (importsProhibited)
+                    throw new ImportsNoLongerAllowedException(token);
+
+                yield return await ParseImportStatement(token, cancellationToken);
+
+                continue;
+            }
+
+            importsProhibited = true;
+
+            if (type is TokenType.TypeName)
                 yield return await ParseVariableDeclaration(token, cancellationToken);
             else if (type is TokenType.Identifier or TokenType.UnderscoreSymbol)
                 yield return await ParseIdentifierUsage(token, cancellationToken);
@@ -47,14 +62,31 @@ public class StatementParser
                 yield return await ParseAnonymousCodeBlock(token, cancellationToken);
             else if (type is TokenType.ClosingCurlyBracket)
                 yield break;
-            else if (type is not TokenType.Whitespace and not TokenType.NewLine and not TokenType.LineComment)
-                throw new UnexpectedTokenException(token, TokenType.TypeName, TokenType.Identifier, TokenType.UnderscoreSymbol, TokenType.Whitespace, TokenType.NewLine, TokenType.LineComment, TokenType.IfKeyword, TokenType.WhileKeyword, TokenType.ReturnKeyword, TokenType.OpeningCurlyBracket, TokenType.ClosingCurlyBracket);
+            else
+            {
+                var allowed = new []
+                {
+                    TokenType.TypeName, TokenType.Identifier,
+                    TokenType.UnderscoreSymbol, TokenType.Whitespace,
+                    TokenType.NewLine, TokenType.LineComment,
+                    TokenType.IfKeyword, TokenType.WhileKeyword,
+                    TokenType.ReturnKeyword, TokenType.BreakKeyword,
+                    TokenType.OpeningCurlyBracket, TokenType.ClosingCurlyBracket,
+                };
+
+                if (!importsProhibited)
+                    allowed = allowed.Append(TokenType.ImportKeyword).ToArray();
+
+                throw new UnexpectedTokenException(token, allowed);
+            }
         }
     }
 
     private Task<Statement> ParseImportStatement(CancellationToken cancellationToken = default)
     {
         // import: import <literal string>
+
+        cancellationToken.ThrowIfCancellationRequested();
 
         var literalStringToken = tokenQueue.Dequeue(TokenType.LiteralString);
 
@@ -98,11 +130,11 @@ public class StatementParser
     private async Task<Statement> ParseReturnStatement(Token returnToken, CancellationToken cancellationToken = default)
     {
         // return: return <expression>
-        
+
         var expressionTokens = tokenQueue.DequeueUntil(TokenType.NewLine);
-        
+
         tokenQueue.Dequeue(TokenType.NewLine);
-        
+
         var expression = await ExpressionParser.ParseAsync(expressionTokens, cancellationToken);
 
         return new ReturnStatement(expression)
@@ -249,7 +281,7 @@ public class StatementParser
         var indexExpressionTokens = tokenQueue.DequeueUntil(TokenType.ClosingSquareBracket);
 
         _ = tokenQueue.Dequeue(TokenType.ClosingSquareBracket);
-        
+
         var equalsToken = tokenQueue.Dequeue(TokenType.EqualsSymbol);
 
         var indexExpression = await ExpressionParser.ParseAsync(indexExpressionTokens, cancellationToken);
@@ -288,6 +320,7 @@ public class StatementParser
         var operationToken = tokenQueue.Dequeue(TokenType.PlusSymbol,
             TokenType.MinusSymbol, TokenType.AsteriskSymbol, TokenType.SlashSymbol,
             TokenType.PercentSymbol);
+
         var valueDenominator = tokenQueue.Dequeue(TokenType.PlusSymbol,
             TokenType.MinusSymbol, TokenType.AsteriskSymbol, TokenType.SlashSymbol,
             TokenType.PercentSymbol, TokenType.EqualsSymbol);

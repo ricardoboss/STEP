@@ -3,7 +3,7 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Parsing.Statements;
 
-internal class ImportStatement : Statement
+internal sealed class ImportStatement : Statement
 {
     private readonly Token filePathToken;
 
@@ -18,14 +18,29 @@ internal class ImportStatement : Statement
     /// <inheritdoc />
     public override async Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
-        var fileInfo = new FileInfo(filePathToken.Value);
+        FileInfo fileInfo;
+        if (Location is null)
+            fileInfo = new(filePathToken.Value);
+        else if (Path.IsPathRooted(filePathToken.Value))
+            fileInfo = new(filePathToken.Value);
+        else
+        {
+            var currentDirectory = Path.GetDirectoryName(Location.File.FullName) ?? throw new InvalidOperationException();
+            var resolvedPath = Path.Combine(currentDirectory, filePathToken.Value);
+
+            fileInfo = new(resolvedPath);
+        }
 
         if (!fileInfo.Exists)
-            throw new ImportedFileDoesNotExistException(fileInfo);
+            throw new ImportedFileDoesNotExistException(Location, fileInfo);
+
+        if (fileInfo.FullName == Location?.File.FullName)
+            throw new ImportedFileIsSelfException(Location, fileInfo);
 
         var fileContents = await File.ReadAllTextAsync(fileInfo.FullName, cancellationToken);
 
         var tokenizer = new Tokenizer();
+        tokenizer.UpdateFile(fileInfo);
         tokenizer.Add(fileContents);
         var tokens = tokenizer.TokenizeAsync(cancellationToken);
 
