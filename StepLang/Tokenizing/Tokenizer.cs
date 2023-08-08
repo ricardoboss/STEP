@@ -81,7 +81,7 @@ public class Tokenizer
         }
 
         if (stringQuote.HasValue)
-            throw new UnclosedStringException(stringStartLocation, stringQuote!.Value);
+            throw new UnterminatedStringException(stringStartLocation, stringQuote!.Value);
 
         if (tokenBuilder.Length == 0)
             yield break;
