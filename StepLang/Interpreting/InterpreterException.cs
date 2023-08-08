@@ -1,10 +1,8 @@
-using System.Diagnostics.CodeAnalysis;
 using StepLang.Parsing.Statements;
 using StepLang.Tokenizing;
 
 namespace StepLang.Interpreting;
 
-[SuppressMessage("Design", "CA1032:Implement standard exception constructors")]
 public abstract class InterpreterException : Exception
 {
     public Statement? Statement { get; }
