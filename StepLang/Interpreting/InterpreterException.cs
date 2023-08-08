@@ -3,28 +3,17 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Interpreting;
 
-public abstract class InterpreterException : Exception
+public abstract class InterpreterException : StepLangException
 {
-    public Statement? Statement { get; }
-    public Token? Token { get; }
-    public TokenLocation? Location { get; }
-
-    protected InterpreterException(string message) : base(message)
+    protected InterpreterException(Statement? statement, string message, string helpText, Exception? inner = null) : this(statement?.Location, message, helpText, inner)
     {
     }
 
-    protected InterpreterException(Statement? statement, string message, Exception? inner = null) : base(message, inner)
+    protected InterpreterException(Token? token, string message, string helpText, Exception? inner = null) : this(token?.Location, message, helpText, inner)
     {
-        Statement = statement;
     }
 
-    protected InterpreterException(Token? token, string message, Exception? inner = null) : base(message, inner)
+    protected InterpreterException(TokenLocation? location, string message, string helpText, Exception? inner = null) : base(location, message, helpText, inner)
     {
-        Token = token;
-    }
-
-    protected InterpreterException(TokenLocation? location, string message, Exception? inner = null) : base(message, inner)
-    {
-        Location = location;
     }
 }

@@ -1,10 +1,11 @@
 ﻿using StepLang.Interpreting;
+using StepLang.Tokenizing;
 
 namespace StepLang.Parsing.Expressions;
 
 public class InvalidIndexOperatorException : InterpreterException
 {
-    public InvalidIndexOperatorException(string valueType) : base($"Invalid index expression: Cannot index into a value of type {valueType}")
+    public InvalidIndexOperatorException(TokenLocation? location, string index, string valueType) : base(location, $"Invalid index expression: Cannot access index {index} of a value of type {valueType}", "Make sure you're accessing an index of a value that supports indexing (like lists or maps).")
     {
     }
 }

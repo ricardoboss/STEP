@@ -62,14 +62,7 @@ public class Interpreter
                 break;
             }
 
-            try
-            {
-                await statement.ExecuteAsync(this, cancellationToken);
-            }
-            catch (Exception e) when (e is IncompatibleTypesException)
-            {
-                throw new InvalidAssignmentException(statement, e);
-            }
+            await statement.ExecuteAsync(this, cancellationToken);
 
             if (CurrentScope.TryGetResult(out _))
                 break;

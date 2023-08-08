@@ -34,7 +34,7 @@ public abstract class Expression
         return new BinaryExpression("^", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType || a.ValueType != "number")
-                throw new IncompatibleTypesException(a.ValueType, b.Value, "pow");
+                throw new IncompatibleExpressionOperandsException(a, b, "power");
 
             return ExpressionResult.Number(Math.Pow(a.Value, b.Value));
         });
@@ -45,7 +45,7 @@ public abstract class Expression
         return new BinaryExpression("+", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType)
-                throw new IncompatibleTypesException(a.ValueType, b.Value, "add");
+                throw new IncompatibleExpressionOperandsException(a, b, "add");
 
             return ExpressionResult.From(a.ValueType, a.Value + b.Value);
         });
@@ -56,7 +56,7 @@ public abstract class Expression
         return new BinaryExpression("-", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType || a.ValueType != "number")
-                throw new IncompatibleTypesException(a.ValueType, b.Value, "subtract");
+                throw new IncompatibleExpressionOperandsException(a, b, "subtract");
 
             return ExpressionResult.Number(a.Value - b.Value);
         });
@@ -67,7 +67,7 @@ public abstract class Expression
         return new BinaryExpression("*", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType || a.ValueType != "number")
-                throw new IncompatibleTypesException(a.ValueType, b.Value, "multiply");
+                throw new IncompatibleExpressionOperandsException(a, b, "multiply");
 
             return ExpressionResult.Number(a.Value * b.Value);
         });
@@ -78,7 +78,7 @@ public abstract class Expression
         return new BinaryExpression("/", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType || a.ValueType != "number")
-                throw new IncompatibleTypesException(a.ValueType, b.Value, "divide");
+                throw new IncompatibleExpressionOperandsException(a, b, "divide");
 
             return ExpressionResult.Number(a.Value / b.Value);
         });
@@ -89,7 +89,7 @@ public abstract class Expression
         return new BinaryExpression("%", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType || a.ValueType != "number")
-                throw new IncompatibleTypesException(a.ValueType, b.Value, "modulo");
+                throw new IncompatibleExpressionOperandsException(a, b, "modulo");
 
             return ExpressionResult.Number(a.Value % b.Value);
         });
@@ -100,7 +100,7 @@ public abstract class Expression
         return new BinaryExpression("<", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType)
-                throw new IncompatibleTypesException(a.ValueType, b.Value, "compare");
+                throw new IncompatibleExpressionOperandsException(a, b, "compare (less than)");
 
             return ExpressionResult.Bool(a.Value < b.Value);
         });
@@ -111,7 +111,7 @@ public abstract class Expression
         return new BinaryExpression("<=", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType)
-                throw new IncompatibleTypesException(a.ValueType, b.Value, "compare");
+                throw new IncompatibleExpressionOperandsException(a, b, "compare (less than or equal)");
 
             return ExpressionResult.Bool(a.Value <= b.Value);
         });
@@ -122,7 +122,7 @@ public abstract class Expression
         return new BinaryExpression(">", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType)
-                throw new IncompatibleTypesException(a.ValueType, b.Value, "compare");
+                throw new IncompatibleExpressionOperandsException(a, b, "compare (greater than)");
 
             return ExpressionResult.Bool(a.Value > b.Value);
         });
@@ -133,7 +133,7 @@ public abstract class Expression
         return new BinaryExpression(">=", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType)
-                throw new IncompatibleTypesException(a.ValueType, b.Value, "compare");
+                throw new IncompatibleExpressionOperandsException(a, b, "compare (greater than or equal)");
 
             return ExpressionResult.Bool(a.Value >= b.Value);
         });
@@ -158,7 +158,7 @@ public abstract class Expression
         return new BinaryExpression("||", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType || a.ValueType != "bool")
-                throw new IncompatibleTypesException(a.ValueType, b.Value, "compare");
+                throw new IncompatibleExpressionOperandsException(a, b, "logical or");
 
             return ExpressionResult.Bool(a.Value || b.Value);
         });
@@ -169,8 +169,8 @@ public abstract class Expression
         return new BinaryExpression("&&", left, right, (a, b) =>
         {
             if (a.ValueType != b.ValueType || a.ValueType != "bool")
-                throw new IncompatibleTypesException(a.ValueType, b.Value, "compare");
-            
+                throw new IncompatibleExpressionOperandsException(a, b, "logical and");
+
             return ExpressionResult.Bool(a.Value && b.Value);
         });
     }
@@ -183,7 +183,7 @@ public abstract class Expression
                 return b;
 
             if (a.ValueType != b.ValueType)
-                throw new IncompatibleTypesException(a.ValueType, b.ValueType, "coalesce");
+                throw new IncompatibleExpressionOperandsException(a, b, "null coalesce");
 
             return ExpressionResult.From(a.ValueType, a.Value ?? b.Value);
         });
@@ -210,7 +210,7 @@ public abstract class Expression
                     return pairs[key];
                 }
                 default:
-                    throw new InvalidIndexOperatorException(a.ValueType);
+                    throw new InvalidIndexOperatorException(null, b.Value?.ToString() ?? "<null>", a.ValueType);
             }
         });
     }
@@ -246,4 +246,11 @@ public abstract class Expression
 
     [ExcludeFromCodeCoverage]
     protected virtual string DebugDisplay() => "";
+}
+
+public class IncompatibleExpressionOperandsException : IncompatibleTypesException
+{
+    public IncompatibleExpressionOperandsException(ExpressionResult a, ExpressionResult b, string operation) : base(null, $"Cannot use the {operation} operator on values of type {a.ValueType} and {b.ValueType}", "Make sure the operands are of the same type or check if the used operator can be used on the given types")
+    {
+    }
 }

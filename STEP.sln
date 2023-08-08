@@ -13,11 +13,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang.Tests", "StepLang.Tests\StepLang.Tests.csproj", "{CB5E44DF-C1D2-4DA9-8175-FD76F8D95A42}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{034D6437-D28A-46AA-88D2-6D556A97C3AC}"
-	ProjectSection(SolutionItems) = preProject
-		docs\logo.svg = docs\logo.svg
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang.CLI", "StepLang.CLI\StepLang.CLI.csproj", "{D8D36317-78E3-4FD9-B85B-12869B498983}"
 EndProject
 Global
@@ -40,6 +35,5 @@ Global
 		{D8D36317-78E3-4FD9-B85B-12869B498983}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{034D6437-D28A-46AA-88D2-6D556A97C3AC} = {4EC278E0-B181-49AF-BCC1-F1F4D7133B24}
 	EndGlobalSection
 EndGlobal

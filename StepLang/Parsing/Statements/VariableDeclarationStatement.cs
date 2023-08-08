@@ -43,7 +43,7 @@ public class VariableDeclarationStatement : Statement
             result = await expression.EvaluateAsync(interpreter, cancellationToken);
 
             if (result.ValueType != type.Value)
-                throw new IncompatibleTypesException(result.ValueType, type.Value, "assign");
+                throw new InvalidVariableAssignmentException(type, result);
         }
 
         interpreter.CurrentScope.SetVariable(identifier.Value, result);
