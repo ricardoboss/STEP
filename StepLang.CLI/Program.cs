@@ -118,7 +118,7 @@ internal static class Program
         outputLines = outputLines.Prepend(message).Prepend(exceptionName);
 
         if (e.HelpText is { } helpText)
-            outputLines = outputLines.Append(Environment.NewLine + "i ".Pastel(ConsoleColor.DarkCyan) + helpText);
+            outputLines = outputLines.Append(Environment.NewLine + "Tip: ".Pastel(ConsoleColor.DarkCyan) + helpText);
 
         return Environment.NewLine + string.Join(Environment.NewLine, outputLines);
     }
