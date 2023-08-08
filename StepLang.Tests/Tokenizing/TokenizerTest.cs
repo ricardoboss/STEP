@@ -198,4 +198,20 @@ public class TokenizerTest
         Assert.Equal(TokenType.LineComment, tokens[12].Type);
         Assert.Equal("// more comments", tokens[12].Value);
     }
+
+    [Fact]
+    public void TestTokenizeEmitsAnIdentifierBeforeALiteralString()
+    {
+        const string source = "identifier\"\"";
+
+        var tokenizer = new Tokenizer();
+        tokenizer.Add(source);
+        var tokens = tokenizer.TokenizeAsync().ToList();
+
+        Assert.Equal(2, tokens.Count);
+        Assert.Equal(TokenType.Identifier, tokens[0].Type);
+        Assert.Equal("identifier", tokens[0].Value);
+        Assert.Equal(TokenType.LiteralString, tokens[1].Type);
+        Assert.Equal("", tokens[1].Value);
+    }
 }
