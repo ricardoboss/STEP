@@ -1,8 +1,11 @@
-﻿namespace StepLang.Tokenizing;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace StepLang.Tokenizing;
 
 public class Token
 {
     public TokenType Type { get; }
+
     public string Value { get; }
 
     public TokenLocation? Location { get; }
@@ -20,6 +23,7 @@ public class Token
         Location = location;
     }
 
+    [ExcludeFromCodeCoverage]
     public override string ToString()
     {
         var printableValue = Value

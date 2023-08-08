@@ -33,7 +33,6 @@ public enum TokenType
     AmpersandSymbol,
     ExclamationMarkSymbol,
     HatSymbol,
-    TildeSymbol,
     QuestionMarkSymbol,
     ReturnKeyword,
     UnderscoreSymbol,
@@ -45,6 +44,7 @@ public enum TokenType
 
 public static class TokenTypes
 {
+    [ExcludeFromCodeCoverage]
     public static string ToDisplay(this TokenType type)
     {
         return type switch
@@ -78,7 +78,6 @@ public static class TokenTypes
             TokenType.AmpersandSymbol => "'&'",
             TokenType.ExclamationMarkSymbol => "'!'",
             TokenType.HatSymbol => "'^'",
-            TokenType.TildeSymbol => "'~'",
             TokenType.QuestionMarkSymbol => "'?'",
             TokenType.ReturnKeyword => "'return'",
             TokenType.UnderscoreSymbol => "'_'",
@@ -171,9 +170,6 @@ public static class TokenTypes
             case '^':
                 type = TokenType.HatSymbol;
                 return true;
-            case '~':
-                type = TokenType.TildeSymbol;
-                return true;
             case '>':
                 type = TokenType.GreaterThanSymbol;
                 return true;
@@ -215,15 +211,6 @@ public static class TokenTypes
         return type switch
         {
             TokenType.PlusSymbol or TokenType.MinusSymbol or TokenType.AsteriskSymbol or TokenType.SlashSymbol or TokenType.PercentSymbol => true,
-            _ => false,
-        };
-    }
-
-    public static bool IsLiteral(this TokenType type)
-    {
-        return type switch
-        {
-            TokenType.LiteralString or TokenType.LiteralNumber or TokenType.LiteralBoolean => true,
             _ => false,
         };
     }
