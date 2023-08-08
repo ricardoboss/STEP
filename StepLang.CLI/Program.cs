@@ -82,39 +82,43 @@ internal static class Program
 
     private static string FormatStepLangException(StepLangException e)
     {
-        if (e.Location is { } location)
-            return FormatTokenLocationException(e, location);
-
-        return FormatGeneralException(e);
-    }
-
-    private static string FormatTokenLocationException(Exception e, TokenLocation location)
-    {
         const int contextLineCount = 4;
 
-        var sourceCode = location.File.Exists ? File.ReadAllText(location.File.FullName) : "";
-        var lines = sourceCode.ReplaceLineEndings().Split(Environment.NewLine);
-        var contextStartLine = Math.Max(0, location.Line - 1 - contextLineCount);
-        var contextEndLine = Math.Min(lines.Length, location.Line + contextLineCount);
-        var lineNumber = contextStartLine;
-        var lineNumberWidth = contextEndLine.ToString(CultureInfo.InvariantCulture).Length;
-        var contextLines =  lines[contextStartLine..contextEndLine].Select(l =>
-        {
-            var prefix = lineNumber == location.Line - 1 ? $"{">".Pastel(ConsoleColor.Red)} " : "  ";
-
-            var displayLineNumber = (lineNumber + 1).ToString(CultureInfo.InvariantCulture);
-            var line = prefix + $"{(displayLineNumber.PadLeft(lineNumberWidth) + "|").Pastel(ConsoleColor.Gray)} {l}";
-
-            lineNumber++;
-
-            return line;
-        });
-
+        IEnumerable<string> outputLines;
         var exceptionName = (" " + e.GetType().Name + " ").Pastel(ConsoleColor.White).PastelBg(ConsoleColor.Red);
         var message = Environment.NewLine + "\t" + e.Message + Environment.NewLine;
-        var locationString = $"at {location.File.FullName.Pastel(ConsoleColor.Green)}:{location.Line}";
 
-        var outputLines = contextLines.Prepend(locationString).Prepend(message).Prepend(exceptionName);
+        if (e.Location is { } location)
+        {
+            var sourceCode = location.File.Exists ? File.ReadAllText(location.File.FullName) : "";
+            var lines = sourceCode.ReplaceLineEndings().Split(Environment.NewLine);
+            var contextStartLine = Math.Max(0, location.Line - 1 - contextLineCount);
+            var contextEndLine = Math.Min(lines.Length, location.Line + contextLineCount);
+            var lineNumber = contextStartLine;
+            var lineNumberWidth = contextEndLine.ToString(CultureInfo.InvariantCulture).Length;
+            var contextLines = lines[contextStartLine..contextEndLine].Select(l =>
+            {
+                var prefix = lineNumber == location.Line - 1 ? $"{">".Pastel(ConsoleColor.Red)} " : "  ";
+
+                var displayLineNumber = (lineNumber + 1).ToString(CultureInfo.InvariantCulture);
+                var line = prefix + $"{(displayLineNumber.PadLeft(lineNumberWidth) + "|").Pastel(ConsoleColor.Gray)} {l}";
+
+                lineNumber++;
+
+                return line;
+            });
+
+            var locationString = $"at {location.File.FullName.Pastel(ConsoleColor.Green)}:{location.Line}";
+
+            outputLines = contextLines.Prepend(locationString);
+        }
+        else
+            outputLines = new [] { (e.StackTrace ?? string.Empty).Pastel(ConsoleColor.Gray) };
+
+        outputLines = outputLines.Prepend(message).Prepend(exceptionName);
+
+        if (e.HelpText is { } helpText)
+            outputLines = outputLines.Append(Environment.NewLine + "i ".Pastel(ConsoleColor.DarkCyan) + helpText);
 
         return Environment.NewLine + string.Join(Environment.NewLine, outputLines);
     }
