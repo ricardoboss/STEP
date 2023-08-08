@@ -1,3 +1,5 @@
-import "Examples/scoped.step"
+import "scoped.step"
 
-println("Imported from scoped.step: a = ", a)
+println("Imported scoped.step")
+println("a = ", a)
+println("b = ", b)
