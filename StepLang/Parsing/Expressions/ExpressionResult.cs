@@ -69,6 +69,7 @@ public sealed class ExpressionResult : IEquatable<ExpressionResult>
     }
 
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     public override string ToString()
     {
         return IsVoid ? "<void>" : Value is not null ? $"({ValueType}) {RenderValue(Value)}" : "<null>";
