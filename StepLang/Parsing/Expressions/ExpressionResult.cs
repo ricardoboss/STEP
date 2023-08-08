@@ -122,7 +122,7 @@ public sealed class ExpressionResult : IEquatable<ExpressionResult>
         return doubleValue;
     }
 
-    public int ExpectListIndex(int max)
+    public int ExpectIntegerIndex(int max)
     {
         var doubleIndex = ExpectNumber();
 

@@ -198,7 +198,7 @@ public abstract class Expression
                 case "list":
                 {
                     var values = a.ExpectList();
-                    var index = b.ExpectListIndex(values.Count);
+                    var index = b.ExpectIntegerIndex(values.Count);
 
                     return values[index];
                 }
@@ -209,8 +209,15 @@ public abstract class Expression
 
                     return pairs[key];
                 }
+                case "string":
+                {
+                    var value = a.ExpectString();
+                    var index = b.ExpectIntegerIndex(value.Length);
+
+                    return ExpressionResult.String(value[index].ToString());
+                }
                 default:
-                    throw new InvalidIndexOperatorException(null, b.Value?.ToString() ?? "<null>", a.ValueType);
+                    throw new InvalidIndexOperatorException(null, b.Value?.ToString() ?? "<null>", a.ValueType, $"access");
             }
         });
     }

@@ -31,7 +31,7 @@ public class IndexAssignmentStatement : Statement
         {
             case "list":
                 var list = indexedVariable.Value.ExpectList();
-                var index = indexResult.ExpectListIndex(list.Count);
+                var index = indexResult.ExpectIntegerIndex(list.Count);
 
                 list[index] = valueResult;
                 break;
@@ -42,7 +42,7 @@ public class IndexAssignmentStatement : Statement
                 map[key] = valueResult;
                 break;
             default:
-                throw new InvalidIndexOperatorException(identifier.Location, indexResult.Value?.ToString() ?? "<null>", indexedVariable.Value.ValueType);
+                throw new InvalidIndexOperatorException(identifier.Location, indexResult.Value?.ToString() ?? "<null>", indexedVariable.Value.ValueType, "assign");
         }
     }
 
