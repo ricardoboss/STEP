@@ -183,7 +183,7 @@ public abstract class Expression
                 return b;
 
             if (a.ValueType != b.ValueType)
-                throw new IncompatibleTypesException(a.ValueType, b.Value, "coalesce");
+                throw new IncompatibleTypesException(a.ValueType, b.ValueType, "coalesce");
 
             return ExpressionResult.From(a.ValueType, a.Value ?? b.Value);
         });
