@@ -214,4 +214,16 @@ public class TokenizerTest
         Assert.Equal(TokenType.LiteralString, tokens[1].Type);
         Assert.Equal("", tokens[1].Value);
     }
+
+    [Fact]
+    public void TestThrowsForUnclosedStrings()
+    {
+        const string source = "\"string";
+
+        var tokenizer = new Tokenizer();
+        tokenizer.Add(source);
+        var exception = Assert.Throws<UnterminatedStringException>(() => tokenizer.TokenizeAsync().ToList());
+
+        Assert.Equal('\"', exception.StringDelimiter);
+    }
 }
