@@ -29,17 +29,16 @@ public class StatementParser
 
             var type = token.Type;
 
-            if (type is TokenType.Whitespace or TokenType.NewLine or TokenType.LineComment)
-                continue;
-
-            if (type is TokenType.ImportKeyword)
+            switch (type)
             {
-                if (importsProhibited)
+                case TokenType.Whitespace or TokenType.NewLine or TokenType.LineComment:
+                    continue;
+                case TokenType.ImportKeyword when importsProhibited:
                     throw new ImportsNoLongerAllowedException(token);
+                case TokenType.ImportKeyword:
+                    yield return await ParseImportStatement(token, cancellationToken);
 
-                yield return await ParseImportStatement(token, cancellationToken);
-
-                continue;
+                    continue;
             }
 
             importsProhibited = true;
@@ -82,7 +81,7 @@ public class StatementParser
         }
     }
 
-    private Task<Statement> ParseImportStatement(CancellationToken cancellationToken = default)
+    private Task<Statement> ParseImportStatement(Token importToken, CancellationToken cancellationToken = default)
     {
         // import: import <literal string>
 
@@ -90,7 +89,7 @@ public class StatementParser
 
         var literalStringToken = tokenQueue.Dequeue(TokenType.LiteralString);
 
-        return Task.FromResult<Statement>(new ImportStatement(literalStringToken));
+        return Task.FromResult<Statement>(new ImportStatement(importToken, literalStringToken));
     }
 
     private async Task<Statement> ParseContinueStatement(Token continueToken, CancellationToken cancellationToken = default)
