@@ -72,9 +72,7 @@ internal static class Program
     {
         return e switch
         {
-            ParserException pe => FormatParserException(pe),
-            TokenizerException te => FormatTokenizerException(te),
-            InterpreterException ie => FormatInterpreterException(ie),
+            StepLangException sle => FormatStepLangException(sle),
             _ => FormatGeneralException(e),
         };
     }
@@ -82,33 +80,8 @@ internal static class Program
     private static string FormatGeneralException(Exception e) => FormatError(e.GetType().Name,
         e.Message + Environment.NewLine + e.StackTrace.Pastel(Color.DarkGray));
 
-    private static string FormatTokenizerException(TokenizerException e)
+    private static string FormatStepLangException(StepLangException e)
     {
-        if (e.Location is { } location)
-            return FormatTokenLocationException(e, location);
-
-        return FormatGeneralException(e);
-    }
-
-    private static string FormatParserException(ParserException e)
-    {
-        if (e.Token is { Location: not null } token)
-            return FormatTokenLocationException(e, token.Location);
-
-        if (e.Location is { } location)
-            return FormatTokenLocationException(e, location);
-
-        return FormatGeneralException(e);
-    }
-
-    private static string FormatInterpreterException(InterpreterException e)
-    {
-        if (e.Statement is { Location: not null } statement)
-            return FormatTokenLocationException(e, statement.Location);
-
-        if (e.Token is { Location: not null } token)
-            return FormatTokenLocationException(e, token.Location);
-
         if (e.Location is { } location)
             return FormatTokenLocationException(e, location);
 

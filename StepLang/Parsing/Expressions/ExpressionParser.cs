@@ -384,7 +384,7 @@ public class ExpressionParser
                 return true;
             default:
                 var nextToken = tokenQueue.Peek();
-                throw new UnexpectedOperatorException(nextToken, $"The operator '{nextToken.Value}' was not recognized or is not supported");
+                throw new UnexpectedTokenException(nextToken, $"The operator '{nextToken.Value}' was not recognized or is not supported");
         }
     }
 }

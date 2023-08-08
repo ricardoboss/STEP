@@ -64,10 +64,7 @@ public class StatementParser
         else
             expression = await ExpressionParser.ParseAsync(expressionTokens, cancellationToken);
 
-        return new ContinueStatement(expression)
-        {
-            Location = continueToken.Location,
-        };
+        return new ContinueStatement(continueToken, expression);
     }
 
     private async Task<Statement> ParseBreakStatement(Token breakToken, CancellationToken cancellationToken = default)
@@ -84,10 +81,7 @@ public class StatementParser
         else
             expression = await ExpressionParser.ParseAsync(expressionTokens, cancellationToken);
 
-        return new BreakStatement(expression)
-        {
-            Location = breakToken.Location,
-        };
+        return new BreakStatement(breakToken, expression);
     }
 
     private async Task<Statement> ParseReturnStatement(Token returnToken, CancellationToken cancellationToken = default)

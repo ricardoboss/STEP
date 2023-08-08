@@ -2,18 +2,13 @@
 
 namespace StepLang.Parsing;
 
-public abstract class ParserException : Exception
+public abstract class ParserException : StepLangException
 {
-    public Token? Token { get; }
-    public TokenLocation? Location { get; }
-
-    protected ParserException(Token? token, string message, Exception? inner = null) : base(message, inner)
+    protected ParserException(Token? token, string message, string helpText, Exception? inner = null) : this(token?.Location, message, helpText, inner)
     {
-        Token = token;
     }
 
-    protected ParserException(TokenLocation? location, string message) : base(message)
+    protected ParserException(TokenLocation? location, string message, string helpText, Exception? inner = null) : base(location, message, helpText, inner)
     {
-        Location = location;
     }
 }

@@ -42,7 +42,7 @@ public class IndexAssignmentStatement : Statement
                 map[key] = valueResult;
                 break;
             default:
-                throw new InvalidIndexOperatorException(indexedVariable.Value.ValueType);
+                throw new InvalidIndexOperatorException(identifier.Location, indexResult.Value?.ToString() ?? "<null>", indexedVariable.Value.ValueType);
         }
     }
 

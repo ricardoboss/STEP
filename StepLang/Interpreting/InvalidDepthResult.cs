@@ -1,10 +1,11 @@
 using StepLang.Parsing.Expressions;
+using StepLang.Tokenizing;
 
 namespace StepLang.Interpreting;
 
 public class InvalidDepthResult : InterpreterException
 {
-    public InvalidDepthResult(string keyword, ExpressionResult result) : base($"Invalid {keyword} depth: {keyword} depth must be a positive number, got {result}")
+    public InvalidDepthResult(Token keywordToken, ExpressionResult result) : base(keywordToken.Location, $"Invalid {keywordToken.Value} depth: {keywordToken.Value} depth must be a positive number, got {result}", "Make sure to only pass positive numbers as the depth to continue or break.")
     {
     }
 }

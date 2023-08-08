@@ -20,7 +20,7 @@ public abstract class BaseFunctionCallExpression : Expression
         {
             return await function.EvaluateAsync(interpreter, Args, cancellationToken);
         }
-        catch (Exception e) when (e is InvalidArgumentCountException)
+        catch (InvalidArgumentCountException e)
         {
             throw new InvalidFunctionCallException(GetCallLocation(), e);
         }

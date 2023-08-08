@@ -1,11 +1,8 @@
 ﻿namespace StepLang.Tokenizing;
 
-public abstract class TokenizerException : Exception
+public abstract class TokenizerException : StepLangException
 {
-    public TokenLocation? Location { get; }
-
-    protected TokenizerException(TokenLocation? location, string message) : base(message)
+    protected TokenizerException(string message, TokenLocation? location, string helpText, Exception? inner = null) : base(location, message, helpText, inner)
     {
-        Location = location;
     }
 }

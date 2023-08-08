@@ -42,7 +42,7 @@ public class UserDefinedFunctionDefinition : FunctionDefinition
             argument.ThrowIfVoid();
 
             if (argument.ValueType != parameterType)
-                throw new IncompatibleTypesException(argument.ValueType, parameterType, "assign");
+                throw new InvalidArgumentTypeException(parameterTypeToken, argument);
 
             ExpressionResult parameterValue = ExpressionResult.From(parameterType, argument.Value);
 

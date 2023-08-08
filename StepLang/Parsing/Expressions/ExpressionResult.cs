@@ -126,10 +126,10 @@ public sealed class ExpressionResult : IEquatable<ExpressionResult>
         var doubleIndex = ExpectNumber();
 
         if (doubleIndex < 0 || doubleIndex >= max)
-            throw new ListIndexOutOfRangeException(doubleIndex, max);
+            throw new ListIndexOutOfBoundsException(doubleIndex, max);
 
         if (Math.Abs(Math.Round(doubleIndex) - doubleIndex) > double.Epsilon)
-            throw new ListIndexOutOfRangeException(doubleIndex, max);
+            throw new ListIndexOutOfBoundsException(doubleIndex, max);
 
         return (int)doubleIndex;
     }

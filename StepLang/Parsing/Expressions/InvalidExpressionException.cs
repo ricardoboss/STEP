@@ -4,7 +4,7 @@ namespace StepLang.Parsing.Expressions;
 
 internal sealed class InvalidExpressionException : ParserException
 {
-    public InvalidExpressionException(Token? token, string message) : base(token, message)
+    public InvalidExpressionException(Token? token, string message) : base(token, message, "Check the syntax of your expression. Make sure all operators are used correctly and all operands are present. Try to read the expression as if you needed to calculate the result by hand.")
     {
     }
 }
