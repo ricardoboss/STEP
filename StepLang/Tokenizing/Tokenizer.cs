@@ -37,6 +37,15 @@ public class Tokenizer
 
             if (character is '"' or '\'')
             {
+                if (tokenBuilder.Length > 0)
+                {
+                    var token = TryFinalizeTokenFromBuilder(true);
+                    if (token is not null)
+                        yield return token;
+
+                    Debug.Assert(tokenBuilder.Length == 0);
+                }
+
                 stringQuote = character;
                 stringStartLocation = characterQueue.CurrentLocation;
 
@@ -47,14 +56,9 @@ public class Tokenizer
             {
                 if (tokenBuilder.Length > 0)
                 {
-                    var tokenValue = tokenBuilder.ToString();
-                    var token = HandleTokenValue(tokenValue);
+                    var token = TryFinalizeTokenFromBuilder(true);
                     if (token is not null)
                         yield return token;
-                    else if (tokenValue.IsValidIdentifier())
-                        yield return FinalizeToken(TokenType.Identifier);
-                    else
-                        throw new InvalidIdentifierException(characterQueue.CurrentLocation, tokenValue);
 
                     Debug.Assert(tokenBuilder.Length == 0);
                 }
@@ -82,7 +86,7 @@ public class Tokenizer
         if (tokenBuilder.Length == 0)
             yield break;
 
-        var leftOverToken = HandleTokenValue(tokenBuilder.ToString());
+        var leftOverToken = TryFinalizeTokenFromBuilder(true);
         if (leftOverToken is not null) yield return leftOverToken;
     }
 
@@ -120,27 +124,16 @@ public class Tokenizer
 
     private Token []? HandleChar(char c)
     {
-        string tokenValue;
-
         if (c.TryParseSymbol(out var symbolType))
         {
             var tokens = new List<Token>();
         
-            tokenValue = tokenBuilder.ToString();
+            var tokenValue = tokenBuilder.ToString();
             if (tokenValue.Length > 0)
             {
-                var tempToken = HandleTokenValue(tokenValue);
+                var tempToken = TryFinalizeTokenFromBuilder(true);
                 if (tempToken is not null)
-                {
                     tokens.Add(tempToken);
-                }
-                else
-                {
-                    if (tokenValue.IsValidIdentifier())
-                        tokens.Add(FinalizeToken(TokenType.Identifier));
-                    else
-                        throw new InvalidIdentifierException(characterQueue.CurrentLocation, tokenValue);
-                }
             }
 
             tokens.Add(new(symbolType.Value, c.ToString(), characterQueue.CurrentLocation));
@@ -154,8 +147,8 @@ public class Tokenizer
             return null;
         }
 
-        tokenValue = tokenBuilder.Append(c).ToString();
-        var token = HandleTokenValue(tokenValue);
+        tokenBuilder.Append(c);
+        var token = TryFinalizeTokenFromBuilder(false);
         if (token is null)
             return null;
 
@@ -165,8 +158,10 @@ public class Tokenizer
         };
     }
 
-    private Token? HandleTokenValue(string tokenValue)
+    private Token? TryFinalizeTokenFromBuilder(bool allowIdentifier)
     {
+        var tokenValue = tokenBuilder.ToString();
+
         if (tokenValue.IsKnownTypeName())
             return FinalizeToken(TokenType.TypeName);
 
@@ -179,12 +174,18 @@ public class Tokenizer
         if (bool.TryParse(tokenValue, out _))
             return FinalizeToken(TokenType.LiteralBoolean);
 
-        return null;
+        if (!allowIdentifier)
+            return null;
+
+        if (tokenValue.IsValidIdentifier())
+            return FinalizeToken(TokenType.Identifier);
+
+        throw new InvalidIdentifierException(characterQueue.CurrentLocation, tokenValue);
     }
 
     private static bool IsPartOfLiteralNumber(char c)
     {
-        return char.IsDigit(c) || c == '.' || c == '-' || c == '+';
+        return char.IsDigit(c) || c is '.' or '-' or '+';
     }
 
     private Token FinalizeToken(TokenType type)
