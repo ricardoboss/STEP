@@ -1,9 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using StepLang.Tokenizing;
+﻿using StepLang.Tokenizing;
 
 namespace StepLang.Parsing;
 
-[SuppressMessage("Design", "CA1032:Implement standard exception constructors")]
 public class UnexpectedTokenException : ParserException
 {
     private static string BuildMessage(Token token, IReadOnlyList<TokenType> allowed)
