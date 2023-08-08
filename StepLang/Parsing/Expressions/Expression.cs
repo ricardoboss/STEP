@@ -217,7 +217,7 @@ public abstract class Expression
                     return ExpressionResult.String(value[index].ToString());
                 }
                 default:
-                    throw new InvalidIndexOperatorException(null, b.Value?.ToString() ?? "<null>", a.ValueType, $"access");
+                    throw new InvalidIndexOperatorException(null, b.Value?.ToString() ?? "<null>", a.ValueType, "access");
             }
         });
     }
