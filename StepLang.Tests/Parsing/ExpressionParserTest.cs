@@ -1,4 +1,5 @@
 using StepLang.Interpreting;
+using StepLang.Parsing;
 using StepLang.Parsing.Expressions;
 using StepLang.Tokenizing;
 
@@ -84,5 +85,17 @@ public class ExpressionParserTest
         Assert.False(result.IsVoid);
         Assert.Equal(9, result.Value);
         Assert.Equal("number", result.ValueType);
+    }
+
+    [Fact]
+    public async Task TestParseThrowsUnexpectedEndOfTokensExceptionForEmptyExpression()
+    {
+        await Assert.ThrowsAsync<UnexpectedEndOfTokensException>(() => ExpressionParser.ParseAsync(Array.Empty<Token>()));
+    }
+
+    [Fact]
+    public async Task TestParseThrowsUnexpectedEndOfTokensExceptionForMissingRightOperand()
+    {
+        await Assert.ThrowsAsync<UnexpectedEndOfTokensException>(() => ExpressionParser.ParseAsync(new [] { new Token(TokenType.LiteralNumber, "1", null), new Token(TokenType.PlusSymbol, "+", null) }));
     }
 }
