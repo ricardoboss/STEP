@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Runtime.CompilerServices;
 using StepLang.Parsing.Statements;
 using StepLang.Tokenizing;
@@ -11,15 +9,10 @@ public class ExpressionParser
 {
     private readonly TokenQueue tokenQueue = new();
 
-    public void Add(IEnumerable<Token> tokens)
-    {
-        tokenQueue.Enqueue(tokens);
-    }
-
     public static async Task<Expression> ParseAsync(IEnumerable<Token> tokens, CancellationToken cancellationToken = default)
     {
         var parser = new ExpressionParser();
-        parser.Add(tokens);
+        parser.tokenQueue.Enqueue(tokens);
         return await parser.ParseBinaryExpression(cancellationToken: cancellationToken);
     }
 
@@ -38,7 +31,7 @@ public class ExpressionParser
         {
             if (token.Type is TokenType.CommaSymbol && expressionDepth == 0 && codeBlockDepth == 0 && listDepth == 0)
             {
-                parser.Add(currentGroup);
+                parser.tokenQueue.Enqueue(currentGroup);
 
                 yield return await parser.ParseBinaryExpression(cancellationToken: cancellationToken);
 
@@ -72,7 +65,7 @@ public class ExpressionParser
             }
         }
 
-        parser.Add(currentGroup);
+        parser.tokenQueue.Enqueue(currentGroup);
 
         yield return await parser.ParseBinaryExpression(cancellationToken: cancellationToken);
     }
@@ -90,11 +83,7 @@ public class ExpressionParser
         foreach (var token in tokens)
         {
             if (token.Type is TokenType.CommaSymbol && expressionDepth == 0 && codeBlockDepth == 0 && listDepth == 0)
-            {
                 yield return await FinalizeGroup();
-
-                Debug.Assert(currentGroup.IsEmpty);
-            }
             else
             {
                 currentGroup.Enqueue(token);
@@ -153,22 +142,21 @@ public class ExpressionParser
             if (tokenQueue.PeekType() is TokenType.ClosingParentheses or TokenType.ClosingSquareBracket)
                 return left;
 
-            if (!TryPeekOperator(out var op, out var opPreLength, out var opPostLength))
-                throw new UnexpectedEndOfExpressionException(tokenQueue.TryPeek(out var next) ? next : null);
+            var op = PeekOperator(out var opPreLength, out var opPostLength);
 
-            var precedence = op.Value.Precedence();
+            var precedence = op.Precedence();
             if (precedence < parentPrecedence)
                 break;
 
             // dequeue operator tokens before right value
-            _ = tokenQueue.Dequeue(opPreLength.Value);
+            _ = tokenQueue.Dequeue(opPreLength);
 
             var right = await ParseBinaryExpression(precedence + 1, cancellationToken);
 
             // dequeue operator tokens after right value
-            _ = tokenQueue.Dequeue(opPostLength.Value);
+            _ = tokenQueue.Dequeue(opPostLength);
 
-            left = Expression.FromOperator(op.Value, left, right);
+            left = Expression.FromOperator(op, left, right);
         }
 
         return left;
@@ -314,74 +302,53 @@ public class ExpressionParser
         return new DirectFunctionDefinitionCallExpression(definitionExpression, args);
     }
 
-    private bool TryPeekOperator([NotNullWhen(true)] out BinaryExpressionOperator? op, [NotNullWhen(true)] out int? opPreLength, [NotNullWhen(true)] out int? opPostLength)
+    private BinaryExpressionOperator PeekOperator(out int opPreLength, out int opPostLength)
     {
-        op = null;
-        opPreLength = null;
-        opPostLength = null;
-        if (!tokenQueue.TryPeekType(out var currentTokenType))
-            return false;
-
         opPreLength = 1;
         opPostLength = 0;
-        switch (currentTokenType)
+
+        switch (tokenQueue.PeekType())
         {
             case TokenType.PlusSymbol:
-                op = BinaryExpressionOperator.Plus;
-                return true;
+                return BinaryExpressionOperator.Plus;
             case TokenType.MinusSymbol:
-                op = BinaryExpressionOperator.Minus;
-                return true;
+                return BinaryExpressionOperator.Minus;
             case TokenType.AsteriskSymbol:
-                op = BinaryExpressionOperator.Multiply;
-                return true;
+                return BinaryExpressionOperator.Multiply;
             case TokenType.SlashSymbol:
-                op = BinaryExpressionOperator.Divide;
-                return true;
+                return BinaryExpressionOperator.Divide;
             case TokenType.PercentSymbol:
-                op = BinaryExpressionOperator.Modulo;
-                return true;
+                return BinaryExpressionOperator.Modulo;
             case TokenType.HatSymbol:
-                op = BinaryExpressionOperator.Power;
-                return true;
+                return BinaryExpressionOperator.Power;
             case TokenType.EqualsSymbol when tokenQueue.PeekType(1) is TokenType.EqualsSymbol:
-                op = BinaryExpressionOperator.Equal;
                 opPreLength = 2;
-                return true;
+                return BinaryExpressionOperator.Equal;
             case TokenType.ExclamationMarkSymbol when tokenQueue.PeekType(1) is TokenType.EqualsSymbol:
-                op = BinaryExpressionOperator.NotEqual;
                 opPreLength = 2;
-                return true;
+                return BinaryExpressionOperator.NotEqual;
             case TokenType.GreaterThanSymbol when tokenQueue.PeekType(1) is TokenType.EqualsSymbol:
-                op = BinaryExpressionOperator.GreaterThanOrEqual;
                 opPreLength = 2;
-                return true;
+                return BinaryExpressionOperator.GreaterThanOrEqual;
             case TokenType.GreaterThanSymbol:
-                op = BinaryExpressionOperator.GreaterThan;
-                return true;
+                return BinaryExpressionOperator.GreaterThan;
             case TokenType.LessThanSymbol when tokenQueue.PeekType(1) is TokenType.EqualsSymbol:
-                op = BinaryExpressionOperator.LessThanOrEqual;
                 opPreLength = 2;
-                return true;
+                return BinaryExpressionOperator.LessThanOrEqual;
             case TokenType.LessThanSymbol:
-                op = BinaryExpressionOperator.LessThan;
-                return true;
+                return BinaryExpressionOperator.LessThan;
             case TokenType.AmpersandSymbol when tokenQueue.PeekType(1) is TokenType.AmpersandSymbol:
-                op = BinaryExpressionOperator.LogicalAnd;
                 opPreLength = 2;
-                return true;
+                return BinaryExpressionOperator.LogicalAnd;
             case TokenType.PipeSymbol when tokenQueue.PeekType(1) is TokenType.PipeSymbol:
-                op = BinaryExpressionOperator.LogicalOr;
                 opPreLength = 2;
-                return true;
+                return BinaryExpressionOperator.LogicalOr;
             case TokenType.QuestionMarkSymbol when tokenQueue.PeekType(1) is TokenType.QuestionMarkSymbol:
-                op = BinaryExpressionOperator.Coalesce;
                 opPreLength = 2;
-                return true;
+                return BinaryExpressionOperator.Coalesce;
             case TokenType.OpeningSquareBracket:
-                op = BinaryExpressionOperator.Index;
                 opPostLength = 1;
-                return true;
+                return BinaryExpressionOperator.Index;
             default:
                 var nextToken = tokenQueue.Peek();
                 throw new UnexpectedTokenException(nextToken, $"The operator '{nextToken.Value}' was not recognized or is not supported");
