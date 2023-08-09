@@ -55,6 +55,8 @@ while (tries <= 3) {
 print("Goodbye", EOL)
 ```
 
+To get started yourself, head over to the [Wiki](https://github.com/ricardoboss/STEP/wiki)
+
 ## What is this?
 
 This repository contains an interpreter and command line interface for the STEP programming language.
