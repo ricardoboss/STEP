@@ -40,6 +40,7 @@ public enum TokenType
     OpeningSquareBracket,
     ClosingSquareBracket,
     ColonSymbol,
+    ImportKeyword,
 }
 
 public static class TokenTypes
@@ -85,6 +86,7 @@ public static class TokenTypes
             TokenType.OpeningSquareBracket => "'['",
             TokenType.ClosingSquareBracket => "']'",
             TokenType.ColonSymbol => "':'",
+            TokenType.ImportKeyword => "'import'",
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, "Unknown token type"),
         };
     }
@@ -115,6 +117,9 @@ public static class TokenTypes
                 return true;
             case "return":
                 type = TokenType.ReturnKeyword;
+                return true;
+            case "import":
+                type = TokenType.ImportKeyword;
                 return true;
         }
 

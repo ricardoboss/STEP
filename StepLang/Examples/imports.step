@@ -1,0 +1,5 @@
+import "scoped.step"
+
+println("Imported scoped.step")
+println("a = ", a)
+println("b = ", b)

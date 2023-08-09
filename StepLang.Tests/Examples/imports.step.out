@@ -2,3 +2,6 @@
 (in scope) b = 2
 a = 1
 b = 2
+Imported scoped.step
+a = 1
+b = 2

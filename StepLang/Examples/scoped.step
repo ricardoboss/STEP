@@ -4,9 +4,9 @@ number b = 2
 {
     number a = 3
 
-    print(a, EOL)
-    print(b, EOL)
+    println("(in scope) a = ", a)
+    println("(in scope) b = ", b)
 }
 
-print(a, EOL)
-print(b, EOL)
+println("a = ", a)
+println("b = ", b)
