@@ -49,4 +49,4 @@ rm bin/Release/$frameworkVersion/publish/step
 # zip framework-dependent libraries
 zip -j publish/step bin/Release/$frameworkVersion/publish/*
 
-echo "✅ Done"
+echo "✅ Done (publish/step.zip)"
