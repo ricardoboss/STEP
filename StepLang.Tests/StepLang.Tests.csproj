@@ -38,10 +38,6 @@
       <None Update="Failures\*.step*">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-
-      <None Update="Failures\incompatible-types.step.exception.json">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
     </ItemGroup>
 
 
