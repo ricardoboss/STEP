@@ -18,10 +18,7 @@ public abstract class ExpressionResult : IEquatable<ExpressionResult>
         };
     }
 
-    protected ExpressionResult(ResultType resultType)
-    {
-        ResultType = resultType;
-    }
+    protected ExpressionResult(ResultType resultType) => ResultType = resultType;
 
     public ResultType ResultType { get; }
 
