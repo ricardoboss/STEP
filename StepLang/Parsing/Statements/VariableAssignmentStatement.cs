@@ -7,19 +7,19 @@ namespace StepLang.Parsing.Statements;
 
 public class VariableAssignmentStatement : Statement
 {
-    private readonly Token identifier;
+    private readonly Token identifierToken;
     private readonly Expression expression;
 
     /// <inheritdoc />
-    public VariableAssignmentStatement(Token identifier, Expression expression) : base(StatementType.VariableAssignment)
+    public VariableAssignmentStatement(Token identifierToken, Expression expression) : base(StatementType.VariableAssignment)
     {
-        if (identifier.Type != TokenType.Identifier)
-            throw new UnexpectedTokenException(identifier, TokenType.Identifier);
+        if (identifierToken.Type != TokenType.Identifier)
+            throw new UnexpectedTokenException(identifierToken, TokenType.Identifier);
 
-        this.identifier = identifier;
+        this.identifierToken = identifierToken;
         this.expression = expression;
 
-        Location = identifier.Location;
+        Location = identifierToken.Location;
     }
 
     /// <inheritdoc />
@@ -27,13 +27,20 @@ public class VariableAssignmentStatement : Statement
     {
         var result = await expression.EvaluateAsync(interpreter, cancellationToken);
 
-        interpreter.CurrentScope.UpdateValue(identifier, result);
+        try
+        {
+            interpreter.CurrentScope.UpdateValue(identifierToken, result);
+        }
+        catch (IncompatibleVariableTypeException e)
+        {
+            throw new InvalidVariableAssignmentException(identifierToken, e);
+        }
     }
 
     /// <inheritdoc />
     [ExcludeFromCodeCoverage]
     protected override string DebugRenderContent()
     {
-        return $"{identifier} = {expression}";
+        return $"{identifierToken} = {expression}";
     }
 }

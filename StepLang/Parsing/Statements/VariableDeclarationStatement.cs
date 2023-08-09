@@ -7,25 +7,25 @@ namespace StepLang.Parsing.Statements;
 
 public class VariableDeclarationStatement : Statement
 {
-    private readonly Token type;
-    private readonly Token identifier;
+    private readonly Token typeToken;
+    private readonly Token identifierToken;
     private readonly Expression? expression;
 
     /// <inheritdoc />
-    public VariableDeclarationStatement(Token type, Token identifier, Expression? expression) : base(StatementType.VariableDeclaration)
+    public VariableDeclarationStatement(Token typeToken, Token identifierToken, Expression? expression) : base(StatementType.VariableDeclaration)
     {
-        if (type.Type != TokenType.TypeName)
-            throw new UnexpectedTokenException(type, TokenType.TypeName);
+        if (typeToken.Type != TokenType.TypeName)
+            throw new UnexpectedTokenException(typeToken, TokenType.TypeName);
 
-        this.type = type;
+        this.typeToken = typeToken;
 
-        if (identifier.Type != TokenType.Identifier)
-            throw new UnexpectedTokenException(identifier, TokenType.Identifier);
+        if (identifierToken.Type != TokenType.Identifier)
+            throw new UnexpectedTokenException(identifierToken, TokenType.Identifier);
 
-        this.identifier = identifier;
+        this.identifierToken = identifierToken;
         this.expression = expression;
 
-        Location = type.Location;
+        Location = typeToken.Location;
     }
 
     /// <inheritdoc />
@@ -33,20 +33,18 @@ public class VariableDeclarationStatement : Statement
     {
         ExpressionResult result;
         if (expression is null)
-        {
-            // only declare, no value assigned
-
-            result = ExpressionResult.From(type.Value);
-        }
+            result = ExpressionResult.From(typeToken.Value); // only declare, no value assigned
         else
-        {
             result = await expression.EvaluateAsync(interpreter, cancellationToken);
 
-            if (result.ValueType != type.Value)
-                throw new InvalidVariableAssignmentException(type, result);
+        try
+        {
+            interpreter.CurrentScope.SetVariable(identifierToken.Value, result);
         }
-
-        interpreter.CurrentScope.SetVariable(identifier.Value, result);
+        catch (IncompatibleVariableTypeException e)
+        {
+            throw new InvalidVariableAssignmentException(typeToken, e);
+        }
     }
 
     /// <inheritdoc />
@@ -57,6 +55,6 @@ public class VariableDeclarationStatement : Statement
         if (expression is not null)
             expressionStr = $" = {expression}";
 
-        return $"{type} {identifier}{expressionStr}";
+        return $"{typeToken} {identifierToken}{expressionStr}";
     }
 }
