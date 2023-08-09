@@ -1,3 +1,4 @@
+using System.Globalization;
 using StepLang.Interpreting;
 using StepLang.Parsing.Expressions;
 using StepLang.Tokenizing;
@@ -27,22 +28,27 @@ public class IndexAssignmentStatement : Statement
         var indexResult = await indexExpression.EvaluateAsync(interpreter, cancellationToken);
         var valueResult = await valueExpression.EvaluateAsync(interpreter, cancellationToken);
 
-        switch (indexedVariable.Value.ValueType)
+        switch (indexedVariable.Value)
         {
-            case "list":
-                var list = indexedVariable.Value.ExpectList();
-                var index = indexResult.ExpectIntegerIndex(list.Count);
+            case ListResult { Value: var list }:
+                var index = (int)indexResult.ExpectInteger().Value;
 
                 list[index] = valueResult;
                 break;
-            case "map":
-                var map = indexedVariable.Value.ExpectMap();
-                var key = indexResult.ExpectString();
+            case MapResult { Value: var map }:
+                var key = indexResult.ExpectString().Value;
 
                 map[key] = valueResult;
                 break;
             default:
-                throw new InvalidIndexOperatorException(identifier.Location, indexResult.Value?.ToString() ?? "<null>", indexedVariable.Value.ValueType, "assign");
+                var indexRepresentation = indexResult switch
+                {
+                    StringResult stringResult => stringResult.Value,
+                    NumberResult numberResult => numberResult.Value.ToString(CultureInfo.InvariantCulture),
+                    _ => indexResult.ToString(),
+                };
+
+                throw new InvalidIndexOperatorException(null, indexRepresentation, indexedVariable.Value.ResultType, "assign");
         }
     }
 

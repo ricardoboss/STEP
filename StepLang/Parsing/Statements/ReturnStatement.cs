@@ -16,7 +16,7 @@ public class ReturnStatement : Statement
     /// <inheritdoc />
     public override async Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
-        var result = ExpressionResult.Void;
+        ExpressionResult result = VoidResult.Instance;
 
         if (expression is not null)
             result = await expression.EvaluateAsync(interpreter, cancellationToken);
@@ -26,5 +26,5 @@ public class ReturnStatement : Statement
 
     /// <inheritdoc />
     [ExcludeFromCodeCoverage]
-    protected override string DebugRenderContent() => expression?.ToString() ?? ExpressionResult.Void.ToString();
+    protected override string DebugRenderContent() => expression?.ToString() ?? VoidResult.Instance.ToString();
 }

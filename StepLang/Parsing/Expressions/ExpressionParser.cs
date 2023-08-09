@@ -129,7 +129,7 @@ public class ExpressionParser
 
             var keyExpression = await ParseAsync(keyTokens, cancellationToken);
 
-            if (keyExpression is not ConstantExpression { Value: string key })
+            if (keyExpression is not ConstantExpression { Result: StringResult { Value: {} key } })
                 throw new UnexpectedTokenException(keyTokens[0], TokenType.LiteralString);
 
             var valueExpression = await ParseAsync(valueTokens, cancellationToken);

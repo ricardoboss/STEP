@@ -18,7 +18,7 @@ internal sealed class ListExpression : Expression
             .EvaluateAsync(interpreter, cancellationToken)
             .ToArrayAsync(cancellationToken);
 
-        return ExpressionResult.List(values);
+        return new ListResult(values);
     }
 
     /// <inheritdoc />

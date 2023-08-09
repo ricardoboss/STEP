@@ -1,4 +1,7 @@
 number a = 1
-number b = 1 + 2
 string c = "Hello"
-string d = c + " World" + EOL
+
+number b
+b = 1 + 2
+
+string d = c + " World" + 2 + EOL

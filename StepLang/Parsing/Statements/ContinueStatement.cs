@@ -20,9 +20,9 @@ internal sealed class ContinueStatement : Statement
     public override async Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
         var continueDepthResult = await expression.EvaluateAsync(interpreter, cancellationToken);
-        if (continueDepthResult is not { ValueType: "number" } or { Value: <= 0 })
+        if (continueDepthResult is not NumberResult numberResult || numberResult.Value < 0 || !numberResult.IsInteger)
             throw new InvalidDepthResult(continueToken, continueDepthResult);
 
-        interpreter.ContinueDepth += continueDepthResult.Value;
+        interpreter.ContinueDepth += (int)numberResult.Value;
     }
 }

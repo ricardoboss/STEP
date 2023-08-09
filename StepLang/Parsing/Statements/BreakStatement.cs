@@ -20,9 +20,9 @@ public class BreakStatement : Statement
     public override async Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
         var breakDepthResult = await expression.EvaluateAsync(interpreter, cancellationToken);
-        if (breakDepthResult is not { ValueType: "number" } or { Value: <= 0 })
+        if (breakDepthResult is not NumberResult numberResult || numberResult.Value < 0 || !numberResult.IsInteger)
             throw new InvalidDepthResult(breakToken, breakDepthResult);
 
-        interpreter.BreakDepth += breakDepthResult.Value;
+        interpreter.BreakDepth += (int)numberResult.Value;
     }
 }

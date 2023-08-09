@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using StepLang.Interpreting;
 
 namespace StepLang.Parsing.Expressions;
@@ -33,10 +34,10 @@ public abstract class Expression
     {
         return new BinaryExpression("^", left, right, (a, b) =>
         {
-            if (a.ValueType != b.ValueType || a.ValueType != "number")
+            if (a is not NumberResult aNumber || b is not NumberResult bNumber)
                 throw new IncompatibleExpressionOperandsException(a, b, "power");
 
-            return ExpressionResult.Number(Math.Pow(a.Value, b.Value));
+            return new NumberResult(Math.Pow(aNumber.Value, bNumber.Value));
         });
     }
 
@@ -44,10 +45,14 @@ public abstract class Expression
     {
         return new BinaryExpression("+", left, right, (a, b) =>
         {
-            if (a.ValueType != b.ValueType)
-                throw new IncompatibleExpressionOperandsException(a, b, "add");
-
-            return ExpressionResult.From(a.ValueType, a.Value + b.Value);
+            return a switch
+            {
+                NumberResult aNumber when b is NumberResult bNumber => new NumberResult(aNumber.Value + bNumber.Value),
+                NumberResult aNumber when b is StringResult bString => new StringResult(aNumber.Value + bString.Value),
+                StringResult aString when b is NumberResult bNumber => new StringResult(aString.Value + bNumber.Value),
+                StringResult aString when b is StringResult bString => new StringResult(aString.Value + bString.Value),
+                _ => throw new IncompatibleExpressionOperandsException(a, b, "add"),
+            };
         });
     }
 
@@ -55,10 +60,10 @@ public abstract class Expression
     {
         return new BinaryExpression("-", left, right, (a, b) =>
         {
-            if (a.ValueType != b.ValueType || a.ValueType != "number")
+            if (a is not NumberResult aNumber || b is not NumberResult bNumber)
                 throw new IncompatibleExpressionOperandsException(a, b, "subtract");
 
-            return ExpressionResult.Number(a.Value - b.Value);
+            return new NumberResult(aNumber.Value - bNumber.Value);
         });
     }
 
@@ -66,10 +71,10 @@ public abstract class Expression
     {
         return new BinaryExpression("*", left, right, (a, b) =>
         {
-            if (a.ValueType != b.ValueType || a.ValueType != "number")
+            if (a is not NumberResult aNumber || b is not NumberResult bNumber)
                 throw new IncompatibleExpressionOperandsException(a, b, "multiply");
 
-            return ExpressionResult.Number(a.Value * b.Value);
+            return new NumberResult(aNumber.Value * bNumber.Value);
         });
     }
 
@@ -77,10 +82,12 @@ public abstract class Expression
     {
         return new BinaryExpression("/", left, right, (a, b) =>
         {
-            if (a.ValueType != b.ValueType || a.ValueType != "number")
+            if (a is not NumberResult aNumber || b is not NumberResult bNumber)
                 throw new IncompatibleExpressionOperandsException(a, b, "divide");
 
-            return ExpressionResult.Number(a.Value / b.Value);
+            // TODO: throw a specific exception when dividing by zero
+
+            return new NumberResult(aNumber.Value / bNumber.Value);
         });
     }
 
@@ -88,10 +95,10 @@ public abstract class Expression
     {
         return new BinaryExpression("%", left, right, (a, b) =>
         {
-            if (a.ValueType != b.ValueType || a.ValueType != "number")
+            if (a is not NumberResult aNumber || b is not NumberResult bNumber)
                 throw new IncompatibleExpressionOperandsException(a, b, "modulo");
 
-            return ExpressionResult.Number(a.Value % b.Value);
+            return new NumberResult(aNumber.Value % bNumber.Value);
         });
     }
 
@@ -99,10 +106,10 @@ public abstract class Expression
     {
         return new BinaryExpression("<", left, right, (a, b) =>
         {
-            if (a.ValueType != b.ValueType)
+            if (a is not NumberResult aNumber || b is not NumberResult bNumber)
                 throw new IncompatibleExpressionOperandsException(a, b, "compare (less than)");
 
-            return ExpressionResult.Bool(a.Value < b.Value);
+            return new BoolResult(aNumber.Value < bNumber.Value);
         });
     }
 
@@ -110,10 +117,10 @@ public abstract class Expression
     {
         return new BinaryExpression("<=", left, right, (a, b) =>
         {
-            if (a.ValueType != b.ValueType)
+            if (a is not NumberResult aNumber || b is not NumberResult bNumber)
                 throw new IncompatibleExpressionOperandsException(a, b, "compare (less than or equal)");
 
-            return ExpressionResult.Bool(a.Value <= b.Value);
+            return new BoolResult(aNumber.Value <= bNumber.Value);
         });
     }
 
@@ -121,10 +128,10 @@ public abstract class Expression
     {
         return new BinaryExpression(">", left, right, (a, b) =>
         {
-            if (a.ValueType != b.ValueType)
+            if (a is not NumberResult aNumber || b is not NumberResult bNumber)
                 throw new IncompatibleExpressionOperandsException(a, b, "compare (greater than)");
 
-            return ExpressionResult.Bool(a.Value > b.Value);
+            return new BoolResult(aNumber.Value > bNumber.Value);
         });
     }
 
@@ -132,10 +139,10 @@ public abstract class Expression
     {
         return new BinaryExpression(">=", left, right, (a, b) =>
         {
-            if (a.ValueType != b.ValueType)
+            if (a is not NumberResult aNumber || b is not NumberResult bNumber)
                 throw new IncompatibleExpressionOperandsException(a, b, "compare (greater than or equal)");
 
-            return ExpressionResult.Bool(a.Value >= b.Value);
+            return new BoolResult(aNumber.Value >= bNumber.Value);
         });
     }
 
@@ -143,13 +150,22 @@ public abstract class Expression
     {
         return new BinaryExpression("==", left, right, (a, b) =>
         {
-            if (a.ValueType == b.ValueType)
-                return ExpressionResult.Bool(a.Value == b.Value);
+            if (a is VoidResult || b is VoidResult)
+                throw new IncompatibleExpressionOperandsException(a, b, "compare (equals)");
 
-            if (a.ValueType == "null") return ExpressionResult.Bool(b.Value == null);
-            if (b.ValueType == "null") return ExpressionResult.Bool(a.Value == null);
+            if (a is NullResult && b is NullResult)
+                return new BoolResult(true);
 
-            return ExpressionResult.False;
+            if (a is NullResult || b is NullResult)
+                return new BoolResult(false);
+
+            return new BoolResult(a switch
+            {
+                StringResult aString when b is StringResult bString => string.Equals(aString.Value, bString.Value, StringComparison.InvariantCulture),
+                NumberResult aNumber when b is NumberResult bNumber => Math.Abs(aNumber.Value - bNumber.Value) < double.Epsilon,
+                BoolResult aBool when b is BoolResult bBool => aBool.Value == bBool.Value,
+                _ => false,
+            });
         });
     }
 
@@ -157,67 +173,65 @@ public abstract class Expression
     {
         return new BinaryExpression("||", left, right, (a, b) =>
         {
-            if (a.ValueType != b.ValueType || a.ValueType != "bool")
+            if (a is not BoolResult aBool || b is not BoolResult bBool)
                 throw new IncompatibleExpressionOperandsException(a, b, "logical or");
 
-            return ExpressionResult.Bool(a.Value || b.Value);
+            return new BoolResult(aBool.Value || bBool.Value);
         });
     }
-    
+
     public static Expression LogicalAnd(Expression left, Expression right)
     {
         return new BinaryExpression("&&", left, right, (a, b) =>
         {
-            if (a.ValueType != b.ValueType || a.ValueType != "bool")
+            if (a is not BoolResult aBool || b is not BoolResult bBool)
                 throw new IncompatibleExpressionOperandsException(a, b, "logical and");
 
-            return ExpressionResult.Bool(a.Value && b.Value);
+            return new BoolResult(aBool.Value && bBool.Value);
         });
     }
 
     public static Expression Coalesce(Expression left, Expression right)
     {
-        return new BinaryExpression("??", left, right, (a, b) =>
-        {
-            if (a.ValueType == "null")
-                return b;
-
-            if (a.ValueType != b.ValueType)
-                throw new IncompatibleExpressionOperandsException(a, b, "null coalesce");
-
-            return ExpressionResult.From(a.ValueType, a.Value ?? b.Value);
-        });
+        return new BinaryExpression("??", left, right, (a, b) => a is NullResult ? b : a);
     }
 
     public static Expression Index(Expression left, Expression right)
     {
         return new BinaryExpression("[]", left, right, (a, b) =>
         {
-            switch (a.ValueType)
+            switch (a.ResultType)
             {
-                case "list":
+                case ResultType.List:
                 {
-                    var values = a.ExpectList();
-                    var index = b.ExpectIntegerIndex(values.Count);
+                    var values = a.ExpectList().Value;
+                    var index = (int)b.ExpectInteger().Value;
 
                     return values[index];
                 }
-                case "map":
+                case ResultType.Map:
                 {
-                    var pairs = a.ExpectMap();
-                    var key = b.ExpectString();
+                    var pairs = a.ExpectMap().Value;
+                    var key = b.ExpectString().Value;
 
                     return pairs[key];
                 }
-                case "string":
+                case ResultType.Str:
                 {
-                    var value = a.ExpectString();
-                    var index = b.ExpectIntegerIndex(value.Length);
+                    var value = a.ExpectString().Value;
+                    var index = (int)b.ExpectInteger().Value;
 
-                    return ExpressionResult.String(value[index].ToString());
+                    return new StringResult(value[index].ToString());
                 }
                 default:
-                    throw new InvalidIndexOperatorException(null, b.Value?.ToString() ?? "<null>", a.ValueType, "access");
+                    var indexRepresentation = b switch
+                    {
+                        StringResult stringResult => stringResult.Value,
+                        NumberResult numberResult => numberResult.Value.ToString(CultureInfo.InvariantCulture),
+                        _ => b.ToString(),
+                    };
+
+                    throw new InvalidIndexOperatorException(null, indexRepresentation, a.ResultType, "access");
             }
         });
     }
@@ -226,17 +240,17 @@ public abstract class Expression
     {
         return new UnaryExpression("!", expression, result =>
         {
-            var value = result.ExpectBool();
+            var value = result.ExpectBool().Value;
 
-            return ExpressionResult.Bool(!value);
+            return new BoolResult(!value);
         });
     }
 
-    public static Expression Constant(double value) => ConstantExpression.Number(value);
+    public static Expression Constant(double value) => new ConstantExpression(new NumberResult(value));
 
-    public static Expression Constant(string value) => ConstantExpression.String(value);
+    public static Expression Constant(string value) => new ConstantExpression(new StringResult(value));
 
-    public static Expression Constant(bool value) => ConstantExpression.Bool(value);
+    public static Expression Constant(bool value) => new ConstantExpression(new BoolResult(value));
 
     public abstract Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken = default);
 

@@ -15,11 +15,11 @@ public class ReadlineFunction : NativeFunction
             throw new InvalidArgumentCountException(0, arguments.Count);
 
         if (interpreter.StdIn is not { } stdIn)
-            return ExpressionResult.Null;
+            return StringResult.Empty;
 
-        var line = await stdIn.ReadLineAsync(cancellationToken);
+        var line = await stdIn.ReadLineAsync(cancellationToken) ?? string.Empty;
 
-        return line is null ? ExpressionResult.Null : ExpressionResult.String(line);
+        return new StringResult(line);
     }
 
     /// <inheritdoc />

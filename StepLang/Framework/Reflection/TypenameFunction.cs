@@ -19,9 +19,9 @@ public class TypenameFunction : NativeFunction
             throw new InvalidExpressionTypeException(nameof(VariableExpression), exp.GetType().Name);
 
         var variable = interpreter.CurrentScope.GetVariable(varExp.Identifier);
-        var result = ExpressionResult.String(variable.Value.ValueType);
+        var result = new StringResult(variable.Value.ResultType.ToTypeName());
 
-        return Task.FromResult(result);
+        return Task.FromResult<ExpressionResult>(result);
     }
 
     /// <inheritdoc />

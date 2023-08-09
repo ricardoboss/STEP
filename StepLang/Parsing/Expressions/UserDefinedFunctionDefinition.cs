@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using StepLang.Interpreting;
 using StepLang.Parsing.Statements;
 using StepLang.Tokenizing;
@@ -26,7 +27,7 @@ public class UserDefinedFunctionDefinition : FunctionDefinition
 
         await interpreter.InterpretAsync(body.ToAsyncEnumerable(), cancellationToken);
 
-        return interpreter.PopScope().TryGetResult(out var result) ? result : ExpressionResult.Void;
+        return interpreter.PopScope().TryGetResult(out var result) ? result : VoidResult.Instance;
     }
 
     private async Task EvaluateParameters(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
@@ -34,20 +35,24 @@ public class UserDefinedFunctionDefinition : FunctionDefinition
         for (var i = 0; i < parameters.Count; i++)
         {
             var (parameterTypeToken, parameterNameToken) = parameters[i];
-            var parameterType = parameterTypeToken.Value;
-            var parameterName = parameterNameToken.Value;
+            var argumentExpression = arguments[i];
 
-            var argument = await arguments[i].EvaluateAsync(interpreter, cancellationToken);
-
-            argument.ThrowIfVoid();
-
-            if (argument.ValueType != parameterType)
-                throw new InvalidArgumentTypeException(parameterTypeToken, argument);
-
-            ExpressionResult parameterValue = ExpressionResult.From(parameterType, argument.Value);
-
-            interpreter.CurrentScope.SetVariable(parameterName, parameterValue);
+            await EvaluateParameter(interpreter, parameterTypeToken, parameterNameToken, argumentExpression, cancellationToken);
         }
+    }
+
+    private static async Task EvaluateParameter(Interpreter interpreter, Token typeToken, Token nameToken, Expression argument, CancellationToken cancellationToken = default)
+    {
+        Debug.Assert(typeToken.Type == TokenType.TypeName, "typeToken.Type == TokenType.TypeName");
+
+        var parameterType = ValueTypeExtensions.FromTypeName(typeToken.Value);
+        var parameterName = nameToken.Value;
+
+        var argumentResult = await argument.EvaluateAsync(interpreter, cancellationToken);
+        if (argumentResult is VoidResult || argumentResult.ResultType != parameterType)
+            throw new InvalidArgumentTypeException(typeToken, argumentResult);
+
+        interpreter.CurrentScope.SetVariable(parameterName, argumentResult);
     }
 
     protected override string DebugParamsString => string.Join(", ", parameters.Select(t => $"{t.type} {t.identifier}"));
