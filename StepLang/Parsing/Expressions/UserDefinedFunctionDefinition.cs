@@ -46,7 +46,7 @@ public class UserDefinedFunctionDefinition : FunctionDefinition
 
             ExpressionResult parameterValue = ExpressionResult.From(parameterType, argument.Value);
 
-            interpreter.CurrentScope.InitializeVariable(parameterName, parameterValue);
+            interpreter.CurrentScope.SetVariable(parameterName, parameterValue);
         }
     }
 

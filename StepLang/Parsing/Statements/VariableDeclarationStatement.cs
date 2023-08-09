@@ -34,20 +34,19 @@ public class VariableDeclarationStatement : Statement
         // default value for given type
         var result = ExpressionResult.From(typeToken.Value);
 
-        // create variable with given type
-        var variable = new Variable(identifierToken.Value, result);
-
         // add variable to current scope
-        interpreter.CurrentScope.SetVariable(variable);
+        interpreter.CurrentScope.SetVariable(identifierToken.Value, result);
 
-        // if there is an expression, evaluate it
-        if (expression is not null)
-            result = await expression.EvaluateAsync(interpreter, cancellationToken);
+        // if there is no expression, we are done
+        if (expression is null)
+            return;
+
+        result = await expression.EvaluateAsync(interpreter, cancellationToken);
 
         try
         {
             // this will throw if the resulting expression type is not compatible with the variable type
-            variable.Assign(result);
+            interpreter.CurrentScope.UpdateValue(identifierToken, result);
         }
         catch (IncompatibleVariableTypeException e)
         {

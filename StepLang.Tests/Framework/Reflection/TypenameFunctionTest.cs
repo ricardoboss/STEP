@@ -14,7 +14,7 @@ public class TypenameFunctionTest
     {
         const string varName = "a";
         var interpreter = new Interpreter();
-        interpreter.CurrentScope.InitializeVariable(varName, arg);
+        interpreter.CurrentScope.SetVariable(varName, arg);
         
         var function = new TypenameFunction();
         var result = await function.EvaluateAsync(interpreter, new []{ new VariableExpression(new(TokenType.Identifier, varName, null)) });
