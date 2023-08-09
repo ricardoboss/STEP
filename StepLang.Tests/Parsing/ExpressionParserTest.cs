@@ -11,7 +11,7 @@ public class ExpressionParserTest
     public async Task TestParseVariableExpression()
     {
         var interpreter = new Interpreter();
-        interpreter.CurrentScope.SetVariable("variable", ExpressionResult.True);
+        interpreter.CurrentScope.InitializeVariable("variable", ExpressionResult.True);
         var expression = await ExpressionParser.ParseAsync(new [] { new Token(TokenType.Identifier, "variable", null) });
 
 

@@ -21,31 +21,36 @@ public class Scope
         parentScope = null;
 
         // globally defined identifiers
-        SetVariable(PrintFunction.Identifier, ExpressionResult.Function(new PrintFunction()));
-        SetVariable(PrintlnFunction.Identifier, ExpressionResult.Function(new PrintlnFunction()));
-        SetVariable(ReadlineFunction.Identifier, ExpressionResult.Function(new ReadlineFunction()));
-        SetVariable(TypenameFunction.Identifier, ExpressionResult.Function(new TypenameFunction()));
-        SetVariable(ParseFunction.Identifier, ExpressionResult.Function(new ParseFunction()));
-        SetVariable(JsonEncodeFunction.Identifier, ExpressionResult.Function(new JsonEncodeFunction()));
-        SetVariable(JsonDecodeFunction.Identifier, ExpressionResult.Function(new JsonDecodeFunction()));
+        InitializeVariable(PrintFunction.Identifier, ExpressionResult.Function(new PrintFunction()));
+        InitializeVariable(PrintlnFunction.Identifier, ExpressionResult.Function(new PrintlnFunction()));
+        InitializeVariable(ReadlineFunction.Identifier, ExpressionResult.Function(new ReadlineFunction()));
+        InitializeVariable(TypenameFunction.Identifier, ExpressionResult.Function(new TypenameFunction()));
+        InitializeVariable(ParseFunction.Identifier, ExpressionResult.Function(new ParseFunction()));
+        InitializeVariable(JsonEncodeFunction.Identifier, ExpressionResult.Function(new JsonEncodeFunction()));
+        InitializeVariable(JsonDecodeFunction.Identifier, ExpressionResult.Function(new JsonDecodeFunction()));
 
-        SetVariable("null", ExpressionResult.Null);
+        InitializeVariable("null", ExpressionResult.Null);
 
-        SetVariable("EOL", ExpressionResult.String(Environment.NewLine));
+        InitializeVariable("EOL", ExpressionResult.String(Environment.NewLine));
     }
 
-    public void SetVariable(string identifier, ExpressionResult value)
+    public void InitializeVariable(string identifier, ExpressionResult value)
     {
         // only look for variable in the current scope for assigning
         // this enables use to shadow variables from parent scopes
-        if (identifiers.TryGetValue(identifier, out var variable))
+        if (!identifiers.TryGetValue(identifier, out var variable))
         {
-            variable.Assign(value);
+            variable = new(identifier, value);
+
+            SetVariable(variable);
         }
-        else
-        {
-            identifiers[identifier] = new(identifier, value);
-        }
+
+        variable.Assign(value);
+    }
+
+    public void SetVariable(Variable variable)
+    {
+        identifiers[variable.Identifier] = variable;
     }
 
     private bool TryGetVariable(string identifier, [NotNullWhen(true)] out Variable? variable)
@@ -75,7 +80,7 @@ public class Scope
         variable.Assign(value);
     }
 
-    public void SetResult(ExpressionResult result) => SetVariable("$$RETURN", result);
+    public void SetResult(ExpressionResult result) => InitializeVariable("$$RETURN", result);
 
     public bool TryGetResult([NotNullWhen(true)] out ExpressionResult? result)
     {

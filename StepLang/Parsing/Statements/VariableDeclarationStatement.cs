@@ -31,15 +31,23 @@ public class VariableDeclarationStatement : Statement
     /// <inheritdoc />
     public override async Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
-        ExpressionResult result;
-        if (expression is null)
-            result = ExpressionResult.From(typeToken.Value); // only declare, no value assigned
-        else
+        // default value for given type
+        var result = ExpressionResult.From(typeToken.Value);
+
+        // create variable with given type
+        var variable = new Variable(identifierToken.Value, result);
+
+        // add variable to current scope
+        interpreter.CurrentScope.SetVariable(variable);
+
+        // if there is an expression, evaluate it
+        if (expression is not null)
             result = await expression.EvaluateAsync(interpreter, cancellationToken);
 
         try
         {
-            interpreter.CurrentScope.SetVariable(identifierToken.Value, result);
+            // this will throw if the resulting expression type is not compatible with the variable type
+            variable.Assign(result);
         }
         catch (IncompatibleVariableTypeException e)
         {
