@@ -35,7 +35,7 @@ jobs:
         run: dotnet test --configuration Release --no-build
 
       - name: Publish
-        run: StepLang.CLI/publish.sh
+        run: cd StepLang.CLI && ./publish.sh
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
