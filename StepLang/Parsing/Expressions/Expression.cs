@@ -161,7 +161,7 @@ public abstract class Expression
 
             return new BoolResult(a switch
             {
-                StringResult aString when b is StringResult bString => string.Equals(aString.Value, bString.Value, StringComparison.InvariantCulture),
+                StringResult aString when b is StringResult bString => string.Equals(aString.Value, bString.Value, StringComparison.Ordinal),
                 NumberResult aNumber when b is NumberResult bNumber => Math.Abs(aNumber.Value - bNumber.Value) < double.Epsilon,
                 BoolResult aBool when b is BoolResult bBool => aBool.Value == bBool.Value,
                 _ => false,
