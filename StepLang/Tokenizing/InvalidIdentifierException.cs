@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace StepLang.Tokenizing;
 
 internal sealed class InvalidIdentifierException : TokenizerException

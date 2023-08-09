@@ -5,13 +5,10 @@ namespace StepLang.Parsing.Statements;
 
 internal sealed class ImportStatement : Statement
 {
-    private readonly Token importToken;
     private readonly Token filePathToken;
 
     public ImportStatement(Token importToken, Token filePathToken) : base(StatementType.ImportStatement)
     {
-        this.importToken = importToken;
-
         if (filePathToken.Type is not TokenType.LiteralString)
             throw new UnexpectedTokenException(filePathToken, TokenType.LiteralString);
 
