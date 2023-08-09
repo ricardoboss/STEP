@@ -82,16 +82,13 @@ more advanced languages.
 Take a look at the [`STEP/Examples`](./STEP/Examples) folder.
 It contains a few examples of STEP code, which you can run using the interpreter.
 
+If you ever need help, feel free to join @ricardoboss' [Discord server](https://discord.gg/ySpmcdCqFN).
+
 ## Can I contribute?
 
 Sure, open a PR with your feature and corresponding tests.
 If it's something I want to develop myself however, I might not merge it.
 This is because, well, I want to learn it myself.
-
-## Are you going to maintain it?
-
-It's just a small project to learn about programming languages.
-If there are bugs, I'll try to fix them, but I'm not promising new features or anything like that.
 
 # License (MIT)
 
