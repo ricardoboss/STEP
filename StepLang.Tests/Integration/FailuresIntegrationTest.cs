@@ -66,6 +66,7 @@ public class FailuresIntegrationTest
 
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Deserialized from JSON")]
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local", Justification = "Initialized from JSON")]
+    [SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Used by xUnit")]
     private sealed class ExceptionDetails
     {
         public string? Message { get; init; }
