@@ -35,7 +35,7 @@ jobs:
         run: dotnet test --configuration Release --no-build
 
       - name: Publish
-        run: cd StepLang.CLI && ./publish.sh
+        run: pushd StepLang.CLI && ./publish.sh && popd
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
@@ -45,4 +45,4 @@ jobs:
           generate_release_notes: true
           fail_on_unmatched_files: true
           files: |
-            Step.CLI/publish/*
+            StepLang.CLI/publish/*
