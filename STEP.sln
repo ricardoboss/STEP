@@ -7,13 +7,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 		global.json = global.json
 		README.md = README.md
-		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
 		.gitattributes = .gitattributes
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang.Tests", "StepLang.Tests\StepLang.Tests.csproj", "{CB5E44DF-C1D2-4DA9-8175-FD76F8D95A42}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang.CLI", "StepLang.CLI\StepLang.CLI.csproj", "{D8D36317-78E3-4FD9-B85B-12869B498983}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{995634A6-466A-41FB-BD99-D95F782EE11D}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\publish.yml = .github\workflows\publish.yml
+		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
