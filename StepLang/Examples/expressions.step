@@ -1,6 +1,7 @@
 ﻿number a = 1 + 2
 
 println(a)
+println(1 + (2))
 println(2 + 3)
 println(1 * 2 + 3)
 println(1 + 2 * 3)
