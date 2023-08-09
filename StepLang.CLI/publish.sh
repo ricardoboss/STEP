@@ -2,8 +2,17 @@
 
 set -e
 
-platforms=("linux-x64" "win-x64" "osx-x64" "linux-arm64" "win-arm64" "osx-arm64")
+platforms=(
+  "linux-x64"
+  "win-x64"
+  "osx-x64"
+  "linux-arm64"
+  "win-arm64"
+#  "osx-arm64" # disable arm64 macOS builds until a workflow for signing them is created
+)
 frameworkVersion="net7.0"
+
+echo "🗑️ Cleaning up..."
 
 # clean up any built files
 rm -rf bin obj publish
@@ -15,7 +24,7 @@ mkdir -p publish
 for platform in "${platforms[@]}"; do
     echo "🔨 Building for $platform..."
 
-    dotnet publish --configuration Release --runtime "$platform" --framework "$frameworkVersion" --self-contained true /p:PublishSingleFile=true
+    dotnet publish --configuration Release --runtime "$platform" --framework "$frameworkVersion" --verbosity quiet --nologo --self-contained true /p:PublishSingleFile=true
 
     sourceFilename="step"
     if [[ "$platform" == "win-x64" || "$platform" == "win-arm64" ]]; then
@@ -35,18 +44,18 @@ for platform in "${platforms[@]}"; do
     # clean up publish folder
     rm -rf "bin/Release/$frameworkVersion/$platform"
 
-    echo "✅ Done ($outputPath)"
+    echo -e "\t✅ built $outputPath"
 done
 
 echo "🔨 Building platform-independent binary..."
 
 # build platform-independent binary
-dotnet publish --configuration Release --framework "$frameworkVersion"
+dotnet publish --configuration Release --framework "$frameworkVersion" --verbosity quiet --nologo
 
 # remove platform-dependent binary
 rm bin/Release/$frameworkVersion/publish/step
 
 # zip framework-dependent libraries
-zip -j publish/step bin/Release/$frameworkVersion/publish/*
+zip -jq publish/step bin/Release/$frameworkVersion/publish/*
 
-echo "✅ Done (publish/step.zip)"
+echo -e "\t✅ built publish/step.zip"
