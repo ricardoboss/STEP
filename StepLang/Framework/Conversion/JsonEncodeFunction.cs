@@ -21,7 +21,7 @@ public class JsonEncodeFunction : NativeFunction
                 new ExpressionResultJsonConverter(),
             },
         });
-        return ExpressionResult.String(json);
+        return new StringResult(json);
     }
 
     /// <inheritdoc />

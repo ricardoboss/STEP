@@ -11,15 +11,12 @@ public class ExpressionParserTest
     public async Task TestParseVariableExpression()
     {
         var interpreter = new Interpreter();
-        interpreter.CurrentScope.SetVariable("variable", ExpressionResult.True);
+        interpreter.CurrentScope.SetVariable("variable", BoolResult.True);
         var expression = await ExpressionParser.ParseAsync(new [] { new Token(TokenType.Identifier, "variable", null) });
-
 
         var result = await expression.EvaluateAsync(interpreter);
 
-        Assert.False(result.IsVoid);
-        Assert.Equal(true, result.Value);
-        Assert.Equal("bool", result.ValueType);
+        Assert.True(result is BoolResult { Value: true });
     }
 
     [Fact]
@@ -30,9 +27,7 @@ public class ExpressionParserTest
 
         var result = await expression.EvaluateAsync(interpreter);
 
-        Assert.False(result.IsVoid);
-        Assert.Equal(579, result.Value);
-        Assert.Equal("number", result.ValueType);
+        Assert.True(result is NumberResult { Value: 579 });
     }
 
     [Fact]
@@ -43,9 +38,7 @@ public class ExpressionParserTest
 
         var result = await expression.EvaluateAsync(interpreter);
 
-        Assert.False(result.IsVoid);
-        Assert.Equal(10, result.Value);
-        Assert.Equal("number", result.ValueType);
+        Assert.True(result is NumberResult { Value: 10 });
     }
 
     [Fact]
@@ -56,9 +49,7 @@ public class ExpressionParserTest
 
         var result = await expression.EvaluateAsync(interpreter);
 
-        Assert.False(result.IsVoid);
-        Assert.Equal(5, result.Value);
-        Assert.Equal("number", result.ValueType);
+        Assert.True(result is NumberResult { Value: 5 });
     }
 
     [Fact]
@@ -69,9 +60,7 @@ public class ExpressionParserTest
 
         var result = await expression.EvaluateAsync(interpreter);
 
-        Assert.False(result.IsVoid);
-        Assert.Equal(7, result.Value);
-        Assert.Equal("number", result.ValueType);
+        Assert.True(result is NumberResult { Value: 7 });
     }
 
     [Fact]
@@ -82,9 +71,7 @@ public class ExpressionParserTest
 
         var result = await expression.EvaluateAsync(interpreter);
 
-        Assert.False(result.IsVoid);
-        Assert.Equal(9, result.Value);
-        Assert.Equal("number", result.ValueType);
+        Assert.True(result is NumberResult { Value: 9 });
     }
 
     [Fact]

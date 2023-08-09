@@ -20,7 +20,7 @@ public class IfStatement : Statement
     {
         var result = await condition.EvaluateAsync(interpreter, cancellationToken);
 
-        return result is { ValueType: "bool", Value: true };
+        return result is BoolResult { Value: true };
     }
 
     public override async Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)

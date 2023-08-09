@@ -21,7 +21,7 @@ public class MapExpression : Expression
                 cancellationToken
             );
 
-        return ExpressionResult.Map(pairs);
+        return new MapResult(pairs);
     }
 
     /// <inheritdoc />

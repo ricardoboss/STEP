@@ -20,7 +20,7 @@ public class WhileStatement : Statement
     {
         var result = await condition.EvaluateAsync(interpreter, cancellationToken);
 
-        return result is { ValueType: "bool", Value: true };
+        return result is BoolResult { Value: true };
     }
 
     /// <inheritdoc />

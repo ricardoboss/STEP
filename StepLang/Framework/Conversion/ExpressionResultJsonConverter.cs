@@ -13,13 +13,13 @@ public class ExpressionResultJsonConverter : JsonConverter<ExpressionResult>
 
         return reader.TokenType switch
         {
-            JsonTokenType.False => ExpressionResult.False,
-            JsonTokenType.True => ExpressionResult.True,
-            JsonTokenType.Null => ExpressionResult.Null,
-            JsonTokenType.Number => ExpressionResult.Number(reader.GetDouble()),
-            JsonTokenType.String => ExpressionResult.String(reader.GetString() ?? string.Empty),
-            JsonTokenType.StartArray => ExpressionResult.List(ReadArray(ref reader, options)),
-            JsonTokenType.StartObject => ExpressionResult.Map(ReadObject(ref reader, options)),
+            JsonTokenType.False => BoolResult.False,
+            JsonTokenType.True => BoolResult.True,
+            JsonTokenType.Null => NullResult.Instance,
+            JsonTokenType.Number => new NumberResult(reader.GetDouble()),
+            JsonTokenType.String => new StringResult(reader.GetString() ?? string.Empty),
+            JsonTokenType.StartArray => new ListResult(ReadArray(ref reader, options)),
+            JsonTokenType.StartObject => new MapResult(ReadObject(ref reader, options)),
             _ => throw new NotImplementedException($"Conversion of {reader.TokenType} to ExpressionResult is not implemented"),
         };
     }
@@ -68,28 +68,29 @@ public class ExpressionResultJsonConverter : JsonConverter<ExpressionResult>
 
     public override void Write(Utf8JsonWriter writer, ExpressionResult value, JsonSerializerOptions options)
     {
-        switch (value.ValueType)
+        switch (value)
         {
-            case "string" when value.Value is string stringValue:
+            case StringResult { Value: var stringValue }:
                 writer.WriteStringValue(stringValue);
                 return;
-            case "number" when value.Value is double numberValue:
+            case NumberResult { Value: var numberValue }:
                 writer.WriteNumberValue(numberValue);
                 return;
-            case "bool" when value.Value is bool boolValue:
+            case BoolResult { Value: var boolValue }:
                 writer.WriteBooleanValue(boolValue);
                 return;
-            case "null":
+            case NullResult:
                 writer.WriteNullValue();
                 return;
-            case "list" when value.Value is IList<ExpressionResult> listValue:
+            case ListResult { Value: var listValue }:
                 writer.WriteStartArray();
                 foreach (var item in listValue)
+                {
                     Write(writer, item, options);
-
+                }
                 writer.WriteEndArray();
                 return;
-            case "map" when value.Value is IDictionary<string, ExpressionResult> mapValue:
+            case MapResult { Value: var mapValue }:
                 writer.WriteStartObject();
                 foreach (var (key, item) in mapValue)
                 {

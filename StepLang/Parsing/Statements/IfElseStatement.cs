@@ -38,7 +38,7 @@ public class IfElseStatement : Statement
     {
         var result = await firstCondition.EvaluateAsync(interpreter, cancellationToken);
 
-        return result is { ValueType: "bool", Value: true };
+        return result is BoolResult { Value: true };
     }
 
     private async Task<bool> ShouldExecuteSecondBranch(Interpreter interpreter,
@@ -49,7 +49,7 @@ public class IfElseStatement : Statement
 
         var result = await secondCondition.EvaluateAsync(interpreter, cancellationToken);
 
-        return result is { ValueType: "bool", Value: true };
+        return result is BoolResult { Value: true };
     }
 
     private async Task ExecuteFirstBranch(Interpreter interpreter, CancellationToken cancellationToken = default)

@@ -1,194 +1,115 @@
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using StepLang.Interpreting;
-
 namespace StepLang.Parsing.Expressions;
 
-public sealed class ExpressionResult : IEquatable<ExpressionResult>
+public abstract class ExpressionResult : IEquatable<ExpressionResult>
 {
-    public static ExpressionResult Void { get; } = new("void", isVoid: true);
-
-    public static ExpressionResult Null { get; } = new("null");
-
-    public static ExpressionResult True { get; } = new("bool", true);
-
-    public static ExpressionResult False { get; } = new("bool", false);
-
-    public static ExpressionResult Number(double value) => new("number", value);
-
-    [SuppressMessage("Naming", "CA1720:Identifier contains type name")]
-    public static ExpressionResult String(string value) => new("string", value);
-
-    public static ExpressionResult Bool(bool value) => new("bool", value);
-
-    public static ExpressionResult Function(FunctionDefinition definition) => new("function", definition);
-
-    public static ExpressionResult List(IList<ExpressionResult> items) => new("list", items);
-
-    public static ExpressionResult Map(IDictionary<string, ExpressionResult> map) => new("map", map);
-
-    public static ExpressionResult From(string type, dynamic? value = null) => new(type, value);
-
-    private ExpressionResult(string valueType, dynamic? value = null, bool isVoid = false)
+    public static ExpressionResult DefaultFor(ResultType resultType)
     {
-        ValueType = valueType;
-        Value = value;
-        IsVoid = isVoid;
+        return resultType switch
+        {
+            ResultType.Void => VoidResult.Instance,
+            ResultType.Str => StringResult.Empty,
+            ResultType.Number => NumberResult.Zero,
+            ResultType.Bool => BoolResult.False,
+            ResultType.List => ListResult.Empty,
+            ResultType.Map => MapResult.Empty,
+            ResultType.Function => FunctionResult.VoidFunction,
+            ResultType.Null => NullResult.Instance,
+            _ => throw new ArgumentOutOfRangeException(nameof(resultType), resultType, null),
+        };
     }
 
-    public string ValueType { get; init; }
-    public dynamic? Value { get; init; }
-    public bool IsVoid { get; init; }
-
-    public override bool Equals(object? obj)
+    protected ExpressionResult(ResultType resultType)
     {
-        return obj is ExpressionResult other && Equals(other);
+        ResultType = resultType;
     }
 
+    public ResultType ResultType { get; }
+
+    /// <inheritdoc />
     public bool Equals(ExpressionResult? other)
     {
-        if (other is null)
+        if (ReferenceEquals(null, other))
             return false;
 
         if (ReferenceEquals(this, other))
             return true;
 
-        return ValueType == other.ValueType && Value == other.Value && IsVoid == other.IsVoid;
-    }
-
-    public void Deconstruct(out string valueType, out dynamic? value)
-    {
-        valueType = ValueType;
-        value = Value;
+        return ResultType == other.ResultType;
     }
 
     /// <inheritdoc />
-    public override int GetHashCode()
+    public override bool Equals(object? obj)
     {
-        return HashCode.Combine(ValueType, Value, IsVoid);
+        if (ReferenceEquals(null, obj))
+            return false;
+
+        if (ReferenceEquals(this, obj))
+            return true;
+
+        return obj.GetType() == GetType() && Equals((ExpressionResult)obj);
     }
 
     /// <inheritdoc />
-    [ExcludeFromCodeCoverage]
-    public override string ToString()
-    {
-        return IsVoid ? "<void>" : Value is not null ? $"({ValueType}) {RenderValue(Value)}" : "<null>";
+    public override int GetHashCode() => (int)ResultType;
 
-        string RenderValue(dynamic value)
-        {
-            return value switch
-            {
-                string strValue => strValue,
-                double doubleValue => doubleValue.ToString(CultureInfo.InvariantCulture),
-                bool boolValue => boolValue.ToString(),
-                FunctionDefinition function => function.ToString(),
-                IEnumerable<ExpressionResult> list => $"[{string.Join(", ", list.Select(RenderValue))}]",
-                IEnumerable<KeyValuePair<string, ExpressionResult>> map => $"{{{string.Join(", ", map.Select(e => e.Key + ": " + RenderValue(e.Value)))}}}",
-                _ => $"[not implemented for {value.GetType().Name}]",
-            };
-        }
+    /// <inheritdoc />
+    public override string ToString() => ResultType.ToTypeName();
+
+    public NumberResult ExpectNumber()
+    {
+        if (this is not NumberResult numberResult)
+            throw new InvalidOperationException($"Expected a {ResultType.Number.ToTypeName()}, but got {ResultType.ToTypeName()}");
+
+        return numberResult;
     }
 
-    public string ExpectString()
+    public NumberResult ExpectInteger()
     {
-        if (ValueType is not "string")
-            throw new InvalidResultTypeException("string", ValueType);
+        var numberResult = ExpectNumber();
 
-        if (Value is not string stringValue)
-            throw new InvalidResultTypeException("string", Value?.GetType().Name ?? "<null>");
+        if (!numberResult.IsInteger)
+            throw new InvalidOperationException($"Expected an integer, but got {numberResult.Value}");
 
-        return stringValue;
+        return numberResult;
     }
 
-    public bool ExpectBool()
+    public StringResult ExpectString()
     {
-        if (ValueType is not "bool")
-            throw new InvalidResultTypeException("bool", ValueType);
+        if (this is not StringResult stringResult)
+            throw new InvalidOperationException($"Expected a {ResultType.Str.ToTypeName()}, but got {ResultType.ToTypeName()}");
 
-        if (Value is not bool boolValue)
-            throw new InvalidResultTypeException("bool", Value?.GetType().Name ?? "<null>");
-
-        return boolValue;
+        return stringResult;
     }
 
-    public double ExpectNumber()
+    public BoolResult ExpectBool()
     {
-        if (ValueType is not "number")
-            throw new InvalidResultTypeException("number", ValueType);
+        if (this is not BoolResult boolResult)
+            throw new InvalidOperationException($"Expected a {ResultType.Bool.ToTypeName()}, but got {ResultType.ToTypeName()}");
 
-        if (Value is not double doubleValue)
-            throw new InvalidResultTypeException("number", Value?.GetType().Name ?? "<null>");
-
-        return doubleValue;
+        return boolResult;
     }
 
-    public int ExpectIntegerIndex(int max)
+    public ListResult ExpectList()
     {
-        var doubleIndex = ExpectNumber();
+        if (this is not ListResult listResult)
+            throw new InvalidOperationException($"Expected a {ResultType.List.ToTypeName()}, but got {ResultType.ToTypeName()}");
 
-        if (doubleIndex < 0 || doubleIndex >= max)
-            throw new ListIndexOutOfBoundsException(doubleIndex, max);
-
-        if (Math.Abs(Math.Round(doubleIndex) - doubleIndex) > double.Epsilon)
-            throw new ListIndexOutOfBoundsException(doubleIndex, max);
-
-        return (int)doubleIndex;
+        return listResult;
     }
 
-    public FunctionDefinition ExpectFunction()
+    public MapResult ExpectMap()
     {
-        if (ValueType is not "function")
-            throw new InvalidResultTypeException("function", ValueType);
+        if (this is not MapResult mapResult)
+            throw new InvalidOperationException($"Expected a {ResultType.Map.ToTypeName()}, but got {ResultType.ToTypeName()}");
 
-        if (Value is not FunctionDefinition definition)
-            throw new InvalidResultTypeException("function", Value?.GetType().Name ?? "<null>");
-
-        return definition;
+        return mapResult;
     }
 
-    public IList<ExpressionResult> ExpectList()
+    public FunctionResult ExpectFunction()
     {
-        if (ValueType is not "list")
-            throw new InvalidResultTypeException("list", ValueType);
+        if (this is not FunctionResult functionResult)
+            throw new InvalidOperationException($"Expected a {ResultType.Function.ToTypeName()}, but got {ResultType.ToTypeName()}");
 
-        if (Value is not IEnumerable<ExpressionResult> enumerable)
-            throw new InvalidResultTypeException("list", Value?.GetType().Name ?? "<null>");
-
-        IList<ExpressionResult> values;
-        if (enumerable is IList<ExpressionResult> list)
-            values = list;
-        else
-            values = enumerable.ToList();
-
-        return values;
-    }
-
-    public IDictionary<string, ExpressionResult> ExpectMap()
-    {
-        if (ValueType is not "map")
-            throw new InvalidResultTypeException("map", ValueType);
-
-        if (Value is not IEnumerable<KeyValuePair<string, ExpressionResult>> enumerable)
-            throw new InvalidResultTypeException("map", Value?.GetType().Name ?? "<null>");
-
-        IDictionary<string, ExpressionResult> values;
-        if (enumerable is IDictionary<string, ExpressionResult> map)
-            values = map;
-        else
-            values = enumerable.ToDictionary(p => p.Key, p => p.Value);
-
-        return values;
-    }
-
-    public void ThrowIfVoid(string? expected = null)
-    {
-        if (ValueType is "void" || IsVoid)
-            throw new InvalidResultTypeException(expected ?? "non-void", "void");
-    }
-
-    public void ThrowIfNotVoid()
-    {
-        if (ValueType is not "void" || !IsVoid)
-            throw new InvalidResultTypeException("void", ValueType);
+        return functionResult;
     }
 }

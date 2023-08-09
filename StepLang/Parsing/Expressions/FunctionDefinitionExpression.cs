@@ -22,9 +22,9 @@ public class FunctionDefinitionExpression : Expression
     public override Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
         var function = new UserDefinedFunctionDefinition(parameters, body);
-        var result = ExpressionResult.Function(function);
+        var result = new FunctionResult(function);
 
-        return Task.FromResult(result);
+        return Task.FromResult<ExpressionResult>(result);
     }
 
     /// <inheritdoc />

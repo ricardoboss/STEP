@@ -15,7 +15,7 @@ public class DirectFunctionDefinitionCallExpression : BaseFunctionCallExpression
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
         var expressionResult = await definitionExpression.EvaluateAsync(interpreter, cancellationToken);
-        var definition = expressionResult.ExpectFunction();
+        var definition = expressionResult.ExpectFunction().Value;
 
         return await ExecuteFunction(definition, interpreter, cancellationToken);
     }

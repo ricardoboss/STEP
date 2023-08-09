@@ -13,7 +13,7 @@ public class PrintFunction : NativeFunction
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
         if (interpreter.StdOut is not { } stdOut)
-            return ExpressionResult.Void;
+            return VoidResult.Instance;
 
         var stringArgs = await arguments
             .EvaluateAsync(interpreter, cancellationToken)
@@ -22,36 +22,38 @@ public class PrintFunction : NativeFunction
 
         await Print(stdOut, string.Join("", stringArgs), cancellationToken);
 
-        return ExpressionResult.Void;
+        return VoidResult.Instance;
     }
 
     private static string RenderValue(ExpressionResult result)
     {
-        switch (result.ValueType)
+        switch (result)
         {
-            case "string" when result.Value is string stringValue:
+            case StringResult { Value: var stringValue }:
                 return stringValue;
-            case "number" when result.Value is double numberValue:
+            case NumberResult { Value: var numberValue }:
                 return numberValue.ToString(CultureInfo.InvariantCulture);
-            case "bool" when result.Value is bool boolValue:
+            case BoolResult { Value: var boolValue }:
                 return boolValue.ToString();
-            case "null" when result.Value is null:
+            case NullResult:
                 return "null";
-            case "list" when result.Value is IList<ExpressionResult> values:
+            case ListResult { Value: var values }:
                 return $"[{string.Join(", ", values.Select(RenderValue))}]";
-            case "map" when result.Value is IDictionary<string, ExpressionResult> pairs:
+            case MapResult { Value: var pairs }:
                 var renderedPairs = pairs.Select(pair =>
                 {
-                    var renderedValue = RenderValue(pair.Value);
-                    if (pair.Value.ValueType is "string")
-                        renderedValue = $"\"{renderedValue}\"";
+                    string renderedValue;
+                    if (pair.Value is StringResult stringValue)
+                        renderedValue = $"\"{stringValue.Value}\"";
+                    else
+                        renderedValue = RenderValue(pair.Value);
 
                     return $"\"{pair.Key}\": {renderedValue}";
                 });
                 var mapContents = string.Join(", ", renderedPairs);
                 return $"{{{mapContents}}}";
             default:
-                return $"[{result.ValueType}]";
+                return $"[{result.ResultType}]";
         }
     }
 
@@ -60,5 +62,5 @@ public class PrintFunction : NativeFunction
 
     /// <inheritdoc />
     [ExcludeFromCodeCoverage]
-    protected override string DebugParamsString => "string ...args";
+    protected override string DebugParamsString => "any ...args";
 }

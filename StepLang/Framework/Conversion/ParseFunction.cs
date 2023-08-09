@@ -15,38 +15,42 @@ public class ParseFunction : NativeFunction
             throw new InvalidArgumentCountException(2, arguments.Count);
 
         var type = await arguments[0].EvaluateAsync(interpreter, cancellationToken);
-        var targetType = type.ExpectString();
+        var targetType = ValueTypeExtensions.FromTypeName(type.ExpectString().Value);
 
         var source = await arguments[1].EvaluateAsync(interpreter, cancellationToken);
-        source.ThrowIfVoid();
-        var (sourceType, sourceValue) = source;
 
-        if (targetType == sourceType)
-            return ExpressionResult.From(targetType, sourceValue);
+        if (source.ResultType == targetType)
+            return source;
 
-        string stringValue = sourceValue?.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
-        return sourceType switch
+        return source switch
         {
-            "string" => targetType switch
+            StringResult stringResult => targetType switch
             {
-                "number" when double.TryParse(stringValue, NumberStyles.Any, CultureInfo.InvariantCulture, out var doubleValue) => ExpressionResult.Number(doubleValue),
-                "bool" when bool.TryParse(stringValue, out var boolValue) => ExpressionResult.Bool(boolValue),
-                "bool" when stringValue is "1" or "0" => ExpressionResult.Bool(stringValue is "1"),
-                _ => ExpressionResult.Null,
+                ResultType.Number when double.TryParse(stringResult.Value, NumberStyles.Any, CultureInfo.InvariantCulture, out var doubleValue) => new NumberResult(doubleValue),
+                ResultType.Bool when bool.TryParse(stringResult.Value, out var boolValue) => new BoolResult(boolValue),
+                ResultType.Bool when stringResult.Value is "1" or "0" => new BoolResult(stringResult.Value is "1"),
+                _ => NullResult.Instance,
             },
-            "number" => targetType switch
+            NumberResult numberResult => targetType switch
             {
-                "string" => ExpressionResult.String(stringValue),
-                "bool" => ExpressionResult.Bool(sourceValue is not 0.0),
-                _ => ExpressionResult.Null,
+                ResultType.Str => new StringResult(numberResult.Value.ToString(CultureInfo.InvariantCulture)),
+                ResultType.Bool => new BoolResult(numberResult.Value != 0),
+                _ => NullResult.Instance,
             },
-            "bool" => targetType switch
+            BoolResult boolResult => targetType switch
             {
-                "string" => ExpressionResult.String(stringValue),
-                "number" => ExpressionResult.Number(sourceValue is true ? 1 : 0),
-                _ => ExpressionResult.Null,
+                ResultType.Str => new StringResult(boolResult.Value ? "true" : "false"),
+                ResultType.Number => new NumberResult(boolResult.Value ? 1 : 0),
+                _ => NullResult.Instance,
             },
-            _ => ExpressionResult.Null,
+            NullResult => targetType switch
+            {
+                ResultType.Str => StringResult.Empty,
+                ResultType.Number => NumberResult.Zero,
+                ResultType.Bool => BoolResult.False,
+                _ => NullResult.Instance,
+            },
+            _ => throw new InvalidResultTypeException(source.ResultType, ResultType.Str, ResultType.Number, ResultType.Bool, ResultType.Null),
         };
     }
 

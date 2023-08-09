@@ -21,17 +21,17 @@ public class Scope
         parentScope = null;
 
         // globally defined identifiers
-        SetVariable(PrintFunction.Identifier, ExpressionResult.Function(new PrintFunction()));
-        SetVariable(PrintlnFunction.Identifier, ExpressionResult.Function(new PrintlnFunction()));
-        SetVariable(ReadlineFunction.Identifier, ExpressionResult.Function(new ReadlineFunction()));
-        SetVariable(TypenameFunction.Identifier, ExpressionResult.Function(new TypenameFunction()));
-        SetVariable(ParseFunction.Identifier, ExpressionResult.Function(new ParseFunction()));
-        SetVariable(JsonEncodeFunction.Identifier, ExpressionResult.Function(new JsonEncodeFunction()));
-        SetVariable(JsonDecodeFunction.Identifier, ExpressionResult.Function(new JsonDecodeFunction()));
+        SetVariable(PrintFunction.Identifier, new FunctionResult(new PrintFunction()));
+        SetVariable(PrintlnFunction.Identifier, new FunctionResult(new PrintlnFunction()));
+        SetVariable(ReadlineFunction.Identifier, new FunctionResult(new ReadlineFunction()));
+        SetVariable(TypenameFunction.Identifier, new FunctionResult(new TypenameFunction()));
+        SetVariable(ParseFunction.Identifier, new FunctionResult(new ParseFunction()));
+        SetVariable(JsonEncodeFunction.Identifier, new FunctionResult(new JsonEncodeFunction()));
+        SetVariable(JsonDecodeFunction.Identifier, new FunctionResult(new JsonDecodeFunction()));
 
-        SetVariable("null", ExpressionResult.Null);
+        SetVariable("null", NullResult.Instance);
 
-        SetVariable("EOL", ExpressionResult.String(Environment.NewLine));
+        SetVariable("EOL", new StringResult(Environment.NewLine));
     }
 
     public void SetVariable(string identifier, ExpressionResult value)

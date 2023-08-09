@@ -32,7 +32,7 @@ public class VariableDeclarationStatement : Statement
     public override async Task ExecuteAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
         // default value for given type
-        var result = ExpressionResult.From(typeToken.Value);
+        var result = ExpressionResult.DefaultFor(ValueTypeExtensions.FromTypeName(typeToken.Value));
 
         // add variable to current scope
         interpreter.CurrentScope.SetVariable(identifierToken.Value, result);

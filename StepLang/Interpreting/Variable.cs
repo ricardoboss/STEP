@@ -15,9 +15,7 @@ public class Variable
 
     public void Assign(ExpressionResult newValue)
     {
-        newValue.ThrowIfVoid();
-
-        if (newValue.ValueType is not "null" && newValue.ValueType != Value.ValueType)
+        if (newValue is VoidResult || newValue.ResultType != Value.ResultType)
             throw new IncompatibleVariableTypeException(this, newValue);
 
         Value = newValue;
