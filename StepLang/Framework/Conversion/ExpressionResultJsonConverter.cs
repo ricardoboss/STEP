@@ -72,24 +72,23 @@ public class ExpressionResultJsonConverter : JsonConverter<ExpressionResult>
         {
             case "string" when value.Value is string stringValue:
                 writer.WriteStringValue(stringValue);
-                break;
+                return;
             case "number" when value.Value is double numberValue:
                 writer.WriteNumberValue(numberValue);
-                break;
+                return;
             case "bool" when value.Value is bool boolValue:
                 writer.WriteBooleanValue(boolValue);
-                break;
+                return;
             case "null":
                 writer.WriteNullValue();
-                break;
+                return;
             case "list" when value.Value is IList<ExpressionResult> listValue:
                 writer.WriteStartArray();
                 foreach (var item in listValue)
-                {
                     Write(writer, item, options);
-                }
+
                 writer.WriteEndArray();
-                break;
+                return;
             case "map" when value.Value is IDictionary<string, ExpressionResult> mapValue:
                 writer.WriteStartObject();
                 foreach (var (key, item) in mapValue)
@@ -98,7 +97,7 @@ public class ExpressionResultJsonConverter : JsonConverter<ExpressionResult>
                     Write(writer, item, options);
                 }
                 writer.WriteEndObject();
-                break;
+                return;
             default:
                 throw new NotImplementedException($"Conversion of {value} to JSON is not implemented");
         }

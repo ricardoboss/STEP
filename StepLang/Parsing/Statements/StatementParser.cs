@@ -41,43 +41,53 @@ public class StatementParser
                     continue;
             }
 
-            importsProhibited = true;
+            if (!importsProhibited)
+                importsProhibited = true;
 
-            if (type is TokenType.TypeName)
-                yield return await ParseVariableDeclaration(token, cancellationToken);
-            else if (type is TokenType.Identifier or TokenType.UnderscoreSymbol)
-                yield return await ParseIdentifierUsage(token, cancellationToken);
-            else if (type is TokenType.IfKeyword)
-                yield return await ParseIfStatement(token, cancellationToken);
-            else if (type is TokenType.WhileKeyword)
-                yield return await ParseWhileLoop(token, cancellationToken);
-            else if (type is TokenType.ReturnKeyword)
-                yield return await ParseReturnStatement(token, cancellationToken);
-            else if (type is TokenType.BreakKeyword)
-                yield return await ParseBreakStatement(token, cancellationToken);
-            else if (type is TokenType.ContinueKeyword)
-                yield return await ParseContinueStatement(token, cancellationToken);
-            else if (type is TokenType.OpeningCurlyBracket)
-                yield return await ParseAnonymousCodeBlock(token, cancellationToken);
-            else if (type is TokenType.ClosingCurlyBracket)
-                yield break;
-            else
+            switch (type)
             {
-                var allowed = new []
-                {
-                    TokenType.TypeName, TokenType.Identifier,
-                    TokenType.UnderscoreSymbol, TokenType.Whitespace,
-                    TokenType.NewLine, TokenType.LineComment,
-                    TokenType.IfKeyword, TokenType.WhileKeyword,
-                    TokenType.ReturnKeyword, TokenType.BreakKeyword,
-                    TokenType.OpeningCurlyBracket, TokenType.ClosingCurlyBracket,
-                };
-
-                if (!importsProhibited)
-                    allowed = allowed.Append(TokenType.ImportKeyword).ToArray();
-
-                throw new UnexpectedTokenException(token, allowed);
+                case TokenType.TypeName:
+                    yield return await ParseVariableDeclaration(token, cancellationToken);
+                    continue;
+                case TokenType.Identifier or TokenType.UnderscoreSymbol:
+                    yield return await ParseIdentifierUsage(token, cancellationToken);
+                    continue;
+                case TokenType.IfKeyword:
+                    yield return await ParseIfStatement(token, cancellationToken);
+                    continue;
+                case TokenType.WhileKeyword:
+                    yield return await ParseWhileLoop(token, cancellationToken);
+                    continue;
+                case TokenType.ReturnKeyword:
+                    yield return await ParseReturnStatement(token, cancellationToken);
+                    continue;
+                case TokenType.BreakKeyword:
+                    yield return await ParseBreakStatement(token, cancellationToken);
+                    continue;
+                case TokenType.ContinueKeyword:
+                    yield return await ParseContinueStatement(token, cancellationToken);
+                    continue;
+                case TokenType.OpeningCurlyBracket:
+                    yield return await ParseAnonymousCodeBlock(token, cancellationToken);
+                    continue;
+                case TokenType.ClosingCurlyBracket:
+                    yield break;
             }
+
+            var allowed = new []
+            {
+                TokenType.TypeName, TokenType.Identifier,
+                TokenType.UnderscoreSymbol, TokenType.Whitespace,
+                TokenType.NewLine, TokenType.LineComment,
+                TokenType.IfKeyword, TokenType.WhileKeyword,
+                TokenType.ReturnKeyword, TokenType.BreakKeyword,
+                TokenType.OpeningCurlyBracket, TokenType.ClosingCurlyBracket,
+            };
+
+            if (!importsProhibited)
+                allowed = allowed.Append(TokenType.ImportKeyword).ToArray();
+
+            throw new UnexpectedTokenException(token, allowed);
         }
     }
 
