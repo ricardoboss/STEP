@@ -88,33 +88,38 @@ public class ExpressionParser
             {
                 currentGroup.Enqueue(token);
 
-                switch (token.Type)
-                {
-                    case TokenType.OpeningParentheses:
-                        expressionDepth++;
-                        break;
-                    case TokenType.ClosingParentheses:
-                        expressionDepth--;
-                        break;
-                    case TokenType.OpeningCurlyBracket:
-                        codeBlockDepth++;
-                        break;
-                    case TokenType.ClosingCurlyBracket:
-                        codeBlockDepth--;
-                        break;
-                    case TokenType.OpeningSquareBracket:
-                        listDepth++;
-                        break;
-                    case TokenType.ClosingSquareBracket:
-                        listDepth--;
-                        break;
-                }
+                UpdateDepths(token.Type);
             }
         }
 
         yield return await FinalizeGroup();
 
         yield break;
+
+        void UpdateDepths(TokenType? type)
+        {
+            switch (type)
+            {
+                case TokenType.OpeningParentheses:
+                    expressionDepth++;
+                    return;
+                case TokenType.ClosingParentheses:
+                    expressionDepth--;
+                    return;
+                case TokenType.OpeningCurlyBracket:
+                    codeBlockDepth++;
+                    return;
+                case TokenType.ClosingCurlyBracket:
+                    codeBlockDepth--;
+                    return;
+                case TokenType.OpeningSquareBracket:
+                    listDepth++;
+                    return;
+                case TokenType.ClosingSquareBracket:
+                    listDepth--;
+                    return;
+            }
+        }
 
         async Task<KeyValuePair<string, Expression>> FinalizeGroup()
         {

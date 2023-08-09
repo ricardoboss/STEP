@@ -37,14 +37,8 @@ public class Tokenizer
 
             if (character is '"' or '\'')
             {
-                if (tokenBuilder.Length > 0)
-                {
-                    var token = TryFinalizeTokenFromBuilder(true);
-                    if (token is not null)
-                        yield return token;
-
-                    Debug.Assert(tokenBuilder.Length == 0);
-                }
+                if (TryFinalizePreviousToken() is { } previousToken)
+                    yield return previousToken;
 
                 stringQuote = character;
                 stringStartLocation = characterQueue.CurrentLocation;
@@ -52,31 +46,15 @@ public class Tokenizer
                 continue;
             }
 
-            if (character is '/' && characterQueue.TryPeek(out var nextCharacter) && nextCharacter is '/')
+            if (character == '/' && characterQueue.TryPeek(out var nextCharacter) && nextCharacter is '/')
             {
-                if (tokenBuilder.Length > 0)
-                {
-                    var token = TryFinalizeTokenFromBuilder(true);
-                    if (token is not null)
-                        yield return token;
-
-                    Debug.Assert(tokenBuilder.Length == 0);
-                }
-
-                tokenBuilder.Append(character);
-                foreach (var commentCharacter in characterQueue.DequeueUntil('\n'))
-                    tokenBuilder.Append(commentCharacter);
-
-                yield return FinalizeToken(TokenType.LineComment);
+                foreach (var commentToken in HandleLineComment(character))
+                    yield return commentToken;
 
                 continue;
             }
 
-            var tokens = HandleChar(character);
-            if (tokens is null)
-                continue;
-
-            foreach (var token in tokens)
+            foreach (var token in HandleChar(character))
                 yield return token;
         }
 
@@ -88,6 +66,30 @@ public class Tokenizer
 
         var leftOverToken = TryFinalizeTokenFromBuilder(true);
         if (leftOverToken is not null) yield return leftOverToken;
+    }
+
+    private IEnumerable<Token> HandleLineComment(char character)
+    {
+        if (TryFinalizePreviousToken() is { } previousToken)
+            yield return previousToken;
+
+        tokenBuilder.Append(character);
+        foreach (var commentCharacter in characterQueue.DequeueUntil('\n'))
+            tokenBuilder.Append(commentCharacter);
+
+        yield return FinalizeToken(TokenType.LineComment);
+    }
+
+    private Token? TryFinalizePreviousToken()
+    {
+        if (tokenBuilder.Length <= 0)
+            return null;
+
+        var token = TryFinalizeTokenFromBuilder(true);
+
+        Debug.Assert(tokenBuilder.Length == 0);
+
+        return token;
     }
 
     private Token? HandleString(char c)
@@ -122,40 +124,26 @@ public class Tokenizer
         return null;
     }
 
-    private Token []? HandleChar(char c)
+    private IEnumerable<Token> HandleChar(char c)
     {
         if (c.TryParseSymbol(out var symbolType))
         {
-            var tokens = new List<Token>();
-        
-            var tokenValue = tokenBuilder.ToString();
-            if (tokenValue.Length > 0)
-            {
-                var tempToken = TryFinalizeTokenFromBuilder(true);
-                if (tempToken is not null)
-                    tokens.Add(tempToken);
-            }
+            if (TryFinalizePreviousToken() is { } previousToken)
+                yield return previousToken;
 
-            tokens.Add(new(symbolType.Value, c.ToString(), characterQueue.CurrentLocation));
+            yield return new(symbolType.Value, c.ToString(), characterQueue.CurrentLocation);
 
-            return tokens.ToArray();
-        }
-
-        if (IsPartOfLiteralNumber(c))
-        {
-            tokenBuilder.Append(c);
-            return null;
+            yield break;
         }
 
         tokenBuilder.Append(c);
-        var token = TryFinalizeTokenFromBuilder(false);
-        if (token is null)
-            return null;
 
-        return new []
-        {
-            token,
-        };
+        if (IsPartOfLiteralNumber(c))
+            yield break;
+
+        var token = TryFinalizeTokenFromBuilder(false);
+        if (token is not null)
+            yield return token;
     }
 
     private Token? TryFinalizeTokenFromBuilder(bool allowIdentifier)

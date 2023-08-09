@@ -135,30 +135,35 @@ public class TokenQueue
             if (nextType is not TokenType.Whitespace and not TokenType.LineComment)
                 tokens.Add(token);
 
-            switch (nextType)
-            {
-                case TokenType.OpeningParentheses:
-                    expressionDepth++;
-                    break;
-                case TokenType.ClosingParentheses:
-                    expressionDepth--;
-                    break;
-                case TokenType.OpeningCurlyBracket:
-                    codeBlockDepth++;
-                    break;
-                case TokenType.ClosingCurlyBracket:
-                    codeBlockDepth--;
-                    break;
-                case TokenType.OpeningSquareBracket:
-                    listDepth++;
-                    break;
-                case TokenType.ClosingSquareBracket:
-                    listDepth--;
-                    break;
-            }
+            UpdateDepth(nextType);
         }
 
         return tokens;
+
+        void UpdateDepth(TokenType? type)
+        {
+            switch (type)
+            {
+                case TokenType.OpeningParentheses:
+                    expressionDepth++;
+                    return;
+                case TokenType.ClosingParentheses:
+                    expressionDepth--;
+                    return;
+                case TokenType.OpeningCurlyBracket:
+                    codeBlockDepth++;
+                    return;
+                case TokenType.ClosingCurlyBracket:
+                    codeBlockDepth--;
+                    return;
+                case TokenType.OpeningSquareBracket:
+                    listDepth++;
+                    return;
+                case TokenType.ClosingSquareBracket:
+                    listDepth--;
+                    return;
+            }
+        }
     }
 
     public bool IsEmpty => tokenList.Count == 0;
