@@ -18,7 +18,7 @@ public class Variable
         newValue.ThrowIfVoid();
 
         if (newValue.ValueType is not "null" && newValue.ValueType != Value.ValueType)
-            throw new InvalidOperationException($"Cannot assign a value of a type {newValue.ValueType} to a variable declared as {Value.ValueType}.");
+            throw new IncompatibleVariableTypeException(this, newValue);
 
         Value = newValue;
     }

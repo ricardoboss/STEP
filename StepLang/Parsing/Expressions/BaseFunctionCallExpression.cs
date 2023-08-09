@@ -24,5 +24,9 @@ public abstract class BaseFunctionCallExpression : Expression
         {
             throw new InvalidFunctionCallException(GetCallLocation(), e);
         }
+        catch (InvalidArgumentTypeException e)
+        {
+            throw new InvalidFunctionCallException(GetCallLocation(), e);
+        }
     }
 }
