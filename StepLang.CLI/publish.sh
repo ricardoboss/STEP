@@ -24,7 +24,7 @@ mkdir -p publish
 for platform in "${platforms[@]}"; do
     echo "🔨 Building for $platform..."
 
-    dotnet publish --configuration Release --runtime "$platform" --framework "$frameworkVersion" --verbosity quiet --nologo --self-contained true /p:PublishSingleFile=true
+    dotnet publish --configuration Release --runtime "$platform" --framework "$frameworkVersion" --verbosity quiet --nologo --self-contained true /p:PublishSingleFile=true /p:PublishTrimmed=true
 
     sourceFilename="step"
     if [[ "$platform" == "win-x64" || "$platform" == "win-arm64" ]]; then
@@ -43,6 +43,8 @@ for platform in "${platforms[@]}"; do
 
     # clean up publish folder
     rm -rf "bin/Release/$frameworkVersion/$platform"
+
+    chmod +x "$outputPath"
 
     echo -e "\t✅ built $outputPath"
 done

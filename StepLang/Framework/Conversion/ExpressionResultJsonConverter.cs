@@ -18,49 +18,47 @@ public class ExpressionResultJsonConverter : JsonConverter<ExpressionResult>
             JsonTokenType.Null => NullResult.Instance,
             JsonTokenType.Number => new NumberResult(reader.GetDouble()),
             JsonTokenType.String => new StringResult(reader.GetString() ?? string.Empty),
-            JsonTokenType.StartArray => new ListResult(ReadArray(ref reader, options)),
-            JsonTokenType.StartObject => new MapResult(ReadObject(ref reader, options)),
+            JsonTokenType.StartArray => new ListResult(ReadArray(ref reader)),
+            JsonTokenType.StartObject => new MapResult(ReadObject(ref reader)),
             _ => throw new NotImplementedException($"Conversion of {reader.TokenType} to ExpressionResult is not implemented"),
         };
     }
 
-    private static IList<ExpressionResult> ReadArray(ref Utf8JsonReader reader, JsonSerializerOptions options)
+    private static IList<ExpressionResult> ReadArray(ref Utf8JsonReader reader)
     {
         var results = new List<ExpressionResult>();
         while (reader.Read())
         {
-            switch (reader.TokenType)
-            {
-                case JsonTokenType.EndArray:
-                    return results;
-                default:
-                    results.Add(JsonSerializer.Deserialize<ExpressionResult>(ref reader, options)!);
-                    break;
-            }
+            if (reader.TokenType == JsonTokenType.EndArray)
+                return results;
+
+            var value = JsonSerializer.Deserialize(ref reader, JsonConversionContext.Default.ExpressionResult);
+            if (value is null)
+                throw new JsonException("Unexpected token when reading array.");
+
+            results.Add(value);
         }
 
         throw new JsonException("Unexpected end of JSON while reading array.");
     }
 
-    private static IDictionary<string, ExpressionResult> ReadObject(ref Utf8JsonReader reader, JsonSerializerOptions options)
+    private static IDictionary<string, ExpressionResult> ReadObject(ref Utf8JsonReader reader)
     {
         var results = new Dictionary<string, ExpressionResult>();
         while (reader.Read())
         {
-            switch (reader.TokenType)
-            {
-                case JsonTokenType.EndObject:
-                    return results;
-                case JsonTokenType.PropertyName:
-                    var key = reader.GetString() ?? string.Empty;
-                    var value = JsonSerializer.Deserialize<ExpressionResult>(ref reader, options)!;
+            if (reader.TokenType == JsonTokenType.EndObject)
+                return results;
 
-                    results.Add(key, value);
+            if (reader.TokenType != JsonTokenType.PropertyName)
+                throw new JsonException("Unexpected token when reading object.");
 
-                    break;
-                default:
-                    throw new JsonException("Unexpected token when reading object.");
-            }
+            var key = reader.GetString() ?? string.Empty;
+            var value = JsonSerializer.Deserialize(ref reader, JsonConversionContext.Default.ExpressionResult);
+            if (value is null)
+                throw new JsonException("Unexpected token when reading object.");
+
+            results.Add(key, value);
         }
 
         throw new JsonException("Unexpected end of JSON while reading object.");

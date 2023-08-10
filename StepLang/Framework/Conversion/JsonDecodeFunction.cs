@@ -14,13 +14,7 @@ public class JsonDecodeFunction : NativeFunction
         var source = arguments.Single();
         var result = await source.EvaluateAsync(interpreter, cancellationToken);
         var json = result.ExpectString().Value;
-        return JsonSerializer.Deserialize<ExpressionResult>(json, new JsonSerializerOptions
-        {
-            Converters =
-            {
-                new ExpressionResultJsonConverter(),
-            },
-        }) ?? NullResult.Instance;
+        return JsonSerializer.Deserialize(json, JsonConversionContext.Default.ExpressionResult) ?? NullResult.Instance;
     }
 
     /// <inheritdoc />
