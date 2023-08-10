@@ -1,5 +1,9 @@
+using System.Text.Json.Serialization;
+using StepLang.Framework.Conversion;
+
 namespace StepLang.Parsing.Expressions;
 
+[JsonConverter(typeof(ExpressionResultJsonConverter))]
 public abstract class ExpressionResult : IEquatable<ExpressionResult>
 {
     public static ExpressionResult DefaultFor(ResultType resultType)
