@@ -1,5 +1,5 @@
 print()
-print('Hello')
+print("Hello")
 print(" World", EOL)
 print("Answer: ")
 print("You said: ", readline(), EOL)

@@ -41,7 +41,7 @@ public class ExamplesIntegrationTest
         // act
         var chars = await File.ReadAllTextAsync(exampleFile.FullName);
         tokenizer.Add(chars);
-        var tokens = tokenizer.TokenizeAsync();
+        var tokens = tokenizer.Tokenize();
         await parser.AddAsync(tokens.ToAsyncEnumerable());
         var statements = parser.ParseAsync();
         await interpreter.InterpretAsync(statements);

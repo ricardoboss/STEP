@@ -40,7 +40,7 @@ public class FailuresIntegrationTest
         // assert
         var exception = await Assert.ThrowsAnyAsync<StepLangException>(async () =>
         {
-            var tokens = tokenizer.TokenizeAsync();
+            var tokens = tokenizer.Tokenize();
             await parser.AddAsync(tokens.ToAsyncEnumerable());
             var statements = parser.ParseAsync();
             await interpreter.InterpretAsync(statements);

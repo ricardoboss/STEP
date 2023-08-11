@@ -20,7 +20,7 @@ public class Tokenizer
         characterQueue.File = file;
     }
 
-    public IEnumerable<Token> TokenizeAsync(CancellationToken cancellationToken = default)
+    public IEnumerable<Token> Tokenize(CancellationToken cancellationToken = default)
     {
         while (characterQueue.TryDequeue(out var character))
         {
@@ -35,7 +35,7 @@ public class Tokenizer
                 continue;
             }
 
-            if (character is '"' or '\'')
+            if (character is '"')
             {
                 if (TryFinalizePreviousToken() is { } previousToken)
                     yield return previousToken;
@@ -46,11 +46,17 @@ public class Tokenizer
                 continue;
             }
 
-            if (character == '/' && characterQueue.TryPeek(out var nextCharacter) && nextCharacter is '/')
+            if (character is '/' && characterQueue.TryPeek(out var nextCharacter) && nextCharacter is '/')
             {
                 foreach (var commentToken in HandleLineComment(character))
                     yield return commentToken;
 
+                continue;
+            }
+
+            if (character is '\r' && characterQueue.TryPeek(out nextCharacter) && nextCharacter is '\n')
+            {
+                // skip \r in new lines
                 continue;
             }
 

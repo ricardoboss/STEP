@@ -44,7 +44,7 @@ internal sealed class ImportStatement : Statement
         var tokenizer = new Tokenizer();
         tokenizer.UpdateFile(fileInfo);
         tokenizer.Add(fileContents);
-        var tokens = tokenizer.TokenizeAsync(cancellationToken);
+        var tokens = tokenizer.Tokenize(cancellationToken);
 
         var parser = new StatementParser();
         parser.Add(tokens);

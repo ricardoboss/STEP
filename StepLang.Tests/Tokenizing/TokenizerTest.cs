@@ -11,7 +11,7 @@ public class TokenizerTest
 
         var tokenizer = new Tokenizer();
         tokenizer.Add(source);
-        var tokens = tokenizer.TokenizeAsync().ToArray();
+        var tokens = tokenizer.Tokenize().ToArray();
 
         Assert.Single(tokens);
         Assert.Equal(TokenType.LiteralString, tokens[0].Type);
@@ -25,7 +25,7 @@ public class TokenizerTest
 
         var tokenizer = new Tokenizer();
         tokenizer.Add(source);
-        var tokens = tokenizer.TokenizeAsync().ToArray();
+        var tokens = tokenizer.Tokenize().ToArray();
 
         Assert.Single(tokens);
         Assert.Equal(TokenType.LiteralNumber, tokens[0].Type);
@@ -71,7 +71,7 @@ public class TokenizerTest
 
         var tokenizer = new Tokenizer();
         tokenizer.Add(source);
-        var tokens = tokenizer.TokenizeAsync().ToArray();
+        var tokens = tokenizer.Tokenize().ToArray();
 
         Assert.Single(tokens);
         Assert.Equal(TokenType.LiteralString, tokens[0].Type);
@@ -85,7 +85,7 @@ public class TokenizerTest
     {
         var tokenizer = new Tokenizer();
         tokenizer.Add(source);
-        var tokens = tokenizer.TokenizeAsync().ToArray();
+        var tokens = tokenizer.Tokenize().ToArray();
 
         Assert.Single(tokens);
         Assert.Equal(TokenType.LiteralString, tokens[0].Type);
@@ -101,7 +101,7 @@ public class TokenizerTest
     {
         var tokenizer = new Tokenizer();
         tokenizer.Add(source);
-        var tokens = tokenizer.TokenizeAsync().ToList();
+        var tokens = tokenizer.Tokenize().ToList();
 
         Assert.Single(tokens);
         Assert.Equal(TokenType.TypeName, tokens[0].Type);
@@ -118,7 +118,7 @@ public class TokenizerTest
     {
         var tokenizer = new Tokenizer();
         tokenizer.Add(source);
-        var tokens = tokenizer.TokenizeAsync().ToArray();
+        var tokens = tokenizer.Tokenize().ToArray();
 
         Assert.Single(tokens);
         Assert.Equal(type, tokens[0].Type);
@@ -132,7 +132,7 @@ public class TokenizerTest
 
         var tokenizer = new Tokenizer();
         tokenizer.Add(source);
-        var tokens = tokenizer.TokenizeAsync().ToList();
+        var tokens = tokenizer.Tokenize().ToList();
 
         Assert.Equal(7, tokens.Count);
         Assert.Equal(TokenType.TypeName, tokens[0].Type);
@@ -158,7 +158,7 @@ public class TokenizerTest
 
         var tokenizer = new Tokenizer();
         tokenizer.Add(source);
-        var tokens = tokenizer.TokenizeAsync().ToList();
+        var tokens = tokenizer.Tokenize().ToList();
 
         Assert.Equal(5, tokens.Count);
         Assert.Equal(TokenType.IfKeyword, tokens[0].Type);
@@ -180,7 +180,7 @@ public class TokenizerTest
 
         var tokenizer = new Tokenizer();
         tokenizer.Add(source);
-        var tokens = tokenizer.TokenizeAsync().ToList();
+        var tokens = tokenizer.Tokenize().ToList();
 
         Assert.Equal(4, tokens.Count);
         Assert.Equal(TokenType.Identifier, tokens[0].Type);
@@ -200,7 +200,7 @@ public class TokenizerTest
 
         var tokenizer = new Tokenizer();
         tokenizer.Add(source);
-        var tokens = tokenizer.TokenizeAsync().ToList();
+        var tokens = tokenizer.Tokenize().ToList();
 
         Assert.Equal(13, tokens.Count);
         Assert.Equal(TokenType.Identifier, tokens[0].Type);
@@ -238,7 +238,7 @@ public class TokenizerTest
 
         var tokenizer = new Tokenizer();
         tokenizer.Add(source);
-        var tokens = tokenizer.TokenizeAsync().ToList();
+        var tokens = tokenizer.Tokenize().ToList();
 
         Assert.Equal(2, tokens.Count);
         Assert.Equal(TokenType.Identifier, tokens[0].Type);
@@ -254,7 +254,7 @@ public class TokenizerTest
 
         var tokenizer = new Tokenizer();
         tokenizer.Add(source);
-        var exception = Assert.Throws<UnterminatedStringException>(() => tokenizer.TokenizeAsync().ToList());
+        var exception = Assert.Throws<UnterminatedStringException>(() => tokenizer.Tokenize().ToList());
 
         Assert.Equal('\"', exception.StringDelimiter);
     }

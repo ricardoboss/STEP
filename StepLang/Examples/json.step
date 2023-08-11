@@ -1,4 +1,4 @@
-string body = '"text"'
+string body = "\"text\""
 println(jsonDecode(body))
 println(jsonDecode("\"text2\""))
 println(jsonDecode("123"))
