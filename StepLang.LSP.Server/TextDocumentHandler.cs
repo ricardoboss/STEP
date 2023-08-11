@@ -7,7 +7,7 @@ using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server.Capabilities;
 
-namespace HILFE.LSP.Server;
+namespace StepLang.LSP.Server;
 
 public class TextDocumentHandler : TextDocumentSyncHandlerBase
 {

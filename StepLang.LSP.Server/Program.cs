@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using HILFE.LSP.Server;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -7,6 +6,7 @@ using Newtonsoft.Json.Linq;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Server;
 using Serilog;
+using StepLang.LSP.Server;
 
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()

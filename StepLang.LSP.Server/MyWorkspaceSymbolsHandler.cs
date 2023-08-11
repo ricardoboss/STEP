@@ -5,7 +5,7 @@ using OmniSharp.Extensions.LanguageServer.Protocol.Progress;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server.WorkDone;
 using OmniSharp.Extensions.LanguageServer.Protocol.Workspace;
 
-namespace HILFE.LSP.Server;
+namespace StepLang.LSP.Server;
 
 internal class MyWorkspaceSymbolsHandler : IWorkspaceSymbolsHandler
 {
