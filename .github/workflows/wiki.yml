@@ -7,7 +7,6 @@ on:
       - .github/workflows/wiki.yml
     branches:
       - main
-      - issues/20-wiki-to-docs
 
 jobs:
   sync:
