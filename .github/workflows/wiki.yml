@@ -15,7 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: apt update && apt install -y rsync
       - name: Pull GitHub Wiki
         run: git clone https://github.com/$GITHUB_REPOSITORY.wiki.git _wiki
       - name: Push Docs to GitHub Wiki
