@@ -3,7 +3,8 @@ name: Synchronize Wiki
 on:
   push:
     paths:
-      - docs/**
+      - StepLang.Wiki/**
+      - .github/workflows/wiki.yml
     branches:
       - main
       - issues/20-wiki-to-docs
