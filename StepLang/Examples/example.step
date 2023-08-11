@@ -3,38 +3,38 @@ number pi = 3.141592 // close enough
 
 string name = readline()
 if (name == "John") {
-    println("Hello, ", name)
+	println("Hello, ", name)
 } else {
-    println("Who are you?")
+	println("Who are you?")
 }
 
 string guess
 number parsedGuess
 number tries = 0
 while (tries <= 3) {
-    print("Guess PI: ")
-    guess = readline()
-    parsedGuess = parse("number", guess)
-    if (parsedGuess == null) {
-        println("Enter a valid number!")
+	print("Guess PI: ")
+	guess = readline()
+	parsedGuess = parse("number", guess)
+	if (parsedGuess == null) {
+		println("Enter a valid number!")
 
-        tries++ // increases by one
+		tries++ // increases by one
 
-        continue //restarts the loop
-    }
+		continue //restarts the loop
+	}
 
-    if (parsedGuess == pi) {
-        println("Close enough!")
-        break // breaks out of the while loop
-    } else {
-        if (parsedGuess > 4 || parsedGuess < 3) {
-            println("Way off! ", 3 - tries, " tries left.")
-        } else {
-            println("Nope, try again. ", 3 - tries, " tries left.")
-        }
-    }
+	if (parsedGuess == pi) {
+		println("Close enough!")
+		break // breaks out of the while loop
+	} else {
+		if (parsedGuess > 4 || parsedGuess < 3) {
+			println("Way off! ", 3 - tries, " tries left.")
+		} else {
+			println("Nope, try again. ", 3 - tries, " tries left.")
+		}
+	}
 
-    tries++
+	tries++
 }
 
 print("Goodbye", EOL)
