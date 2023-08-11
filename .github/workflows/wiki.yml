@@ -27,5 +27,4 @@ jobs:
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@users.noreply.github.com"
           git commit -m "${{ github.event.head_commit.message }} (${{ github.sha }})"
-          git log -1
           git push -f --set-upstream https://github.com/$GITHUB_REPOSITORY.wiki.git master
