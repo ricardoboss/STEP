@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="branching.step" type="DotNetProject" factoryName=".NET Project">
-    <option name="EXE_PATH" value="$PROJECT_DIR$/StepLang.CLI/bin/Debug/net7.0/StepLang.CLI" />
+    <option name="EXE_PATH" value="$PROJECT_DIR$/StepLang.CLI/bin/Debug/net7.0/step.exe" />
     <option name="PROGRAM_PARAMETERS" value="run Examples/branching.step" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/StepLang.CLI/bin/Debug/net7.0" />
     <option name="PASS_PARENT_ENVS" value="1" />
