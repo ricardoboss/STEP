@@ -20,12 +20,12 @@ jobs:
       - name: Update Wiki files
         run: |
           rsync -av --delete StepLang.Wiki/ _wiki/ --exclude .git --exclude StepLang.Wiki.csproj
-          cd _wiki
-          git add .
       - name: Push Docs to GitHub Wiki
         run: |
+          cd _wiki
+          git add .
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@users.noreply.github.com"
           git commit -m "${{ github.event.head_commit.message }} (${{ github.sha }})"
           git log -1
-          git push -f
+          git push -f --set-upstream https://github.com/$GITHUB_REPOSITORY.wiki.git master
