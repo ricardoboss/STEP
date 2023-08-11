@@ -23,7 +23,7 @@ jobs:
         run: |
           cd _wiki
           git add .
-          git status --porcelain && exit 0 || exit 1
+          git status --porcelain && exit 0
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@users.noreply.github.com"
           git commit -m "${{ github.event.head_commit.message }} (${{ github.sha }})"
