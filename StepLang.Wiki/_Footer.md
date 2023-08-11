@@ -1,0 +1,1 @@
+&copy; 2023 Ricardo Boss &bull; Licensed under [MIT](https://github.com/ricardoboss/STEP/blob/main/README.md)
