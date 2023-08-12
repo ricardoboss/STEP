@@ -7,7 +7,7 @@ namespace StepLang.Framework.Conversion;
 
 public class JsonEncodeFunction : NativeFunction
 {
-    public const string Identifier = "jsonEncode";
+    public override string Identifier { get; } = "jsonEncode";
 
     /// <inheritdoc />
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)

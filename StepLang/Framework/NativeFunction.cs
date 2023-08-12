@@ -5,6 +5,8 @@ namespace StepLang.Framework;
 
 public abstract class NativeFunction : FunctionDefinition
 {
+    public abstract string Identifier { get; }
+
     /// <inheritdoc />
     [ExcludeFromCodeCoverage]
     protected override string DebugBodyString => "[native code]";

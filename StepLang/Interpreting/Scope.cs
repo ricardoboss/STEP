@@ -1,7 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using StepLang.Framework.Conversion;
-using StepLang.Framework.IO;
-using StepLang.Framework.Reflection;
+using StepLang.Framework;
 using StepLang.Parsing.Expressions;
 using StepLang.Tokenizing;
 
@@ -21,17 +19,25 @@ public class Scope
         parentScope = null;
 
         // globally defined identifiers
-        SetVariable(PrintFunction.Identifier, new FunctionResult(new PrintFunction()));
-        SetVariable(PrintlnFunction.Identifier, new FunctionResult(new PrintlnFunction()));
-        SetVariable(ReadlineFunction.Identifier, new FunctionResult(new ReadlineFunction()));
-        SetVariable(TypenameFunction.Identifier, new FunctionResult(new TypenameFunction()));
-        SetVariable(ParseFunction.Identifier, new FunctionResult(new ParseFunction()));
-        SetVariable(JsonEncodeFunction.Identifier, new FunctionResult(new JsonEncodeFunction()));
-        SetVariable(JsonDecodeFunction.Identifier, new FunctionResult(new JsonDecodeFunction()));
+        InitBuiltInFunctions();
 
         SetVariable("null", NullResult.Instance);
 
         SetVariable("EOL", new StringResult(Environment.NewLine));
+    }
+
+    private void InitBuiltInFunctions()
+    {
+        var nativeFunctionType = typeof(NativeFunction);
+        var identifierProp = nativeFunctionType.GetProperty("Identifier")!;
+        foreach (var functionType in nativeFunctionType.Assembly.GetTypes()
+                     .Where(t => t.IsAssignableFrom(nativeFunctionType)))
+        {
+            var function = (NativeFunction)Activator.CreateInstance(functionType)!;
+            var functionIdentifier = (string)identifierProp.GetValue(function)!;
+
+            SetVariable(functionIdentifier, new FunctionResult(function));
+        }
     }
 
     public void SetVariable(string identifier, ExpressionResult value)

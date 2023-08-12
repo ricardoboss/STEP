@@ -6,7 +6,7 @@ namespace StepLang.Framework.Reflection;
 
 public class TypenameFunction : NativeFunction
 {
-    public const string Identifier = "typename";
+    public override string Identifier { get; } = "typename";
 
     /// <inheritdoc />
     public override Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)

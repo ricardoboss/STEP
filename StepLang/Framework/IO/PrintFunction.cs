@@ -7,7 +7,7 @@ namespace StepLang.Framework.IO;
 
 public class PrintFunction : NativeFunction
 {
-    public const string Identifier = "print";
+    public override string Identifier { get; } = "print";
 
     /// <inheritdoc />
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)

@@ -6,7 +6,7 @@ namespace StepLang.Framework.IO;
 
 public class ReadlineFunction : NativeFunction
 {
-    public const string Identifier = "readline";
+    public override string Identifier { get; } =  "readline";
 
     /// <inheritdoc />
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)

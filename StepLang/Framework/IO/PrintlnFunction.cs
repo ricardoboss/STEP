@@ -2,7 +2,7 @@ namespace StepLang.Framework.IO;
 
 public class PrintlnFunction : PrintFunction
 {
-    public new const string Identifier = "println";
+    public override string Identifier { get; } = "println";
 
     /// <inheritdoc />
     protected override async Task Print(TextWriter output, string value, CancellationToken cancellationToken = default)
