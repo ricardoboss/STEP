@@ -20,7 +20,7 @@ fi
 # commit and push
 echo "Committing and pushing..."
 git add .
-git commit --verbose -m "$COMMIT_MSG"
-git push --all --force-with-lease --set-upstream wiki master --verbose
+git commit -m "$COMMIT_MSG" --verbose
+git push --force-with-lease --set-upstream wiki master --verbose
 
 popd
