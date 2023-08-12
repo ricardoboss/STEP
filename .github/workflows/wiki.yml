@@ -30,4 +30,4 @@ jobs:
       - name: Update Wiki files
         run: rsync -av --delete StepLang.Wiki/ _wiki/ --exclude .git --exclude StepLang.Wiki.csproj
       - name: Push Docs to GitHub Wiki
-        run: StepLang.Wiki/sync.sh
+        run: chmod+x StepLang.Wiki/sync.sh && StepLang.Wiki/sync.sh
