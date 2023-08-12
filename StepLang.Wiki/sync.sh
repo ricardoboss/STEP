@@ -12,7 +12,10 @@ git remote add wiki "https://$USER_NAME:$USER_TOKEN@github.com/$REPOSITORY_NAME.
 
 # if there are no changes, just exit
 echo "Checking for changes..."
-git status --porcelain && exit 0
+if [[ -z $(git status -s) ]]; then
+    echo "No changes to commit."
+    exit 0
+fi
 
 # commit and push
 echo "Committing and pushing..."
