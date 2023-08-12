@@ -25,5 +25,5 @@ public class LengthFunction : NativeFunction
         return Task.FromResult<ExpressionResult>(expressionResult);
     }
 
-    protected override string DebugParamsString { get; }
+    protected override string DebugParamsString => "a string, list, or map";
 }
