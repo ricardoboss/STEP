@@ -15,6 +15,7 @@ pushd _wiki
 git config user.name "$USER_NAME"
 git config user.email "$USER_EMAIL"
 git remote add wiki "https://$USER_NAME:$USER_TOKEN@github.com/$GITHUB_REPOSITORY.wiki.git"
+git fetch wiki
 
 # if there are no changes, just exit
 echo "Checking for changes..."
