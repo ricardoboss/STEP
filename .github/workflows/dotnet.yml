@@ -5,8 +5,10 @@ name: .NET
 
 on:
   push:
+    paths-ignore: [ "StepLang.Wiki/**" ]
     branches: [ "main" ]
   pull_request:
+    paths-ignore: [ "StepLang.Wiki/**" ]
     branches: [ "main" ]
 
 jobs:
