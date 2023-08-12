@@ -13,7 +13,6 @@ env:
   USER_NAME: ${{ github.actor }}
   USER_EMAIL: "${{ github.actor }}@users.noreply.github.com"
   OWNER: ${{ github.event.repository.owner.name }}
-  REPOSITORY_NAME: ${{ github.event.repository.name }}
   COMMIT_MSG: "${{ github.event.head_commit.message }} (${{ github.sha }})"
 
 jobs:
