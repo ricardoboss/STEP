@@ -10,7 +10,7 @@ public class UnterminatedStringException : TokenizerException
     public char StringDelimiter { get; }
 
     /// <inheritdoc />
-    public UnterminatedStringException(TokenLocation? location, char stringDelimiter) : base("A string was not properly terminated", location, BuildHelpText(stringDelimiter))
+    public UnterminatedStringException(TokenLocation? location, char stringDelimiter) : base(location, "A string was not properly terminated", BuildHelpText(stringDelimiter))
     {
         StringDelimiter = stringDelimiter;
     }
