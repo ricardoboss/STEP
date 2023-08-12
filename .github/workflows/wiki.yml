@@ -24,9 +24,5 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Pull GitHub Wiki
-        run: git clone https://github.com/$GITHUB_REPOSITORY.wiki.git _wiki
-      - name: Update Wiki files
-        run: rsync -av --delete StepLang.Wiki/ _wiki/ --exclude .git --exclude StepLang.Wiki.csproj
-      - name: Push Docs to GitHub Wiki
+      - name: Run sync script
         run: chmod +x StepLang.Wiki/sync.sh && StepLang.Wiki/sync.sh

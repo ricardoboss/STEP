@@ -2,6 +2,12 @@
 
 set -e
 
+echo "Cloning wiki..."
+git clone "https://github.com/$GITHUB_REPOSITORY.wiki.git" _wiki
+
+echo "Syncing wiki files..."
+rsync -av --delete StepLang.Wiki/ _wiki/ --exclude .git --exclude StepLang.Wiki.csproj
+
 # switch to wiki directory
 pushd _wiki
 
@@ -17,7 +23,6 @@ if [[ -z $(git status -s) ]]; then
     exit 0
 fi
 
-# commit and push
 echo "Committing and pushing..."
 git add .
 git commit -m "$COMMIT_MSG" --verbose
