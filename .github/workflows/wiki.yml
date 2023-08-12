@@ -8,6 +8,14 @@ on:
     branches:
       - main
 
+env:
+  USER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  USER_NAME: ${{ github.actor }}
+  USER_EMAIL: "${{ github.actor }}@users.noreply.github.com"
+  OWNER: ${{ github.event.repository.owner.name }}
+  REPOSITORY_NAME: ${{ github.event.repository.name }}
+  COMMIT_MSG: "${{ github.event.head_commit.message }} (${{ github.sha }})"
+
 jobs:
   sync:
     name: Synchronize Wiki
@@ -19,15 +27,6 @@ jobs:
       - name: Pull GitHub Wiki
         run: git clone https://github.com/$GITHUB_REPOSITORY.wiki.git _wiki
       - name: Update Wiki files
-        run: |
-          rsync -av --delete StepLang.Wiki/ _wiki/ --exclude .git --exclude StepLang.Wiki.csproj
+        run: rsync -av --delete StepLang.Wiki/ _wiki/ --exclude .git --exclude StepLang.Wiki.csproj
       - name: Push Docs to GitHub Wiki
-        run: |
-          cd _wiki
-          git add .
-          git status --porcelain && exit 0
-          git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor }}@users.noreply.github.com"
-          git remote add wiki https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY.wiki.git
-          git commit -m "${{ github.event.head_commit.message }} (${{ github.sha }})"
-          git push -f --set-upstream wiki master
+        run: pushd _wiki && StepLang.Wiki/sync.sh && popd
