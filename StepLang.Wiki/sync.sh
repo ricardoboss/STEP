@@ -2,6 +2,9 @@
 
 set -e
 
+# switch to wiki directory
+pushd _wiki
+
 # set up git
 git config user.name "$USER_NAME"
 git config user.email "$USER_EMAIL"
@@ -13,3 +16,5 @@ git status --porcelain && exit 0
 git add .
 git commit --verbose -m "$COMMIT_MSG"
 git push -f --set-upstream wiki master --verbose
+
+popd
