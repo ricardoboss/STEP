@@ -30,8 +30,11 @@ public class Scope
     {
         var nativeFunctionType = typeof(NativeFunction);
         var identifierProp = nativeFunctionType.GetProperty("Identifier")!;
-        foreach (var functionType in nativeFunctionType.Assembly.GetTypes()
-                     .Where(t => t.IsAssignableFrom(nativeFunctionType)))
+        var functionTypes = nativeFunctionType.Assembly.GetTypes()
+                                            .Where(t => t.IsAssignableTo(nativeFunctionType)
+                                                         && !t.IsAbstract);
+
+        foreach (var functionType in functionTypes)
         {
             var function = (NativeFunction)Activator.CreateInstance(functionType)!;
             var functionIdentifier = (string)identifierProp.GetValue(function)!;
