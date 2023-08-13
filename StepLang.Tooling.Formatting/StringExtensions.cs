@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace StepLang.Formatters;
+namespace StepLang.Tooling.Formatting;
 
 public static class StringExtensions
 {

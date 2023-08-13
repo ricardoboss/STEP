@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
-using StepLang.Formatters.Fixers;
-using StepLang.Formatters.Fixers.Results;
+using StepLang.Tooling.Formatting.Fixers;
+using StepLang.Tooling.Formatting.Fixers.Results;
 
-namespace StepLang.Formatters.Applicators;
+namespace StepLang.Tooling.Formatting.Applicators;
 
 public abstract class BaseFixApplicator : IFixApplicator
 {

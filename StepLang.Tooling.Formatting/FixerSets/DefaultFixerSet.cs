@@ -1,6 +1,6 @@
-﻿using StepLang.Formatters.Fixers;
+﻿using StepLang.Tooling.Formatting.Fixers;
 
-namespace StepLang.Formatters.FixerSets;
+namespace StepLang.Tooling.Formatting.FixerSets;
 
 public class DefaultFixerSet : BaseFixerSet
 {
