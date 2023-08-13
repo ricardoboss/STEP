@@ -14,15 +14,16 @@ public class FileEncodingFixer : IFileFixer
         var encoding = GetEncoding(stream);
 
         if (Equals(encoding, DefaultEncoding))
-            return new(true, null, input);
+            return new(false, input);
 
         var tempFile = Path.GetTempFileName();
+
         await using var tempWriter = new StreamWriter(tempFile, false, DefaultEncoding);
         using var fileReader = new StreamReader(stream, encoding);
         await tempWriter.WriteAsync(await fileReader.ReadToEndAsync(cancellationToken));
         await tempWriter.FlushAsync();
 
-        return new(true, null, new(tempFile));
+        return new(true, new(tempFile));
     }
 
     private static Encoding GetEncoding(Stream stream)

@@ -6,8 +6,8 @@ public class TrailingWhitespaceFixer : IStringFixer
 
     public Task<StringFixResult> FixAsync(string input, CancellationToken cancellationToken = default)
     {
-        var fixedInput = input.WithoutTrailingWhitespace();
+        var fixedString = input.WithoutTrailingWhitespace();
 
-        return Task.FromResult<StringFixResult>(new(true, null, fixedInput));
+        return Task.FromResult(StringFixResult.FromInputAndFix(input, fixedString));
     }
 }

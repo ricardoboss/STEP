@@ -5,6 +5,7 @@ namespace StepLang.Tooling.Fixers.Tests;
 public class TrailingWhitespaceFixerTest
 {
     [Theory]
+    [InlineData("a", "a")]
     [InlineData("a ", "a")]
     [InlineData(" a", " a")]
     [InlineData(" a ", " a")]
@@ -20,7 +21,7 @@ public class TrailingWhitespaceFixerTest
 
         var result = await fixer.FixAsync(input, CancellationToken.None);
 
-        Assert.True(result.Success);
+        Assert.Equal(!string.Equals(input, output, StringComparison.Ordinal), result.FixRequired);
         Assert.Equal(output, result.FixedString);
     }
 }
