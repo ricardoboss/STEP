@@ -1,4 +1,4 @@
-﻿namespace StepLang.Formatters.Fixers;
+﻿namespace StepLang.Tooling.Formatting.Fixers;
 
 /// <summary>
 /// This is just a marker for all fixers.

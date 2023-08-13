@@ -1,8 +1,8 @@
 ﻿using System.Drawing;
 using System.Globalization;
 using Pastel;
-using StepLang.Formatters.Applicators;
-using StepLang.Formatters.FixerSets;
+using StepLang.Tooling.Formatting.Applicators;
+using StepLang.Tooling.Formatting.FixerSets;
 
 namespace StepLang.CLI;
 

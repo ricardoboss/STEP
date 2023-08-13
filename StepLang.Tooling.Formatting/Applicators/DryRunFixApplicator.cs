@@ -1,6 +1,6 @@
-﻿using StepLang.Formatters.Fixers.Results;
+﻿using StepLang.Tooling.Formatting.Fixers.Results;
 
-namespace StepLang.Formatters.Applicators;
+namespace StepLang.Tooling.Formatting.Applicators;
 
 public class DryRunFixApplicator : BaseFixApplicator
 {

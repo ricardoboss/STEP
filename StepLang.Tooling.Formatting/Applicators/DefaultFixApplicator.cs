@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
-using StepLang.Formatters.Fixers.Results;
+using StepLang.Tooling.Formatting.Fixers.Results;
 
-namespace StepLang.Formatters.Applicators;
+namespace StepLang.Tooling.Formatting.Applicators;
 
 public class DefaultFixApplicator : BaseFixApplicator
 {

@@ -1,5 +1,5 @@
-﻿using StepLang.Formatters.Fixers;
+﻿using StepLang.Tooling.Formatting.Fixers;
 
-namespace StepLang.Formatters.Applicators;
+namespace StepLang.Tooling.Formatting.Applicators;
 
 public record BeforeFixerRanEventArgs(FileInfo File, IFixer Fixer);
