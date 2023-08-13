@@ -1,4 +1,6 @@
-﻿namespace StepLang.Formatters;
+﻿using StepLang.Formatters.Fixers.Results;
+
+namespace StepLang.Formatters.Fixers;
 
 public interface IFileFixer : IFixer
 {

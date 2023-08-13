@@ -1,6 +1,7 @@
 ﻿using System.Collections;
+using StepLang.Formatters.Fixers;
 
-namespace StepLang.Formatters;
+namespace StepLang.Formatters.FixerSets;
 
 public abstract class BaseFixerSet : IFixerSet
 {

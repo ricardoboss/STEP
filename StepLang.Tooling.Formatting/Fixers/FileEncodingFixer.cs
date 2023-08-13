@@ -1,6 +1,7 @@
 ﻿using System.Text;
+using StepLang.Formatters.Fixers.Results;
 
-namespace StepLang.Formatters;
+namespace StepLang.Formatters.Fixers;
 
 public class FileEncodingFixer : IFileFixer
 {

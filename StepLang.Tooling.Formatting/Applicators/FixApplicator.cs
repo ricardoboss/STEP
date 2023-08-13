@@ -1,10 +1,14 @@
-﻿namespace StepLang.Formatters;
+﻿using StepLang.Formatters.Fixers;
+
+namespace StepLang.Formatters.Applicators;
 
 public interface IFixApplicator
 {
-    public bool ThrowOnFailure { get; init; }
+    public event EventHandler<BeforeFixerRanEventArgs>? BeforeFixerRun;
 
-    public bool DryRun { get; init; }
+    public event EventHandler<AfterFixerRanEventArgs>? AfterApplyFix;
+
+    public bool ThrowOnFailure { get; init; }
 
     public Task<FixApplicatorResult> ApplyFixesAsync(IFixer fixer, FileInfo file, CancellationToken cancellationToken = default);
     public Task<FixApplicatorResult> ApplyFixesAsync(IEnumerable<IFixer> fixers, FileInfo file, CancellationToken cancellationToken = default);
