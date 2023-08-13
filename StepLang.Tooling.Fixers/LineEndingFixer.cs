@@ -10,6 +10,6 @@ public class LineEndingFixer : IStringFixer
     {
         var fixedString = input.Replace("\r\n", DefaultLineEnding);
 
-        return Task.FromResult<StringFixResult>(new(true, null, fixedString));
+        return Task.FromResult(StringFixResult.FromInputAndFix(input, fixedString));
     }
 }

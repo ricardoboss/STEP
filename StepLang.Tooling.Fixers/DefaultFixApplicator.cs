@@ -1,77 +1,99 @@
-﻿namespace StepLang.Formatters;
+﻿using System.Diagnostics;
+
+namespace StepLang.Formatters;
+
+public record AfterFixerRanEventArgs(FileInfo File, IFixer Fixer, FixResult Result);
+
+public record BeforeFixerRanEventArgs(FileInfo File, IFixer Fixer);
 
 public class DefaultFixApplicator : BaseFixApplicator
 {
-    public event EventHandler<FixResult>? Failure;
+    public event EventHandler<BeforeFixerRanEventArgs>? BeforeFixerRun;
 
-    public event EventHandler<FixResult>? BeforeApplyFix;
+    public event EventHandler<AfterFixerRanEventArgs>? BeforeApplyFix;
 
-    public event EventHandler<FixResult>? AfterApplyFix;
+    public event EventHandler<AfterFixerRanEventArgs>? AfterApplyFix;
 
-    protected virtual void OnFailure(FixResult result) => Failure?.Invoke(this, result);
+    private void OnBeforeFixerRun(FileInfo file, IFixer fixer) => BeforeFixerRun?.Invoke(this, new(file, fixer));
 
-    protected virtual void OnBeforeApplyFix(FixResult result) => BeforeApplyFix?.Invoke(this, result);
+    private void OnBeforeApplyFix(FileInfo file, IFixer fixer, FixResult result) => BeforeApplyFix?.Invoke(this, new(file, fixer, result));
 
-    protected virtual void OnAfterApplyFix(FixResult result) => AfterApplyFix?.Invoke(this, result);
+    private void OnAfterApplyFix(FileInfo file, IFixer fixer, FixResult result) => AfterApplyFix?.Invoke(this, new(file, fixer, result));
 
-    public bool ThrowOnFailure { get; set; } = true;
+    public override bool ThrowOnFailure { get; init; } = true;
 
-    public bool DryRun { get; set; } = false;
+    public override bool DryRun { get; init; }
 
-    public override async Task ApplyFixesAsync(IFixer fixer, FileInfo file, CancellationToken cancellationToken = default)
+    public override async Task<FixApplicatorResult> ApplyFixesAsync(IFixer fixer, FileInfo file,
+        CancellationToken cancellationToken = default)
     {
-        switch (fixer)
+        OnBeforeFixerRun(file, fixer);
+
+        Stopwatch sw = new();
+
+        sw.Start();
+
+        FixResult result;
+        try
         {
-            case IStringFixer stringFixer:
-                await ApplyStringFixer(stringFixer, file, cancellationToken);
-                break;
-            case IFileFixer fileFixer:
-                await ApplyFileFixer(file, fileFixer, cancellationToken);
-                break;
+            result = fixer switch
+            {
+                IStringFixer stringFixer => await RunStringFixer(stringFixer, file, cancellationToken),
+                IFileFixer fileFixer => await RunFileFixer(fileFixer, file, cancellationToken),
+                _ => throw new NotImplementedException($"Unknown fixer type '{fixer.GetType().FullName}'"),
+            };
+
+            sw.Stop();
         }
+        catch (Exception e)
+        {
+            sw.Stop();
+
+            if (ThrowOnFailure)
+                throw new FixerException(fixer, $"Failed to run fixer '{fixer.Name}' on file '{file.FullName}'", e);
+
+            return new(0, 1, sw.Elapsed);
+        }
+
+        if (!result.FixRequired)
+            return new(0, 0, sw.Elapsed);
+
+        return await ApplyFixer(fixer, file, result, sw.Elapsed, cancellationToken);
     }
 
-    private async Task ApplyFileFixer(FileInfo file, IFileFixer fileFixer, CancellationToken cancellationToken)
+    private async Task<FixApplicatorResult> ApplyFixer(IFixer fixer, FileInfo file, FixResult result, TimeSpan fixDuration, CancellationToken cancellationToken)
     {
-        var fileFixResult = await fileFixer.FixAsync(file, cancellationToken);
-        if (!fileFixResult.Success)
-        {
-            if (ThrowOnFailure)
-                throw new FixerException(fileFixer, fileFixResult.Message);
-
-            OnFailure(fileFixResult);
-
-            return;
-        }
-
-        OnBeforeApplyFix(fileFixResult);
+        OnBeforeApplyFix(file, fixer, result);
 
         if (!DryRun)
-            File.Copy(fileFixResult.FixedFile!.FullName, file.FullName, true);
+        {
+            switch (result)
+            {
+                case StringFixResult stringFixResult:
+                    await File.WriteAllTextAsync(file.FullName, stringFixResult.FixedString, cancellationToken);
+                    break;
+                case FileFixResult fileFixResult:
+                    fileFixResult.FixedFile.MoveTo(file.FullName, true);
+                    break;
+                default:
+                    throw new NotImplementedException($"Unknown fix result type '{result.GetType().FullName}'");
+            }
+        }
 
-        OnAfterApplyFix(fileFixResult);
+        OnAfterApplyFix(file, fixer, result);
+
+        return new(1, 0, fixDuration);
     }
 
-    private async Task ApplyStringFixer(IStringFixer stringFixer, FileSystemInfo file, CancellationToken cancellationToken)
+    private static async Task<FileFixResult> RunFileFixer(IFileFixer fixer, FileInfo file, CancellationToken cancellationToken)
     {
-        var fileContents = await File.ReadAllTextAsync(file.FullName, cancellationToken);
+        return await fixer.FixAsync(file, cancellationToken);
+    }
 
-        var stringFixResult = await stringFixer.FixAsync(fileContents, cancellationToken);
-        if (!stringFixResult.Success)
-        {
-            if (ThrowOnFailure)
-                throw new FixerException(stringFixer, stringFixResult.Message);
+    private static async Task<StringFixResult> RunStringFixer(IStringFixer fixer, FileSystemInfo file, CancellationToken cancellationToken)
+    {
+        var contents = await File.ReadAllTextAsync(file.FullName, cancellationToken);
 
-            OnFailure(stringFixResult);
-
-            return;
-        }
-
-        OnBeforeApplyFix(stringFixResult);
-
-        if (!DryRun)
-            await File.WriteAllTextAsync(file.FullName, stringFixResult.FixedString, cancellationToken);
-
-        OnAfterApplyFix(stringFixResult);
+        return await fixer.FixAsync(contents, cancellationToken);
     }
 }
