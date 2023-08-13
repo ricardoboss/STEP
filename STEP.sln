@@ -28,11 +28,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang.Wiki", "StepLang.Wiki\StepLang.Wiki.csproj", "{C7B31C5F-7112-4CFB-BBC0-15764540545D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang.Tooling.Fixers", "StepLang.Tooling.Fixers\StepLang.Tooling.Fixers.csproj", "{728ABD46-2621-45BC-ACB1-0EF00267DCCC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang.Tooling.Formatting", "StepLang.Tooling.Formatting\StepLang.Tooling.Formatting.csproj", "{728ABD46-2621-45BC-ACB1-0EF00267DCCC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tooling", "Tooling", "{A9BE3B66-38F1-454B-9A12-E1BF21E307CF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang.Tooling.Fixers.Tests", "StepLang.Tooling.Fixers.Tests\StepLang.Tooling.Fixers.Tests.csproj", "{0DC701B1-15E9-4776-AFF5-9BBEA1C7D55B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang.Tooling.Formatting.Tests", "StepLang.Tooling.Formatting.Tests\StepLang.Tooling.Formatting.Tests.csproj", "{0DC701B1-15E9-4776-AFF5-9BBEA1C7D55B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

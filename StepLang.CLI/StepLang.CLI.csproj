@@ -28,7 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\StepLang.Tooling.Fixers\StepLang.Tooling.Fixers.csproj" />
+      <ProjectReference Include="..\StepLang.Tooling.Formatting\StepLang.Tooling.Formatting.csproj" />
       <ProjectReference Include="..\StepLang\StepLang.csproj" />
     </ItemGroup>
 </Project>
