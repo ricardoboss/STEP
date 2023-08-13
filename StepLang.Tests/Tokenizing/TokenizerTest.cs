@@ -80,7 +80,6 @@ public class TokenizerTest
 
     [Theory]
     [InlineData("\"abc\\\"def\"", "abc\"def")]
-    [InlineData("\'abc\\\'def'", "abc'def")]
     public void TestTokenizeLiteralStringWithEscapedQuotes(string source, string expected)
     {
         var tokenizer = new Tokenizer();
@@ -196,7 +195,7 @@ public class TokenizerTest
     [Fact]
     public void TestTokenizeLineComment()
     {
-        const string source = "f(variable) // this is a comment\nprintln('text') // more comments";
+        const string source = "f(variable) // this is a comment\nprintln(\"text\") // more comments";
 
         var tokenizer = new Tokenizer();
         tokenizer.Add(source);
