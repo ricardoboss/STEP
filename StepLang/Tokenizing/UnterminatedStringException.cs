@@ -1,6 +1,6 @@
 namespace StepLang.Tokenizing;
 
-public class UnterminatedStringException : TokenizerException
+internal sealed class UnterminatedStringException : TokenizerException
 {
     private static string BuildHelpText(char stringDelimiter)
     {
@@ -10,7 +10,7 @@ public class UnterminatedStringException : TokenizerException
     public char StringDelimiter { get; }
 
     /// <inheritdoc />
-    public UnterminatedStringException(TokenLocation? location, char stringDelimiter) : base(location, "A string was not properly terminated", BuildHelpText(stringDelimiter))
+    public UnterminatedStringException(TokenLocation? location, char stringDelimiter) : base(2, location, "A string was not properly terminated", BuildHelpText(stringDelimiter))
     {
         StringDelimiter = stringDelimiter;
     }

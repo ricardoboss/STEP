@@ -1,8 +1,8 @@
 namespace StepLang.Tokenizing;
 
-public class UnexpectedEndOfCharactersException : TokenizerException
+internal sealed class UnexpectedEndOfCharactersException : TokenizerException
 {
-    public UnexpectedEndOfCharactersException(TokenLocation? location) : base(location, "Unexpected end of character input", "The current token was not complete. Check your spelling, parentheses, and other punctuation.")
+    public UnexpectedEndOfCharactersException(TokenLocation? location) : base(1, location, "Unexpected end of character input", "The current token was not complete. Check your spelling, parentheses, and other punctuation.")
     {
     }
 }
