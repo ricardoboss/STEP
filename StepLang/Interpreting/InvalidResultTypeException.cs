@@ -17,7 +17,7 @@ public class InvalidResultTypeException : InterpreterException
         return $"Invalid result type: expected {expectation}, got {got.ToTypeName()}";
     }
 
-    public InvalidResultTypeException(ResultType got, params ResultType[] expected) : base((TokenLocation?)null, BuildMessage(got, expected), "An expression evaluated to an unexpected type. Check what types of expression results are allowed in the current context.")
+    public InvalidResultTypeException(ResultType got, params ResultType[] expected) : base(6, (TokenLocation?)null, BuildMessage(got, expected), "An expression evaluated to an unexpected type. Check what types of expression results are allowed in the current context.")
     {
     }
 }
