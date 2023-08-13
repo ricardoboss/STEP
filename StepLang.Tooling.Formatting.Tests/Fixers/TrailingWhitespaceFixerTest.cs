@@ -1,7 +1,6 @@
-using StepLang.Formatters;
-using StepLang.Formatters.Fixers;
+using StepLang.Tooling.Formatting.Fixers;
 
-namespace StepLang.Tooling.Fixers.Tests;
+namespace StepLang.Tooling.Formatting.Tests.Fixers;
 
 public class TrailingWhitespaceFixerTest
 {
