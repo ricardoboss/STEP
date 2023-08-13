@@ -4,11 +4,6 @@ namespace StepLang.Formatters;
 
 public static class StringExtensions
 {
-    public static IEnumerable<string> SplitLines(this string input)
-    {
-        return input.Split("\r\n").SelectMany(l => l.Split("\n"));
-    }
-
     public static string WithoutTrailingWhitespace(this string input)
     {
         var sb = new StringBuilder();
