@@ -1,4 +1,4 @@
-﻿namespace StepLang.Formatters;
+﻿namespace StepLang.Formatters.Fixers.Results;
 
 public record StringFixResult(bool FixRequired, string? FixedString) : FixResult(FixRequired)
 {

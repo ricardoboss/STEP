@@ -1,4 +1,6 @@
-﻿namespace StepLang.Formatters;
+﻿using StepLang.Formatters.Fixers;
+
+namespace StepLang.Formatters;
 
 public class FixerException : Exception
 {

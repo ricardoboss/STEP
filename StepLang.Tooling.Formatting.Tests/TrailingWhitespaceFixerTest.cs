@@ -1,4 +1,5 @@
 using StepLang.Formatters;
+using StepLang.Formatters.Fixers;
 
 namespace StepLang.Tooling.Fixers.Tests;
 

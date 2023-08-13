@@ -1,4 +1,4 @@
-﻿namespace StepLang.Formatters;
+﻿namespace StepLang.Formatters.Applicators;
 
 public record FixApplicatorResult(int AppliedFixers, int FailedFixers, TimeSpan Elapsed) {
     public static FixApplicatorResult Zero { get; } = new(0, 0, TimeSpan.Zero);
