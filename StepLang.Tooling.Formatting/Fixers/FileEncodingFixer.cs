@@ -9,7 +9,7 @@ public class FileEncodingFixer : IFileFixer
 
     public async Task<FileFixResult> FixAsync(FileInfo input, FixerConfiguration configuration, CancellationToken cancellationToken = default)
     {
-        var expectedEncoding = configuration.ParsedEncoding;
+        var expectedEncoding = configuration.GetParsedEncoding();
 
         await using var stream = new FileStream(input.FullName, FileMode.Open, FileAccess.Read);
 
