@@ -10,8 +10,6 @@ public interface IFixApplicator
 
     public bool ThrowOnFailure { get; init; }
 
-    public FixerConfiguration Configuration { get; init; }
-
     public Task<FixApplicatorResult> ApplyFixesAsync(IFixer fixer, FileInfo file, CancellationToken cancellationToken = default);
     public Task<FixApplicatorResult> ApplyFixesAsync(IEnumerable<IFixer> fixers, FileInfo file, CancellationToken cancellationToken = default);
     public Task<FixApplicatorResult> ApplyFixesAsync(IFixer fixer, DirectoryInfo directory, CancellationToken cancellationToken = default);

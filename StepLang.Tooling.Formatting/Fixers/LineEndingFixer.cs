@@ -4,20 +4,15 @@ namespace StepLang.Tooling.Formatting.Fixers;
 
 public class LineEndingFixer : IStringFixer
 {
+    private const string DefaultLineEnding = "\n";
+
     public string Name => "LineEndingFixer";
 
-    public Task<StringFixResult> FixAsync(string input, FixerConfiguration configuration, CancellationToken cancellationToken = default)
+    public Task<StringFixResult> FixAsync(string input, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var lineEnding = configuration.LineEnding switch
-        {
-            FixerConfiguration.LineEndings.Lf => "\n",
-            FixerConfiguration.LineEndings.CrLf => "\r\n",
-            _ => throw new ArgumentOutOfRangeException(nameof(configuration.LineEnding), configuration.LineEnding, "Unknown line ending type."),
-        };
-
-        var fixedString = string.Join(lineEnding, input.SplitLines());
+        var fixedString = string.Join(DefaultLineEnding, input.SplitLines());
 
         return Task.FromResult(StringFixResult.FromInputAndFix(input, fixedString));
     }
