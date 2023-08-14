@@ -19,7 +19,7 @@ public class TrailingWhitespaceFixerTest
     {
         var fixer = new TrailingWhitespaceFixer();
 
-        var result = await fixer.FixAsync(input, new(), CancellationToken.None);
+        var result = await fixer.FixAsync(input, CancellationToken.None);
 
         Assert.Equal(!string.Equals(input, output, StringComparison.Ordinal), result.FixRequired);
         Assert.Equal(output, result.FixedString);

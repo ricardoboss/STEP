@@ -31,10 +31,4 @@
       <ProjectReference Include="..\StepLang.Tooling.Formatting\StepLang.Tooling.Formatting.csproj" />
       <ProjectReference Include="..\StepLang\StepLang.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-      <None Update="example-format-config.json">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
 </Project>

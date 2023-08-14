@@ -5,21 +5,21 @@ namespace StepLang.Tooling.Formatting.Fixers;
 
 public class FileEncodingFixer : IFileFixer
 {
+    private static readonly Encoding DefaultEncoding = Encoding.UTF8;
+
     public string Name => "FileEncodingFixer";
 
-    public async Task<FileFixResult> FixAsync(FileInfo input, FixerConfiguration configuration, CancellationToken cancellationToken = default)
+    public async Task<FileFixResult> FixAsync(FileInfo input, CancellationToken cancellationToken = default)
     {
-        var expectedEncoding = configuration.GetParsedEncoding();
-
         await using var stream = new FileStream(input.FullName, FileMode.Open, FileAccess.Read);
 
-        var usedEncoding = GetEncoding(stream, expectedEncoding);
-        if (Equals(usedEncoding, expectedEncoding))
+        var usedEncoding = GetEncoding(stream, DefaultEncoding);
+        if (Equals(usedEncoding, DefaultEncoding))
             return new(false, input);
 
         var tempFile = Path.GetTempFileName();
 
-        await using var tempWriter = new StreamWriter(tempFile, false, expectedEncoding);
+        await using var tempWriter = new StreamWriter(tempFile, false, DefaultEncoding);
         using var fileReader = new StreamReader(stream, usedEncoding);
         await tempWriter.WriteAsync(await fileReader.ReadToEndAsync(cancellationToken));
         await tempWriter.FlushAsync();

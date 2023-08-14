@@ -10,8 +10,6 @@ public abstract class BaseFixApplicator : IFixApplicator
 
     public virtual bool ThrowOnFailure { get; init; } = true;
 
-    public virtual FixerConfiguration Configuration { get; init; } = new();
-
     public async Task<FixApplicatorResult> ApplyFixesAsync(IFixer fixer, DirectoryInfo directory,
         CancellationToken cancellationToken = default) =>
         await ApplyFixesAsync(new [] { fixer }, new [] { directory }, cancellationToken);
@@ -106,16 +104,16 @@ public abstract class BaseFixApplicator : IFixApplicator
         return fixApplicatorResult with { Elapsed = fixApplicatorResult.Elapsed + runDuration };
     }
 
-    private async Task<FileFixResult> RunFileFixer(IFileFixer fixer, FileInfo file, CancellationToken cancellationToken)
+    private static async Task<FileFixResult> RunFileFixer(IFileFixer fixer, FileInfo file, CancellationToken cancellationToken)
     {
-        return await fixer.FixAsync(file, Configuration, cancellationToken);
+        return await fixer.FixAsync(file, cancellationToken);
     }
 
-    private async Task<StringFixResult> RunStringFixer(IStringFixer fixer, FileSystemInfo file, CancellationToken cancellationToken)
+    private static async Task<StringFixResult> RunStringFixer(IStringFixer fixer, FileSystemInfo file, CancellationToken cancellationToken)
     {
         var contents = await File.ReadAllTextAsync(file.FullName, cancellationToken);
 
-        return await fixer.FixAsync(contents, Configuration, cancellationToken);
+        return await fixer.FixAsync(contents, cancellationToken);
     }
 
     protected abstract Task<FixApplicatorResult> ApplyResult(FixResult result, FileInfo file, CancellationToken cancellationToken);
