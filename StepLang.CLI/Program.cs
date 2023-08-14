@@ -36,6 +36,12 @@ internal static class Program
             Arity = ArgumentArity.ZeroOrOne,
         };
 
+        var formatConfigOption = new Option<FileInfo>(aliases: new[] { "--config", "-c" }, description: "The path to a step-format.json-file")
+        {
+            IsRequired = false,
+            Arity = ArgumentArity.ZeroOrOne,
+        };
+
         var runCommand = new Command(name: "run", description: "Run a .step file");
         runCommand.AddArgument(fileArgument);
         runCommand.SetHandler(RunCommand.Invoke, fileArgument);
@@ -45,7 +51,8 @@ internal static class Program
         formatCommand.AddOption(setExitCodeOption);
         formatCommand.AddOption(dryRunOption);
         formatCommand.AddOption(verbosityOption);
-        formatCommand.SetHandler(FormatCommand.Invoke, fileOrDirArgument, setExitCodeOption, dryRunOption, verbosityOption);
+        formatCommand.AddOption(formatConfigOption);
+        formatCommand.SetHandler(FormatCommand.Invoke, fileOrDirArgument, setExitCodeOption, dryRunOption, verbosityOption, formatConfigOption);
 
         var rootCommand = new RootCommand("STEP - Simple Transition to Elevated Programming");
         rootCommand.AddCommand(runCommand);

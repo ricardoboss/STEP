@@ -2,6 +2,7 @@
 using System.Globalization;
 using Pastel;
 using StepLang.Tooling.Formatting.Applicators;
+using StepLang.Tooling.Formatting.Fixers;
 using StepLang.Tooling.Formatting.FixerSets;
 
 namespace StepLang.CLI;
@@ -11,7 +12,8 @@ internal static class FormatCommand
     private static VerbosityWriter stdout = new(Console.Out, Verbosity.Normal);
     private static VerbosityWriter stderr = new(Console.Error, Verbosity.Normal);
 
-    public static async Task<int> Invoke(string [] filesOrDirs, bool setExitCode, bool dryRun, Verbosity verbosity)
+    public static async Task<int> Invoke(string [] filesOrDirs, bool setExitCode, bool dryRun, Verbosity verbosity,
+        FileInfo? formatConfigFile)
     {
         stdout = new(Console.Out, verbosity);
         stderr = new(Console.Error, verbosity);
@@ -22,7 +24,11 @@ internal static class FormatCommand
         if (filesOrDirs.Length == 0)
             filesOrDirs = new [] { "." };
 
-        IFixApplicator fixApplicator = dryRun ? new DryRunFixApplicator() : new DefaultFixApplicator();
+        var fixerConfig = await GetFixerConfiguration(formatConfigFile);
+
+        IFixApplicator fixApplicator = dryRun ?
+            new DryRunFixApplicator { Configuration = fixerConfig } :
+            new DefaultFixApplicator { Configuration = fixerConfig };
 
         var files = new HashSet<FileInfo>();
 
@@ -56,6 +62,29 @@ internal static class FormatCommand
             return results.AppliedFixers + results.FailedFixers > 0 ? 1 : 0;
 
         return 0;
+    }
+
+    private static async Task<FixerConfiguration> GetFixerConfiguration(FileInfo? formatConfigFile)
+    {
+        if (formatConfigFile != null)
+        {
+            var loadedFixerConfig = FixerConfiguration.FromFile(formatConfigFile);
+
+            if (loadedFixerConfig == null)
+            {
+                await stderr.Normal($"Could not load format configuration from '{formatConfigFile.FullName.Pastel(Color.DarkRed)}'. Using default");
+
+                return new();
+            }
+
+            await stdout.Verbose($"Loaded format configuration from '{formatConfigFile.FullName.Pastel(Color.DarkCyan)}'");
+
+            return loadedFixerConfig;
+        }
+
+        await stdout.Verbose("Using default format configuration");
+
+        return new();
     }
 
     private static async Task<FixApplicatorResult> Format(string fileOrDir, IFixApplicator fixApplicator,

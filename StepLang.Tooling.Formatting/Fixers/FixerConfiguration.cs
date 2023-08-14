@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace StepLang.Tooling.Formatting.Fixers;
 
@@ -16,16 +15,25 @@ public class FixerConfiguration
         return JsonSerializer.Deserialize(json, FixerConfigurationJsonContext.Default.FixerConfiguration);
     }
 
-    public string LineEndings { get; set; } = "\n";
+    public LineEndings LineEnding { get; set; } = LineEndings.Lf;
 
     public string Encoding { get; set; } = "utf-8";
 
-    public bool TabIndentation { get; set; } = true;
+    public Indentations Indentation { get; set; } = Indentations.Tab;
 
     public int IndentationSize { get; set; } = 4;
 
-    private Encoding? parsedEncoding;
+    public Encoding GetParsedEncoding() => System.Text.Encoding.GetEncoding(Encoding);
 
-    [JsonIgnore]
-    public Encoding ParsedEncoding => parsedEncoding ??= System.Text.Encoding.GetEncoding(Encoding);
+    public enum LineEndings
+    {
+        Lf,
+        CrLf,
+    }
+
+    public enum Indentations
+    {
+        Tab,
+        Space,
+    }
 }

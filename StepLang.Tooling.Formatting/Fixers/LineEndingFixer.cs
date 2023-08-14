@@ -10,7 +10,14 @@ public class LineEndingFixer : IStringFixer
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var fixedString = string.Join(configuration.LineEndings, input.SplitLines());
+        var lineEnding = configuration.LineEnding switch
+        {
+            FixerConfiguration.LineEndings.Lf => "\n",
+            FixerConfiguration.LineEndings.CrLf => "\r\n",
+            _ => throw new ArgumentOutOfRangeException(nameof(configuration.LineEnding), configuration.LineEnding, "Unknown line ending type."),
+        };
+
+        var fixedString = string.Join(lineEnding, input.SplitLines());
 
         return Task.FromResult(StringFixResult.FromInputAndFix(input, fixedString));
     }
