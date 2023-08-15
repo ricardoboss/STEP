@@ -10,7 +10,7 @@ public class LengthFunctionTest
 {
     [Theory]
     [ClassData(typeof(ParseData))]
-    public async Task TestEvaluateAsync(Expression value, ExpressionResult expected)
+    public async Task TestEvaluateAsync(Expression value, NumberResult expected)
     {
         var interpreter = new Interpreter();
         var function = new LengthFunction();
@@ -19,7 +19,9 @@ public class LengthFunctionTest
             value,
         });
 
-        Assert.Equal(expected, result);
+        var numberResult = result.ExpectInteger();
+        
+        Assert.Equal(expected.Value, numberResult.Value);
     }
 
     [Fact]
@@ -35,7 +37,7 @@ public class LengthFunctionTest
     }
 
     [SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Used by xUnit")]
-    private sealed class ParseData : TheoryData<Expression, ExpressionResult>
+    private sealed class ParseData : TheoryData<Expression, NumberResult>
     {
         public ParseData()
         {
