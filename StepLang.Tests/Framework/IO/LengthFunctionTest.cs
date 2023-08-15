@@ -41,6 +41,15 @@ public class LengthFunctionTest
         {
             Add(ConstantExpression.Str(""), new NumberResult(0));
             Add(ConstantExpression.Str("Hello"), new NumberResult(5));
+
+            var list = new ListExpression(new List<Expression>
+            {
+                ConstantExpression.Str("A"),
+                ConstantExpression.Number(1),
+                ConstantExpression.Bool(true)
+            });
+
+            Add(list, new NumberResult(3));
         }
     }
 }
