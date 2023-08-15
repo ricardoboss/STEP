@@ -5,7 +5,7 @@ namespace StepLang.Framework.IO;
 
 public class LengthFunction : NativeFunction
 {
-    public override string Identifier { get; } = "length";
+    public const string Identifier = "length";
 
     public override Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments,
         CancellationToken cancellationToken = default)
