@@ -52,6 +52,23 @@ public class LengthFunctionTest
             });
 
             Add(list, new NumberResult(3));
+
+            var map = new MapExpression(new Dictionary<string, Expression>
+            {
+                {
+                    "Foo", ConstantExpression.Str("A")
+                },
+                {
+                    "Bar", ConstantExpression.Number(1)
+                },
+                {
+                    "Baz", ConstantExpression.Bool(true)
+                },
+                {
+                    "Bum", ConstantExpression.Str("lol")
+                }
+            });
+            Add(map, new NumberResult(4));
         }
     }
 }
