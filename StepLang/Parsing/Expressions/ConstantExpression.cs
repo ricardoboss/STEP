@@ -8,6 +8,8 @@ public class ConstantExpression : Expression
     public static ConstantExpression Str(string value) => new(new StringResult(value));
     public static ConstantExpression Number(double value) => new(new NumberResult(value));
     public static ConstantExpression Bool(bool value) => new(new BoolResult(value));
+    public static ConstantExpression List(IList<ExpressionResult> value) => new(new ListResult(value));
+    public static ConstantExpression Map(IDictionary<string, ExpressionResult> value) => new(new MapResult(value));
     public static ConstantExpression True => Bool(true);
     public static ConstantExpression False => Bool(false);
     public static ConstantExpression Null => new(NullResult.Instance);
