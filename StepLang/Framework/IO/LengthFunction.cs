@@ -1,7 +1,7 @@
 using StepLang.Interpreting;
 using StepLang.Parsing.Expressions;
 
-namespace StepLang.Framework.IO;
+namespace StepLang.Framework.Conversion;
 
 public class LengthFunction : NativeFunction
 {
