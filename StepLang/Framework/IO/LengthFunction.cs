@@ -38,7 +38,7 @@ public class LengthFunction : NativeFunction
 
                 break;
             default:
-                throw new ArgumentException();
+                throw new ArgumentException(message: "First and only argument must be a string, list, or map");
         }
 
         var numberResult = new NumberResult(length);
