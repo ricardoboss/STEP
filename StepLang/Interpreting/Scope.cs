@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using StepLang.Framework;
 using StepLang.Parsing.Expressions;
 using StepLang.Tokenizing;
@@ -30,17 +31,43 @@ public class Scope
     {
         var nativeFunctionType = typeof(NativeFunction);
         var identifierProp = nativeFunctionType.GetProperty("Identifier")!;
-        var functionTypes = nativeFunctionType.Assembly.GetTypes()
-                                            .Where(t => t.IsAssignableTo(nativeFunctionType)
-                                                         && !t.IsAbstract);
+        var functionTypes = GetNativeFunctionTypes(nativeFunctionType);
 
-        foreach (var functionType in functionTypes)
+        foreach (var functionType in functionTypes.Select(
+                     ([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors |
+                                                 DynamicallyAccessedMemberTypes.PublicProperties)]
+                      ft) => new NativeFunctionTypeDescriptor {Type = ft}))
         {
-            var function = (NativeFunction)Activator.CreateInstance(functionType)!;
-            var functionIdentifier = (string)identifierProp.GetValue(function)!;
+            var function = GetNativeFunctionWithIdentifier(functionType, identifierProp, out var functionIdentifier);
 
             SetVariable(functionIdentifier, new FunctionResult(function));
         }
+    }
+
+    internal struct NativeFunctionTypeDescriptor
+    {
+        // https://github.com/dotnet/sdk/issues/27997#issuecomment-1260011790
+        
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors |
+                                    DynamicallyAccessedMemberTypes.PublicProperties)]
+        public Type Type { get; init; }
+    }
+    
+    private static NativeFunction GetNativeFunctionWithIdentifier(
+        NativeFunctionTypeDescriptor functionType,
+        PropertyInfo identifierProp,
+        out string functionIdentifier)
+    {
+        var function = (NativeFunction)Activator.CreateInstance(functionType.Type)!;
+        functionIdentifier = (string)identifierProp.GetValue(function)!;
+        return function;
+    }
+
+    private static IEnumerable<Type> GetNativeFunctionTypes(Type nativeFunctionType)
+    {
+        return nativeFunctionType.Assembly.GetTypes()
+            .Where(t => t.IsAssignableTo(nativeFunctionType)
+                        && !t.IsAbstract);
     }
 
     public void SetVariable(string identifier, ExpressionResult value)
