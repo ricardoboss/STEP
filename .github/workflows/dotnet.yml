@@ -58,4 +58,4 @@ jobs:
       with:
         recreate: true
         path: code-coverage-results.md
-        GIT_TOKEN: ${{ secrets.PR_COMMENT_PAT }}
+        GITHUB_TOKEN: ${{ secrets.PR_COMMENT_PAT }}
