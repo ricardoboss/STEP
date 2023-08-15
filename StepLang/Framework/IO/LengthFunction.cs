@@ -26,9 +26,15 @@ public class LengthFunction : NativeFunction
 
                 break;
             case ListExpression listExp:
-                var expressionResult = await listExp.EvaluateAsync(interpreter, cancellationToken);
-                var list = expressionResult.ExpectList();
+                var listExpressionResult = await listExp.EvaluateAsync(interpreter, cancellationToken);
+                var list = listExpressionResult.ExpectList();
                 length = list.Value.Count;
+
+                break;
+            case MapExpression mapExp:
+                var mapExpressionResult = await mapExp.EvaluateAsync(interpreter, cancellationToken);
+                var map = mapExpressionResult.ExpectMap();
+                length = map.Value.Count;
 
                 break;
             default:
