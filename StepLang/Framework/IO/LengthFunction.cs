@@ -7,22 +7,36 @@ public class LengthFunction : NativeFunction
 {
     public const string Identifier = "length";
 
-    public override Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments,
+    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter,
+        IReadOnlyList<Expression> arguments,
         CancellationToken cancellationToken = default)
     {
         if (arguments.Count is not 1)
             throw new InvalidArgumentCountException(1, arguments.Count);
 
         var exp = arguments.Single();
-        if (exp is not ConstantExpression conExp)
+
+        int length;
+
+        switch (exp)
         {
-            throw new InvalidExpressionTypeException(nameof(ConstantExpression), exp.GetType().Name);
+            case ConstantExpression conExp:
+                var str = conExp.Result.ExpectString();
+                length = str.Value.Length;
+
+                break;
+            case ListExpression listExp:
+                var expressionResult = await listExp.EvaluateAsync(interpreter, cancellationToken);
+                var list = expressionResult.ExpectList();
+                length = list.Value.Count;
+
+                break;
+            default:
+                throw new ArgumentException();
         }
 
-        var str = conExp.Result.ExpectString();
-
-        var expressionResult = new NumberResult(str.Value.Length);
-        return Task.FromResult<ExpressionResult>(expressionResult);
+        var numberResult = new NumberResult(length);
+        return await Task.FromResult<ExpressionResult>(numberResult);
     }
 
     protected override string DebugParamsString => "a string, list, or map";
