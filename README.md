@@ -79,7 +79,7 @@ more advanced languages.
 
 ## How can I learn it?
 
-Take a look at the [`STEP/Examples`](./STEP/Examples) folder.
+Take a look at the [`StepLang/Examples`](./StepLang/Examples) folder.
 It contains a few examples of STEP code, which you can run using the interpreter.
 
 If you ever need help, feel free to join @ricardoboss' [Discord server](https://discord.gg/ySpmcdCqFN).
