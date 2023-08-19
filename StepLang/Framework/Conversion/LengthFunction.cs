@@ -18,11 +18,31 @@ public class LengthFunction : NativeFunction
 
         int length;
 
+        const string unexpectedTypeMessage = "First and only argument must be a string, list, or map";
+
         switch (exp)
         {
             case ConstantExpression conExp:
-                var str = conExp.Result.ExpectString();
-                length = str.Value.Length;
+                switch (conExp.Result.ResultType)
+                {
+                    case ResultType.Str:
+                        var constStr = conExp.Result.ExpectString();
+                        length = constStr.Value.Length;
+
+                        break;
+                    case ResultType.List:
+                        var constList = conExp.Result.ExpectList();
+                        length = constList.Value.Count;
+
+                        break;
+                    case ResultType.Map:
+                        var constMap = conExp.Result.ExpectMap();
+                        length = constMap.Value.Count;
+
+                        break;
+                    default:
+                        throw new ArgumentException(message: unexpectedTypeMessage);
+                }
 
                 break;
             case ListExpression listExp:
@@ -38,7 +58,7 @@ public class LengthFunction : NativeFunction
 
                 break;
             default:
-                throw new ArgumentException(message: "First and only argument must be a string, list, or map");
+                throw new ArgumentException(message: unexpectedTypeMessage);
         }
 
         var numberResult = new NumberResult(length);
