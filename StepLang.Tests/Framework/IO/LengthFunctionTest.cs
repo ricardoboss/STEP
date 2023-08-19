@@ -1,6 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 using StepLang.Framework.Conversion;
-using StepLang.Framework.IO;
 using StepLang.Interpreting;
 using StepLang.Parsing.Expressions;
 
@@ -20,7 +19,7 @@ public class LengthFunctionTest
         });
 
         var numberResult = result.ExpectInteger();
-        
+
         Assert.Equal(expected.Value, numberResult.Value);
     }
 
@@ -53,6 +52,12 @@ public class LengthFunctionTest
 
             Add(list, new NumberResult(3));
 
+            var constantList = ConstantExpression.List(new List<ExpressionResult>(new []
+            {
+                new NumberResult(123)
+            }));
+            Add(constantList, new NumberResult(1));
+
             var map = new MapExpression(new Dictionary<string, Expression>
             {
                 {
@@ -68,6 +73,7 @@ public class LengthFunctionTest
                     "Bum", ConstantExpression.Str("lol")
                 }
             });
+
             Add(map, new NumberResult(4));
         }
     }
