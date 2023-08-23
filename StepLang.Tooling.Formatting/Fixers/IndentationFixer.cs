@@ -19,8 +19,12 @@ public class IndentationFixer : IStringFixer
                 currentIndent--;
             }
 
-            builder.Append(new string('\t', currentIndent));
-            builder.Append(trimmedLine);
+            if (trimmedLine.Length > 0)
+            {
+                builder.Append(new string('\t', currentIndent));
+                builder.Append(trimmedLine);
+            }
+
             builder.Append(lineEnding);
 
             if (trimmedLine.TrimEnd().EndsWith("{"))

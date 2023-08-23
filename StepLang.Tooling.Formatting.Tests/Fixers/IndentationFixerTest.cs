@@ -14,6 +14,7 @@ public class IndentationFixerTest
     [InlineData("  }\r\n}\r\n", "}\r\n}\r\n")]
     [InlineData("\r\n\r\n", "\r\n\r\n")]
     [InlineData("   \r\n\t\r\n", "\r\n\r\n")]
+    [InlineData("{\n\t\n\n}\n", "{\n\n\n}\n")]
     public async Task TestApplyReplacesIndentsWithTabs(string input, string output)
     {
         var fixer = new IndentationFixer();
