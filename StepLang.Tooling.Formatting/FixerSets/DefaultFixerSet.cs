@@ -9,5 +9,6 @@ public class DefaultFixerSet : BaseFixerSet
         yield return new FileEncodingFixer();
         yield return new LineEndingFixer();
         yield return new TrailingWhitespaceFixer();
+        yield return new IndentationFixer();
     }
 }
