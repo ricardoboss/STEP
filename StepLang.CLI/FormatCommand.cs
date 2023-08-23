@@ -54,13 +54,19 @@ internal static class FormatCommand
     private static async Task<FixApplicatorResult> Format(string fileOrDir, IFixApplicator fixApplicator,
         IFixerSet fixerSet)
     {
-        await stdout.Normal($"Formatting '{fileOrDir.Pastel(ConsoleColor.DarkBlue)}'...");
-
         FixApplicatorResult changes;
         if (File.Exists(fileOrDir))
-            changes = await fixApplicator.ApplyFixesAsync(fixerSet, new FileInfo(fileOrDir));
+        {
+            var file = new FileInfo(fileOrDir);
+            await stdout.Normal($"Formatting file '{file.FullName.Pastel(ConsoleColor.DarkBlue)}'...");
+            changes = await fixApplicator.ApplyFixesAsync(fixerSet, file);
+        }
         else if (Directory.Exists(fileOrDir))
-            changes = await fixApplicator.ApplyFixesAsync(fixerSet, new DirectoryInfo(fileOrDir));
+        {
+            var dir = new DirectoryInfo(fileOrDir);
+            await stdout.Normal($"Formatting directory '{dir.FullName.Pastel(ConsoleColor.DarkBlue)}'...");
+            changes = await fixApplicator.ApplyFixesAsync(fixerSet, dir);
+        }
         else
         {
             await stderr.Normal($"The path '{fileOrDir.Pastel(ConsoleColor.DarkBlue)}' is not a file or directory.");
