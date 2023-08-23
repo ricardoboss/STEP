@@ -4,8 +4,6 @@ namespace StepLang.Tooling.Formatting.Fixers;
 
 public class TrailingWhitespaceFixer : IStringFixer
 {
-    public string Name => "TrailingWhitespaceFixer";
-
     public Task<StringFixResult> FixAsync(string input, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();

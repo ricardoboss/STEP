@@ -7,8 +7,6 @@ public class FileEncodingFixer : IFileFixer
 {
     private static readonly Encoding DefaultEncoding = Encoding.UTF8;
 
-    public string Name => "FileEncodingFixer";
-
     public async Task<FileFixResult> FixAsync(FileInfo input, CancellationToken cancellationToken = default)
     {
         await using var stream = new FileStream(input.FullName, FileMode.Open, FileAccess.Read);

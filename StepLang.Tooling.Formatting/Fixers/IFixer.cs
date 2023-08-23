@@ -5,5 +5,5 @@
 /// </summary>
 public interface IFixer
 {
-    public string Name { get; }
+    public string Name => GetType().Name;
 }
