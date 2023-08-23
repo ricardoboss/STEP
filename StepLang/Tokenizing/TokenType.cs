@@ -91,34 +91,71 @@ public static class TokenTypes
         };
     }
 
+    public static string ToCode(this TokenType? type)
+    {
+        return type switch
+        {
+            TokenType.BreakKeyword => "break",
+            TokenType.ContinueKeyword => "continue",
+            TokenType.ElseKeyword => "else",
+            TokenType.IfKeyword => "if",
+            TokenType.ImportKeyword => "import",
+            TokenType.ReturnKeyword => "return",
+            TokenType.WhileKeyword => "while",
+            TokenType.AmpersandSymbol => "&",
+            TokenType.AsteriskSymbol => "*",
+            TokenType.ClosingCurlyBracket => "}",
+            TokenType.ClosingParentheses => ")",
+            TokenType.ColonSymbol => ":",
+            TokenType.CommaSymbol => ",",
+            TokenType.EqualsSymbol => "=",
+            TokenType.ExclamationMarkSymbol => "!",
+            TokenType.GreaterThanSymbol => ">",
+            TokenType.HatSymbol => "^",
+            TokenType.LessThanSymbol => "<",
+            TokenType.MinusSymbol => "-",
+            TokenType.OpeningCurlyBracket => "{",
+            TokenType.OpeningParentheses => "(",
+            TokenType.PercentSymbol => "%",
+            TokenType.PipeSymbol => "|",
+            TokenType.PlusSymbol => "+",
+            TokenType.QuestionMarkSymbol => "?",
+            TokenType.SlashSymbol => "/",
+            TokenType.UnderscoreSymbol => "_",
+            TokenType.OpeningSquareBracket => "[",
+            TokenType.ClosingSquareBracket => "]",
+            _ => throw new InvalidOperationException("Token type does not have a static code representation"),
+        };
+    }
+
     public static bool IsKnownTypeName(this string name)
     {
-        return name is "string" or "number" or "bool" or "function" or "list" or "map";
+        return name.ToUpperInvariant() is "STRING" or "NUMBER" or "BOOL" or "FUNCTION" or "LIST" or "MAP";
     }
 
     public static bool TryParseKeyword(this string name, [NotNullWhen(true)] out TokenType? type)
     {
-        switch (name)
+        switch (name.ToUpperInvariant())
         {
-            case "if":
+            case "IF":
                 type = TokenType.IfKeyword;
                 return true;
-            case "else":
+            case "ELSE":
                 type = TokenType.ElseKeyword;
                 return true;
-            case "while":
+            case "WHILE":
                 type = TokenType.WhileKeyword;
                 return true;
-            case "break":
+            case "BREAK":
                 type = TokenType.BreakKeyword;
                 return true;
-            case "continue":
+            case "CONTINUE":
                 type = TokenType.ContinueKeyword;
                 return true;
-            case "return":
+            case "RETURN":
                 type = TokenType.ReturnKeyword;
                 return true;
-            case "import":
+            case "IMPORT":
                 type = TokenType.ImportKeyword;
                 return true;
         }

@@ -16,4 +16,8 @@
       <PackageReference Include="System.Linq.Async" Version="6.0.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\StepLang\StepLang.csproj" />
+    </ItemGroup>
+
 </Project>
