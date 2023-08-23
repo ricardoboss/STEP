@@ -9,6 +9,48 @@ public static class StringExtensions
         return input.Split("\r\n").SelectMany(l => l.Split("\n"));
     }
 
+    public static IEnumerable<(string lineEnding, string line)> SplitLinesPreserveNewLines(this string input)
+    {
+        var line = new StringBuilder();
+        using var enumerator = input.GetEnumerator();
+        while (enumerator.MoveNext())
+        {
+            if (enumerator.Current is '\r')
+            {
+                if (enumerator.MoveNext())
+                {
+                    if (enumerator.Current is '\n')
+                    {
+                        yield return ("\r\n", line.ToString());
+                        line.Clear();
+                    }
+                    else
+                    {
+                        line.Append('\r');
+                    }
+                }
+                else
+                {
+                    yield return ("", line + "\r");
+
+                    yield break;
+                }
+            }
+            else if (enumerator.Current is '\n')
+            {
+                yield return ("\n", line.ToString());
+                line.Clear();
+            }
+            else
+            {
+                line.Append(enumerator.Current);
+            }
+        }
+
+        if (line.Length > 0)
+            yield return ("", line.ToString());
+    }
+
     public static string WithoutTrailingWhitespace(this string input)
     {
         var sb = new StringBuilder();
