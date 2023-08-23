@@ -25,12 +25,6 @@ internal static class FormatCommand
 
         var files = new HashSet<FileInfo>();
 
-        fixApplicator.BeforeFixerRun += async (_, f) =>
-        {
-            await stdout.Verbose(
-                $"Running fixer '{f.Fixer.Name.Pastel(ConsoleColor.DarkMagenta)}' on '{f.File.Name.Pastel(ConsoleColor.DarkCyan)}'");
-        };
-
         fixApplicator.AfterApplyFix += async (_, f) =>
         {
             files.Add(f.File);
