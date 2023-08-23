@@ -2,10 +2,10 @@ number a = 1
 number b = 2
 
 {
-    number a = 3
+	number a = 3
 
-    println("(in scope) a = ", a)
-    println("(in scope) b = ", b)
+	println("(in scope) a = ", a)
+	println("(in scope) b = ", b)
 }
 
 println("a = ", a)

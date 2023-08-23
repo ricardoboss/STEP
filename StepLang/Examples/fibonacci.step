@@ -1,16 +1,16 @@
-﻿function fibonacci = (number n) {
-    if (n == 0) {
-        return 0
-    }
+function fibonacci = (number n) {
+	if (n == 0) {
+		return 0
+	}
 
-    if (n == 1) {
-        return 1
-    }
+	if (n == 1) {
+		return 1
+	}
 
-    number left = fibonacci(n - 1)
-    number right = fibonacci(n - 2)
+	number left = fibonacci(n - 1)
+	number right = fibonacci(n - 2)
 
-    return left + right
+	return left + right
 }
 
 print("Fibonacci of: ")

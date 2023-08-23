@@ -1,37 +1,37 @@
-﻿function isEven = (number n) {
-    return n % 2 == 0
+function isEven = (number n) {
+	return n % 2 == 0
 }
 
 function calculateCircleArea = (number radius) {
-    if (radius <= 0.0) {
-        println("Error: The radius must be greater than zero")
-        return 0.0
-    } else {
-        return pi * radius ^ 2
-    }
+	if (radius <= 0.0) {
+		println("Error: The radius must be greater than zero")
+		return 0.0
+	} else {
+		return pi * radius ^ 2
+	}
 }
 
 function printEvenNumbers = (number limit) {
-    number i = 1
-    while (i <= limit) {
-        if (isEven(i)) {
-            println(i, " is even")
-        }
-        i = i + 1
-    }
+	number i = 1
+	while (i <= limit) {
+		if (isEven(i)) {
+			println(i, " is even")
+		}
+		i = i + 1
+	}
 }
 
 function factorial = (number n) {
-    if (n == 0) {
-        return 1
-    } else {
-        return n * factorial(n - 1)
-    }
+	if (n == 0) {
+		return 1
+	} else {
+		return n * factorial(n - 1)
+	}
 }
 
 println("Inline function definition and call:")
 println((number a, number b) {
-    return a + b
+	return a + b
 }(1, 2))
 println()
 
