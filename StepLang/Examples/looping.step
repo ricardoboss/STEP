@@ -1,8 +1,8 @@
-﻿number i = 0
+number i = 0
 
 while (i != 10) {
-    print(i, EOL)
-    i++
+	print(i, EOL)
+	i++
 }
 
 print("done", EOL)
