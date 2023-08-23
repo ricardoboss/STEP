@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using System.Globalization;
+﻿using System.Globalization;
 using Pastel;
 using StepLang.Tooling.Formatting.Applicators;
 using StepLang.Tooling.Formatting.FixerSets;
