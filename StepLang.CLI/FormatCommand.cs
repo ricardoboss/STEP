@@ -29,7 +29,7 @@ internal static class FormatCommand
         fixApplicator.BeforeFixerRun += async (_, f) =>
         {
             await stdout.Verbose(
-                $"Running fixer '{f.Fixer.Name.Pastel(ConsoleColor.DarkMagenta)}' on '{f.File.Name.Pastel(ConsoleColor.Cyan)}'");
+                $"Running fixer '{f.Fixer.Name.Pastel(ConsoleColor.DarkMagenta)}' on '{f.File.Name.Pastel(ConsoleColor.DarkCyan)}'");
         };
 
         fixApplicator.AfterApplyFix += async (_, f) =>
@@ -37,7 +37,7 @@ internal static class FormatCommand
             files.Add(f.File);
 
             await stdout.Verbose(
-                $"Applied fixer '{f.Fixer.Name.Pastel(ConsoleColor.DarkMagenta)}' to '{f.File.Name.Pastel(ConsoleColor.Cyan)}'");
+                $"Applied fixer '{f.Fixer.Name.Pastel(ConsoleColor.DarkMagenta)}' to '{f.File.Name.Pastel(ConsoleColor.DarkCyan)}'");
         };
 
         var fixerSet = new DefaultFixerSet();
@@ -61,7 +61,7 @@ internal static class FormatCommand
     private static async Task<FixApplicatorResult> Format(string fileOrDir, IFixApplicator fixApplicator,
         IFixerSet fixerSet)
     {
-        await stdout.Normal($"Formatting '{fileOrDir.Pastel(Color.Aqua)}'...");
+        await stdout.Normal($"Formatting '{fileOrDir.Pastel(ConsoleColor.DarkBlue)}'...");
 
         FixApplicatorResult changes;
         if (File.Exists(fileOrDir))
@@ -70,7 +70,7 @@ internal static class FormatCommand
             changes = await fixApplicator.ApplyFixesAsync(fixerSet, new DirectoryInfo(fileOrDir));
         else
         {
-            await stderr.Normal($"The path '{fileOrDir.Pastel(Color.Aqua)}' is not a file or directory.");
+            await stderr.Normal($"The path '{fileOrDir.Pastel(ConsoleColor.DarkBlue)}' is not a file or directory.");
 
             return FixApplicatorResult.Zero;
         }
