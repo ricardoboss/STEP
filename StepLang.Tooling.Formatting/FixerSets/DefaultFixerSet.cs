@@ -10,5 +10,7 @@ public class DefaultFixerSet : BaseFixerSet
         yield return new LineEndingFixer();
         yield return new TrailingWhitespaceFixer();
         yield return new IndentationFixer();
+        yield return new KeywordCasingFixer();
+        yield return new TypeNameCasingFixer();
     }
 }

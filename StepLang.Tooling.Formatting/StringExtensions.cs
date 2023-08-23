@@ -80,4 +80,61 @@ public static class StringExtensions
 
         return sb.ToString();
     }
+
+    public static string SelectWords(this IEnumerable<char> input, Func<string, string> callback)
+    {
+
+        StringBuilder output = new();
+        StringBuilder currentWord = new();
+        var inString = false;
+        var escaped = false;
+
+        using var enumerator = input.GetEnumerator();
+        while (enumerator.MoveNext())
+        {
+            var currentChar = enumerator.Current;
+            switch (currentChar)
+            {
+                case '"' when !escaped:
+                    inString = !inString;
+                    output.Append(currentChar);
+                    continue;
+                case '\\' when inString:
+                    escaped = true;
+                    output.Append(currentChar);
+                    continue;
+            }
+
+            if (inString)
+            {
+                output.Append(currentChar);
+                continue;
+            }
+
+            if (char.IsLetterOrDigit(currentChar))
+            {
+                currentWord.Append(currentChar);
+                continue;
+            }
+
+            if (currentWord.Length > 0)
+                SelectWord();
+
+            output.Append(currentChar);
+        }
+
+        if (currentWord.Length > 0 && !inString)
+            SelectWord();
+
+        return output.ToString();
+
+        void SelectWord()
+        {
+            var word = currentWord.ToString();
+
+            output.Append(callback(word));
+
+            currentWord.Clear();
+        }
+    }
 }
