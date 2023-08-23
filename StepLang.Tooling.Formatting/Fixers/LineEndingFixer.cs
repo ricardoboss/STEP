@@ -6,8 +6,6 @@ public class LineEndingFixer : IStringFixer
 {
     private const string DefaultLineEnding = "\n";
 
-    public string Name => "LineEndingFixer";
-
     public Task<StringFixResult> FixAsync(string input, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();

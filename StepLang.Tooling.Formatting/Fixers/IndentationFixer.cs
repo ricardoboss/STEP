@@ -5,8 +5,6 @@ namespace StepLang.Tooling.Formatting.Fixers;
 
 public class IndentationFixer : IStringFixer
 {
-    public string Name => "IndentationFixer";
-
     public Task<StringFixResult> FixAsync(string input, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
