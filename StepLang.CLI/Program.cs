@@ -30,7 +30,7 @@ internal static class Program
             Arity = ArgumentArity.ZeroOrOne,
         };
 
-        var verbosityOption = new Option<Verbosity>(aliases: new[] { "--verbosity", "-v" }, description: "Set the verbosity level")
+        var verbosityOption = new Option<Verbosity>(aliases: new[] { "--verbosity", "-v" }, description: "Set the verbosity level", getDefaultValue: () => Verbosity.Normal)
         {
             IsRequired = false,
             Arity = ArgumentArity.ZeroOrOne,
