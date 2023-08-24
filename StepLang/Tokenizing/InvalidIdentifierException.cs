@@ -22,7 +22,7 @@ internal sealed class InvalidIdentifierException : TokenizerException
         return generalHelp + $"Yours contains an invalid character: '{invalidChar!.Value}'";
     }
 
-    public InvalidIdentifierException(TokenLocation? location, string value) : base(3, location, BuildMessage(value), BuildHelpText(value))
+    public InvalidIdentifierException(TokenLocation? location, string value) : base(1, location, BuildMessage(value), BuildHelpText(value))
     {
     }
 }

@@ -50,14 +50,6 @@ public class CharacterQueue
         return true;
     }
 
-    public char Dequeue()
-    {
-        if (!TryDequeue(out var character))
-            throw new UnexpectedEndOfCharactersException(File is null ? null : new(File, Line, Column));
-
-        return character;
-    }
-
     public bool TryPeek(int offset, out char character)
     {
         character = charQueue.Skip(offset).FirstOrDefault();
@@ -71,12 +63,12 @@ public class CharacterQueue
     {
         var characters = new List<char>();
 
-        while (TryPeek(out var character))
+        while (TryPeek(out var nextChar))
         {
-            if (character == c)
+            if (nextChar == c || !TryDequeue(out var character))
                 break;
 
-            characters.Add(Dequeue());
+            characters.Add(character);
         }
 
         return characters;
