@@ -17,6 +17,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         version: [6.x, 7.x, 8.x]
+        command: ['build --configuration Release', 'test --configuration Release', 'format --verify-no-changes' ]
 
     runs-on: ${{ matrix.os }}
 
@@ -32,11 +33,5 @@ jobs:
       with:
         dotnet-version: ${{ matrix.version }}
 
-    - name: Restore dependencies
-      run: dotnet restore
-
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
-
-    - name: Test
-      run: dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
+    - name: Run dotnet ${{ matrix.command }}
+      run: dotnet ${{ matrix.command }}
