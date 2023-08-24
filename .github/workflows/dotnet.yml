@@ -43,4 +43,4 @@ jobs:
 
     - name: Check Style
       if: always()
-      run: dotnet format --verify-no-changes
+      run: dotnet tool update dotnet-format -g && dotnet format --verify-no-changes
