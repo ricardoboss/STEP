@@ -1,4 +1,4 @@
-﻿using System.CommandLine;
+using System.CommandLine;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
@@ -13,7 +13,7 @@ namespace StepLang.CLI;
 [ExcludeFromCodeCoverage]
 internal static class Program
 {
-    public static async Task<int> Main(string [] args)
+    public static async Task<int> Main(string[] args)
     {
         var fileArgument = new Argument<FileInfo>(name: "file", description: "The path to a .step-file")
         {
@@ -113,7 +113,7 @@ internal static class Program
             outputLines = contextLines.Prepend(locationString);
         }
         else
-            outputLines = new [] { (e.StackTrace ?? string.Empty).Pastel(ConsoleColor.Gray) };
+            outputLines = new[] { (e.StackTrace ?? string.Empty).Pastel(ConsoleColor.Gray) };
 
         outputLines = outputLines.Prepend(message).Prepend(exceptionName);
 

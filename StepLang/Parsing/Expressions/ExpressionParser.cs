@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using StepLang.Parsing.Statements;
 using StepLang.Tokenizing;
@@ -129,7 +129,7 @@ public class ExpressionParser
 
             var keyExpression = await ParseAsync(keyTokens, cancellationToken);
 
-            if (keyExpression is not ConstantExpression { Result: StringResult { Value: {} key } })
+            if (keyExpression is not ConstantExpression { Result: StringResult { Value: { } key } })
                 throw new UnexpectedTokenException(keyTokens[0], TokenType.LiteralString);
 
             var valueExpression = await ParseAsync(valueTokens, cancellationToken);

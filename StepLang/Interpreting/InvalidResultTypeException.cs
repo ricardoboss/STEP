@@ -5,7 +5,7 @@ namespace StepLang.Interpreting;
 
 public class InvalidResultTypeException : InterpreterException
 {
-    private static string BuildMessage(ResultType got, ResultType [] expected)
+    private static string BuildMessage(ResultType got, ResultType[] expected)
     {
         var expectation = expected.Length switch
         {

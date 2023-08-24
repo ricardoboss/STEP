@@ -1,4 +1,4 @@
-﻿namespace StepLang.Tokenizing;
+namespace StepLang.Tokenizing;
 
 public abstract class TokenizerException : StepLangException
 {

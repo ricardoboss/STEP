@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using StepLang.Interpreting;
@@ -53,9 +53,9 @@ public class ExamplesIntegrationTest
     }
 
     [SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Used by xUnit")]
-    private sealed class ExampleFiles : IEnumerable<object []>
+    private sealed class ExampleFiles : IEnumerable<object[]>
     {
-        public IEnumerator<object []> GetEnumerator() => Directory
+        public IEnumerator<object[]> GetEnumerator() => Directory
             .EnumerateFiles("Examples", "*.step")
             .Select(path => new object[] { new FileInfo(path) })
             .GetEnumerator();

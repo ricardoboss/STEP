@@ -1,4 +1,4 @@
-﻿using StepLang.Tokenizing;
+using StepLang.Tokenizing;
 
 namespace StepLang.Parsing;
 
@@ -21,7 +21,7 @@ public class UnexpectedTokenException : ParserException
         return "This error is usually caused by a missing token or a typo. Check the syntax of the statement you are trying to use. Also review your code for syntax errors, such as missing parentheses or other punctuation.";
     }
 
-    public UnexpectedTokenException(Token token, params TokenType [] allowed) : base(token, BuildMessage(token, allowed), BuildHelpText())
+    public UnexpectedTokenException(Token token, params TokenType[] allowed) : base(token, BuildMessage(token, allowed), BuildHelpText())
     {
     }
 

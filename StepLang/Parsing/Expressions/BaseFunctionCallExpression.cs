@@ -1,4 +1,4 @@
-﻿using StepLang.Interpreting;
+using StepLang.Interpreting;
 using StepLang.Tokenizing;
 
 namespace StepLang.Parsing.Expressions;

@@ -1,4 +1,4 @@
-﻿using StepLang.Tokenizing;
+using StepLang.Tokenizing;
 
 namespace StepLang.Interpreting;
 
