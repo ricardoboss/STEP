@@ -10,7 +10,7 @@ public class ParserTest
     public async Task TestParseFunctionCallNoParams()
     {
         var parser = new StatementParser();
-        parser.Add(new Token []
+        parser.Add(new Token[]
         {
             new(TokenType.Identifier, "function", null),
             new(TokenType.OpeningParentheses, "(", null),
@@ -27,7 +27,7 @@ public class ParserTest
     public async Task TestParseUnexpectedTokenThrows()
     {
         var parser = new StatementParser();
-        parser.Add(new Token []
+        parser.Add(new Token[]
         {
             new(TokenType.LiteralString, "string", null),
         });

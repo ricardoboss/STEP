@@ -55,9 +55,9 @@ public class TokenQueue
 
     public bool TryPeek(int offset, [NotNullWhen(true)] out Token? token)
     {
-         token = tokenList.Skip(offset).FirstOrDefault();
+        token = tokenList.Skip(offset).FirstOrDefault();
 
-         return token is not null;
+        return token is not null;
     }
 
     public bool TryPeekType([NotNullWhen(true)] out TokenType? type) => TryPeekType(0, out type);

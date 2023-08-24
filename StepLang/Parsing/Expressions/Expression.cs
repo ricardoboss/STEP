@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using StepLang.Interpreting;
 
@@ -203,26 +203,26 @@ public abstract class Expression
             switch (a.ResultType)
             {
                 case ResultType.List:
-                {
-                    var values = a.ExpectList().Value;
-                    var index = (int)b.ExpectInteger().Value;
+                    {
+                        var values = a.ExpectList().Value;
+                        var index = (int)b.ExpectInteger().Value;
 
-                    return values[index];
-                }
+                        return values[index];
+                    }
                 case ResultType.Map:
-                {
-                    var pairs = a.ExpectMap().Value;
-                    var key = b.ExpectString().Value;
+                    {
+                        var pairs = a.ExpectMap().Value;
+                        var key = b.ExpectString().Value;
 
-                    return pairs[key];
-                }
+                        return pairs[key];
+                    }
                 case ResultType.Str:
-                {
-                    var value = a.ExpectString().Value;
-                    var index = (int)b.ExpectInteger().Value;
+                    {
+                        var value = a.ExpectString().Value;
+                        var index = (int)b.ExpectInteger().Value;
 
-                    return new StringResult(value[index].ToString());
-                }
+                        return new StringResult(value[index].ToString());
+                    }
                 default:
                     var indexRepresentation = b switch
                     {

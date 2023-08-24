@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using StepLang.Interpreting;
 
 namespace StepLang.Parsing.Expressions;

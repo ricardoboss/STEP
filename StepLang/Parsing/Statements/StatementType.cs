@@ -1,4 +1,4 @@
-﻿namespace StepLang.Parsing.Statements;
+namespace StepLang.Parsing.Statements;
 
 public enum StatementType
 {

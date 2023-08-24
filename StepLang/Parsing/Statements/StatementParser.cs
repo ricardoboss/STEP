@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using StepLang.Parsing.Expressions;
 using StepLang.Tokenizing;
@@ -74,7 +74,7 @@ public class StatementParser
                     yield break;
             }
 
-            var allowed = new []
+            var allowed = new[]
             {
                 TokenType.TypeName, TokenType.Identifier,
                 TokenType.UnderscoreSymbol, TokenType.Whitespace,
@@ -341,7 +341,7 @@ public class StatementParser
             if (operationToken.Type != valueDenominator.Type)
                 throw new UnexpectedTokenException(valueDenominator, operationToken.Type);
 
-            valueExpTokens = new Token []
+            valueExpTokens = new Token[]
             {
                 new(TokenType.LiteralNumber, "1", null),
             };
@@ -355,7 +355,7 @@ public class StatementParser
         }
 
         // TODO: ugly. Move expression parsing to another class
-        var expression = await ExpressionParser.ParseAsync(new []
+        var expression = await ExpressionParser.ParseAsync(new[]
         {
             identifierToken, operationToken,
         }.Concat(valueExpTokens).ToArray(), cancellationToken);

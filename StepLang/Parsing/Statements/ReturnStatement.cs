@@ -7,7 +7,7 @@ namespace StepLang.Parsing.Statements;
 public class ReturnStatement : Statement
 {
     private readonly Expression? expression;
-    
+
     public ReturnStatement(Expression? expression) : base(StatementType.ReturnStatement)
     {
         this.expression = expression;
