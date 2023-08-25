@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using StepLang.Tooling.Formatting.Fixers;
 using StepLang.Tooling.Formatting.Fixers.Results;
 
@@ -12,19 +12,19 @@ public abstract class BaseFixApplicator : IFixApplicator
 
     public async Task<FixApplicatorResult> ApplyFixesAsync(IFixer fixer, DirectoryInfo directory,
         CancellationToken cancellationToken = default) =>
-        await ApplyFixesAsync(new [] { fixer }, new [] { directory }, cancellationToken);
+        await ApplyFixesAsync(new[] { fixer }, new[] { directory }, cancellationToken);
 
     public async Task<FixApplicatorResult> ApplyFixesAsync(IEnumerable<IFixer> fixers, DirectoryInfo directory,
         CancellationToken cancellationToken = default) =>
-        await ApplyFixesAsync(fixers, new [] { directory }, cancellationToken);
+        await ApplyFixesAsync(fixers, new[] { directory }, cancellationToken);
 
     public async Task<FixApplicatorResult> ApplyFixesAsync(IFixer fixer, IEnumerable<FileInfo> files,
         CancellationToken cancellationToken = default) =>
-        await ApplyFixesAsync(new [] { fixer }, files, cancellationToken);
+        await ApplyFixesAsync(new[] { fixer }, files, cancellationToken);
 
     public async Task<FixApplicatorResult> ApplyFixesAsync(IFixer fixer, IEnumerable<DirectoryInfo> directories,
         CancellationToken cancellationToken = default) =>
-        await ApplyFixesAsync(new [] { fixer }, directories, cancellationToken);
+        await ApplyFixesAsync(new[] { fixer }, directories, cancellationToken);
 
     public async Task<FixApplicatorResult> ApplyFixesAsync(IEnumerable<IFixer> fixers,
         IEnumerable<DirectoryInfo> directories, CancellationToken cancellationToken = default)
