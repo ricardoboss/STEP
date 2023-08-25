@@ -1,4 +1,4 @@
-﻿using StepLang.Tooling.Formatting.Fixers.Results;
+using StepLang.Tooling.Formatting.Fixers.Results;
 
 namespace StepLang.Tooling.Formatting.Fixers;
 

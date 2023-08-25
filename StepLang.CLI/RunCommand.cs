@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using System.Globalization;
 using Pastel;
 using StepLang.Interpreting;
@@ -93,7 +93,7 @@ internal static class RunCommand
             outputLines = contextLines.Prepend(locationString);
         }
         else
-            outputLines = new [] { (e.StackTrace ?? string.Empty).Pastel(ConsoleColor.Gray) };
+            outputLines = new[] { (e.StackTrace ?? string.Empty).Pastel(ConsoleColor.Gray) };
 
         outputLines = outputLines.Prepend(message).Prepend(exceptionName);
 

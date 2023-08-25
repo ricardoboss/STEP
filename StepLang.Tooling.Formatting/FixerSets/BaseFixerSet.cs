@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using StepLang.Tooling.Formatting.Fixers;
 
 namespace StepLang.Tooling.Formatting.FixerSets;

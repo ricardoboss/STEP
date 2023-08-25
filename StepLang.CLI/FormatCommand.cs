@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using Pastel;
 using StepLang.Tooling.Formatting.Applicators;
 using StepLang.Tooling.Formatting.FixerSets;
@@ -10,7 +10,7 @@ internal static class FormatCommand
     private static VerbosityWriter stdout = new(Console.Out, Verbosity.Normal);
     private static VerbosityWriter stderr = new(Console.Error, Verbosity.Normal);
 
-    public static async Task<int> Invoke(string [] filesOrDirs, bool setExitCode, bool dryRun, Verbosity verbosity)
+    public static async Task<int> Invoke(string[] filesOrDirs, bool setExitCode, bool dryRun, Verbosity verbosity)
     {
         stdout = new(Console.Out, verbosity);
         stderr = new(Console.Error, verbosity);
@@ -19,7 +19,7 @@ internal static class FormatCommand
             await stdout.Normal("Dry run mode enabled. No files will be modified.".Pastel(ConsoleColor.DarkYellow));
 
         if (filesOrDirs.Length == 0)
-            filesOrDirs = new [] { "." };
+            filesOrDirs = new[] { "." };
 
         IFixApplicator fixApplicator = dryRun ? new DryRunFixApplicator() : new DefaultFixApplicator();
 

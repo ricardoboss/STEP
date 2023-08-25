@@ -1,4 +1,4 @@
-﻿namespace StepLang.CLI;
+namespace StepLang.CLI;
 
 internal sealed record VerbosityWriter(TextWriter Writer, Verbosity Verbosity)
 {

@@ -1,6 +1,7 @@
-﻿namespace StepLang.Tooling.Formatting.Applicators;
+namespace StepLang.Tooling.Formatting.Applicators;
 
-public record FixApplicatorResult(int AppliedFixers, int FailedFixers, TimeSpan Elapsed) {
+public record FixApplicatorResult(int AppliedFixers, int FailedFixers, TimeSpan Elapsed)
+{
     public static FixApplicatorResult Zero { get; } = new(0, 0, TimeSpan.Zero);
 
     public static FixApplicatorResult operator +(FixApplicatorResult a, FixApplicatorResult b)

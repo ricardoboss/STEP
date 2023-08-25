@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using StepLang.Tooling.Formatting.Fixers.Results;
 
 namespace StepLang.Tooling.Formatting.Applicators;

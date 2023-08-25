@@ -1,4 +1,4 @@
-﻿namespace StepLang.CLI;
+namespace StepLang.CLI;
 
 public enum Verbosity
 {
