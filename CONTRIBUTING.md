@@ -39,7 +39,7 @@ all contributors.
 1. Fork this repository to your GitHub account.
 2. Clone your forked repository to your local machine:
    ```bash
-   git clone https://github.com/ricardoboss/STEP.git
+   git clone https://github.com/<username>/STEP.git
    ```
 
 ### Setting Up Your Local Environment
