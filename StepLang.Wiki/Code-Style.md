@@ -55,7 +55,7 @@ if (name != "John") {
 
 Notice how the braces (`{` and `}`) are placed on the same line as the `if` and `else`.
 
-Since anonymous code blocks have no associated keyword, the braces are placed on their own line
+Since anonymous code blocks have no associated keyword, the braces are placed on their own line:
 
 ```step
 {
