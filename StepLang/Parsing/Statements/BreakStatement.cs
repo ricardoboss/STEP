@@ -21,7 +21,7 @@ public class BreakStatement : Statement
     {
         var breakDepthResult = await expression.EvaluateAsync(interpreter, cancellationToken);
         if (breakDepthResult is not NumberResult numberResult || numberResult.Value < 0 || !numberResult.IsInteger)
-            throw new InvalidDepthResult(breakToken, breakDepthResult);
+            throw new InvalidDepthResultException(breakToken, breakDepthResult);
 
         interpreter.BreakDepth += (int)numberResult.Value;
     }

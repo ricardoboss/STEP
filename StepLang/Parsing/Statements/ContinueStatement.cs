@@ -21,7 +21,7 @@ internal sealed class ContinueStatement : Statement
     {
         var continueDepthResult = await expression.EvaluateAsync(interpreter, cancellationToken);
         if (continueDepthResult is not NumberResult numberResult || numberResult.Value < 0 || !numberResult.IsInteger)
-            throw new InvalidDepthResult(continueToken, continueDepthResult);
+            throw new InvalidDepthResultException(continueToken, continueDepthResult);
 
         interpreter.ContinueDepth += (int)numberResult.Value;
     }
