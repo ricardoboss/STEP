@@ -247,6 +247,18 @@ public class TokenizerTest
     }
 
     [Fact]
+    public void TesetThrowsForInvalidIdentifiers()
+    {
+        const string source = "number a.b = 1";
+
+        var tokenizer = new Tokenizer();
+        tokenizer.Add(source);
+        var exception = Assert.Throws<InvalidIdentifierException>(() => tokenizer.TokenizeAsync().ToList());
+
+        Assert.Equal("TOK001", exception.ErrorCode);
+    }
+
+    [Fact]
     public void TestThrowsForUnclosedStrings()
     {
         const string source = "\"string";
@@ -255,6 +267,7 @@ public class TokenizerTest
         tokenizer.Add(source);
         var exception = Assert.Throws<UnterminatedStringException>(() => tokenizer.Tokenize().ToList());
 
+        Assert.Equal("TOK002", exception.ErrorCode);
         Assert.Equal('\"', exception.StringDelimiter);
     }
 }
