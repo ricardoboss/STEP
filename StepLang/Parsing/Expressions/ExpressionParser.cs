@@ -202,8 +202,8 @@ public class ExpressionParser
                 var nextType = tokenQueue.PeekType();
                 if (nextType is TokenType.ClosingParentheses)
                 {
-                    if (tokenQueue.PeekType(1) is not TokenType.OpeningCurlyBracket)
-                        throw new InvalidExpressionException(null, "Empty pair of parentheses is not a valid expression.");
+                    if (!tokenQueue.TryPeekType(out var nextNextType) || nextNextType is not TokenType.OpeningCurlyBracket)
+                        throw new InvalidExpressionException(null, "An empty pair of parentheses is not a valid expression.");
 
                     // function declaration
 
