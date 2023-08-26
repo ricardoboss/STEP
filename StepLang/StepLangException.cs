@@ -8,10 +8,13 @@ public abstract class StepLangException : Exception
 
     public TokenLocation? Location { get; }
 
+    public string ErrorCode { get; }
+
     protected StepLangException(string errorCode, TokenLocation? location, string message, string helpText, Exception? innerException) : base(message, innerException)
     {
         HelpText = helpText;
         Location = location;
+        ErrorCode = errorCode;
 
         // ReSharper disable once VirtualMemberCallInConstructor
         HelpLink = $"https://github.com/ricardoboss/STEP/blob/main/StepLang.Wiki/Errors/{errorCode}.md";
