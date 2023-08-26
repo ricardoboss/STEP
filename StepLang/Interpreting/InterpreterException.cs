@@ -8,7 +8,11 @@ public abstract class InterpreterException : StepLangException
     {
     }
 
-    protected InterpreterException(int errorCode, TokenLocation? location, string message, string helpText, Exception? inner = null) : base($"INT{errorCode}", location, message, helpText, inner)
+    protected InterpreterException(int errorCode, TokenLocation? location, string message, string helpText, Exception? inner = null) : this($"INT{errorCode:000}", location, message, helpText, inner)
+    {
+    }
+
+    protected InterpreterException(string errorCode, TokenLocation? location, string message, string helpText, Exception? inner = null) : base(errorCode, location, message, helpText, inner)
     {
     }
 }
