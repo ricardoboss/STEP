@@ -70,7 +70,7 @@ public class InterpretationTest
         var interpreter = new Interpreter();
         var exception = await Assert.ThrowsAsync<IncompatibleExpressionOperandsException>(async () => await statement.ExecuteAsync(interpreter));
 
-        Assert.Equal("TYP003", exception.ErrorCode);
+        Assert.Equal("TYP002", exception.ErrorCode);
     }
 
     [Fact]
@@ -86,7 +86,7 @@ public class InterpretationTest
         var interpreter = new Interpreter();
         var exception = await Assert.ThrowsAsync<InvalidFunctionCallException>(async () => await interpreter.InterpretAsync(statements.ToAsyncEnumerable()));
 
-        Assert.Equal("TYP004", exception.ErrorCode);
+        Assert.Equal("TYP003", exception.ErrorCode);
         Assert.IsType<InvalidArgumentTypeException>(exception.InnerException);
     }
 
@@ -103,6 +103,6 @@ public class InterpretationTest
         var interpreter = new Interpreter();
         var exception = await Assert.ThrowsAsync<InvalidResultTypeException>(async () => await interpreter.InterpretAsync(statements.ToAsyncEnumerable()));
 
-        Assert.Equal("TYP005", exception.ErrorCode);
+        Assert.Equal("TYP004", exception.ErrorCode);
     }
 }
