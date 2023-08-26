@@ -17,7 +17,7 @@ public class InvalidResultTypeException : IncompatibleTypesException
         return $"Invalid result type: expected {expectation}, got {got.ToTypeName()}";
     }
 
-    public InvalidResultTypeException(ResultType got, params ResultType[] expected) : base(5, null, BuildMessage(got, expected), "An expression evaluated to an unexpected type. Check what types of expression results are allowed in the current context.")
+    public InvalidResultTypeException(ResultType got, params ResultType[] expected) : base(4, null, BuildMessage(got, expected), "An expression evaluated to an unexpected type. Check what types of expression results are allowed in the current context.")
     {
     }
 }
