@@ -108,7 +108,8 @@ public class StatementParser
 
         var expressionTokens = tokenQueue.DequeueUntil(TokenType.NewLine);
 
-        tokenQueue.Dequeue(TokenType.NewLine);
+        if (tokenQueue.IsNotEmpty)
+            tokenQueue.Dequeue(TokenType.NewLine);
 
         Expression expression;
         if (expressionTokens.Count == 0)
@@ -125,7 +126,8 @@ public class StatementParser
 
         var expressionTokens = tokenQueue.DequeueUntil(TokenType.NewLine);
 
-        tokenQueue.Dequeue(TokenType.NewLine);
+        if (tokenQueue.IsNotEmpty)
+            tokenQueue.Dequeue(TokenType.NewLine);
 
         Expression expression;
         if (expressionTokens.Count == 0)
