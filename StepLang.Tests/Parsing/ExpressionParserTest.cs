@@ -77,12 +77,24 @@ public class ExpressionParserTest
     [Fact]
     public async Task TestParseThrowsUnexpectedEndOfTokensExceptionForEmptyExpression()
     {
-        await Assert.ThrowsAsync<UnexpectedEndOfTokensException>(() => ExpressionParser.ParseAsync(Array.Empty<Token>()));
+        var exception = await Assert.ThrowsAsync<UnexpectedEndOfTokensException>(() => ExpressionParser.ParseAsync(Array.Empty<Token>()));
+
+        Assert.Equal("PAR002", exception.ErrorCode);
     }
 
     [Fact]
     public async Task TestParseThrowsUnexpectedEndOfTokensExceptionForMissingRightOperand()
     {
-        await Assert.ThrowsAsync<UnexpectedEndOfTokensException>(() => ExpressionParser.ParseAsync(new[] { new Token(TokenType.LiteralNumber, "1", null), new Token(TokenType.PlusSymbol, "+", null) }));
+        var exception = await Assert.ThrowsAsync<UnexpectedEndOfTokensException>(() => ExpressionParser.ParseAsync(new[] { new Token(TokenType.LiteralNumber, "1", null), new Token(TokenType.PlusSymbol, "+", null) }));
+
+        Assert.Equal("PAR002", exception.ErrorCode);
+    }
+
+    [Fact]
+    public async Task TestInvalidExpressionIsThrownForEmptyParentheses()
+    {
+        var exception = await Assert.ThrowsAsync<InvalidExpressionException>(() => ExpressionParser.ParseAsync(new[] { new Token(TokenType.OpeningParentheses, "(", null), new Token(TokenType.ClosingParentheses, ")", null) }));
+
+        Assert.Equal("PAR008", exception.ErrorCode);
     }
 }
