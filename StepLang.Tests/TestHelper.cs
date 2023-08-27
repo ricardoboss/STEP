@@ -1,4 +1,3 @@
-using StepLang.Parsing.Expressions;
 using StepLang.Parsing.Statements;
 using StepLang.Tokenizing;
 
@@ -13,11 +12,6 @@ public static class TestHelper
         return tokenizer.TokenizeAsync();
     }
 
-    public static async Task<Expression> AsExpressionAsync(this string code)
-    {
-        return await ExpressionParser.ParseAsync(code.AsTokens(), CancellationToken.None);
-    }
-
     public static async Task<List<Statement>> AsStatementsAsync(this string code)
     {
         var parser = new StatementParser();
@@ -30,5 +24,12 @@ public static class TestHelper
         var statements = await code.AsStatementsAsync();
 
         return statements.Single();
+    }
+
+    public static StatementParser AsParsable(this string code)
+    {
+        var parser = new StatementParser();
+        parser.Add(code.AsTokens());
+        return parser;
     }
 }
