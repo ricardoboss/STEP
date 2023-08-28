@@ -49,7 +49,7 @@ public class TokenizerTest
     }
 
     [Fact]
-    public void TestTokenizeLiteralNegativeWithDecimalsNumber()
+    public void TestTokenizeLiteralNegativeNumberWithDecimals()
     {
         const string source = "-1.23";
 
