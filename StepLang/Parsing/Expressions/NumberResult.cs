@@ -10,4 +10,6 @@ public class NumberResult : ValueExpressionResult<double>
     }
 
     public bool IsInteger => Math.Abs(Value % 1) < double.Epsilon * 100;
+
+    public int RoundedIntValue => (int)Math.Round(Value);
 }
