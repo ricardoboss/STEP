@@ -173,7 +173,7 @@ public class Tokenizer
 
     private static bool IsPartOfLiteralNumber(char c)
     {
-        return char.IsDigit(c) || c is '.' or '-' or '+';
+        return char.IsDigit(c) || c is '.' or '-';
     }
 
     private Token FinalizeToken(TokenType type)
