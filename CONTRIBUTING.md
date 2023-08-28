@@ -56,8 +56,8 @@ all contributors.
 
 1. Create a new branch for your feature or bug fix:
    ```bash
-   # if an issue you want to fix exists, use issue/<id>-<description>:
-   git checkout -b issue/26-contribution-docs
+   # if an issue you want to fix exists, use issues/<id>-<description>:
+   git checkout -b issues/26-contribution-docs
    
    # if no issue exists or is not applicable, choose an appropriate category and give it a short description:
    git checkout -b meta/change-project-name
