@@ -246,6 +246,16 @@ public abstract class Expression
         });
     }
 
+    public static Expression Negate(Expression expression)
+    {
+        return new UnaryExpression("-", expression, result =>
+        {
+            var value = result.ExpectNumber().Value;
+
+            return new NumberResult(-value);
+        });
+    }
+
     public static Expression Constant(double value) => new ConstantExpression(new NumberResult(value));
 
     public static Expression Constant(string value) => new ConstantExpression(new StringResult(value));
