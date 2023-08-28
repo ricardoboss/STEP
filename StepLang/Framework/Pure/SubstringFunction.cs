@@ -25,7 +25,7 @@ public class SubstringFunction : NativeFunction
         if (start < 0)
             start = subject.Length + start;
 
-        if (start >= subject.Length)
+        if (start < 0 || start >= subject.Length)
             return StringResult.Empty;
 
         length = Math.Min(length, subject.Length - start);

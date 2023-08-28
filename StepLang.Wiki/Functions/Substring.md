@@ -18,7 +18,7 @@ substring(string subject, number start, number length)
 - If `length` is 0 or negative, the function will return an empty string.
 - If `start + length` is greater than the number of characters remaining in the string, the substring will be truncated to the remaining characters.
 - If `start` or `length` is not an integer, it will be rounded to the nearest integer (0.5 rounds up).
-- If `start` is negative, it is treated as starting from the end of the subject. For example, if `start` is -3 and `length` is 3, the function will return the last 3 characters of the string.
+- If `start` is negative, it is treated as starting from the end of the subject. For example, if `start` is -3 and `length` is 3, the function will return the last 3 characters of the string. If the absolute value is greater than the number of characters in `subject`, an empty string is returned.
 
 # Examples
 
@@ -30,7 +30,8 @@ substring("Hello, world!", 7, 0)   # ""
 substring("Hello, world!", 7, -1)  # ""
 substring("Hello, world!", 7, 1.5) # "wo"
 substring("Hello, world!", 7.5, 1) # "o"
-substring("Hello, world!", 100, 5) # ""
+substring("Hello, world!", 14, 5) # ""
+substring("Hello, world!", -14, 5) # ""
 substring("Hello, world!", -1, 3)  # "!"
 substring("Hello, world!", -2, 3)  # "d!"
 substring("Hello, world!", -3, 3)  # "ld!"
