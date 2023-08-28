@@ -33,6 +33,38 @@ public class TokenizerTest
     }
 
     [Fact]
+    public void TestTokenizeLiteralNegativeNumber()
+    {
+        const string source = "-123";
+
+        var tokenizer = new Tokenizer();
+        tokenizer.Add(source);
+        var tokens = tokenizer.TokenizeAsync().ToArray();
+
+        Assert.Equal(2, tokens.Length);
+        Assert.Equal(TokenType.MinusSymbol, tokens[0].Type);
+        Assert.Equal("-", tokens[0].Value);
+        Assert.Equal(TokenType.LiteralNumber, tokens[1].Type);
+        Assert.Equal("123", tokens[1].Value);
+    }
+
+    [Fact]
+    public void TestTokenizeLiteralNegativeWithDecimalsNumber()
+    {
+        const string source = "-1.23";
+
+        var tokenizer = new Tokenizer();
+        tokenizer.Add(source);
+        var tokens = tokenizer.TokenizeAsync().ToArray();
+
+        Assert.Equal(2, tokens.Length);
+        Assert.Equal(TokenType.MinusSymbol, tokens[0].Type);
+        Assert.Equal("-", tokens[0].Value);
+        Assert.Equal(TokenType.LiteralNumber, tokens[1].Type);
+        Assert.Equal("1.23", tokens[1].Value);
+    }
+
+    [Fact]
     public void TestTokenizeLiteralStringWithSpaces()
     {
         const string source = "\"abc def\"";
