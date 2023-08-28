@@ -245,6 +245,12 @@ public class ExpressionParser
                 var map = mapExpressions.ToDictionary(p => p.Key, p => p.Value);
 
                 return new MapExpression(map);
+            case TokenType.MinusSymbol when tokenQueue.TryPeekType(out var nextTokenType) && nextTokenType is TokenType.LiteralNumber:
+                var numberToken = tokenQueue.Dequeue(TokenType.LiteralNumber);
+                if (double.TryParse(numberToken.Value, NumberStyles.Any, CultureInfo.InvariantCulture, out var number))
+                    return Expression.Constant(-number);
+
+                throw new FormatException("Invalid number format.");
             case var _ when currentTokenType.IsMathematicalOperation():
                 throw new NotImplementedException("Cannot parse mathematical operation as expression");
             default:
