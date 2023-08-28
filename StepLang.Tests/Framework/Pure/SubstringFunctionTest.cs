@@ -14,6 +14,8 @@ public class SubstringFunctionTest
     [InlineData("substring(\"Hello, world!\", 7, 0)", "")]
     [InlineData("substring(\"Hello, world!\", 7, -1)", "")]
     [InlineData("substring(\"Hello, world!\", 7, 1.5)", "wo")]
+    [InlineData("substring(\"Hello, world!\", 7.5, 1)", "o")]
+    [InlineData("substring(\"Hello, world!\", 100, 5)", "")]
     [InlineData("substring(\"Hello, world!\", -1, 3)", "!")]
     [InlineData("substring(\"Hello, world!\", -2, 3)", "d!")]
     [InlineData("substring(\"Hello, world!\", -3, 3)", "ld!")]
