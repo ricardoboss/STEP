@@ -18,38 +18,38 @@ number pi = 3.141592
 
 string name = "John"
 if (name == "John") {
-    println("Hello, ", name)
+	println("Hello, ", name)
 } else {
-    println("Who are you?")
+	println("Who are you?")
 }
 
 string guess
 number parsedGuess
 number tries = 0
 while (tries <= 3) {
-    print("Guess PI: ")
-    guess = readline()
-    parsedGuess = parse("number", guess)
-    if (parsedGuess == null) {
-        println("Enter a valid number!")
+	print("Guess PI: ")
+	guess = readline()
+	parsedGuess = parse("number", guess)
+	if (parsedGuess == null) {
+		println("Enter a valid number!")
 
-        tries++
+		tries++
 
-        continue
-    }
+		continue
+	}
 
-    if (parsedGuess == pi) {
-        println("Close enough!")
-        break
-    } else {
-        if (parsedGuess > 4 || parsedGuess < 3) {
-            println("Way off! ", 3 - tries, " tries left.")
-        } else {
-            println("Nope, try again. ", 3 - tries, " tries left.")
-        }
-    }
+	if (parsedGuess == pi) {
+		println("Close enough!")
+		break
+	} else {
+		if (parsedGuess > 4 || parsedGuess < 3) {
+			println("Way off! ", 3 - tries, " tries left.")
+		} else {
+			println("Nope, try again. ", 3 - tries, " tries left.")
+		}
+	}
 
-    tries++
+	tries++
 }
 
 print("Goodbye", EOL)
@@ -73,7 +73,7 @@ Another reason was my desire to create a language that can be taught to people w
 
 ## What does it do better than other languages?
 
-It uses very little keywords and not many symbols, so new programmers can focus on the important stuff.
+It uses very little keywords and not many symbols, so rookie programmers can focus on the important stuff.
 Like many other languages, it also uses C-like syntax, which is very common and prepares new programmers for other,
 more advanced languages.
 
@@ -82,10 +82,16 @@ more advanced languages.
 Take a look at the [`StepLang/Examples`](./StepLang/Examples) folder.
 It contains a few examples of STEP code, which you can run using the interpreter.
 
+Tutorials are planned in https://github.com/ricardoboss/STEP/issues/29.
+
 If you ever need help, feel free to join @ricardoboss' [Discord server](https://discord.gg/ySpmcdCqFN).
 
 ## Can I contribute?
 
-Sure, open a PR with your feature and corresponding tests.
-If it's something I want to develop myself however, I might not merge it.
-This is because, well, I want to learn it myself.
+Of course!
+Make sure to read [`CONTRIBUTING.md`](./CONTRIBUTING.md) to get started and make yourself familiar with the workflow.
+
+## License
+
+This project is licensed under the MIT license.
+For more information, read [`LICENSE.md`](./LICENSE.md).
