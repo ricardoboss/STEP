@@ -9,7 +9,7 @@ substring(string subject, number start, number length)
 ```
 
 - `subject` is the string to take a substring from.
-- `start` is the index of the first character to include in the substring (0-based). Must be greater than or equal to 0.
+- `start` is the index of the first character to include in the substring (0-based).
 - `length` is the number of characters to include in the substring. Must be greater than or equal to 0.
 
 # Remarks
