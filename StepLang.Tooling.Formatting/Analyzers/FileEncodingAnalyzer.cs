@@ -7,13 +7,13 @@ public class FileEncodingAnalyzer : IFileAnalyzer
 {
     private static readonly Encoding DefaultEncoding = Encoding.UTF8;
 
-    public async Task<FileAnalysisResult> AnalyzeAsync(FileInfo input, CancellationToken cancellationToken = default)
+    public async Task<FileAnalysisResult> AnalyzeAsync(FileInfo original, CancellationToken cancellationToken = default)
     {
-        await using var stream = new FileStream(input.FullName, FileMode.Open, FileAccess.Read);
+        await using var stream = new FileStream(original.FullName, FileMode.Open, FileAccess.Read);
 
         var usedEncoding = GetEncoding(stream, DefaultEncoding);
         if (Equals(usedEncoding, DefaultEncoding))
-            return new(false, input);
+            return FileAnalysisResult.RetainOriginal(original);
 
         var tempFile = Path.GetTempFileName();
 
@@ -22,7 +22,7 @@ public class FileEncodingAnalyzer : IFileAnalyzer
         await tempWriter.WriteAsync(await fileReader.ReadToEndAsync(cancellationToken));
         await tempWriter.FlushAsync();
 
-        return new(true, new(tempFile));
+        return FileAnalysisResult.FixedAt(new(tempFile));
     }
 
     private static Encoding GetEncoding(Stream stream, Encoding fallback)
