@@ -2,7 +2,7 @@ namespace StepLang.CLI;
 
 internal sealed record VerbosityWriter(TextWriter Writer, Verbosity Verbosity)
 {
-    public async Task Quiet(string value)
+    public async Task Loud(string value)
     {
         if (Verbosity.IsAtLeast(Verbosity.Quiet))
             await Writer.WriteLineAsync(value);

@@ -1,4 +1,4 @@
-using StepLang.Tooling.Formatting.Fixers;
+using StepLang.Tooling.Formatting.Analyzers;
 
 namespace StepLang.Tooling.Formatting.Tests.Fixers;
 
@@ -13,9 +13,9 @@ public class TypeNameCasingFixerTest
     [InlineData("\"Nested \\\"Bool\\\" String\"", "\"Nested \\\"Bool\\\" String\"")]
     public async Task TestKeywordCasingFixer(string input, string output)
     {
-        var fixer = new TypeNameCasingFixer();
+        var fixer = new TypeNameCasingAnalyzer();
 
-        var result = await fixer.FixAsync(input, CancellationToken.None);
+        var result = await fixer.AnalyzeAsync(input, CancellationToken.None);
 
         Assert.Equal(output, result.FixedString);
         Assert.Equal(!string.Equals(input, output, StringComparison.Ordinal), result.FixRequired);

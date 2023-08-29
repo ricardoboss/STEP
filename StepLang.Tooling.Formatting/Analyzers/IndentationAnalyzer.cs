@@ -1,11 +1,11 @@
 using System.Text;
-using StepLang.Tooling.Formatting.Fixers.Results;
+using StepLang.Tooling.Formatting.Analyzers.Results;
 
-namespace StepLang.Tooling.Formatting.Fixers;
+namespace StepLang.Tooling.Formatting.Analyzers;
 
-public class IndentationFixer : IStringFixer
+public class IndentationAnalyzer : IStringAnalyzer
 {
-    public Task<StringFixResult> FixAsync(string input, CancellationToken cancellationToken = default)
+    public Task<StringAnalysisResult> AnalyzeAsync(string input, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -33,6 +33,6 @@ public class IndentationFixer : IStringFixer
             }
         }
 
-        return Task.FromResult(StringFixResult.FromInputAndFix(input, builder.ToString()));
+        return Task.FromResult(StringAnalysisResult.FromInputAndFix(input, builder.ToString()));
     }
 }

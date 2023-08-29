@@ -1,4 +1,4 @@
-using StepLang.Tooling.Formatting.Fixers;
+using StepLang.Tooling.Formatting.Analyzers;
 
 namespace StepLang.Tooling.Formatting.Tests.Fixers;
 
@@ -10,9 +10,9 @@ public class LineEndingFixerTest
     [InlineData("\r\n\r\n", "\n\n")]
     public async Task TestLineEndingFixerFixesLineEndings(string input, string output)
     {
-        var fixer = new LineEndingFixer();
+        var fixer = new LineEndingAnalyzer();
 
-        var result = await fixer.FixAsync(input, CancellationToken.None);
+        var result = await fixer.AnalyzeAsync(input, CancellationToken.None);
 
         Assert.Equal(output, result.FixedString);
         Assert.Equal(!string.Equals(input, output, StringComparison.Ordinal), result.FixRequired);

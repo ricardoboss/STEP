@@ -1,7 +1,7 @@
 using System.Globalization;
 using Pastel;
-using StepLang.Tooling.Formatting.Applicators;
-using StepLang.Tooling.Formatting.FixerSets;
+using StepLang.Tooling.Formatting.AnalyzerSet;
+using StepLang.Tooling.Formatting.Fixers;
 
 namespace StepLang.CLI;
 
@@ -21,59 +21,59 @@ internal static class FormatCommand
         if (filesOrDirs.Length == 0)
             filesOrDirs = new[] { "." };
 
-        IFixApplicator fixApplicator = dryRun ? new DryRunFixApplicator() : new DefaultFixApplicator();
+        IFixer fixer = dryRun ? new DryRunFixer() : new DefaultFixer();
 
         var files = new HashSet<FileInfo>();
 
-        fixApplicator.AfterApplyFix += async (_, f) =>
+        fixer.AfterApplyFix += async (_, f) =>
         {
             files.Add(f.File);
 
             await stdout.Verbose(
-                $"Applied fixer '{f.Fixer.Name.Pastel(ConsoleColor.DarkMagenta)}' to '{f.File.Name.Pastel(ConsoleColor.DarkCyan)}'");
+                $"Applied analyzer '{f.Analyzer.Name.Pastel(ConsoleColor.DarkMagenta)}' to '{f.File.Name.Pastel(ConsoleColor.DarkCyan)}'");
         };
 
-        var fixerSet = new DefaultFixerSet();
+        var analyzers = new DefaultAnalyzerSet();
 
         var results = await filesOrDirs
             .ToAsyncEnumerable()
             .AggregateAwaitAsync(
-                FixApplicatorResult.Zero,
-                async (current, fileOrDir) => current + await Format(fileOrDir, fixApplicator, fixerSet)
+                FixerResult.None,
+                async (current, fileOrDir) => current + await Fix(fileOrDir, fixer, analyzers)
             );
 
         await stdout.Normal(
             $"{(dryRun ? "Would have fixed" : "Fixed")} {files.Count.ToString(CultureInfo.InvariantCulture).Pastel(ConsoleColor.Green)} file(s) in {results.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture).Pastel(ConsoleColor.DarkCyan)} seconds.");
 
         if (setExitCode)
-            return results.AppliedFixers + results.FailedFixers > 0 ? 1 : 0;
+            return results.AppliedFixes > 0 ? 1 : 0;
 
         return 0;
     }
 
-    private static async Task<FixApplicatorResult> Format(string fileOrDir, IFixApplicator fixApplicator,
-        IFixerSet fixerSet)
+    private static async Task<FixerResult> Fix(string fileOrDir, IFixer fixer,
+        IAnalyzerSet analyzers)
     {
-        FixApplicatorResult changes;
+        FixerResult result;
         if (File.Exists(fileOrDir))
         {
             var file = new FileInfo(fileOrDir);
             await stdout.Normal($"Formatting file '{file.FullName.Pastel(ConsoleColor.DarkBlue)}'...");
-            changes = await fixApplicator.ApplyFixesAsync(fixerSet, file);
+            result = await fixer.FixAsync(analyzers, file);
         }
         else if (Directory.Exists(fileOrDir))
         {
             var dir = new DirectoryInfo(fileOrDir);
             await stdout.Normal($"Formatting directory '{dir.FullName.Pastel(ConsoleColor.DarkBlue)}'...");
-            changes = await fixApplicator.ApplyFixesAsync(fixerSet, dir);
+            result = await fixer.FixAsync(analyzers, dir);
         }
         else
         {
-            await stderr.Normal($"The path '{fileOrDir.Pastel(ConsoleColor.DarkBlue)}' is not a file or directory.");
+            await stderr.Loud($"The path '{fileOrDir.Pastel(ConsoleColor.DarkBlue)}' is not a file or directory.");
 
-            return FixApplicatorResult.Zero;
+            return FixerResult.None;
         }
 
-        return changes;
+        return result;
     }
 }
