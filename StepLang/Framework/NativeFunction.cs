@@ -15,4 +15,10 @@ public abstract class NativeFunction : FunctionDefinition
         if (arguments.Count != expectedCount)
             throw new InvalidArgumentCountException(expectedCount, arguments.Count);
     }
+
+    protected static void CheckArgumentCount(IReadOnlyList<Expression> arguments, int minCount, int maxCount)
+    {
+        if (arguments.Count < minCount || arguments.Count > maxCount)
+            throw new InvalidArgumentCountException(minCount, arguments.Count, maxCount);
+    }
 }
