@@ -1,9 +1,21 @@
+using StepLang.Tooling.Formatting.Analyzers;
+
 namespace StepLang.Tooling.Formatting.Fixers;
 
-/// <summary>
-/// This is just a marker for all fixers.
-/// </summary>
 public interface IFixer
 {
-    public string Name => GetType().Name;
+    public event EventHandler<BeforeFixerRanEventArgs>? BeforeApplyFix;
+
+    public event EventHandler<AfterFixerRanEventArgs>? AfterApplyFix;
+
+    public bool ThrowOnFailure { get; init; }
+
+    public Task<FixerResult> FixAsync(IAnalyzer analyzer, FileInfo file, CancellationToken cancellationToken = default);
+    public Task<FixerResult> FixAsync(IEnumerable<IAnalyzer> analyzers, FileInfo file, CancellationToken cancellationToken = default);
+    public Task<FixerResult> FixAsync(IAnalyzer analyzer, DirectoryInfo directory, CancellationToken cancellationToken = default);
+    public Task<FixerResult> FixAsync(IEnumerable<IAnalyzer> analyzers, DirectoryInfo directory, CancellationToken cancellationToken = default);
+    public Task<FixerResult> FixAsync(IAnalyzer analyzer, IEnumerable<FileInfo> files, CancellationToken cancellationToken = default);
+    public Task<FixerResult> FixAsync(IEnumerable<IAnalyzer> analyzers, IEnumerable<FileInfo> files, CancellationToken cancellationToken = default);
+    public Task<FixerResult> FixAsync(IAnalyzer analyzer, IEnumerable<DirectoryInfo> directories, CancellationToken cancellationToken = default);
+    public Task<FixerResult> FixAsync(IEnumerable<IAnalyzer> analyzers, IEnumerable<DirectoryInfo> directories, CancellationToken cancellationToken = default);
 }

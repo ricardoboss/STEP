@@ -1,11 +1,11 @@
 using System.Diagnostics;
-using StepLang.Tooling.Formatting.Fixers.Results;
+using StepLang.Tooling.Formatting.Analyzers.Results;
 
-namespace StepLang.Tooling.Formatting.Applicators;
+namespace StepLang.Tooling.Formatting.Fixers;
 
-public class DefaultFixApplicator : BaseFixApplicator
+public class DefaultFixer : BaseFixer
 {
-    protected override async Task<FixApplicatorResult> ApplyResult(FixResult result, FileInfo file,
+    protected override async Task<FixerResult> ApplyResult(AnalysisResult result, FileInfo file,
         CancellationToken cancellationToken)
     {
         Stopwatch sw = new();
@@ -14,10 +14,10 @@ public class DefaultFixApplicator : BaseFixApplicator
 
         switch (result)
         {
-            case StringFixResult stringFixResult:
+            case StringAnalysisResult stringFixResult:
                 await File.WriteAllTextAsync(file.FullName, stringFixResult.FixedString, cancellationToken);
                 break;
-            case FileFixResult fileFixResult:
+            case FileAnalysisResult fileFixResult:
                 fileFixResult.FixedFile.MoveTo(file.FullName, true);
                 break;
             default:
@@ -26,6 +26,6 @@ public class DefaultFixApplicator : BaseFixApplicator
 
         sw.Stop();
 
-        return new(1, 0, sw.Elapsed);
+        return FixerResult.Applied(1, sw.Elapsed);
     }
 }

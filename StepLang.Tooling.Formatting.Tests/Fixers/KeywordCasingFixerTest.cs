@@ -1,4 +1,4 @@
-using StepLang.Tooling.Formatting.Fixers;
+using StepLang.Tooling.Formatting.Analyzers;
 
 namespace StepLang.Tooling.Formatting.Tests.Fixers;
 
@@ -18,9 +18,9 @@ public class KeywordCasingFixerTest
     [InlineData("rETURN", "return")]
     public async Task TestKeywordCasingFixer(string input, string output)
     {
-        var fixer = new KeywordCasingFixer();
+        var fixer = new KeywordCasingAnalyzer();
 
-        var result = await fixer.FixAsync(input, CancellationToken.None);
+        var result = await fixer.AnalyzeAsync(input, CancellationToken.None);
 
         Assert.Equal(output, result.FixedString);
         Assert.Equal(!string.Equals(input, output, StringComparison.Ordinal), result.FixRequired);

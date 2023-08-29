@@ -1,13 +1,13 @@
-using StepLang.Tooling.Formatting.Fixers;
+using StepLang.Tooling.Formatting.Analyzers;
 
 namespace StepLang.Tooling.Formatting;
 
 public class FixerException : Exception
 {
-    public IFixer Fixer { get; }
+    public IAnalyzer Analyzer { get; }
 
-    public FixerException(IFixer fixer, string? message = null, Exception? inner = null) : base(message, inner)
+    public FixerException(IAnalyzer analyzer, string? message = null, Exception? inner = null) : base(message, inner)
     {
-        Fixer = fixer;
+        Analyzer = analyzer;
     }
 }

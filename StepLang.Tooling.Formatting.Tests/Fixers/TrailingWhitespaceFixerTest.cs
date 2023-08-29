@@ -1,4 +1,4 @@
-using StepLang.Tooling.Formatting.Fixers;
+using StepLang.Tooling.Formatting.Analyzers;
 
 namespace StepLang.Tooling.Formatting.Tests.Fixers;
 
@@ -22,9 +22,9 @@ public class TrailingWhitespaceFixerTest
     [InlineData("a\t\n\tb\n", "a\n\tb\n")]
     public async Task TestApplyRemovesTrailingWhitespace(string input, string output)
     {
-        var fixer = new TrailingWhitespaceFixer();
+        var fixer = new TrailingWhitespaceAnalyzer();
 
-        var result = await fixer.FixAsync(input, CancellationToken.None);
+        var result = await fixer.AnalyzeAsync(input, CancellationToken.None);
 
         Assert.Equal(output, result.FixedString);
         Assert.Equal(!string.Equals(input, output, StringComparison.Ordinal), result.FixRequired);

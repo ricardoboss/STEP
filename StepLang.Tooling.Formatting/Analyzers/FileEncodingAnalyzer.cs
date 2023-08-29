@@ -1,13 +1,13 @@
 using System.Text;
-using StepLang.Tooling.Formatting.Fixers.Results;
+using StepLang.Tooling.Formatting.Analyzers.Results;
 
-namespace StepLang.Tooling.Formatting.Fixers;
+namespace StepLang.Tooling.Formatting.Analyzers;
 
-public class FileEncodingFixer : IFileFixer
+public class FileEncodingAnalyzer : IFileAnalyzer
 {
     private static readonly Encoding DefaultEncoding = Encoding.UTF8;
 
-    public async Task<FileFixResult> FixAsync(FileInfo input, CancellationToken cancellationToken = default)
+    public async Task<FileAnalysisResult> AnalyzeAsync(FileInfo input, CancellationToken cancellationToken = default)
     {
         await using var stream = new FileStream(input.FullName, FileMode.Open, FileAccess.Read);
 

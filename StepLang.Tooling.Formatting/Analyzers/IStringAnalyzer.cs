@@ -1,8 +1,8 @@
-using StepLang.Tooling.Formatting.Fixers.Results;
+using StepLang.Tooling.Formatting.Analyzers.Results;
 
-namespace StepLang.Tooling.Formatting.Fixers;
+namespace StepLang.Tooling.Formatting.Analyzers;
 
-public interface IStringFixer : IFixer
+public interface IStringAnalyzer : IAnalyzer
 {
     /// <summary>
     /// Applies a fix to the input string.
@@ -10,5 +10,5 @@ public interface IStringFixer : IFixer
     /// <param name="input">A string to apply the fix to.</param>
     /// <param name="cancellationToken">A cancellation token.</param>
     /// <returns>A result containing a string with the applied fix.</returns>
-    Task<StringFixResult> FixAsync(string input, CancellationToken cancellationToken = default);
+    Task<StringAnalysisResult> AnalyzeAsync(string input, CancellationToken cancellationToken = default);
 }
