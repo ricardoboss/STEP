@@ -39,7 +39,7 @@ public class TokenizerTest
 
         var tokenizer = new Tokenizer();
         tokenizer.Add(source);
-        var tokens = tokenizer.TokenizeAsync().ToArray();
+        var tokens = tokenizer.Tokenize().ToArray();
 
         Assert.Equal(2, tokens.Length);
         Assert.Equal(TokenType.MinusSymbol, tokens[0].Type);
@@ -55,7 +55,7 @@ public class TokenizerTest
 
         var tokenizer = new Tokenizer();
         tokenizer.Add(source);
-        var tokens = tokenizer.TokenizeAsync().ToArray();
+        var tokens = tokenizer.Tokenize().ToArray();
 
         Assert.Equal(2, tokens.Length);
         Assert.Equal(TokenType.MinusSymbol, tokens[0].Type);

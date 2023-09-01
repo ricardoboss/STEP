@@ -30,7 +30,7 @@ public class SubstringFunctionTest
     {
         var tokenizer = new Tokenizer();
         tokenizer.Add($"print({code})");
-        var tokens = tokenizer.TokenizeAsync();
+        var tokens = tokenizer.Tokenize();
 
         var parser = new StatementParser();
         parser.Add(tokens);
