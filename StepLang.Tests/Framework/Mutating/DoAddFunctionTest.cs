@@ -1,4 +1,5 @@
-﻿using StepLang.Framework.Mutating;
+using System.Diagnostics.CodeAnalysis;
+using StepLang.Framework.Mutating;
 using StepLang.Interpreting;
 using StepLang.Parsing.Expressions;
 using StepLang.Tokenizing;
@@ -26,6 +27,7 @@ public class DoAddFunctionTest
         Assert.Equal(previousCount + 1, list.Value.Count);
     }
 
+    [SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Used by xUnit")]
     private sealed class DoAddData : TheoryData<ListResult, Expression>
     {
         public DoAddData()
