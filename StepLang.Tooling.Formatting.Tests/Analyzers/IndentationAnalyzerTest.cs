@@ -1,8 +1,8 @@
 using StepLang.Tooling.Formatting.Analyzers;
 
-namespace StepLang.Tooling.Formatting.Tests.Fixers;
+namespace StepLang.Tooling.Formatting.Tests.Analyzers;
 
-public class IndentationFixerTest
+public class IndentationAnalyzerTest
 {
     [Theory]
     [InlineData("a", "a")]
@@ -15,7 +15,7 @@ public class IndentationFixerTest
     [InlineData("\r\n\r\n", "\r\n\r\n")]
     [InlineData("   \r\n\t\r\n", "\r\n\r\n")]
     [InlineData("{\n\t\n\n}\n", "{\n\n\n}\n")]
-    public async Task TestApplyReplacesIndentsWithTabs(string input, string output)
+    public async Task TestIndentationAnalyzer(string input, string output)
     {
         var fixer = new IndentationAnalyzer();
 

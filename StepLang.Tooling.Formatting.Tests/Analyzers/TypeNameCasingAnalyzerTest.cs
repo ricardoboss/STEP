@@ -1,8 +1,8 @@
 using StepLang.Tooling.Formatting.Analyzers;
 
-namespace StepLang.Tooling.Formatting.Tests.Fixers;
+namespace StepLang.Tooling.Formatting.Tests.Analyzers;
 
-public class TypeNameCasingFixerTest
+public class TypeNameCasingAnalyzerTest
 {
     [Theory]
     [InlineData("a", "a")]
@@ -11,7 +11,7 @@ public class TypeNameCasingFixerTest
     [InlineData("bOOl ", "bool ")]
     [InlineData("\"Don't fix within String\"", "\"Don't fix within String\"")]
     [InlineData("\"Nested \\\"Bool\\\" String\"", "\"Nested \\\"Bool\\\" String\"")]
-    public async Task TestKeywordCasingFixer(string input, string output)
+    public async Task TestTypeNameCasingAnalyzer(string input, string output)
     {
         var fixer = new TypeNameCasingAnalyzer();
 

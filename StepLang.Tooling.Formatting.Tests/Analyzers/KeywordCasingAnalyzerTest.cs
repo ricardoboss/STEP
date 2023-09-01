@@ -1,8 +1,8 @@
 using StepLang.Tooling.Formatting.Analyzers;
 
-namespace StepLang.Tooling.Formatting.Tests.Fixers;
+namespace StepLang.Tooling.Formatting.Tests.Analyzers;
 
-public class KeywordCasingFixerTest
+public class KeywordCasingAnalyzerTest
 {
     [Theory]
     [InlineData("a", "a")]
@@ -16,7 +16,7 @@ public class KeywordCasingFixerTest
     [InlineData("Else", "else")]
     [InlineData("WHILe", "while")]
     [InlineData("rETURN", "return")]
-    public async Task TestKeywordCasingFixer(string input, string output)
+    public async Task TestKeywordCasingAnalyzer(string input, string output)
     {
         var fixer = new KeywordCasingAnalyzer();
 
