@@ -1,8 +1,8 @@
 using StepLang.Tooling.Formatting.Analyzers;
 
-namespace StepLang.Tooling.Formatting.Tests.Fixers;
+namespace StepLang.Tooling.Formatting.Tests.Analyzers;
 
-public class TrailingWhitespaceFixerTest
+public class TrailingWhitespaceAnalyzerTest
 {
     [Theory]
     [InlineData("a", "a")]
@@ -20,7 +20,7 @@ public class TrailingWhitespaceFixerTest
     [InlineData("a\n b\n ", "a\n b\n")]
     [InlineData("a \n b\n", "a\n b\n")]
     [InlineData("a\t\n\tb\n", "a\n\tb\n")]
-    public async Task TestApplyRemovesTrailingWhitespace(string input, string output)
+    public async Task TestTrailingWhitespaceAnalyzer(string input, string output)
     {
         var fixer = new TrailingWhitespaceAnalyzer();
 
