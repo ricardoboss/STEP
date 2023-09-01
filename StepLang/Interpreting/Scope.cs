@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using StepLang.Framework.Conversion;
 using StepLang.Framework.IO;
+using StepLang.Framework.Mutating;
 using StepLang.Framework.Other;
 using StepLang.Framework.Pure;
 using StepLang.Framework.Reflection;
@@ -30,6 +31,9 @@ public class Scope
         SetVariable(ParseFunction.Identifier, new FunctionResult(new ParseFunction()));
         SetVariable(JsonEncodeFunction.Identifier, new FunctionResult(new JsonEncodeFunction()));
         SetVariable(JsonDecodeFunction.Identifier, new FunctionResult(new JsonDecodeFunction()));
+
+        // mutating functions
+        SetVariable(DoAddFunction.Identifier, new FunctionResult(new DoAddFunction()));
 
         // pure functions
         SetVariable(SubstringFunction.Identifier, new FunctionResult(new SubstringFunction()));

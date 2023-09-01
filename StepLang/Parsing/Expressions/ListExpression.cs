@@ -2,7 +2,7 @@ using StepLang.Interpreting;
 
 namespace StepLang.Parsing.Expressions;
 
-internal sealed class ListExpression : Expression
+public sealed class ListExpression : Expression
 {
     private readonly IReadOnlyList<Expression> expressions;
 
