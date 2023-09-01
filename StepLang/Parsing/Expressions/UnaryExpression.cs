@@ -22,5 +22,5 @@ public class UnaryExpression : Expression
         return transform.Invoke(result);
     }
 
-    protected override string DebugDisplay() => $"({debugName} ({expression})";
+    protected override string DebugDisplay() => $"{debugName} {expression}";
 }

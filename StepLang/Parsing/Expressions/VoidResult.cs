@@ -8,4 +8,6 @@ public class VoidResult : ExpressionResult
     private VoidResult() : base(ResultType.Void)
     {
     }
+
+    public override string ToString() => "void";
 }

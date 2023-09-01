@@ -8,4 +8,6 @@ public class MapResult : ValueExpressionResult<IDictionary<string, ExpressionRes
     public MapResult(IDictionary<string, ExpressionResult> value) : base(ResultType.Map, value)
     {
     }
+
+    public override string ToString() => $"{{ {string.Join(", ", Value.Select(kvp => $"{kvp.Key}: {kvp.Value}"))} }}";
 }

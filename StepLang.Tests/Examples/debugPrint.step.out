@@ -1,0 +1,9 @@
+﻿<ConstantExpression: "string">
+<ConstantExpression: 123>
+<ConstantExpression: True>
+<ListExpression: [<ConstantExpression: "a">, <ConstantExpression: 1>, <ConstantExpression: False>]>
+<MapExpression: { a: <ConstantExpression: 1>, b: <ConstantExpression: 2>, c: <UnaryExpression: - <ConstantExpression: 3>> }>
+<FunctionDefinitionExpression: () { [0 statements] }>
+<UnaryExpression: ! <ConstantExpression: True>>
+<BinaryExpression: <ConstantExpression: 1> + <ConstantExpression: 2>>
+<VariableExpression: <Identifier: 'debugPrint'>>

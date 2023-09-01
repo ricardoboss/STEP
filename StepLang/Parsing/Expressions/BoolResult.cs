@@ -10,4 +10,6 @@ public class BoolResult : ValueExpressionResult<bool>
     public BoolResult(bool value) : base(ResultType.Bool, value)
     {
     }
+
+    public override string ToString() => Value.ToString();
 }

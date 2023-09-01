@@ -8,4 +8,6 @@ public class ListResult : ValueExpressionResult<IList<ExpressionResult>>
     public ListResult(IList<ExpressionResult> value) : base(ResultType.List, value)
     {
     }
+
+    public override string ToString() => $"[{string.Join(", ", Value)}]";
 }

@@ -25,5 +25,5 @@ public class BinaryExpression : Expression
         return combine.Invoke(leftValue, rightValue);
     }
 
-    protected override string DebugDisplay() => $"({left}) {debugName} ({right})";
+    protected override string DebugDisplay() => $"{left} {debugName} {right}";
 }

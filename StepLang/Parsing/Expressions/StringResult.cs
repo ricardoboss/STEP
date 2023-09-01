@@ -8,4 +8,6 @@ public class StringResult : ValueExpressionResult<string>
     public StringResult(string value) : base(ResultType.Str, value)
     {
     }
+
+    public override string ToString() => $"\"{Value}\"";
 }

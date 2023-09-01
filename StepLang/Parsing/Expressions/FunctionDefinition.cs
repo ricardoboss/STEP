@@ -18,6 +18,6 @@ public abstract class FunctionDefinition
         var paramStr = DebugParamsString;
         var bodyStr = DebugBodyString;
 
-        return $"<Function: ({paramStr}) => {{ {bodyStr} }}>";
+        return $"({paramStr}) => {{ {bodyStr} }}>";
     }
 }

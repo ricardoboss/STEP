@@ -11,4 +11,6 @@ public class FunctionResult : ValueExpressionResult<FunctionDefinition>
     public FunctionResult(FunctionDefinition value) : base(ResultType.Function, value)
     {
     }
+
+    public override string ToString() => Value.ToString();
 }

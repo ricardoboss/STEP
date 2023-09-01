@@ -8,4 +8,6 @@ public class NullResult : ExpressionResult
     private NullResult() : base(ResultType.Null)
     {
     }
+
+    public override string ToString() => "null";
 }

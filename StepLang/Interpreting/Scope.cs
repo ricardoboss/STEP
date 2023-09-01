@@ -33,6 +33,9 @@ public class Scope
         // pure functions
         SetVariable(SubstringFunction.Identifier, new FunctionResult(new SubstringFunction()));
 
+        // other functions
+        SetVariable(DebugPrintFunction.Identifier, new FunctionResult(new DebugPrintFunction()));
+
         SetVariable("null", NullResult.Instance);
 
         SetVariable("EOL", new StringResult(Environment.NewLine));
