@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using StepLang.Framework.Conversion;
 using StepLang.Framework.IO;
+using StepLang.Framework.Mutating;
 using StepLang.Framework.Other;
 using StepLang.Framework.Pure;
 using StepLang.Parsing.Expressions;
@@ -26,6 +27,9 @@ public class Scope
         SetVariable(PrintlnFunction.Identifier, new FunctionResult(new PrintlnFunction()));
         SetVariable(ReadlineFunction.Identifier, new FunctionResult(new ReadlineFunction()));
         SetVariable(ParseFunction.Identifier, new FunctionResult(new ParseFunction()));
+
+        // mutating functions
+        SetVariable(DoAddFunction.Identifier, new FunctionResult(new DoAddFunction()));
 
         // pure functions
         SetVariable(SubstringFunction.Identifier, new FunctionResult(new SubstringFunction()));
