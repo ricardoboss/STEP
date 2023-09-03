@@ -26,6 +26,7 @@ There are several ways you can contribute to STEP:
 - Submitting code enhancements or bug fixes through Pull Requests.
 - Improving our documentation.
 - Helping others by participating in discussions and answering questions.
+- Check out the [`good first issue` issues](https://github.com/ricardoboss/STEP/contribute) to choose an issue to work on.
 
 ## Code of Conduct
 
