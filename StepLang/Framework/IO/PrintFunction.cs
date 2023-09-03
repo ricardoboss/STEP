@@ -38,7 +38,17 @@ public class PrintFunction : NativeFunction
             case NullResult:
                 return "null";
             case ListResult { Value: var values }:
-                return $"[{string.Join(", ", values.Select(RenderValue))}]";
+                var renderedValues = values.Select(v =>
+                {
+                    string renderedValue;
+                    if (v is StringResult stringValue)
+                        renderedValue = $"\"{stringValue.Value}\"";
+                    else
+                        renderedValue = RenderValue(v);
+
+                    return renderedValue;
+                });
+                return $"[{string.Join(", ", renderedValues)}]";
             case MapResult { Value: var pairs }:
                 var renderedPairs = pairs.Select(pair =>
                 {
