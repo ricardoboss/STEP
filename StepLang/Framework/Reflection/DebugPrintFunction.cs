@@ -1,4 +1,4 @@
-﻿using StepLang.Interpreting;
+using StepLang.Interpreting;
 using StepLang.Parsing.Expressions;
 
 namespace StepLang.Framework.Reflection;
