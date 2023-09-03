@@ -89,7 +89,9 @@ If you ever need help, feel free to join @ricardoboss' [Discord server](https://
 ## Can I contribute?
 
 Of course!
-Make sure to read [`CONTRIBUTING.md`](./CONTRIBUTING.md) to get started and make yourself familiar with the workflow.
+Make sure to read [`CONTRIBUTING.md`](./CONTRIBUTING.md) and make yourself familiar with the workflow.
+
+Check out the [`good first issue` issues](https://github.com/ricardoboss/STEP/contribute) to get started.
 
 ## License
 
