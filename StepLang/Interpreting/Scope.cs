@@ -33,8 +33,9 @@ public class Scope
         // pure functions
         SetVariable(SubstringFunction.Identifier, new FunctionResult(new SubstringFunction()));
 
-        // converting functions
+        // conversion functions
         SetVariable(ToKeysFunction.Identifier, new FunctionResult(new ToKeysFunction()));
+        SetVariable(ToValuesFunction.Identifier, new FunctionResult(new ToValuesFunction()));
 
         SetVariable("null", NullResult.Instance);
 

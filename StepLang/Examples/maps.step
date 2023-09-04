@@ -13,3 +13,4 @@ d["z"] = 100
 println(nested["a"]["b"]["d"]["z"])
 
 println(toKeys(nested["a"]["b"]))
+println(toValues(nested["a"]["b"]["d"]))
