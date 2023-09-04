@@ -9,7 +9,7 @@ public static class TestHelper
     {
         var tokenizer = new Tokenizer();
         tokenizer.Add(code);
-        return tokenizer.TokenizeAsync();
+        return tokenizer.Tokenize();
     }
 
     public static async Task<List<Statement>> AsStatementsAsync(this string code)

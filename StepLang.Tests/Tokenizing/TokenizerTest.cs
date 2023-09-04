@@ -253,7 +253,7 @@ public class TokenizerTest
 
         var tokenizer = new Tokenizer();
         tokenizer.Add(source);
-        var exception = Assert.Throws<InvalidIdentifierException>(() => tokenizer.TokenizeAsync().ToList());
+        var exception = Assert.Throws<InvalidIdentifierException>(() => tokenizer.Tokenize().ToList());
 
         Assert.Equal("TOK001", exception.ErrorCode);
     }
