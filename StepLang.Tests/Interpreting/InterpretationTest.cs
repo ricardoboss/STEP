@@ -54,6 +54,19 @@ public class InterpretationTest
     }
 
     [Fact]
+    public async Task TestListIndexOutOfBoundsThrows()
+    {
+        var statements = await """
+                               list k = [1, 2, 3]
+                               doRemoveAt(k, 3)
+                               """.AsStatementsAsync();
+        var interpreter = new Interpreter();
+        var exception = await Assert.ThrowsAsync<IndexOutOfBoundsException>(async () => await interpreter.InterpretAsync(statements.ToAsyncEnumerable()));
+
+        Assert.Equal("INT005", exception.ErrorCode);
+    }
+
+    [Fact]
     public async Task TestInvalidValueAssignmentThrows()
     {
         var statement = await "number a = \"Hello\"".AsStatementAsync();

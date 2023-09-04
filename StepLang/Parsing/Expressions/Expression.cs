@@ -205,7 +205,10 @@ public abstract class Expression
                 case ResultType.List:
                     {
                         var values = a.ExpectList().Value;
-                        var index = (int)b.ExpectInteger().Value;
+                        var index = b.ExpectInteger().RoundedIntValue;
+
+                        if (index < 0 || index >= values.Count)
+                            throw new IndexOutOfBoundsException(index, values.Count);
 
                         return values[index];
                     }
@@ -219,7 +222,10 @@ public abstract class Expression
                 case ResultType.Str:
                     {
                         var value = a.ExpectString().Value;
-                        var index = (int)b.ExpectInteger().Value;
+                        var index = b.ExpectInteger().RoundedIntValue;
+
+                        if (index < 0 || index >= value.Length)
+                            throw new IndexOutOfBoundsException(index, value.Length);
 
                         return new StringResult(value[index].ToString());
                     }
