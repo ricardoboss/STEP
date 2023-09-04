@@ -30,7 +30,7 @@ public class FunctionCallStatement : Statement
         var result = await functionExpression.EvaluateAsync(interpreter, cancellationToken);
 
         if (result is not VoidResult)
-            throw new InvalidResultTypeException(ResultType.Void, result.ResultType);
+            throw new InvalidResultTypeException(result.ResultType, ResultType.Void);
     }
 
     /// <inheritdoc />
