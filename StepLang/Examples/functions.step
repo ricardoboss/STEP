@@ -47,4 +47,4 @@ printEvenNumbers(10)
 println("Factorial of 5:")
 println(factorial(5))
 
-_ = isEven(12)
+println(toString(isEven(12)))
