@@ -65,7 +65,11 @@ internal static class RunCommand
         const int contextLineCount = 4;
 
         IEnumerable<string> outputLines;
-        var exceptionName = (" " + e.GetType().Name + " ").Pastel(ConsoleColor.White).PastelBg(ConsoleColor.Red);
+
+        var exceptionName = (" " + e.ErrorCode + ": " + e.GetType().Name + " ")
+            .Pastel(ConsoleColor.White)
+            .PastelBg(ConsoleColor.Red);
+
         var message = Environment.NewLine + "\t" + e.Message + Environment.NewLine;
 
         if (e.Location is { } location)
@@ -99,6 +103,9 @@ internal static class RunCommand
 
         if (e.HelpText is { } helpText)
             outputLines = outputLines.Append(Environment.NewLine + "Tip: ".Pastel(ConsoleColor.DarkCyan) + helpText);
+
+        if (e.HelpLink is { } helpLink)
+            outputLines = outputLines.Append(Environment.NewLine + "See also: ".Pastel(ConsoleColor.DarkCyan) + helpLink);
 
         return Environment.NewLine + string.Join(Environment.NewLine, outputLines);
     }
