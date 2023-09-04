@@ -237,7 +237,7 @@ This program will print `Hello` and `world!` on separate lines.
 ### `null`
 
 The `null` constant is a special value that represents the absence of a value.
-You can check for `null` using the `??` (null coalescing) operator or using the `typename` function.
+You can check for `null` using the `??` (null coalescing) operator or using the `toTypeName` function.
 
 ```step
 string a = readline()
@@ -248,7 +248,7 @@ if (a ?? "null" != "null") {
   println("You didn't enter anything!")
 }
 
-if (typename(a) == "null") {
+if (toTypeName(a) == "null") {
   println("You didn't enter anything!")
 } else {
   println("You entered: ", a)
@@ -305,9 +305,9 @@ bool d = parse("bool", "true")
 
 This program will convert the string `"1"` to the number `1`, the string `"1.23"` to the number `1.23`, the number `123` to the string `"123"` and the string `"true"` to the boolean `true`.
 
-### `typename`
+### `toTypeName`
 
-The `typename` function is used to get the type of a variable.
+The `toTypeName` function is used to get the type of a variable.
 
 It takes one argument: the variable to get the type of.
 
@@ -316,7 +316,7 @@ It returns the type of the variable as a string.
 ```step
 number a = 1
 
-println(typename(a))
+println(toTypeName(a))
 ```
 
 This program will print `number` to the terminal.
