@@ -24,15 +24,15 @@ public class Scope
         SetVariable(PrintFunction.Identifier, new FunctionResult(new PrintFunction()));
         SetVariable(PrintlnFunction.Identifier, new FunctionResult(new PrintlnFunction()));
         SetVariable(ReadlineFunction.Identifier, new FunctionResult(new ReadlineFunction()));
-        SetVariable(ToTypeNameFunction.Identifier, new FunctionResult(new ToTypeNameFunction()));
         SetVariable(ParseFunction.Identifier, new FunctionResult(new ParseFunction()));
-        SetVariable(ToJsonFunction.Identifier, new FunctionResult(new ToJsonFunction()));
-        SetVariable(FromJsonFunction.Identifier, new FunctionResult(new FromJsonFunction()));
 
         // pure functions
         SetVariable(SubstringFunction.Identifier, new FunctionResult(new SubstringFunction()));
 
         // conversion functions
+        SetVariable(ToJsonFunction.Identifier, new FunctionResult(new ToJsonFunction()));
+        SetVariable(FromJsonFunction.Identifier, new FunctionResult(new FromJsonFunction()));
+        SetVariable(ToTypeNameFunction.Identifier, new FunctionResult(new ToTypeNameFunction()));
         SetVariable(ToKeysFunction.Identifier, new FunctionResult(new ToKeysFunction()));
         SetVariable(ToValuesFunction.Identifier, new FunctionResult(new ToValuesFunction()));
 
