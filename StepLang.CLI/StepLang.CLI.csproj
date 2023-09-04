@@ -14,14 +14,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="IDisposableAnalyzers" Version="4.0.6">
+        <PackageReference Include="IDisposableAnalyzers">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Pastel" Version="4.1.0" />
-        <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
-        <PackageReference Include="System.Linq.Async" Version="6.0.1" />
-        <PackageReference Include="ToStringWithoutOverrideAnalyzer" Version="0.6.0">
+        <PackageReference Include="Pastel" />
+        <PackageReference Include="System.CommandLine" />
+        <PackageReference Include="System.Linq.Async" />
+        <PackageReference Include="ToStringWithoutOverrideAnalyzer">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
