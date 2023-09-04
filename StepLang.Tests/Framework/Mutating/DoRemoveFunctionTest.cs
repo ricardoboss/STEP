@@ -17,7 +17,7 @@ public class DoRemoveFunctionTest
         var interpreter = new Interpreter();
         interpreter.CurrentScope.SetVariable(listIdentifier, list);
         var listVarExpression = new VariableExpression(new(TokenType.Identifier, listIdentifier, null));
-        var function = new DoAddFunction();
+        var function = new DoRemoveFunction();
 
         var result = await function.EvaluateAsync(interpreter, new[] { listVarExpression, elementExpression });
 
