@@ -31,6 +31,7 @@ public class Scope
         // mutating functions
         SetVariable(DoAddFunction.Identifier, new FunctionResult(new DoAddFunction()));
         SetVariable(DoRemoveFunction.Identifier, new FunctionResult(new DoRemoveFunction()));
+        SetVariable(DoPopFunction.Identifier, new FunctionResult(new DoPopFunction()));
 
         // pure functions
         SetVariable(SubstringFunction.Identifier, new FunctionResult(new SubstringFunction()));
