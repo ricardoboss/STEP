@@ -18,7 +18,7 @@ public class DoInsertAtFunction : NativeFunction
         var value = await valueExpression.EvaluateAsync(interpreter, cancellationToken);
 
         if (index < 0 || index > list.Count)
-            throw new ListIndexOutOfBoundsException(index, list.Count);
+            throw new IndexOutOfBoundsException(index, list.Count);
 
         list.Insert(index, value);
 

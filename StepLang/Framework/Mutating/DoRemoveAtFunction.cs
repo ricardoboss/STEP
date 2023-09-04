@@ -17,7 +17,7 @@ public class DoRemoveAtFunction : NativeFunction
         var index = await elementExpression.EvaluateAsync(interpreter, r => r.ExpectInteger().RoundedIntValue, cancellationToken);
 
         if (list.Count == 0 || index < 0 || index >= list.Count)
-            throw new ListIndexOutOfBoundsException(index, list.Count);
+            throw new IndexOutOfBoundsException(index, list.Count);
 
         var element = list[index];
         list.RemoveAt(index);
