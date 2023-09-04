@@ -19,5 +19,5 @@ toValues(map myMap)
 # Examples
 
 ```step
-toValues({a: 1, b: 2, c: 3}) // returns [1, 2, 3]
+list values = toValues({"a": 1, "b": 2, "c": 3}) // returns [1, 2, 3]
 ```
