@@ -36,6 +36,7 @@ public class Scope
         SetVariable(DoAddFunction.Identifier, new FunctionResult(new DoAddFunction()));
         SetVariable(DoRemoveFunction.Identifier, new FunctionResult(new DoRemoveFunction()));
         SetVariable(DoPopFunction.Identifier, new FunctionResult(new DoPopFunction()));
+        SetVariable(DoShiftFunction.Identifier, new FunctionResult(new DoShiftFunction()));
 
         // pure functions
         SetVariable(SubstringFunction.Identifier, new FunctionResult(new SubstringFunction()));
