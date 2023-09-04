@@ -13,12 +13,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="IDisposableAnalyzers" Version="4.0.6">
+      <PackageReference Include="IDisposableAnalyzers">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="System.Linq.Async" Version="6.0.1" />
-      <PackageReference Include="ToStringWithoutOverrideAnalyzer" Version="0.6.0">
+      <PackageReference Include="System.Linq.Async" />
+      <PackageReference Include="ToStringWithoutOverrideAnalyzer">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
