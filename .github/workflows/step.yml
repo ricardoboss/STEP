@@ -1,5 +1,13 @@
+name: STEP Format
+
 on:
   push:
+    branches:
+      - main
+    paths:
+      - '**/*.step'
+      - '.github/workflows/step.yml'
+  pull_request:
     branches:
       - main
     paths:
