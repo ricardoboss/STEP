@@ -1,0 +1,5 @@
+println(toRadix(10, 2))
+println(toRadix(10, 8))
+println(toRadix(10, 10))
+println(toRadix(10, 16))
+println(toRadix(10, 123))

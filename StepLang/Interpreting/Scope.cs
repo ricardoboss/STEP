@@ -47,6 +47,7 @@ public class Scope
         SetVariable(ToKeysFunction.Identifier, new FunctionResult(new ToKeysFunction()));
         SetVariable(ToValuesFunction.Identifier, new FunctionResult(new ToValuesFunction()));
         SetVariable(ToStringFunction.Identifier, new FunctionResult(new ToStringFunction()));
+        SetVariable(ToRadixFunction.Identifier, new FunctionResult(new ToRadixFunction()));
 
         // other functions
         SetVariable(FileExistsFunction.Identifier, new FunctionResult(new FileExistsFunction()));
