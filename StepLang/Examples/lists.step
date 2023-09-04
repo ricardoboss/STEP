@@ -38,3 +38,7 @@ println(mutable)
 
 println(doRemoveAt(mutable, 0))
 println(mutable)
+
+doInsertAt(mutable, 0, 1)
+doInsertAt(mutable, 0, 2)
+println(mutable)
