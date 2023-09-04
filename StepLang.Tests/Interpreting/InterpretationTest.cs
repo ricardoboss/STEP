@@ -46,7 +46,7 @@ public class InterpretationTest
     [Fact]
     public async Task TestInvalidExpressionTypeThrows()
     {
-        var statements = await "typename(1)".AsStatementsAsync();
+        var statements = await "toTypeName(1)".AsStatementsAsync();
         var interpreter = new Interpreter();
         var exception = await Assert.ThrowsAsync<InvalidExpressionTypeException>(async () => await interpreter.InterpretAsync(statements.ToAsyncEnumerable()));
 
