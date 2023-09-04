@@ -25,7 +25,13 @@ public class FileWriteFunction : NativeFunction
             if (append)
                 await File.AppendAllTextAsync(path, content, Encoding.ASCII, cancellationToken);
             else
+            {
+                var directory = Path.GetDirectoryName(path);
+                if (!string.IsNullOrEmpty(directory))
+                    Directory.CreateDirectory(directory);
+
                 await File.WriteAllTextAsync(path, content, Encoding.ASCII, cancellationToken);
+            }
         }
         catch (IOException)
         {
