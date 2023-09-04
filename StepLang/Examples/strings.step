@@ -1,4 +1,4 @@
-﻿string foo = "hello world!"
+string foo = "hello world!"
 
 println(foo)
 println(foo[0])

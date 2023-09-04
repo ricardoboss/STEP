@@ -1,4 +1,4 @@
-﻿// this is not exactly pi (not even possible since its irrational, duh)
+// this is not exactly pi (not even possible since its irrational, duh)
 number pi = 3.141592 // close enough
 
 string name = readline()
