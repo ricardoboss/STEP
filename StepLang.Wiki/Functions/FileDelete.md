@@ -21,5 +21,5 @@ fileDelete(string path)
 # Examples
 
 ```step
-fileDelete("C:/Temp/MyFile.txt")
+fileDelete("C:/Temp/MyFile.txt") // Returns true if the file was deleted, false otherwise.
 ```
