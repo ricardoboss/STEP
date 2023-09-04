@@ -8,4 +8,9 @@ public class NullResult : ExpressionResult
     private NullResult() : base(ResultType.Null)
     {
     }
+
+    protected override bool EqualsInternal(ExpressionResult other)
+    {
+        return other is NullResult;
+    }
 }

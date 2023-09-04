@@ -16,7 +16,7 @@ public sealed class ListExpression : Expression
     {
         var values = await expressions
             .EvaluateAsync(interpreter, cancellationToken)
-            .ToArrayAsync(cancellationToken);
+            .ToListAsync(cancellationToken);
 
         return new ListResult(values);
     }
