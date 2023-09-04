@@ -8,6 +8,10 @@ on:
       - ".github/workflows/publish.yml"
       - "StepLang.CLI/publish.sh"
 
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
 jobs:
   build:
     name: Build & Publish

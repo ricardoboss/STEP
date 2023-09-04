@@ -13,6 +13,10 @@ on:
     paths:
       - '**/*.step'
 
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
 jobs:
   format:
     runs-on: ubuntu-latest
