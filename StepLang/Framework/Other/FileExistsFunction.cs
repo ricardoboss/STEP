@@ -5,6 +5,8 @@ namespace StepLang.Framework.Other;
 
 public class FileExistsFunction : NativeFunction
 {
+    public const string Identifier = "fileExists";
+
     /// <inheritdoc />
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
