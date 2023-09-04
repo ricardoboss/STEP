@@ -35,6 +35,7 @@ public class Scope
         // mutating functions
         SetVariable(DoAddFunction.Identifier, new FunctionResult(new DoAddFunction()));
         SetVariable(DoRemoveFunction.Identifier, new FunctionResult(new DoRemoveFunction()));
+        SetVariable(DoRemoveAtFunction.Identifier, new FunctionResult(new DoRemoveAtFunction()));
         SetVariable(DoPopFunction.Identifier, new FunctionResult(new DoPopFunction()));
         SetVariable(DoShiftFunction.Identifier, new FunctionResult(new DoShiftFunction()));
 

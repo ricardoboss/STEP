@@ -20,5 +20,5 @@ doRemove(list subject, any element)
 ```step
 list myList = [1, 2, 3, 4]
 doRemove(myList, 3)
-print(myList) # prints [1, 2, 4]
+print(myList) // prints [1, 2, 4]
 ```
