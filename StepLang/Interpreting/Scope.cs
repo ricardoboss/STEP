@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using StepLang.Framework.Conversion;
 using StepLang.Framework.IO;
+using StepLang.Framework.Other;
 using StepLang.Framework.Pure;
 using StepLang.Framework.Reflection;
 using StepLang.Parsing.Expressions;
@@ -36,6 +37,12 @@ public class Scope
         // conversion functions
         SetVariable(ToKeysFunction.Identifier, new FunctionResult(new ToKeysFunction()));
         SetVariable(ToValuesFunction.Identifier, new FunctionResult(new ToValuesFunction()));
+
+        // other functions
+        SetVariable(FileExistsFunction.Identifier, new FunctionResult(new FileExistsFunction()));
+        SetVariable(FileReadFunction.Identifier, new FunctionResult(new FileReadFunction()));
+        SetVariable(FileWriteFunction.Identifier, new FunctionResult(new FileWriteFunction()));
+        SetVariable(FileDeleteFunction.Identifier, new FunctionResult(new FileDeleteFunction()));
 
         SetVariable("null", NullResult.Instance);
 
