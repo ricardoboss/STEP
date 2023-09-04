@@ -12,6 +12,7 @@ doShift(list myList)
 
 # Remarks
 
+- `doShift` is a mutating function, so it modifies the list given to it
 - if the list is empty, `null` is returned
 
 # Examples
