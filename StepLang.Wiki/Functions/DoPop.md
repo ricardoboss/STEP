@@ -12,6 +12,7 @@ doPop(list myList)
 
 # Remarks
 
+- `doPop` is a mutating function, so it modifies the list given to it
 - if the list is empty, `doPop` returns `null`
 - `doPop` is the opposite of [`doAdd`](./DoAdd.md)
 

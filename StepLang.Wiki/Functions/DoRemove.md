@@ -13,8 +13,7 @@ doRemove(list subject, any element)
 
 # Remarks
 
-- `doRemove` is a mutating function, so it doesn't return a value but modifies the list given to it.
-- the `subject` cannot be a literal list (`[1, 2, 3]`); only variables of type `list` can be used.
+- `doRemove` is a mutating function, so it doesn't return a value but modifies the list given to it
 
 # Examples
 

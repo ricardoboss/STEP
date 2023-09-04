@@ -13,8 +13,7 @@ doAdd(list subject, any element)
 
 # Remarks
 
-- `doAdd` is a mutating function, so it doesn't return a value but modifies the list given to it.
-- the `subject` cannot be a literal list (`[1, 2, 3]`); only variables of type `list` can be used.
+- `doAdd` is a mutating function, so it doesn't return a value but modifies the list given to it
 
 # Examples
 
