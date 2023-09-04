@@ -9,6 +9,7 @@ println(fromJson("null"))
 println(fromJson("[1,2,3]"))
 println(fromJson("[[1],[2, 3]]"))
 println(fromJson("{\"key\": \"value\"}"))
+println(fromJson("{\"a\": 1, \"b\": 2")) // invalid json
 
 println(jsonEncode(true))
 println(jsonEncode(null))

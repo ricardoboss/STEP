@@ -14,7 +14,15 @@ public class FromJsonFunction : NativeFunction
         var source = arguments.Single();
         var result = await source.EvaluateAsync(interpreter, cancellationToken);
         var json = result.ExpectString().Value;
-        return JsonSerializer.Deserialize(json, JsonConversionContext.Default.ExpressionResult) ?? NullResult.Instance;
+        try
+        {
+            return JsonSerializer.Deserialize(json, JsonConversionContext.Default.ExpressionResult) ??
+                   NullResult.Instance;
+        }
+        catch (JsonException)
+        {
+            return NullResult.Instance;
+        }
     }
 
     /// <inheritdoc />
