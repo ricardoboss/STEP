@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using StepLang.Framework.Conversion;
 using StepLang.Interpreting;
 using StepLang.Parsing.Expressions;
