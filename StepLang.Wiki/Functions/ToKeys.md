@@ -19,5 +19,5 @@ toKeys(map myMap)
 # Examples
 
 ```step
-list keys = toKeys({a: 1, b: 2, c: 3}) // returns ["a", "b", "c"]
+list keys = toKeys({"a": 1, "b": 2, "c": 3}) // returns ["a", "b", "c"]
 ```
