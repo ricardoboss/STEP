@@ -11,4 +11,9 @@ public class FunctionResult : ValueExpressionResult<FunctionDefinition>
     public FunctionResult(FunctionDefinition value) : base(ResultType.Function, value)
     {
     }
+
+    protected override bool EqualsInternal(ExpressionResult other)
+    {
+        return other is FunctionResult functionResult && ReferenceEquals(Value, functionResult.Value);
+    }
 }

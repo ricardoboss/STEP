@@ -10,4 +10,9 @@ public class BoolResult : ValueExpressionResult<bool>
     public BoolResult(bool value) : base(ResultType.Bool, value)
     {
     }
+
+    protected override bool EqualsInternal(ExpressionResult other)
+    {
+        return other is BoolResult boolResult && Value == boolResult.Value;
+    }
 }

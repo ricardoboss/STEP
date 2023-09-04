@@ -8,4 +8,9 @@ public class VoidResult : ExpressionResult
     private VoidResult() : base(ResultType.Void)
     {
     }
+
+    protected override bool EqualsInternal(ExpressionResult other)
+    {
+        return other is VoidResult;
+    }
 }

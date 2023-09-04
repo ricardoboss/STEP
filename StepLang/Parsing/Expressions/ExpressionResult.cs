@@ -35,8 +35,13 @@ public abstract class ExpressionResult : IEquatable<ExpressionResult>
         if (ReferenceEquals(this, other))
             return true;
 
-        return ResultType == other.ResultType;
+        if (ResultType != other.ResultType)
+            return false;
+
+        return EqualsInternal(other);
     }
+
+    protected abstract bool EqualsInternal(ExpressionResult other);
 
     /// <inheritdoc />
     public override bool Equals(object? obj)
