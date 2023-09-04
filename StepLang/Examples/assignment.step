@@ -4,4 +4,4 @@ string c = "Hello"
 number b
 b = 1 + 2
 
-string d = c + " World" + 2 + EOL
+string d = toString(a) + " World" + 2 + EOL
