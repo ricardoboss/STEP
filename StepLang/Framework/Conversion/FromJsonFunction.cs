@@ -4,9 +4,9 @@ using StepLang.Parsing.Expressions;
 
 namespace StepLang.Framework.Conversion;
 
-public class JsonDecodeFunction : NativeFunction
+public class FromJsonFunction : NativeFunction
 {
-    public const string Identifier = "jsonDecode";
+    public const string Identifier = "fromJson";
 
     /// <inheritdoc />
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
