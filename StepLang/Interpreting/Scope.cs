@@ -29,7 +29,7 @@ public class Scope
         SetVariable(TypenameFunction.Identifier, new FunctionResult(new TypenameFunction()));
         SetVariable(ParseFunction.Identifier, new FunctionResult(new ParseFunction()));
         SetVariable(JsonEncodeFunction.Identifier, new FunctionResult(new JsonEncodeFunction()));
-        SetVariable(JsonDecodeFunction.Identifier, new FunctionResult(new JsonDecodeFunction()));
+        SetVariable(FromJsonFunction.Identifier, new FunctionResult(new FromJsonFunction()));
 
         // pure functions
         SetVariable(SubstringFunction.Identifier, new FunctionResult(new SubstringFunction()));
