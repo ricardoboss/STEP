@@ -1,41 +1,44 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang", "StepLang\StepLang.csproj", "{D00C8F0A-5D09-415D-AC0A-E9480C8E27E9}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34003.232
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StepLang", "StepLang\StepLang.csproj", "{D00C8F0A-5D09-415D-AC0A-E9480C8E27E9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4EC278E0-B181-49AF-BCC1-F1F4D7133B24}"
 	ProjectSection(SolutionItems) = preProject
-		.gitignore = .gitignore
-		global.json = global.json
-		README.md = README.md
-		.gitattributes = .gitattributes
-		CHANGELOG.md = CHANGELOG.md
-		LICENSE.md = LICENSE.md
-		CONTRIBUTING.md = CONTRIBUTING.md
-		CODE_OF_CONDUCT.md = CODE_OF_CONDUCT.md
 		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		CHANGELOG.md = CHANGELOG.md
+		CODE_OF_CONDUCT.md = CODE_OF_CONDUCT.md
+		CONTRIBUTING.md = CONTRIBUTING.md
 		Directory.Packages.props = Directory.Packages.props
+		global.json = global.json
+		LICENSE.md = LICENSE.md
 		NuGet.Config = NuGet.Config
+		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang.Tests", "StepLang.Tests\StepLang.Tests.csproj", "{CB5E44DF-C1D2-4DA9-8175-FD76F8D95A42}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StepLang.Tests", "StepLang.Tests\StepLang.Tests.csproj", "{CB5E44DF-C1D2-4DA9-8175-FD76F8D95A42}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang.CLI", "StepLang.CLI\StepLang.CLI.csproj", "{D8D36317-78E3-4FD9-B85B-12869B498983}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StepLang.CLI", "StepLang.CLI\StepLang.CLI.csproj", "{D8D36317-78E3-4FD9-B85B-12869B498983}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{995634A6-466A-41FB-BD99-D95F782EE11D}"
 	ProjectSection(SolutionItems) = preProject
-		.github\workflows\publish.yml = .github\workflows\publish.yml
 		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
-		.github\workflows\wiki.yml = .github\workflows\wiki.yml
+		.github\workflows\publish.yml = .github\workflows\publish.yml
 		.github\workflows\step.yml = .github\workflows\step.yml
+		.github\workflows\wiki.yml = .github\workflows\wiki.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang.Wiki", "StepLang.Wiki\StepLang.Wiki.csproj", "{C7B31C5F-7112-4CFB-BBC0-15764540545D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StepLang.Wiki", "StepLang.Wiki\StepLang.Wiki.csproj", "{C7B31C5F-7112-4CFB-BBC0-15764540545D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang.Tooling.Formatting", "StepLang.Tooling.Formatting\StepLang.Tooling.Formatting.csproj", "{728ABD46-2621-45BC-ACB1-0EF00267DCCC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StepLang.Tooling.Formatting", "StepLang.Tooling.Formatting\StepLang.Tooling.Formatting.csproj", "{728ABD46-2621-45BC-ACB1-0EF00267DCCC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tooling", "Tooling", "{A9BE3B66-38F1-454B-9A12-E1BF21E307CF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang.Tooling.Formatting.Tests", "StepLang.Tooling.Formatting.Tests\StepLang.Tooling.Formatting.Tests.csproj", "{0DC701B1-15E9-4776-AFF5-9BBEA1C7D55B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StepLang.Tooling.Formatting.Tests", "StepLang.Tooling.Formatting.Tests\StepLang.Tooling.Formatting.Tests.csproj", "{0DC701B1-15E9-4776-AFF5-9BBEA1C7D55B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +66,9 @@ Global
 		{0DC701B1-15E9-4776-AFF5-9BBEA1C7D55B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0DC701B1-15E9-4776-AFF5-9BBEA1C7D55B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0DC701B1-15E9-4776-AFF5-9BBEA1C7D55B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{728ABD46-2621-45BC-ACB1-0EF00267DCCC} = {A9BE3B66-38F1-454B-9A12-E1BF21E307CF}
