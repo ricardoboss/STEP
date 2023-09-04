@@ -20,5 +20,5 @@ doAdd(list subject, any element)
 ```step
 list myList = [1, 2, 3]
 doAdd(myList, 4)
-print(myList) # prints [1, 2, 3, 4]
+print(myList) // prints [1, 2, 3, 4]
 ```

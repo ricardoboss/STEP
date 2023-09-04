@@ -35,3 +35,6 @@ println(mutable)
 
 println(doShift(mutable))
 println(mutable)
+
+println(doRemoveAt(mutable, 0))
+println(mutable)
