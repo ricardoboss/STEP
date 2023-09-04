@@ -2,7 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 using StepLang.Framework.Conversion;
 using StepLang.Framework.IO;
 using StepLang.Framework.Pure;
-using StepLang.Framework.Reflection;
 using StepLang.Parsing.Expressions;
 using StepLang.Tokenizing;
 
@@ -25,7 +24,7 @@ public class Scope
         SetVariable(PrintFunction.Identifier, new FunctionResult(new PrintFunction()));
         SetVariable(PrintlnFunction.Identifier, new FunctionResult(new PrintlnFunction()));
         SetVariable(ReadlineFunction.Identifier, new FunctionResult(new ReadlineFunction()));
-        SetVariable(TypenameFunction.Identifier, new FunctionResult(new TypenameFunction()));
+        SetVariable(ToTypeNameFunction.Identifier, new FunctionResult(new ToTypeNameFunction()));
         SetVariable(ParseFunction.Identifier, new FunctionResult(new ParseFunction()));
         SetVariable(ToJsonFunction.Identifier, new FunctionResult(new ToJsonFunction()));
         SetVariable(FromJsonFunction.Identifier, new FunctionResult(new FromJsonFunction()));

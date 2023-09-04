@@ -2,11 +2,11 @@ using System.Diagnostics.CodeAnalysis;
 using StepLang.Interpreting;
 using StepLang.Parsing.Expressions;
 
-namespace StepLang.Framework.Reflection;
+namespace StepLang.Framework.Conversion;
 
-public class TypenameFunction : NativeFunction
+public class ToTypeNameFunction : NativeFunction
 {
-    public const string Identifier = "typename";
+    public const string Identifier = "toTypeName";
 
     /// <inheritdoc />
     public override Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
