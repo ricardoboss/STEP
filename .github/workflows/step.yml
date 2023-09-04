@@ -1,0 +1,28 @@
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**/*.step'
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+
+    name: Make sure .step files are formatted
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '7.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Run step format
+        run: dotnet run --project StepLang.CLI/StepLang.CLI.csproj -- format --set-exit-code --dry-run
