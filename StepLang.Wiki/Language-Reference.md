@@ -321,9 +321,9 @@ println(typename(a))
 
 This program will print `number` to the terminal.
 
-### `fromJson` and `jsonEncode`
+### `fromJson` and `toJson`
 
-The `fromJson` and `jsonEncode` functions are used to convert JSON strings to STEP values and STEP values to JSON strings, respectively.
+The `fromJson` and `toJson` functions are used to convert JSON strings to STEP values and STEP values to JSON strings, respectively.
 
 They take one argument: the JSON string to convert or the STEP value to convert.
 
@@ -336,7 +336,7 @@ map myMap = fromJson(json)
 
 println(myMap["a"])
 
-string json2 = jsonEncode(myMap)
+string json2 = toJson(myMap)
 
 println(json2)
 ```
