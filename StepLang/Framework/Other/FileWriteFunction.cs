@@ -33,7 +33,7 @@ public class FileWriteFunction : NativeFunction
                 await File.WriteAllTextAsync(path, content, Encoding.ASCII, cancellationToken);
             }
         }
-        catch (IOException)
+        catch (Exception e) when (e is IOException or SystemException)
         {
             return BoolResult.False;
         }
