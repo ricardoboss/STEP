@@ -6,7 +6,7 @@ on:
       - "v*.*.*"
     paths:
       - ".github/workflows/publish.yml"
-      - "publish.sh"
+      - "StepLang.CLI/publish.sh"
 
 jobs:
   build:
@@ -38,7 +38,7 @@ jobs:
         run: dotnet test --configuration Release --no-build
 
       - name: Publish
-        run: publish.sh
+        run: pushd StepLang.CLI && ./publish.sh && popd
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
@@ -49,4 +49,4 @@ jobs:
           generate_release_notes: true
           fail_on_unmatched_files: true
           files: |
-            publish/*
+            StepLang.CLI/publish/*
