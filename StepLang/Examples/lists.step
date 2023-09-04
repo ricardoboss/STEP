@@ -22,3 +22,13 @@ println(empty)
 
 list nested = [[1, 2], [3, 4]]
 println(nested)
+
+list mutable = [1, 2, 3]
+doAdd(mutable, 4)
+println(mutable)
+
+doRemove(mutable, 2)
+println(mutable)
+
+println(doPop(mutable))
+println(mutable)
