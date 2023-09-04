@@ -6,7 +6,7 @@ on:
       - "v*.*.*"
     paths:
       - ".github/workflows/publish.yml"
-      - "StepLang.CLI/publish.sh"
+      - "publish.sh"
 
 jobs:
   build:
@@ -26,7 +26,7 @@ jobs:
       - name: Install .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 7.0.x
+          dotnet-version: 7.x
 
       - name: Restore dependencies
         run: dotnet restore
@@ -38,7 +38,7 @@ jobs:
         run: dotnet test --configuration Release --no-build
 
       - name: Publish
-        run: pushd StepLang.CLI && ./publish.sh && popd
+        run: publish.sh
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
@@ -49,4 +49,4 @@ jobs:
           generate_release_notes: true
           fail_on_unmatched_files: true
           files: |
-            StepLang.CLI/publish/*
+            publish/*
