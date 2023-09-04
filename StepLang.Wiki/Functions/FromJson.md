@@ -17,6 +17,7 @@ fromJson(string json)
 - if the JSON string is empty, `null` is returned
 - a JSON object is converted to a STEP map (order is not guaranteed to be preserved)
 - a JSON array is converted to a STEP list (order is preserved)
+- the `fromJson` function is the inverse of the [`toJson`](./ToJson.md) function
 
 # Examples
 
