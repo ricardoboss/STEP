@@ -39,7 +39,7 @@ public class ParseFunction : NativeFunction
             },
             BoolResult boolResult => targetType switch
             {
-                ResultType.Str => new StringResult(boolResult.Value ? "true" : "false"),
+                ResultType.Str => new StringResult(boolResult.Value.ToString()),
                 ResultType.Number => new NumberResult(boolResult.Value ? 1 : 0),
                 _ => NullResult.Instance,
             },
