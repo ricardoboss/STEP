@@ -32,3 +32,6 @@ println(mutable)
 
 println(doPop(mutable))
 println(mutable)
+
+println(doShift(mutable))
+println(mutable)
