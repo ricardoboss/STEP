@@ -8,6 +8,7 @@ null
 [1, 2, 3]
 [[1], [2, 3]]
 {"key": "value"}
+null
 true
 null
 "text"
