@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using StepLang.Framework.Other;
 using StepLang.Interpreting;
 using StepLang.Parsing.Expressions;
