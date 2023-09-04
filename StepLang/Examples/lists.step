@@ -42,3 +42,6 @@ println(mutable)
 doInsertAt(mutable, 0, 1)
 doInsertAt(mutable, 0, 2)
 println(mutable)
+
+println(doSwap(mutable, 0, 1))
+println(mutable)

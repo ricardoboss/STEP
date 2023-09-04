@@ -14,3 +14,6 @@ println(nested["a"]["b"]["d"]["z"])
 
 println(toKeys(nested["a"]["b"]))
 println(toValues(nested["a"]["b"]["d"]))
+
+println(doSwap(nested["a"]["b"]["d"], "z", "v"))
+println(nested["a"]["b"]["d"])
