@@ -11,7 +11,7 @@ public class DoAddFunction : NativeFunction
 
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
-        CheckArgumentCount(arguments, 2);
+        CheckArgumentCount(arguments);
 
         var (listExpression, elementExpression) = (arguments[0], arguments[1]);
 

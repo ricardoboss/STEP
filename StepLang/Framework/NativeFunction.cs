@@ -10,8 +10,9 @@ public abstract class NativeFunction : FunctionDefinition
     [ExcludeFromCodeCoverage]
     protected override string DebugBodyString => "[native code]";
 
-    protected static void CheckArgumentCount(IReadOnlyList<Expression> arguments, int expectedCount)
+    protected void CheckArgumentCount(IReadOnlyList<Expression> arguments)
     {
+        var expectedCount = Parameters.Count();
         if (arguments.Count != expectedCount)
             throw new InvalidArgumentCountException(expectedCount, arguments.Count);
     }

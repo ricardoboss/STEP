@@ -11,7 +11,7 @@ public class DoInsertAtFunction : NativeFunction
 
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
-        CheckArgumentCount(arguments, 3);
+        CheckArgumentCount(arguments);
 
         var (listExpression, indexExpression, valueExpression) = (arguments[0], arguments[1], arguments[2]);
 

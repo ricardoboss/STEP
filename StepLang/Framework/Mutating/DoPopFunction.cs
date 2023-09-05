@@ -11,7 +11,7 @@ public class DoPopFunction : NativeFunction
 
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
-        CheckArgumentCount(arguments, 1);
+        CheckArgumentCount(arguments);
 
         var list = await arguments.Single().EvaluateAsync(interpreter, r => r.ExpectList().Value, cancellationToken);
         if (list.Count == 0)
