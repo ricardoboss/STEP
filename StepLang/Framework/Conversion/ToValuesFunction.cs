@@ -11,7 +11,7 @@ public class ToValuesFunction : NativeFunction
 
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
-        CheckArgumentCount(arguments, 1);
+        CheckArgumentCount(arguments);
 
         var map = await arguments.Single().EvaluateAsync(interpreter, r => r.ExpectMap().Value, cancellationToken);
         var values = map.Values.ToList();

@@ -11,7 +11,7 @@ public class SubstringFunction : NativeFunction
     /// <inheritdoc />
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
-        CheckArgumentCount(arguments, 3);
+        CheckArgumentCount(arguments);
 
         var (subjectExp, startExp, lengthExp) = (arguments[0], arguments[1], arguments[2]);
 
