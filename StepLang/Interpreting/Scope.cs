@@ -54,6 +54,7 @@ public class Scope
         SetVariable(SqrtFunction.Identifier, new FunctionResult(new SqrtFunction()));
         SetVariable(ConvertedFunction.Identifier, new FunctionResult(new ConvertedFunction()));
         SetVariable(FilteredFunction.Identifier, new FunctionResult(new FilteredFunction()));
+        SetVariable(ReversedFunction.Identifier, new FunctionResult(new ReversedFunction()));
 
         // conversion functions
         SetVariable(ToJsonFunction.Identifier, new FunctionResult(new ToJsonFunction()));
