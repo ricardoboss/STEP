@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using StepLang.Interpreting;
 using StepLang.Parsing.Expressions;
 
@@ -7,6 +6,8 @@ namespace StepLang.Framework.Pure;
 public class SubstringFunction : NativeFunction
 {
     public const string Identifier = "substring";
+
+    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.Str }, "subject"), (new[] { ResultType.Number }, "start"), (new[] { ResultType.Number }, "length") };
 
     /// <inheritdoc />
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
@@ -34,8 +35,4 @@ public class SubstringFunction : NativeFunction
 
         return new StringResult(substring);
     }
-
-    /// <inheritdoc />
-    [ExcludeFromCodeCoverage]
-    protected override string DebugParamsString => "string subject, number start, number length";
 }
