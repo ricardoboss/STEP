@@ -26,7 +26,6 @@ public class Scope
         SetVariable(PrintFunction.Identifier, new FunctionResult(new PrintFunction()));
         SetVariable(PrintlnFunction.Identifier, new FunctionResult(new PrintlnFunction()));
         SetVariable(ReadlineFunction.Identifier, new FunctionResult(new ReadlineFunction()));
-        SetVariable(ParseFunction.Identifier, new FunctionResult(new ParseFunction()));
 
         // mutating functions
         SetVariable(DoAddFunction.Identifier, new FunctionResult(new DoAddFunction()));
