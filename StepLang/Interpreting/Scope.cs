@@ -41,6 +41,8 @@ public class Scope
         SetVariable(SubstringFunction.Identifier, new FunctionResult(new SubstringFunction()));
         SetVariable(IndexOfFunction.Identifier, new FunctionResult(new IndexOfFunction()));
         SetVariable(ContainsFunction.Identifier, new FunctionResult(new ContainsFunction()));
+        SetVariable(StartsWithFunction.Identifier, new FunctionResult(new StartsWithFunction()));
+        SetVariable(EndsWithFunction.Identifier, new FunctionResult(new EndsWithFunction()));
 
         // conversion functions
         SetVariable(ToJsonFunction.Identifier, new FunctionResult(new ToJsonFunction()));
