@@ -17,30 +17,34 @@ public abstract class ListManipulationFunction : NativeFunction
         var callback = await predicateExpression.EvaluateAsync(interpreter, r => r.ExpectFunction().Value, cancellationToken);
 
         var callbackParameters = callback.Parameters.ToList();
+        Func<ExpressionResult, int, ConstantExpression[]> argsConverter;
         switch (callbackParameters.Count)
         {
             case < 1 or > 2:
                 throw new InvalidArgumentTypeException(null, $"Callback function must have 1 or 2 parameters, but has {callbackParameters.Count}");
-            case 2 when !callbackParameters[1].types.Contains(ResultType.Number):
-                throw new InvalidArgumentTypeException(null, $"Second parameter of callback function must accept numbers, but is {string.Join("|", callbackParameters[1].types.Select(t => t.ToTypeName()))}");
+            case 2:
+                if (!callbackParameters[1].types.Contains(ResultType.Number))
+                    throw new InvalidArgumentTypeException(null, $"Second parameter of callback function must accept numbers, but is {string.Join("|", callbackParameters[1].types.Select(t => t.ToTypeName()))}");
+
+                argsConverter = (element, index) =>
+                {
+                    var elementExpression = new ConstantExpression(element);
+                    var indexExpression = ConstantExpression.Number(index);
+
+                    return new[] { elementExpression, indexExpression };
+                };
+
+                break;
+            default:
+                argsConverter = (element, _) =>
+                {
+                    var elementExpression = new ConstantExpression(element);
+
+                    return new[] { elementExpression };
+                };
+
+                break;
         }
-
-        Func<ExpressionResult, int, ConstantExpression[]> argsConverter;
-        if (callbackParameters.Count == 2)
-            argsConverter = (element, index) =>
-            {
-                var elementExpression = new ConstantExpression(element);
-                var indexExpression = ConstantExpression.Number(index);
-
-                return new[] { elementExpression, indexExpression };
-            };
-        else
-            argsConverter = (element, _) =>
-            {
-                var elementExpression = new ConstantExpression(element);
-
-                return new[] { elementExpression };
-            };
 
         var args = subjectResult
             .DeepClone()
