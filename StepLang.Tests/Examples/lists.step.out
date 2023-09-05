@@ -21,3 +21,7 @@ True
 -1
 True
 False
+[2, 4, 6]
+[0, 2, 6]
+["The 1. number is 1", "The 2. number is 2", "The 3. number is 3"]
+[1, 2, 3]

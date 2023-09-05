@@ -8,6 +8,8 @@ public class FromJsonFunction : NativeFunction
 {
     public const string Identifier = "fromJson";
 
+    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new [] { ResultType.Str }, "source") };
+
     /// <inheritdoc />
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
@@ -24,7 +26,4 @@ public class FromJsonFunction : NativeFunction
             return NullResult.Instance;
         }
     }
-
-    /// <inheritdoc />
-    protected override string DebugParamsString => $"{ResultType.Str.ToTypeName()} json";
 }

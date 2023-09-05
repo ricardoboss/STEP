@@ -18,4 +18,9 @@ public class StringResult : ComparableValueExpressionResult<string>
     {
         return other is StringResult stringResult && string.Equals(Value, stringResult.Value, StringComparison.Ordinal);
     }
+
+    public override StringResult DeepClone()
+    {
+        return new(Value);
+    }
 }

@@ -8,6 +8,8 @@ public class FileWriteFunction : NativeFunction
 {
     public const string Identifier = "fileWrite";
 
+    public override IEnumerable<(ResultType [] types, string identifier)> Parameters => new[] { (new [] { ResultType.Str }, "path"), (new [] { ResultType.Str }, "content"), (new [] { ResultType.Bool }, "append") };
+
     /// <inheritdoc />
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
@@ -40,7 +42,4 @@ public class FileWriteFunction : NativeFunction
 
         return BoolResult.True;
     }
-
-    /// <inheritdoc />
-    protected override string DebugParamsString => "string path, string content, append = false";
 }

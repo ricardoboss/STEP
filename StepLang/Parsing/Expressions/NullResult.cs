@@ -13,4 +13,9 @@ public class NullResult : ExpressionResult
     {
         return other is NullResult;
     }
+
+    public override ExpressionResult DeepClone()
+    {
+        return Instance;
+    }
 }

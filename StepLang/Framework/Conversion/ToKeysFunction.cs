@@ -7,6 +7,8 @@ public class ToKeysFunction : NativeFunction
 {
     public const string Identifier = "toKeys";
 
+    public override IEnumerable<(ResultType [] types, string identifier)> Parameters => new[] { (new [] { ResultType.Map }, "source") };
+
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
         CheckArgumentCount(arguments, 1);
@@ -17,6 +19,4 @@ public class ToKeysFunction : NativeFunction
 
         return new ListResult(keys.Cast<ExpressionResult>().ToList());
     }
-
-    protected override string DebugParamsString => "map source";
 }

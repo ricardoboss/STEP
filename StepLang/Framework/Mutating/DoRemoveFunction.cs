@@ -7,6 +7,8 @@ public class DoRemoveFunction : NativeFunction
 {
     public const string Identifier = "doRemove";
 
+    public override IEnumerable<(ResultType [] types, string identifier)> Parameters => new[] { (new [] { ResultType.List }, "subject"), (Enum.GetValues<ResultType>(), "element") };
+
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
         CheckArgumentCount(arguments, 2);
@@ -20,6 +22,4 @@ public class DoRemoveFunction : NativeFunction
 
         return VoidResult.Instance;
     }
-
-    protected override string DebugParamsString => "list subject, any value";
 }

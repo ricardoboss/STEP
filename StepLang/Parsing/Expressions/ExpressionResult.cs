@@ -118,4 +118,6 @@ public abstract class ExpressionResult : IEquatable<ExpressionResult>
 
         return functionResult;
     }
+
+    public abstract ExpressionResult DeepClone();
 }

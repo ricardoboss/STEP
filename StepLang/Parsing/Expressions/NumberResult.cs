@@ -22,4 +22,9 @@ public class NumberResult : ComparableValueExpressionResult<double>
     {
         return other is NumberResult numberResult && Value.Equals(numberResult.Value);
     }
+
+    public override NumberResult DeepClone()
+    {
+        return new(Value);
+    }
 }
