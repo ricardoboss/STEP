@@ -51,7 +51,7 @@ println(indexOf(mutable, 4))
 println(contains(mutable, 2))
 println(contains(mutable, 4))
 
-list l = [1, 2, 3]
+list l = [1, 2, 3, 4]
 println(converted(l, (number n) {
 	return n * 2
 }))
@@ -62,6 +62,14 @@ println(converted(l, (number n, number i) {
 
 println(converted(l, (number n, number i) {
 	return "The " + (i + 1) + ". number is " + n
+}))
+
+println(filtered(l, (number n) {
+	return n % 2 == 0
+}))
+
+println(filtered(l, (number n, number i) {
+	return i % 2 == 0
 }))
 
 println(l)
