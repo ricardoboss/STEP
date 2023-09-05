@@ -7,7 +7,7 @@ public class FileDeleteFunction : NativeFunction
 {
     public const string Identifier = "fileDelete";
 
-    public override IEnumerable<(ResultType [] types, string identifier)> Parameters => new[] { (new [] { ResultType.Str }, "path") };
+    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.Str }, "path") };
 
     /// <inheritdoc />
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)

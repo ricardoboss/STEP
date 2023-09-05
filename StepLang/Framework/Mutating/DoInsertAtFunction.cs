@@ -7,7 +7,7 @@ public class DoInsertAtFunction : NativeFunction
 {
     public const string Identifier = "doInsertAt";
 
-    public override IEnumerable<(ResultType [] types, string identifier)> Parameters => new[] { (new [] { ResultType.List }, "subject"), (new [] { ResultType.Number }, "index"), (Enum.GetValues<ResultType>(), "value") };
+    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.List }, "subject"), (new[] { ResultType.Number }, "index"), (Enum.GetValues<ResultType>(), "value") };
 
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {

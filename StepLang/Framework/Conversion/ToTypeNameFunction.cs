@@ -7,7 +7,7 @@ public class ToTypeNameFunction : NativeFunction
 {
     public const string Identifier = "toTypeName";
 
-    public override IEnumerable<(ResultType [] types, string identifier)> Parameters => new[] { (Enum.GetValues<ResultType>(), "value") };
+    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (Enum.GetValues<ResultType>(), "value") };
 
     /// <inheritdoc />
     public override Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)

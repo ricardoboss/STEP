@@ -7,7 +7,7 @@ public class ToKeysFunction : NativeFunction
 {
     public const string Identifier = "toKeys";
 
-    public override IEnumerable<(ResultType [] types, string identifier)> Parameters => new[] { (new [] { ResultType.Map }, "source") };
+    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.Map }, "source") };
 
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {

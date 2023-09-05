@@ -8,7 +8,7 @@ public class ToJsonFunction : NativeFunction
 {
     public const string Identifier = "toJson";
 
-    public override IEnumerable<(ResultType [] types, string identifier)> Parameters => new[] { (Enum.GetValues<ResultType>(), "value") };
+    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (Enum.GetValues<ResultType>(), "value") };
 
     /// <inheritdoc />
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)

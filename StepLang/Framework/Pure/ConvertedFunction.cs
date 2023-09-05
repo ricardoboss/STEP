@@ -7,7 +7,7 @@ public class ConvertedFunction : NativeFunction
 {
     public const string Identifier = "converted";
 
-    public override IEnumerable<(ResultType [] types, string identifier)> Parameters => new [] { (new [] { ResultType.List }, "subject"), (new [] { ResultType.Function }, "callback") };
+    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.List }, "subject"), (new[] { ResultType.Function }, "callback") };
 
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
@@ -34,14 +34,16 @@ public class ConvertedFunction : NativeFunction
                 var elementExpression = new ConstantExpression(element);
                 var indexExpression = ConstantExpression.Number(index);
 
-                return new [] { elementExpression, indexExpression };
-            },
+                return new[] { elementExpression, indexExpression };
+            }
+            ,
             _ => (element, _) =>
             {
                 var elementExpression = new ConstantExpression(element);
 
-                return new [] { elementExpression };
-            },
+                return new[] { elementExpression };
+            }
+            ,
         };
 
         var converted = await subjectResult

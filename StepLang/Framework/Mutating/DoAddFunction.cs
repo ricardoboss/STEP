@@ -7,7 +7,7 @@ public class DoAddFunction : NativeFunction
 {
     public const string Identifier = "doAdd";
 
-    public override IEnumerable<(ResultType [] types, string identifier)> Parameters => new[] { (new [] { ResultType.List }, "subject"), (Enum.GetValues<ResultType>(), "element") };
+    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.List }, "subject"), (Enum.GetValues<ResultType>(), "element") };
 
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
