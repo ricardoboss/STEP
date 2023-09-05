@@ -17,6 +17,11 @@ public class IndexOfFunction : NativeFunction
         var subject = await subjectExpression.EvaluateAsync(interpreter, cancellationToken);
         var value = await valueExpression.EvaluateAsync(interpreter, cancellationToken);
 
+        return GetResult(subject, value);
+    }
+
+    internal static ExpressionResult GetResult(ExpressionResult subject, ExpressionResult value)
+    {
         return subject switch
         {
             ListResult list => new NumberResult(list.Value.IndexOf(value)),
