@@ -3,7 +3,13 @@ string foo = "hello world!"
 println(foo)
 println(foo[0])
 println(foo[6])
+
 println(indexOf(foo, "world"))
 println(indexOf(foo, "bar"))
 println(contains(foo, "world"))
 println(contains(foo, "bar"))
+
+println(startsWith(foo, "hello"))
+println(startsWith(foo, "world"))
+println(endsWith(foo, "world!"))
+println(endsWith(foo, "hello"))
