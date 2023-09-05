@@ -19,3 +19,6 @@ println(doSwap(nested["a"]["b"]["d"], "z", "v"))
 println(nested["a"]["b"]["d"])
 
 println(indexOf(nested["a"]["b"]["d"], 100))
+println(indexOf(nested["a"]["b"]["d"], 123))
+println(contains(nested["a"]["b"]["d"], 100))
+println(contains(nested["a"]["b"]["d"], 123))

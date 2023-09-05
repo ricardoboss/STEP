@@ -47,3 +47,6 @@ println(doSwap(mutable, 0, 1))
 println(mutable)
 
 println(indexOf(mutable, 2))
+println(indexOf(mutable, 4))
+println(contains(mutable, 2))
+println(contains(mutable, 4))
