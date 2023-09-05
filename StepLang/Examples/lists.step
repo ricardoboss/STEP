@@ -45,3 +45,5 @@ println(mutable)
 
 println(doSwap(mutable, 0, 1))
 println(mutable)
+
+println(indexOf(mutable, 2))

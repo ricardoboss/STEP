@@ -39,6 +39,7 @@ public class Scope
 
         // pure functions
         SetVariable(SubstringFunction.Identifier, new FunctionResult(new SubstringFunction()));
+        SetVariable(IndexOfFunction.Identifier, new FunctionResult(new IndexOfFunction()));
 
         // conversion functions
         SetVariable(ToJsonFunction.Identifier, new FunctionResult(new ToJsonFunction()));
