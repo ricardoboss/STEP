@@ -16,7 +16,7 @@ public class UserDefinedFunctionDefinition : FunctionDefinition
         this.body = body;
     }
 
-    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => parameters.Select(t => (new [] { ValueTypeExtensions.FromTypeName(t.type.Value) }, t.identifier.Value));
+    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => parameters.Select(t => (new[] { ValueTypeExtensions.FromTypeName(t.type.Value) }, t.identifier.Value));
 
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {

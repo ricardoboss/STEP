@@ -7,7 +7,7 @@ public class DoShiftFunction : NativeFunction
 {
     public const string Identifier = "doShift";
 
-    public override IEnumerable<(ResultType [] types, string identifier)> Parameters => new[] { (new [] { ResultType.List }, "subject") };
+    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.List }, "subject") };
 
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {

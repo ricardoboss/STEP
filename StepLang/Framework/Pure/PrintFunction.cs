@@ -7,7 +7,7 @@ public class PrintFunction : NativeFunction
 {
     public const string Identifier = "print";
 
-    public override IEnumerable<(ResultType [] types, string identifier)> Parameters => new[] { (Enum.GetValues<ResultType>(), "...values") };
+    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (Enum.GetValues<ResultType>(), "...values") };
 
     /// <inheritdoc />
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)

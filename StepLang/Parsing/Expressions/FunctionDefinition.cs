@@ -5,7 +5,7 @@ namespace StepLang.Parsing.Expressions;
 
 public abstract class FunctionDefinition
 {
-    public virtual IEnumerable<(ResultType [] types, string identifier)> Parameters => Enumerable.Empty<(ResultType [] types, string identifier)>();
+    public virtual IEnumerable<(ResultType[] types, string identifier)> Parameters => Enumerable.Empty<(ResultType[] types, string identifier)>();
 
     public abstract Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default);
 
