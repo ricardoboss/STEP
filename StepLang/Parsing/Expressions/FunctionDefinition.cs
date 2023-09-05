@@ -5,9 +5,11 @@ namespace StepLang.Parsing.Expressions;
 
 public abstract class FunctionDefinition
 {
+    public virtual IEnumerable<(ResultType [] types, string identifier)> Parameters => Enumerable.Empty<(ResultType [] types, string identifier)>();
+
     public abstract Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default);
 
-    protected abstract string DebugParamsString { get; }
+    protected virtual string DebugParamsString => string.Join(", ", Parameters.Select(p => $"{string.Join("|", p.types.Select(t => t.ToTypeName()))} {p.identifier}"));
 
     protected abstract string DebugBodyString { get; }
 

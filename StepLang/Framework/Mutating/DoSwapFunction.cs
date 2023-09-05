@@ -7,6 +7,8 @@ public class DoSwapFunction : NativeFunction
 {
     public const string Identifier = "doSwap";
 
+    public override IEnumerable<(ResultType [] types, string identifier)> Parameters => new[] { (new [] { ResultType.List, ResultType.Map }, "subject"), (new [] { ResultType.Number, ResultType.Str }, "a"), (new [] { ResultType.Number, ResultType.Str }, "b") };
+
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
         CheckArgumentCount(arguments, 3);
@@ -54,6 +56,4 @@ public class DoSwapFunction : NativeFunction
 
         return BoolResult.True;
     }
-
-    protected override string DebugParamsString => "list|map subject, number|string a, number|string b";
 }

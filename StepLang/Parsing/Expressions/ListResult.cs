@@ -15,4 +15,11 @@ public class ListResult : ValueExpressionResult<IList<ExpressionResult>>
     {
         return other is ListResult listResult && Value.SequenceEqual(listResult.Value);
     }
+
+    public override ListResult DeepClone()
+    {
+        var clone = Value.Select(result => result.DeepClone()).ToList();
+
+        return new(clone);
+    }
 }

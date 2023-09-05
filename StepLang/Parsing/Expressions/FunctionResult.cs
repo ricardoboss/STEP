@@ -16,4 +16,9 @@ public class FunctionResult : ValueExpressionResult<FunctionDefinition>
     {
         return other is FunctionResult functionResult && ReferenceEquals(Value, functionResult.Value);
     }
+
+    public override FunctionResult DeepClone()
+    {
+        return new(Value);
+    }
 }

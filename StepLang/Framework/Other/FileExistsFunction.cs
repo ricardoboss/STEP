@@ -7,6 +7,8 @@ public class FileExistsFunction : NativeFunction
 {
     public const string Identifier = "fileExists";
 
+    public override IEnumerable<(ResultType [] types, string identifier)> Parameters => new[] { (new [] { ResultType.Str }, "path") };
+
     /// <inheritdoc />
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
@@ -16,7 +18,4 @@ public class FileExistsFunction : NativeFunction
 
         return new BoolResult(File.Exists(path));
     }
-
-    /// <inheritdoc />
-    protected override string DebugParamsString => "string path";
 }

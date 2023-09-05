@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-using StepLang.Framework.Conversion;
 using StepLang.Interpreting;
 using StepLang.Parsing.Expressions;
 
@@ -8,6 +6,8 @@ namespace StepLang.Framework.Pure;
 public class PrintFunction : NativeFunction
 {
     public const string Identifier = "print";
+
+    public override IEnumerable<(ResultType [] types, string identifier)> Parameters => new[] { (Enum.GetValues<ResultType>(), "...values") };
 
     /// <inheritdoc />
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
@@ -34,8 +34,4 @@ public class PrintFunction : NativeFunction
 
     protected virtual async Task Print(TextWriter output, string value, CancellationToken cancellationToken = default)
         => await output.WriteAsync(value.AsMemory(), cancellationToken);
-
-    /// <inheritdoc />
-    [ExcludeFromCodeCoverage]
-    protected override string DebugParamsString => "any ...args";
 }

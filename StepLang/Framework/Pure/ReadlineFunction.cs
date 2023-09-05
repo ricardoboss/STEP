@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using StepLang.Interpreting;
 using StepLang.Parsing.Expressions;
 
@@ -20,8 +19,4 @@ public class ReadlineFunction : NativeFunction
 
         return new StringResult(line);
     }
-
-    /// <inheritdoc />
-    [ExcludeFromCodeCoverage]
-    protected override string DebugParamsString => string.Empty;
 }

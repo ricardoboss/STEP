@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using StepLang.Interpreting;
 using StepLang.Parsing.Expressions;
 
@@ -7,6 +6,8 @@ namespace StepLang.Framework.Conversion;
 public class ToTypeNameFunction : NativeFunction
 {
     public const string Identifier = "toTypeName";
+
+    public override IEnumerable<(ResultType [] types, string identifier)> Parameters => new[] { (Enum.GetValues<ResultType>(), "value") };
 
     /// <inheritdoc />
     public override Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
@@ -23,8 +24,4 @@ public class ToTypeNameFunction : NativeFunction
 
         return Task.FromResult<ExpressionResult>(result);
     }
-
-    /// <inheritdoc />
-    [ExcludeFromCodeCoverage]
-    protected override string DebugParamsString => "any value";
 }

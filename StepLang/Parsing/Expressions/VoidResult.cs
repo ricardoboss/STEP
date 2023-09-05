@@ -13,4 +13,9 @@ public class VoidResult : ExpressionResult
     {
         return other is VoidResult;
     }
+
+    public override ExpressionResult DeepClone()
+    {
+        return Instance;
+    }
 }

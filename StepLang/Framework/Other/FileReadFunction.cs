@@ -8,6 +8,8 @@ public class FileReadFunction : NativeFunction
 {
     public const string Identifier = "fileRead";
 
+    public override IEnumerable<(ResultType [] types, string identifier)> Parameters => new[] { (new [] { ResultType.Str }, "path") };
+
     /// <inheritdoc />
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
@@ -29,7 +31,4 @@ public class FileReadFunction : NativeFunction
             return NullResult.Instance;
         }
     }
-
-    /// <inheritdoc />
-    protected override string DebugParamsString => "string path";
 }

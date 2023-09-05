@@ -27,7 +27,11 @@ internal sealed class InvalidArgumentTypeException : IncompatibleTypesException
     {
     }
 
-    public InvalidArgumentTypeException(TokenLocation? location, IReadOnlyList<ResultType> acceptedParameterTypes, ExpressionResult argument) : base(3, location, BuildMessage(acceptedParameterTypes, argument.ResultType), "Make sure you're passing the correct type of argument to the function.")
+    public InvalidArgumentTypeException(TokenLocation? location, IReadOnlyList<ResultType> acceptedParameterTypes, ExpressionResult argument) : this(location, BuildMessage(acceptedParameterTypes, argument.ResultType))
+    {
+    }
+
+    public InvalidArgumentTypeException(TokenLocation? location, string message) : base(3, location, message, "Make sure you're passing the correct type of argument to the function.")
     {
     }
 }

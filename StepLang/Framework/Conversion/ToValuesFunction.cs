@@ -7,6 +7,8 @@ public class ToValuesFunction : NativeFunction
 {
     public const string Identifier = "toValues";
 
+    public override IEnumerable<(ResultType [] types, string identifier)> Parameters => new[] { (new [] { ResultType.Map }, "source") };
+
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
         CheckArgumentCount(arguments, 1);
@@ -16,6 +18,4 @@ public class ToValuesFunction : NativeFunction
 
         return new ListResult(values);
     }
-
-    protected override string DebugParamsString => "map subject";
 }

@@ -13,4 +13,11 @@ public class MapResult : ValueExpressionResult<IDictionary<string, ExpressionRes
     {
         return other is MapResult mapResult && Value.SequenceEqual(mapResult.Value);
     }
+
+    public override MapResult DeepClone()
+    {
+        var clone = Value.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.DeepClone());
+
+        return new(clone);
+    }
 }

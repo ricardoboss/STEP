@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using StepLang.Interpreting;
 using StepLang.Parsing.Expressions;
@@ -9,6 +8,8 @@ public class ToJsonFunction : NativeFunction
 {
     public const string Identifier = "toJson";
 
+    public override IEnumerable<(ResultType [] types, string identifier)> Parameters => new[] { (Enum.GetValues<ResultType>(), "value") };
+
     /// <inheritdoc />
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
@@ -17,8 +18,4 @@ public class ToJsonFunction : NativeFunction
         var json = JsonSerializer.Serialize(result, JsonConversionContext.Default.ExpressionResult);
         return new StringResult(json);
     }
-
-    /// <inheritdoc />
-    [ExcludeFromCodeCoverage]
-    protected override string DebugParamsString => "any value";
 }

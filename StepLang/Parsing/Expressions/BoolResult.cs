@@ -15,4 +15,9 @@ public class BoolResult : ValueExpressionResult<bool>
     {
         return other is BoolResult boolResult && Value == boolResult.Value;
     }
+
+    public override BoolResult DeepClone()
+    {
+        return new(Value);
+    }
 }
