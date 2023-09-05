@@ -72,4 +72,6 @@ println(filtered(l, (number n, number i) {
 	return i % 2 == 0
 }))
 
+println(reversed(l))
+
 println(l)

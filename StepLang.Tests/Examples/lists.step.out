@@ -26,4 +26,5 @@ False
 ["The 1. number is 1", "The 2. number is 2", "The 3. number is 3", "The 4. number is 4"]
 [2, 4]
 [1, 3]
+[4, 3, 2, 1]
 [1, 2, 3, 4]
