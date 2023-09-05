@@ -25,24 +25,22 @@ public abstract class ListManipulationFunction : NativeFunction
                 throw new InvalidArgumentTypeException(null, $"Second parameter of callback function must accept numbers, but is {string.Join("|", callbackParameters[1].types.Select(t => t.ToTypeName()))}");
         }
 
-        Func<ExpressionResult, int, ConstantExpression[]> argsConverter = callbackParameters.Count switch
-        {
-            2 => (element, index) =>
+        Func<ExpressionResult, int, ConstantExpression[]> argsConverter;
+        if (callbackParameters.Count == 2)
+            argsConverter = (element, index) =>
             {
                 var elementExpression = new ConstantExpression(element);
                 var indexExpression = ConstantExpression.Number(index);
 
                 return new[] { elementExpression, indexExpression };
-            }
-            ,
-            _ => (element, _) =>
+            };
+        else
+            argsConverter = (element, _) =>
             {
                 var elementExpression = new ConstantExpression(element);
 
                 return new[] { elementExpression };
-            }
-            ,
-        };
+            };
 
         var args = subjectResult
             .DeepClone()
