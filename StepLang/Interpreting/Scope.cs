@@ -53,6 +53,7 @@ public class Scope
         SetVariable(MinFunction.Identifier, new FunctionResult(new MinFunction()));
         SetVariable(SqrtFunction.Identifier, new FunctionResult(new SqrtFunction()));
         SetVariable(ConvertedFunction.Identifier, new FunctionResult(new ConvertedFunction()));
+        SetVariable(FilteredFunction.Identifier, new FunctionResult(new FilteredFunction()));
 
         // conversion functions
         SetVariable(ToJsonFunction.Identifier, new FunctionResult(new ToJsonFunction()));
