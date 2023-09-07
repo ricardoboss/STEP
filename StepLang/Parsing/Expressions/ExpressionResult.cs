@@ -120,4 +120,6 @@ public abstract class ExpressionResult : IEquatable<ExpressionResult>
     }
 
     public abstract ExpressionResult DeepClone();
+
+    public ConstantExpression ToExpression() => new(this);
 }

@@ -262,11 +262,11 @@ public abstract class Expression
         });
     }
 
-    public static Expression Constant(double value) => new ConstantExpression(new NumberResult(value));
+    public static Expression Constant(double value) => new NumberResult(value).ToExpression();
 
-    public static Expression Constant(string value) => new ConstantExpression(new StringResult(value));
+    public static Expression Constant(string value) => new StringResult(value).ToExpression();
 
-    public static Expression Constant(bool value) => new ConstantExpression(new BoolResult(value));
+    public static Expression Constant(bool value) => new BoolResult(value).ToExpression();
 
     public abstract Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken = default);
 
