@@ -22,4 +22,6 @@ public abstract class FunctionDefinition
 
         return $"<Function: ({paramStr}) => {{ {bodyStr} }}>";
     }
+
+    public FunctionResult ToResult() => new(this);
 }
