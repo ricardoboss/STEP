@@ -5,7 +5,7 @@ namespace StepLang.Parsing.Expressions;
 
 public class FunctionResult : ValueExpressionResult<FunctionDefinition>
 {
-    public static FunctionResult VoidFunction => new(new UserDefinedFunctionDefinition(new List<(Token type, Token identifier)>(), new[] { new ReturnStatement(ConstantExpression.Void) }));
+    public static FunctionResult VoidFunction => new UserDefinedFunctionDefinition(new List<(Token type, Token identifier)>(), new[] { new ReturnStatement(ConstantExpression.Void) }).ToResult();
 
     /// <inheritdoc />
     public FunctionResult(FunctionDefinition value) : base(ResultType.Function, value)
@@ -17,8 +17,5 @@ public class FunctionResult : ValueExpressionResult<FunctionDefinition>
         return other is FunctionResult functionResult && ReferenceEquals(Value, functionResult.Value);
     }
 
-    public override FunctionResult DeepClone()
-    {
-        return new(Value);
-    }
+    public override FunctionResult DeepClone() => Value.ToResult();
 }
