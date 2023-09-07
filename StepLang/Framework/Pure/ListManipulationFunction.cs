@@ -16,8 +16,20 @@ public abstract class ListManipulationFunction : NativeFunction
         var subjectResult = await subjectExpression.EvaluateAsync(interpreter, r => r.ExpectList(), cancellationToken);
         var callback = await predicateExpression.EvaluateAsync(interpreter, r => r.ExpectFunction().Value, cancellationToken);
 
+        var list = subjectResult.DeepClone().Value;
+        var args = PrepareArgsForCallback(list, callback);
+
+        var result = await EvaluateListManipulationAsync(interpreter, args, callback, cancellationToken)
+            .ToListAsync(cancellationToken);
+
+        return new ListResult(result);
+    }
+
+    protected virtual IAsyncEnumerable<ConstantExpression[]> PrepareArgsForCallback(IEnumerable<ExpressionResult> list, FunctionDefinition callback)
+    {
         var callbackParameters = callback.Parameters.ToList();
         Func<ExpressionResult, int, ConstantExpression[]> argsConverter;
+
         switch (callbackParameters.Count)
         {
             case < 1 or > 2:
@@ -28,7 +40,7 @@ public abstract class ListManipulationFunction : NativeFunction
 
                 argsConverter = (element, index) =>
                 {
-                    var elementExpression = new ConstantExpression(element);
+                    var elementExpression = element.ToExpression();
                     var indexExpression = ConstantExpression.Number(index);
 
                     return new[] { elementExpression, indexExpression };
@@ -38,24 +50,13 @@ public abstract class ListManipulationFunction : NativeFunction
             default:
                 argsConverter = (element, _) =>
                 {
-                    var elementExpression = new ConstantExpression(element);
-
-                    return new[] { elementExpression };
+                    return new[] { element.ToExpression() };
                 };
 
                 break;
         }
 
-        var args = subjectResult
-            .DeepClone()
-            .Value
-            .Select(argsConverter)
-            .ToAsyncEnumerable();
-
-        var result = await EvaluateListManipulationAsync(interpreter, args, callback, cancellationToken)
-            .ToListAsync(cancellationToken);
-
-        return new ListResult(result);
+        return list.Select(argsConverter).ToAsyncEnumerable();
     }
 
     protected abstract IAsyncEnumerable<ExpressionResult> EvaluateListManipulationAsync(Interpreter interpreter, IAsyncEnumerable<ConstantExpression[]> arguments, FunctionDefinition callback, CancellationToken cancellationToken = default);
