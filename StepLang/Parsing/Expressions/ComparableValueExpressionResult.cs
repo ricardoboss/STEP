@@ -1,6 +1,6 @@
 namespace StepLang.Parsing.Expressions;
 
-public abstract class ComparableValueExpressionResult<T> : ValueExpressionResult<T>, IComparable<ComparableValueExpressionResult<T>>, IComparable
+public abstract class ComparableValueExpressionResult<T> : ValueExpressionResult<T>, IComparable<ComparableValueExpressionResult<T>>, IComparable where T : notnull
 {
     protected ComparableValueExpressionResult(ResultType resultType, T value) : base(resultType, value)
     {
