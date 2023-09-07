@@ -1,6 +1,7 @@
 namespace StepLang.Parsing.Expressions;
 
 public abstract class ValueExpressionResult<T> : ExpressionResult, IEquatable<ValueExpressionResult<T>>
+    where T : notnull
 {
     protected ValueExpressionResult(ResultType resultType, T value) : base(resultType)
     {
