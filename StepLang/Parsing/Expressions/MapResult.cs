@@ -20,4 +20,7 @@ public class MapResult : ValueExpressionResult<IDictionary<string, ExpressionRes
 
         return new(clone);
     }
+
+    /// <inheritdoc />
+    public override string ToString() => $"{{{string.Join(", ", Value.Select(p => $"{p.Key}: {p.Value}"))}}}";
 }

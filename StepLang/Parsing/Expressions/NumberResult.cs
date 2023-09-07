@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace StepLang.Parsing.Expressions;
 
 public class NumberResult : ComparableValueExpressionResult<double>
@@ -27,4 +29,7 @@ public class NumberResult : ComparableValueExpressionResult<double>
     {
         return new(Value);
     }
+
+    /// <inheritdoc />
+    public override string ToString() => Value.ToString(CultureInfo.InvariantCulture);
 }

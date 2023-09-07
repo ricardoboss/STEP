@@ -23,4 +23,7 @@ public class StringResult : ComparableValueExpressionResult<string>
     {
         return new(Value);
     }
+
+    /// <inheritdoc />
+    public override string ToString() => $"\"{Value}\"";
 }
