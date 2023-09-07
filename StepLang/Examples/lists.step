@@ -78,3 +78,9 @@ println(l)
 
 list m = ["d", "a", "c", "b"]
 println(sorted(m))
+
+function cmp = (number a, number b) {
+	return a - b
+}
+
+println(sorted([3, 1, 2], cmp))
