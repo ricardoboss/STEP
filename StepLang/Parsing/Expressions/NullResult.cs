@@ -18,4 +18,7 @@ public class NullResult : ExpressionResult
     {
         return Instance;
     }
+
+    /// <inheritdoc />
+    public override string ToString() => "{null}";
 }

@@ -22,4 +22,7 @@ public class ListResult : ValueExpressionResult<IList<ExpressionResult>>
 
         return new(clone);
     }
+
+    /// <inheritdoc />
+    public override string ToString() => $"[{string.Join(", ", Value)}]";
 }

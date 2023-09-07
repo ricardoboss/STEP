@@ -18,4 +18,7 @@ public class VoidResult : ExpressionResult
     {
         return Instance;
     }
+
+    /// <inheritdoc />
+    public override string ToString() => "{void}";
 }
