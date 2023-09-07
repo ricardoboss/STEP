@@ -75,3 +75,6 @@ println(filtered(l, (number n, number i) {
 println(reversed(l))
 
 println(l)
+
+list m = ["d", "a", "c", "b"]
+println(sorted(m))
