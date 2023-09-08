@@ -29,7 +29,7 @@ the way some characters work internally.
 # Examples
 
 ```step
-length("Hello!")                   # 6
-length([1, 2, 3, 4])               # 4
-length({ "a": 1, "b": 2, "c": 3 }) # 3
+length("Hello!")                   // 6
+length([1, 2, 3, 4])               // 4
+length({ "a": 1, "b": 2, "c": 3 }) // 3
 ```
