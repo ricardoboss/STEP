@@ -23,6 +23,4 @@ public class LengthFunction : NativeFunction
             _ => throw new InvalidArgumentTypeException(null, Parameters.Single().types, subjectResult),
         };
     }
-
-    protected override string DebugParamsString => "a string, list, or map";
 }
