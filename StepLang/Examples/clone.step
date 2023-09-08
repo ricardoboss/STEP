@@ -1,0 +1,9 @@
+list l = [3, 2]
+println(l) // [3, 2]
+doAdd(l, 1)
+println(l) // [3, 2, 1]
+list l2 = clone(l)
+println(l2) // [3, 2, 1]
+doAdd(l, 0)
+println(l) // [3, 2, 1, 0]
+println(l2) // [3, 2, 1]

@@ -56,6 +56,7 @@ public class Scope
         SetVariable(FilteredFunction.Identifier, new FilteredFunction().ToResult());
         SetVariable(ReversedFunction.Identifier, new ReversedFunction().ToResult());
         SetVariable(SortedFunction.Identifier, new SortedFunction().ToResult());
+        SetVariable(CloneFunction.Identifier, new CloneFunction().ToResult());
 
         // conversion functions
         SetVariable(ToJsonFunction.Identifier, new ToJsonFunction().ToResult());
