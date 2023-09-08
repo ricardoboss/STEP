@@ -7,10 +7,12 @@ public class IndexOfFunction : NativeFunction
 {
     public const string Identifier = "indexOf";
 
+    public override IEnumerable<(ResultType [] types, string identifier)> Parameters => new [] { (new [] { ResultType.List, ResultType.Map, ResultType.Str }, "subject"), (Enum.GetValues<ResultType>(), "value") };
+
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter,
         IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
-        CheckArgumentCount(arguments, 2);
+        CheckArgumentCount(arguments);
 
         var (subjectExpression, valueExpression) = (arguments[0], arguments[1]);
 
@@ -39,6 +41,4 @@ public class IndexOfFunction : NativeFunction
             NullResult.Instance :
             new StringResult(pair.Key);
     }
-
-    protected override string DebugParamsString => "list|map|string subject, any|string value";
 }

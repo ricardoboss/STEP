@@ -7,9 +7,11 @@ public class ContainsFunction : NativeFunction
 {
     public const string Identifier = "contains";
 
+    public override IEnumerable<(ResultType [] types, string identifier)> Parameters => new [] { (new [] { ResultType.List, ResultType.Map, ResultType.Str }, "subject"), (Enum.GetValues<ResultType>(), "value") };
+
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
-        CheckArgumentCount(arguments, 2);
+        CheckArgumentCount(arguments);
 
         var (subjectExpression, valueExpression) = (arguments[0], arguments[1]);
 
@@ -25,6 +27,4 @@ public class ContainsFunction : NativeFunction
             _ => BoolResult.False,
         };
     }
-
-    protected override string DebugParamsString => "list|map|string subject, any|string value";
 }
