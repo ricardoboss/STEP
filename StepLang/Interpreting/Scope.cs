@@ -21,11 +21,6 @@ public class Scope
     {
         parentScope = null;
 
-        // globally defined identifiers
-        SetVariable(PrintFunction.Identifier, new FunctionResult(new PrintFunction()));
-        SetVariable(PrintlnFunction.Identifier, new FunctionResult(new PrintlnFunction()));
-        SetVariable(ReadlineFunction.Identifier, new FunctionResult(new ReadlineFunction()));
-
         // mutating functions
         SetVariable(DoAddFunction.Identifier, new FunctionResult(new DoAddFunction()));
         SetVariable(DoRemoveFunction.Identifier, new FunctionResult(new DoRemoveFunction()));
@@ -41,6 +36,10 @@ public class Scope
         SetVariable(ContainsFunction.Identifier, new FunctionResult(new ContainsFunction()));
         SetVariable(StartsWithFunction.Identifier, new FunctionResult(new StartsWithFunction()));
         SetVariable(EndsWithFunction.Identifier, new FunctionResult(new EndsWithFunction()));
+        SetVariable(PrintFunction.Identifier, new FunctionResult(new PrintFunction()));
+        SetVariable(PrintlnFunction.Identifier, new FunctionResult(new PrintlnFunction()));
+        SetVariable(ReadlineFunction.Identifier, new FunctionResult(new ReadlineFunction()));
+        SetVariable(ReadFunction.Identifier, new FunctionResult(new ReadFunction()));
 
         // conversion functions
         SetVariable(ToJsonFunction.Identifier, new FunctionResult(new ToJsonFunction()));
@@ -78,7 +77,7 @@ public class Scope
         }
     }
 
-    private bool TryGetVariable(string identifier, [NotNullWhen(true)] out Variable? variable)
+    internal bool TryGetVariable(string identifier, [NotNullWhen(true)] out Variable? variable)
     {
         if (identifiers.TryGetValue(identifier, out variable))
             return true;
