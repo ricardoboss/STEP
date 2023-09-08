@@ -8,18 +8,18 @@ public class ToStringFunction : NativeFunction
 {
     public const string Identifier = "toString";
 
+    public override IEnumerable<(ResultType[] types, string identifier)> Parameters { get; } = new[] { (Enum.GetValues<ResultType>(), "value") };
+
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
-        CheckArgumentCount(arguments, 1);
+        CheckArgumentCount(arguments);
 
         var value = await arguments.Single().EvaluateAsync(interpreter, cancellationToken);
 
         return new StringResult(Render(value));
     }
 
-    protected override string DebugParamsString => "any value";
-
-    private static string Render(ExpressionResult result)
+    internal static string Render(ExpressionResult result)
     {
         switch (result)
         {
