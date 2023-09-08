@@ -11,8 +11,7 @@ public class ReadlineFunction : NativeFunction
     /// <inheritdoc />
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
-        if (arguments.Count is not 0)
-            throw new InvalidArgumentCountException(0, arguments.Count);
+        CheckArgumentCount(arguments, 0);
 
         if (interpreter.StdIn is not { } stdIn)
             return StringResult.Empty;
