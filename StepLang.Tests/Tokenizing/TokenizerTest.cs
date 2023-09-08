@@ -19,6 +19,20 @@ public class TokenizerTest
     }
 
     [Fact]
+    public void TestTokenizeLiteralStringWithEscapedChars()
+    {
+        const string source = "\"\\n\"";
+
+        var tokenizer = new Tokenizer();
+        tokenizer.Add(source);
+        var tokens = tokenizer.Tokenize().ToArray();
+
+        Assert.Single(tokens);
+        Assert.Equal(TokenType.LiteralString, tokens[0].Type);
+        Assert.Equal("\n", tokens[0].Value);
+    }
+
+    [Fact]
     public void TestTokenizeLiteralNumber()
     {
         const string source = "123";

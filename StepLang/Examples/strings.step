@@ -4,6 +4,8 @@ println(foo)
 println(foo[0])
 println(foo[6])
 
+println("🤷‍♂️")
+
 println(indexOf(foo, "world"))
 println(indexOf(foo, "bar"))
 println(contains(foo, "world"))
