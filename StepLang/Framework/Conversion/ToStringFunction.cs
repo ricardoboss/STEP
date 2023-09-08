@@ -31,6 +31,10 @@ public class ToStringFunction : NativeFunction
                 return boolValue.ToString();
             case NullResult:
                 return "null";
+            case VoidResult:
+                return "void";
+            case FunctionResult:
+                return "function";
             case ListResult { Value: var values }:
                 var renderedValues = values.Select(v =>
                 {
@@ -57,7 +61,7 @@ public class ToStringFunction : NativeFunction
                 var mapContents = string.Join(", ", renderedPairs);
                 return $"{{{mapContents}}}";
             default:
-                return $"[{result.ResultType}]";
+                throw new NotImplementedException();
         }
     }
 }
