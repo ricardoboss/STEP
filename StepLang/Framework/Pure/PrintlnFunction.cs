@@ -1,4 +1,4 @@
-namespace StepLang.Framework.IO;
+namespace StepLang.Framework.Pure;
 
 public class PrintlnFunction : PrintFunction
 {
