@@ -15,9 +15,15 @@ public class PrintFunction : NativeFunction
         if (interpreter.StdOut is not { } stdOut)
             return VoidResult.Instance;
 
+        FunctionDefinition toStringFunction;
+        if (interpreter.CurrentScope.TryGetVariable(ToStringFunction.Identifier, out var toStringVar))
+            toStringFunction = toStringVar.Value.ExpectFunction().Value;
+        else
+            toStringFunction = new ToStringFunction();
+
         var stringArgs = await arguments
             .EvaluateAsync(interpreter, cancellationToken)
-            .Select(ToStringFunction.Render)
+            .SelectAwait(async exp => await toStringFunction.EvaluateAsync(interpreter, new[] { new ConstantExpression(exp) }, cancellationToken))
             .ToListAsync(cancellationToken);
 
         await Print(stdOut, string.Join("", stringArgs), cancellationToken);

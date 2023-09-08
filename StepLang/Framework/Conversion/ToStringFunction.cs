@@ -19,7 +19,7 @@ public class ToStringFunction : NativeFunction
 
     protected override string DebugParamsString => "any value";
 
-    internal static string Render(ExpressionResult result)
+    private static string Render(ExpressionResult result)
     {
         switch (result)
         {
