@@ -1,22 +1,20 @@
 using System.Diagnostics.CodeAnalysis;
-using StepLang.Framework.Conversion;
+using StepLang.Framework.Pure;
 using StepLang.Interpreting;
 using StepLang.Parsing.Expressions;
+using StepLang.Tokenizing;
 
-namespace StepLang.Tests.Framework.IO;
+namespace StepLang.Tests.Framework.Pure;
 
 public class LengthFunctionTest
 {
     [Theory]
-    [ClassData(typeof(ParseData))]
+    [ClassData(typeof(LengthData))]
     public async Task TestEvaluateAsync(Expression value, NumberResult expected)
     {
         var interpreter = new Interpreter();
         var function = new LengthFunction();
-        var result = await function.EvaluateAsync(interpreter, new []
-        {
-            value,
-        });
+        var result = await function.EvaluateAsync(interpreter, new[] { value });
 
         var numberResult = result.ExpectInteger();
 
@@ -24,21 +22,32 @@ public class LengthFunctionTest
     }
 
     [Fact]
+    public async Task TestEvaluateWithVariableAsync()
+    {
+        var interpreter = new Interpreter();
+        interpreter.CurrentScope.SetVariable("foo", ConstantExpression.Str("Hello").Result);
+
+        var function = new LengthFunction();
+        var result = await function.EvaluateAsync(interpreter, new[] { new VariableExpression(new(TokenType.Identifier, "foo", null)) });
+
+        var numberResult = result.ExpectInteger();
+
+        Assert.Equal(5, numberResult.Value);
+    }
+
+    [Fact]
     public async Task TestEvaluateThrowsForUnexpectedType()
     {
         var interpreter = new Interpreter();
-        var function = new ParseFunction();
+        var function = new LengthFunction();
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() => function.EvaluateAsync(interpreter, new []
-        {
-            ConstantExpression.Number(0), ConstantExpression.Void,
-        }));
+        await Assert.ThrowsAsync<InvalidArgumentTypeException>(() => function.EvaluateAsync(interpreter, new[] { ConstantExpression.Number(0) }));
     }
 
     [SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Used by xUnit")]
-    private sealed class ParseData : TheoryData<Expression, NumberResult>
+    private sealed class LengthData : TheoryData<Expression, NumberResult>
     {
-        public ParseData()
+        public LengthData()
         {
             Add(ConstantExpression.Str(""), new NumberResult(0));
             Add(ConstantExpression.Str("Hello"), new NumberResult(5));
@@ -47,14 +56,14 @@ public class LengthFunctionTest
             {
                 ConstantExpression.Str("A"),
                 ConstantExpression.Number(1),
-                ConstantExpression.Bool(true)
+                ConstantExpression.Bool(true),
             });
 
             Add(list, new NumberResult(3));
 
-            var constantList = ConstantExpression.List(new List<ExpressionResult>(new []
+            var constantList = ConstantExpression.List(new List<ExpressionResult>(new[]
             {
-                new NumberResult(123)
+                new NumberResult(123),
             }));
             Add(constantList, new NumberResult(1));
 
@@ -71,7 +80,7 @@ public class LengthFunctionTest
                 },
                 {
                     "Bum", ConstantExpression.Str("lol")
-                }
+                },
             });
 
             Add(map, new NumberResult(4));
