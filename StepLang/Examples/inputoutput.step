@@ -1,0 +1,7 @@
+string line = readline()
+
+println("you wrote: ", line)
+
+string c = read()
+
+println("you pressed: ", c)
