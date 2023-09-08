@@ -24,6 +24,7 @@ public class PrintFunction : NativeFunction
         var stringArgs = await arguments
             .EvaluateAsync(interpreter, cancellationToken)
             .SelectAwait(async exp => await toStringFunction.EvaluateAsync(interpreter, new[] { new ConstantExpression(exp) }, cancellationToken))
+            .Select(r => r.ExpectString().Value)
             .ToListAsync(cancellationToken);
 
         await Print(stdOut, string.Join("", stringArgs), cancellationToken);
