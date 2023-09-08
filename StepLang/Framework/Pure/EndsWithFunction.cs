@@ -7,9 +7,11 @@ public class EndsWithFunction : NativeFunction
 {
     public const string Identifier = "endsWith";
 
+    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.Str }, "subject"), (new[] { ResultType.Str }, "suffix") };
+
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
-        CheckArgumentCount(arguments, 2);
+        CheckArgumentCount(arguments);
 
         var (subjectExpression, prefixExpression) = (arguments[0], arguments[1]);
 
@@ -18,6 +20,4 @@ public class EndsWithFunction : NativeFunction
 
         return new BoolResult(subject.EndsWith(suffix, StringComparison.Ordinal));
     }
-
-    protected override string DebugParamsString => "string subject, string suffix";
 }

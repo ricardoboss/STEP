@@ -7,9 +7,11 @@ public class InterpolateFunction : NativeFunction
 {
     public const string Identifier = "interpolate";
 
+    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.Number }, "a"), (new[] { ResultType.Number }, "b"), (new[] { ResultType.Number }, "t") };
+
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
-        CheckArgumentCount(arguments, 3);
+        CheckArgumentCount(arguments);
 
         var a = await arguments[0].EvaluateAsync(interpreter, r => r.ExpectNumber().Value, cancellationToken);
         var b = await arguments[1].EvaluateAsync(interpreter, r => r.ExpectNumber().Value, cancellationToken);
@@ -19,6 +21,4 @@ public class InterpolateFunction : NativeFunction
 
         return new NumberResult(value);
     }
-
-    protected override string DebugParamsString => "number a, number b, number t";
 }

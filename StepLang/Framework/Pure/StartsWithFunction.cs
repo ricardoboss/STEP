@@ -7,9 +7,11 @@ public class StartsWithFunction : NativeFunction
 {
     public const string Identifier = "startsWith";
 
+    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.Str }, "subject"), (new[] { ResultType.Str }, "prefix") };
+
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
-        CheckArgumentCount(arguments, 2);
+        CheckArgumentCount(arguments);
 
         var (subjectExpression, prefixExpression) = (arguments[0], arguments[1]);
 
@@ -18,6 +20,4 @@ public class StartsWithFunction : NativeFunction
 
         return new BoolResult(subject.StartsWith(prefix, StringComparison.Ordinal));
     }
-
-    protected override string DebugParamsString => "string subject, string prefix";
 }
