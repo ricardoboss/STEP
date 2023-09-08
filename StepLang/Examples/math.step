@@ -23,5 +23,5 @@ println("sqrt(e ^ 4) = ", sqrt(e ^ 4))
 println("sqrt(-1) = ", sqrt(-1))
 
 println("sin(1.75 * pi) = ", sin(1.75 * pi))
-println("cos(1.75 * pi) = ", cos(1.75 * pi))
+println("cos(pi) = ", cos(pi))
 println("tan(1.75 * pi) = ", tan(1.75 * pi))
