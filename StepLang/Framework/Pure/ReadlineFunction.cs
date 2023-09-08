@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using StepLang.Interpreting;
 using StepLang.Parsing.Expressions;
 
-namespace StepLang.Framework.IO;
+namespace StepLang.Framework.Pure;
 
 public class ReadlineFunction : NativeFunction
 {
