@@ -15,5 +15,9 @@ function fibonacci = (number n) {
 
 print("Fibonacci of: ")
 string input = readline()
-number n = parse("number", input)
+number n = toNumber(input)
+if (n == null) {
+	println("Not a number: ", input)
+	return
+}
 println(fibonacci(n))
