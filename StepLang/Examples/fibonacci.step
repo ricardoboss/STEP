@@ -18,6 +18,6 @@ string input = readline()
 number n = toNumber(input)
 if (n == null) {
 	println("Not a number: ", input)
-	return
+} else {
+	println(fibonacci(n))
 }
-println(fibonacci(n))
