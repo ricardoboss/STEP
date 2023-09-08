@@ -1,3 +1,4 @@
+using System.Globalization;
 using StepLang.Interpreting;
 using StepLang.Parsing.Expressions;
 
@@ -21,13 +22,14 @@ public class ToNumberFunction : NativeFunction
         {
             var result = radix switch
             {
-                2 or 8 or 10 or 16 => Convert.ToInt32(value, radix),
+                2 or 8 or 16 => Convert.ToInt32(value, radix),
+                10 => double.Parse(value, NumberStyles.Any, CultureInfo.InvariantCulture),
                 _ => throw new ArgumentException($"Radix {radix} is not supported."),
             };
 
             return new NumberResult(result);
         }
-        catch (ArgumentException)
+        catch (Exception e) when (e is ArgumentException or FormatException)
         {
             return NullResult.Instance;
         }

@@ -5,6 +5,8 @@ println(toRadix(10, 16))
 println(toRadix(10, 123))
 
 println(toNumber("1234"))
+println(toNumber("12,34"))
+println(toNumber("12.34"))
 println(toNumber("FF", 16))
 println(toNumber("aa", 16))
 println(toNumber("1010", 2))
