@@ -16,6 +16,12 @@ public class Interpreter
 
     private readonly Stack<Scope> scopes = new();
 
+    private Lazy<Random> random = new(() => new());
+
+    public void SetRandomSeed(int value) => random = new(() => new Random(value));
+
+    public Random Random => random.Value;
+
     public Interpreter(TextWriter? stdOut = null, TextWriter? stdErr = null, TextReader? stdIn = null,
         TextWriter? debugOut = null)
     {

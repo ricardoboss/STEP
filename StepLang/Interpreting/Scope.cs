@@ -40,6 +40,18 @@ public class Scope
         SetVariable(PrintlnFunction.Identifier, new FunctionResult(new PrintlnFunction()));
         SetVariable(ReadlineFunction.Identifier, new FunctionResult(new ReadlineFunction()));
         SetVariable(ReadFunction.Identifier, new FunctionResult(new ReadFunction()));
+        SetVariable(AbsFunction.Identifier, new FunctionResult(new AbsFunction()));
+        SetVariable(CeilFunction.Identifier, new FunctionResult(new CeilFunction()));
+        SetVariable(FloorFunction.Identifier, new FunctionResult(new FloorFunction()));
+        SetVariable(RoundFunction.Identifier, new FunctionResult(new RoundFunction()));
+        SetVariable(ClampFunction.Identifier, new FunctionResult(new ClampFunction()));
+        SetVariable(SinFunction.Identifier, new FunctionResult(new SinFunction()));
+        SetVariable(CosFunction.Identifier, new FunctionResult(new CosFunction()));
+        SetVariable(TanFunction.Identifier, new FunctionResult(new TanFunction()));
+        SetVariable(InterpolateFunction.Identifier, new FunctionResult(new InterpolateFunction()));
+        SetVariable(MaxFunction.Identifier, new FunctionResult(new MaxFunction()));
+        SetVariable(MinFunction.Identifier, new FunctionResult(new MinFunction()));
+        SetVariable(SqrtFunction.Identifier, new FunctionResult(new SqrtFunction()));
 
         // conversion functions
         SetVariable(ToJsonFunction.Identifier, new FunctionResult(new ToJsonFunction()));
@@ -57,10 +69,15 @@ public class Scope
         SetVariable(FileReadFunction.Identifier, new FunctionResult(new FileReadFunction()));
         SetVariable(FileWriteFunction.Identifier, new FunctionResult(new FileWriteFunction()));
         SetVariable(FileDeleteFunction.Identifier, new FunctionResult(new FileDeleteFunction()));
+        SetVariable(SeedFunction.Identifier, new FunctionResult(new SeedFunction()));
+        SetVariable(RandomFunction.Identifier, new FunctionResult(new RandomFunction()));
 
         SetVariable("null", NullResult.Instance);
 
         SetVariable("EOL", new StringResult(Environment.NewLine));
+
+        SetVariable("pi", new NumberResult(Math.PI));
+        SetVariable("e", new NumberResult(Math.E));
     }
 
     public void SetVariable(string identifier, ExpressionResult value)
