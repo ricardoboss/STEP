@@ -31,50 +31,50 @@ public class Scope
         SetVariable(DoSwapFunction.Identifier, new DoSwapFunction().ToResult());
 
         // pure functions
-        SetVariable(SubstringFunction.Identifier, new SubstringFunction.ToResult());
-        SetVariable(IndexOfFunction.Identifier, new IndexOfFunction.ToResult());
-        SetVariable(ContainsFunction.Identifier, new ContainsFunction.ToResult());
-        SetVariable(StartsWithFunction.Identifier, new StartsWithFunction.ToResult());
-        SetVariable(EndsWithFunction.Identifier, new EndsWithFunction.ToResult());
-        SetVariable(PrintFunction.Identifier, new PrintFunction.ToResult());
-        SetVariable(PrintlnFunction.Identifier, new PrintlnFunction.ToResult());
-        SetVariable(ReadlineFunction.Identifier, new ReadlineFunction.ToResult());
-        SetVariable(ReadFunction.Identifier, new ReadFunction.ToResult());
-        SetVariable(AbsFunction.Identifier, new AbsFunction.ToResult());
-        SetVariable(CeilFunction.Identifier, new CeilFunction.ToResult());
-        SetVariable(FloorFunction.Identifier, new FloorFunction.ToResult());
-        SetVariable(RoundFunction.Identifier, new RoundFunction.ToResult());
-        SetVariable(ClampFunction.Identifier, new ClampFunction.ToResult());
-        SetVariable(SinFunction.Identifier, new SinFunction.ToResult());
-        SetVariable(CosFunction.Identifier, new CosFunction.ToResult());
-        SetVariable(TanFunction.Identifier, new TanFunction.ToResult());
-        SetVariable(InterpolateFunction.Identifier, new InterpolateFunction.ToResult());
-        SetVariable(MaxFunction.Identifier, new MaxFunction.ToResult());
-        SetVariable(MinFunction.Identifier, new MinFunction.ToResult());
-        SetVariable(SqrtFunction.Identifier, new SqrtFunction.ToResult());
-        SetVariable(ConvertedFunction.Identifier, new ConvertedFunction.ToResult());
-        SetVariable(FilteredFunction.Identifier, new FilteredFunction.ToResult());
-        SetVariable(ReversedFunction.Identifier, new ReversedFunction.ToResult());
+        SetVariable(SubstringFunction.Identifier, new SubstringFunction().ToResult());
+        SetVariable(IndexOfFunction.Identifier, new IndexOfFunction().ToResult());
+        SetVariable(ContainsFunction.Identifier, new ContainsFunction().ToResult());
+        SetVariable(StartsWithFunction.Identifier, new StartsWithFunction().ToResult());
+        SetVariable(EndsWithFunction.Identifier, new EndsWithFunction().ToResult());
+        SetVariable(PrintFunction.Identifier, new PrintFunction().ToResult());
+        SetVariable(PrintlnFunction.Identifier, new PrintlnFunction().ToResult());
+        SetVariable(ReadlineFunction.Identifier, new ReadlineFunction().ToResult());
+        SetVariable(ReadFunction.Identifier, new ReadFunction().ToResult());
+        SetVariable(AbsFunction.Identifier, new AbsFunction().ToResult());
+        SetVariable(CeilFunction.Identifier, new CeilFunction().ToResult());
+        SetVariable(FloorFunction.Identifier, new FloorFunction().ToResult());
+        SetVariable(RoundFunction.Identifier, new RoundFunction().ToResult());
+        SetVariable(ClampFunction.Identifier, new ClampFunction().ToResult());
+        SetVariable(SinFunction.Identifier, new SinFunction().ToResult());
+        SetVariable(CosFunction.Identifier, new CosFunction().ToResult());
+        SetVariable(TanFunction.Identifier, new TanFunction().ToResult());
+        SetVariable(InterpolateFunction.Identifier, new InterpolateFunction().ToResult());
+        SetVariable(MaxFunction.Identifier, new MaxFunction().ToResult());
+        SetVariable(MinFunction.Identifier, new MinFunction().ToResult());
+        SetVariable(SqrtFunction.Identifier, new SqrtFunction().ToResult());
+        SetVariable(ConvertedFunction.Identifier, new ConvertedFunction().ToResult());
+        SetVariable(FilteredFunction.Identifier, new FilteredFunction().ToResult());
+        SetVariable(ReversedFunction.Identifier, new ReversedFunction().ToResult());
         SetVariable(SortedFunction.Identifier, new SortedFunction().ToResult());
 
         // conversion functions
-        SetVariable(ToJsonFunction.Identifier, new ToJsonFunction.ToResult());
-        SetVariable(FromJsonFunction.Identifier, new FromJsonFunction.ToResult());
-        SetVariable(ToTypeNameFunction.Identifier, new ToTypeNameFunction.ToResult());
-        SetVariable(ToKeysFunction.Identifier, new ToKeysFunction.ToResult());
-        SetVariable(ToValuesFunction.Identifier, new ToValuesFunction.ToResult());
-        SetVariable(ToStringFunction.Identifier, new ToStringFunction.ToResult());
-        SetVariable(ToRadixFunction.Identifier, new ToRadixFunction.ToResult());
-        SetVariable(ToNumberFunction.Identifier, new ToNumberFunction.ToResult());
-        SetVariable(ToBoolFunction.Identifier, new ToBoolFunction.ToResult());
+        SetVariable(ToJsonFunction.Identifier, new ToJsonFunction().ToResult());
+        SetVariable(FromJsonFunction.Identifier, new FromJsonFunction().ToResult());
+        SetVariable(ToTypeNameFunction.Identifier, new ToTypeNameFunction().ToResult());
+        SetVariable(ToKeysFunction.Identifier, new ToKeysFunction().ToResult());
+        SetVariable(ToValuesFunction.Identifier, new ToValuesFunction().ToResult());
+        SetVariable(ToStringFunction.Identifier, new ToStringFunction().ToResult());
+        SetVariable(ToRadixFunction.Identifier, new ToRadixFunction().ToResult());
+        SetVariable(ToNumberFunction.Identifier, new ToNumberFunction().ToResult());
+        SetVariable(ToBoolFunction.Identifier, new ToBoolFunction().ToResult());
 
         // other functions
-        SetVariable(FileExistsFunction.Identifier, new FileExistsFunction.ToResult());
-        SetVariable(FileReadFunction.Identifier, new FileReadFunction.ToResult());
-        SetVariable(FileWriteFunction.Identifier, new FileWriteFunction.ToResult());
-        SetVariable(FileDeleteFunction.Identifier, new FileDeleteFunction.ToResult());
-        SetVariable(SeedFunction.Identifier, new SeedFunction.ToResult());
-        SetVariable(RandomFunction.Identifier, new RandomFunction.ToResult());
+        SetVariable(FileExistsFunction.Identifier, new FileExistsFunction().ToResult());
+        SetVariable(FileReadFunction.Identifier, new FileReadFunction().ToResult());
+        SetVariable(FileWriteFunction.Identifier, new FileWriteFunction().ToResult());
+        SetVariable(FileDeleteFunction.Identifier, new FileDeleteFunction().ToResult());
+        SetVariable(SeedFunction.Identifier, new SeedFunction().ToResult());
+        SetVariable(RandomFunction.Identifier, new RandomFunction().ToResult());
 
         SetVariable("null", NullResult.Instance);
 

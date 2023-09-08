@@ -11,7 +11,7 @@ public class ReadFunction : NativeFunction
     /// <inheritdoc />
     public override Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
-        CheckArgumentCount(arguments, 0);
+        CheckArgumentCount(arguments);
 
         if (interpreter.StdIn is not { } stdIn)
             return Task.FromResult<ExpressionResult>(StringResult.Empty);
@@ -22,8 +22,4 @@ public class ReadFunction : NativeFunction
 
         return Task.FromResult<ExpressionResult>(new StringResult(char.ConvertFromUtf32(character)));
     }
-
-    /// <inheritdoc />
-    [ExcludeFromCodeCoverage]
-    protected override string DebugParamsString => string.Empty;
 }

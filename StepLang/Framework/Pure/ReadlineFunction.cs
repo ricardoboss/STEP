@@ -10,7 +10,7 @@ public class ReadlineFunction : NativeFunction
     /// <inheritdoc />
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
-        CheckArgumentCount(arguments, 0);
+        CheckArgumentCount(arguments);
 
         if (interpreter.StdIn is not { } stdIn)
             return StringResult.Empty;

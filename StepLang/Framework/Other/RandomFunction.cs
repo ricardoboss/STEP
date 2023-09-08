@@ -11,12 +11,10 @@ public class RandomFunction : NativeFunction
 
     public override Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
-        CheckArgumentCount(arguments, 0);
+        CheckArgumentCount(arguments);
 
         var value = interpreter.Random.NextDouble();
 
         return Task.FromResult<ExpressionResult>(new NumberResult(value));
     }
-
-    protected override string DebugParamsString => "";
 }

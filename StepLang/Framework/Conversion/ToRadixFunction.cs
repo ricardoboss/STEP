@@ -7,9 +7,11 @@ public class ToRadixFunction : NativeFunction
 {
     public const string Identifier = "toRadix";
 
+    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.Number }, "value"), (new[] { ResultType.Number }, "radix") };
+
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
-        CheckArgumentCount(arguments, 2);
+        CheckArgumentCount(arguments);
 
         var (valueExpression, radixExpression) = (arguments[0], arguments[1]);
 
@@ -31,6 +33,4 @@ public class ToRadixFunction : NativeFunction
             return NullResult.Instance;
         }
     }
-
-    protected override string DebugParamsString => "number value, number radix";
 }

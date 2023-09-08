@@ -7,9 +7,11 @@ public class ToBoolFunction : NativeFunction
 {
     public const string Identifier = "toBool";
 
+    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (Enum.GetValues<ResultType>(), Identifier) };
+
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
-        CheckArgumentCount(arguments, 1);
+        CheckArgumentCount(arguments);
 
         var value = await arguments.Single().EvaluateAsync(interpreter, cancellationToken);
 
@@ -34,6 +36,4 @@ public class ToBoolFunction : NativeFunction
 
         return new BoolResult(result);
     }
-
-    protected override string DebugParamsString => "any value";
 }

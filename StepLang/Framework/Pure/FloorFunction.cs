@@ -7,14 +7,14 @@ public class FloorFunction : NativeFunction
 {
     public const string Identifier = "floor";
 
+    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.Number }, "x") };
+
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
-        CheckArgumentCount(arguments, 1);
+        CheckArgumentCount(arguments);
 
         var x = await arguments.Single().EvaluateAsync(interpreter, r => r.ExpectNumber().Value, cancellationToken);
 
         return new NumberResult(Math.Floor(x));
     }
-
-    protected override string DebugParamsString => "number x";
 }
