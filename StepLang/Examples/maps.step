@@ -22,3 +22,6 @@ println(indexOf(nested["a"]["b"]["d"], 100))
 println(indexOf(nested["a"]["b"]["d"], 123))
 println(contains(nested["a"]["b"]["d"], 100))
 println(contains(nested["a"]["b"]["d"], 123))
+
+println(length(nested["a"]["b"]["d"]))
+println(length({}))

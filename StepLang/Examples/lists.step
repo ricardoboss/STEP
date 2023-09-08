@@ -84,3 +84,6 @@ function cmp = (number a, number b) {
 }
 
 println(sorted([3, 1, 2], cmp))
+
+println(length(m))
+println(length([]))
