@@ -224,6 +224,24 @@ It will then assign the value `4` to the key `"key1"`.
 
 ## Constants
 
+### `pi`
+
+The `pi` constant is a number that represents the mathematical constant π.
+It represents the ratio of a circle's circumference to its diameter.
+
+```step
+println(pi) // prints 3.141592653589793
+```
+
+### `e`
+
+The `e` constant is a number that represents the mathematical constant e.
+It represents the base of the natural logarithm.
+
+```step
+println(e) // prints 2.718281828459045
+```
+
 ### `EOL`
 
 The `EOL` constant is a string that contains the end-of-line character(s) for the current platform.
