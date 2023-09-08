@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace StepLang.Tokenizing;
 
@@ -100,32 +101,33 @@ public class Tokenizer
 
     private Token? HandleString(char c)
     {
-        if (c is ' ')
+        if (escaped)
         {
-            tokenBuilder.Append(c);
+            var escapedChar = $"\\{c}";
+
+            tokenBuilder.Append(Regex.Unescape(escapedChar));
 
             escaped = false;
+
+            return null;
         }
-        else if (c == stringQuote)
+
+        if (c == stringQuote)
         {
-            if (escaped)
-            {
-                tokenBuilder.Append(c);
+            stringQuote = null;
+            stringStartLocation = null;
 
-                escaped = false;
-            }
-            else
-            {
-                stringQuote = null;
-                stringStartLocation = null;
-
-                return FinalizeToken(TokenType.LiteralString);
-            }
+            return FinalizeToken(TokenType.LiteralString);
         }
-        else if (c is '\\' && !escaped)
+
+        if (c is '\\')
+        {
             escaped = true;
-        else
-            tokenBuilder.Append(c);
+
+            return null;
+        }
+
+        tokenBuilder.Append(c);
 
         return null;
     }
