@@ -14,7 +14,7 @@ number tries = 0
 while (tries <= 3) {
 	print("Guess PI: ")
 	guess = readline()
-	parsedGuess = parse("number", guess)
+	parsedGuess = toNumber(guess)
 	if (parsedGuess == null) {
 		println("Enter a valid number!")
 
