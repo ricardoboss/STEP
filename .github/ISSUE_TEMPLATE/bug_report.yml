@@ -65,5 +65,6 @@ body:
       label: "Please make sure you did the following before submitting your bug report:"
       options:
         - label: I have searched the issues to make sure this is not a duplicate
+          required: true
         - label: The bug is reproducible in the latest version of the code
         - label: I have included steps to reproduce the bug above
