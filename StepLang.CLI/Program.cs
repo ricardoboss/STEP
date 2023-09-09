@@ -11,12 +11,18 @@ internal static class Program
         var fileArgument = new Argument<FileInfo>(name: "file", description: "The path to a .step-file")
         {
             Arity = ArgumentArity.ExactlyOne,
-        };
+        }.LegalFilePathsOnly().ExistingOnly().WithStepExtensionOnly();
+
+        var hiddenFileArgument = new Argument<FileInfo>(name: "file", description: "The path to a .step-file")
+        {
+            Arity = ArgumentArity.ExactlyOne,
+            IsHidden = true,
+        }.LegalFilePathsOnly().ExistingOnly().WithStepExtensionOnly();
 
         var fileOrDirArgument = new Argument<string[]>(name: "file-or-dir", description: "The path to a .step-file or a directory of .step-files")
         {
             Arity = ArgumentArity.ZeroOrMore,
-        };
+        }.LegalFilePathsOnly();
 
         var setExitCodeOption = new Option<bool>(aliases: new[] { "--set-exit-code", "-s" }, description: "Set the exit code to the number of changes made")
         {
@@ -30,7 +36,7 @@ internal static class Program
             Arity = ArgumentArity.ZeroOrOne,
         };
 
-        var verbosityOption = new Option<Verbosity>(aliases: new[] { "--verbosity", "-v" }, description: "Set the verbosity level", getDefaultValue: () => Verbosity.Normal)
+        var verbosityOption = new Option<Verbosity>(aliases: new[] { "--verbosity", "-v" }, description: "Set the output verbosity level", getDefaultValue: () => Verbosity.Normal)
         {
             IsRequired = false,
             Arity = ArgumentArity.ZeroOrOne,
@@ -48,6 +54,9 @@ internal static class Program
         formatCommand.SetHandler(FormatCommand.Invoke, fileOrDirArgument, setExitCodeOption, dryRunOption, verbosityOption);
 
         var rootCommand = new RootCommand("STEP - Simple Transition to Elevated Programming");
+        rootCommand.AddArgument(hiddenFileArgument);
+        rootCommand.SetHandler(RunCommand.Invoke, hiddenFileArgument);
+
         rootCommand.AddCommand(runCommand);
         rootCommand.AddCommand(formatCommand);
 
