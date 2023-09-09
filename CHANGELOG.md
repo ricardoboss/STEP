@@ -3,7 +3,13 @@
 * Use strong types for expression results by @ricardoboss in https://github.com/ricardoboss/STEP/pull/12
 * Use JSON source generators to enable trimming by @ricardoboss in https://github.com/ricardoboss/STEP/pull/14
 * Keep wiki sources in main repository by @ricardoboss in https://github.com/ricardoboss/STEP/pull/21
-* Move license to its own file by @ricardoboss (https://github.com/ricardoboss/STEP/issues/27)
+* Move license to its own file by @ricardoboss in https://github.com/ricardoboss/STEP/issues/27
+* Added many functions to the standard library by @ricardoboss & @chucker in https://github.com/ricardoboss/STEP/issues/5
+* Exceptions now include help links to helpful Docs by @ricardoboss in https://github.com/ricardoboss/STEP/issues/17
+* Added a `format` command to the CLI by @ricardoboss in https://github.com/ricardoboss/STEP/issues/19
+* Added contribution documentation by @ricardoboss in https://github.com/ricardoboss/STEP/issues/26
+
+For more info, see https://github.com/ricardoboss/STEP/milestone/2?closed=1
 
 # v1.0.0 - Initial release 🥳
 
@@ -15,3 +21,5 @@
 * Keep track of token locations and improve error reporting by @ricardoboss in https://github.com/ricardoboss/STEP/pull/8
 * Add `import` statements by @ricardoboss in https://github.com/ricardoboss/STEP/pull/9
 * Added string index operator by @ricardoboss in https://github.com/ricardoboss/STEP/pull/10
+
+For more info, see https://github.com/ricardoboss/STEP/milestone/1?closed=1
