@@ -24,7 +24,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StepLang.Tests", "StepLang.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StepLang.CLI", "StepLang.CLI\StepLang.CLI.csproj", "{D8D36317-78E3-4FD9-B85B-12869B498983}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{995634A6-466A-41FB-BD99-D95F782EE11D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{995634A6-466A-41FB-BD99-D95F782EE11D}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
 		.github\workflows\publish.yml = .github\workflows\publish.yml
@@ -39,6 +39,13 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tooling", "Tooling", "{A9BE3B66-38F1-454B-9A12-E1BF21E307CF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StepLang.Tooling.Formatting.Tests", "StepLang.Tooling.Formatting.Tests\StepLang.Tooling.Formatting.Tests.csproj", "{0DC701B1-15E9-4776-AFF5-9BBEA1C7D55B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{83F45B93-DF47-468E-A956-38826263C018}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ISSUE_TEMPLATE", "ISSUE_TEMPLATE", "{851A3A44-33F7-45C6-86E9-914C5A76749B}"
+	ProjectSection(SolutionItems) = preProject
+		.github\ISSUE_TEMPLATE\bug_report.yml = .github\ISSUE_TEMPLATE\bug_report.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,5 +80,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{728ABD46-2621-45BC-ACB1-0EF00267DCCC} = {A9BE3B66-38F1-454B-9A12-E1BF21E307CF}
 		{0DC701B1-15E9-4776-AFF5-9BBEA1C7D55B} = {A9BE3B66-38F1-454B-9A12-E1BF21E307CF}
+		{995634A6-466A-41FB-BD99-D95F782EE11D} = {83F45B93-DF47-468E-A956-38826263C018}
+		{851A3A44-33F7-45C6-86E9-914C5A76749B} = {83F45B93-DF47-468E-A956-38826263C018}
 	EndGlobalSection
 EndGlobal

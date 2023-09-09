@@ -1,0 +1,69 @@
+name: Bug report
+description: Create a report to help us improve
+labels: [ "bug" ]
+projects: [ "ricadoboss/2" ]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+      placeholder: Whenever I use ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: A clear and concise description of what you expected to happen.
+      placeholder: It should have ...
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction steps
+      description: "How do you trigger this bug? Please walk us through it step by step. If not applicable, delete this section."
+      value: |
+        1.
+        2.
+        3.
+        ...
+  - type: textarea
+    attributes:
+      label: Source Code
+      description: The source code you used to reproduce the bug. If not applicable, delete this section.
+      value: |
+        // Your code here
+      render: step
+  - type: textarea
+    attributes:
+      label: Additional context
+      description: Add any other context about the problem here.
+  - type: checkboxes
+    id: operating-systems
+    attributes:
+      label: Which operating systems have you used?
+      description: You may select more than one.
+      options:
+        - label: macOS
+        - label: Windows
+        - label: Linux
+  - type: dropdown
+    id: version
+    attributes:
+      label: Which version of the software are you using?
+      description: Run `step --version` to find out.
+      options:
+        - 1.0.0
+  - type: checkboxes
+    attributes:
+      label: "Please make sure you did the following before submitting your bug report:"
+      options:
+        - label: I have searched the issues to make sure this is not a duplicate
+        - label: The bug is reproducible in the latest version of the code
+        - label: I have included steps to reproduce the bug above
