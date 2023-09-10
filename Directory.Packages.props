@@ -2,6 +2,7 @@
     <PropertyGroup>
         <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
         <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+        <InvariantGlobalization>true</InvariantGlobalization>
     </PropertyGroup>
     <ItemGroup>
         <PackageVersion Include="System.Linq.Async" Version="6.0.1" />
