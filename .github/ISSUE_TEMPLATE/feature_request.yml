@@ -1,12 +1,8 @@
 name: Feature Request
-description: Suggest an idea for this project
+description: Missing something? Have an idea you want to discuss? Let us know!
 labels: [ "enhancement" ]
 projects: [ "ricadoboss/2" ]
 body:
-  - type: markdown
-    attributes:
-      value: |
-        Missing something? Have an idea you want to discuss? Let us know!
   - type: textarea
     id: description
     attributes:
