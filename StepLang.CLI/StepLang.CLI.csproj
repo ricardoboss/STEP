@@ -7,6 +7,7 @@
         <LangVersion>default</LangVersion>
         <AnalysisMode>All</AnalysisMode>
         <AssemblyName>step</AssemblyName>
+        <AssemblyVersion>v2.0.0-rc1</AssemblyVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">

@@ -6,6 +6,7 @@
         <Nullable>enable</Nullable>
         <LangVersion>default</LangVersion>
         <AnalysisMode>All</AnalysisMode>
+        <AssemblyVersion>v2.0.0-rc1</AssemblyVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
