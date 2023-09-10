@@ -1,0 +1,23 @@
+name: Feature Request
+description: Suggest an idea for this project
+labels: [ "enhancement" ]
+projects: [ "ricadoboss/2" ]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Missing something? Have an idea you want to discuss? Let us know!
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the feature
+      description: A clear and concise description of what the feature is.
+      placeholder: I want to be able to ...
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: "Please make sure you did the following before submitting your feature request:"
+      options:
+        - label: I have searched the issues to make sure this is not a duplicate
+          required: true
