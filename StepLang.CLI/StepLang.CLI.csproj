@@ -7,7 +7,6 @@
         <LangVersion>default</LangVersion>
         <AnalysisMode>All</AnalysisMode>
         <AssemblyName>step</AssemblyName>
-        <AssemblyVersion>v2.0.0-rc1</AssemblyVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
@@ -15,21 +14,25 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="IDisposableAnalyzers">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        <PackageReference Include="GitVersion.MsBuild">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Pastel" />
-        <PackageReference Include="System.CommandLine" />
-        <PackageReference Include="System.Linq.Async" />
+        <PackageReference Include="IDisposableAnalyzers">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Pastel"/>
+        <PackageReference Include="System.CommandLine"/>
+        <PackageReference Include="System.Linq.Async"/>
         <PackageReference Include="ToStringWithoutOverrideAnalyzer">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\StepLang.Tooling.Formatting\StepLang.Tooling.Formatting.csproj" />
-      <ProjectReference Include="..\StepLang\StepLang.csproj" />
+        <ProjectReference Include="..\StepLang.Tooling.Formatting\StepLang.Tooling.Formatting.csproj"/>
+        <ProjectReference Include="..\StepLang\StepLang.csproj"/>
     </ItemGroup>
 </Project>

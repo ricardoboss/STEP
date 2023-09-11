@@ -19,8 +19,15 @@
       "steplang": {
         "type": "Project",
         "dependencies": {
-          "System.Linq.Async": "[6.0.1, )"
+          "System.Linq.Async": "[6.0.1, )",
+          "cmdwtf.BuildTimestampGenerator": "[1.0.1, )"
         }
+      },
+      "cmdwtf.BuildTimestampGenerator": {
+        "type": "CentralTransitive",
+        "requested": "[1.0.1, )",
+        "resolved": "1.0.1",
+        "contentHash": "2XZIjeMNLYzeUyuxxn1IrWm04J4MiP4NnTyJHU3ToLXIBltAObpp3r3WIS6xHzwqGsex3YEZSXYxxpn2J1/o1Q=="
       }
     }
   }
