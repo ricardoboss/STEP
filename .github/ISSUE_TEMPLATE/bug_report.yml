@@ -44,22 +44,17 @@ body:
     attributes:
       label: Additional context
       description: Add any other context about the problem here.
-  - type: checkboxes
-    id: operating-systems
+  - type: textarea
     attributes:
-      label: Which operating systems have you used?
-      description: You may select more than one.
-      options:
-        - label: macOS
-        - label: Windows
-        - label: Linux
-  - type: dropdown
-    id: version
-    attributes:
-      label: Which version of the software are you using?
-      description: Run `step --version` to find out.
-      options:
-        - 1.0.0
+      label: `step --info` Output
+      description: Run `step --info` in your terminal paste the output here.
+      placeholder: |
+        STEP - Simple Transition to Elevated Programming
+        Build Date:
+        Version:
+        Branch:
+        CLR Version:
+        OS Version:
   - type: checkboxes
     attributes:
       label: "Please make sure you did the following before submitting your bug report:"
