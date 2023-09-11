@@ -1,7 +1,6 @@
 using System.CommandLine.Invocation;
 using System.CommandLine.IO;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
 using System.Globalization;
 using Pastel;
 
@@ -25,9 +24,9 @@ internal static class ErrorHandler
         };
     }
 
-    private static string FormatError(string type, string message) => ("! " + type + ": ").Pastel(Color.OrangeRed) + message;
+    private static string FormatError(string type, string message) => ("! " + type + ": ").Pastel(ConsoleColor.Red) + message;
 
-    private static string FormatGeneralException(Exception e) => FormatError(e.GetType().Name, e.Message + Environment.NewLine + e.StackTrace.Pastel(Color.DarkGray));
+    private static string FormatGeneralException(Exception e) => FormatError(e.GetType().Name, e.Message + Environment.NewLine + e.StackTrace.Pastel(ConsoleColor.DarkGray));
 
     private static string FormatStepLangException(StepLangException e)
     {
