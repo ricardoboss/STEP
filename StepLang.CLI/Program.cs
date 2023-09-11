@@ -124,7 +124,7 @@ internal static class Program
         context.Console.Out.WriteLine($"""
                                    {Slogan}
                                    Build Date:  {BuildTimestamp.BuildTimeUtc:yyyy-MM-dd HH:mm:ss} UTC
-                                   Version:     {GitVersionInformation.Sha} ({GitVersionInformation.FullSemVer})
+                                   Version:     {GitVersionInformation.Sha} ({GitVersionInformation.MajorMinorPatch}+{GitVersionInformation.CommitsSinceVersionSource})
                                    Branch:      {GitVersionInformation.BranchName}
                                    CLR Version: {Environment.Version}
                                    OS Version:  {Environment.OSVersion}
