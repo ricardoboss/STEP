@@ -23,6 +23,6 @@ fromJson(string json)
 
 ```step
 fromJson("{\"a\": 1, \"b\": 2}") // returns a map: {"a": 1, "b": 2}
-fromJson("[1, 2, 3]') // returns a list: [1, 2, 3]
+fromJson("[1, 2, 3]") // returns a list: [1, 2, 3]
 fromJson("{\"a\": 1, \"b\": 2") // returns null
 ```
