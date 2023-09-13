@@ -1,6 +1,6 @@
 # Your first STEP program
 
-> **Note**
+> **Note**  
 > Make sure you have set up the [STEP CLI](./Command-Line-Interface) before you continue.
 
 ## 1. Create a new file
