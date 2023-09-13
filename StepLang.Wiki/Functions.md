@@ -60,6 +60,18 @@ They do not modify any of the given values.
 
 Converting functions convert the given value to a different type or retrieve an emerging property of the given value.
 
+| Function                                                               | Returns            | Description                                                   |
+|------------------------------------------------------------------------|--------------------|---------------------------------------------------------------|
+| [`fromJson(string json)`](./Functions/FromJson.md)                     | `any`              | Converts the given JSON string to a STEP value.               |
+| [`toBool(any subject)`](./Functions/ToBool.md)                         | `bool`             | Converts the given value to a bool.                           |
+| [`toJson(any subject)`](./Functions/ToJson.md)                         | `string`           | Converts the given value to a JSON string.                    |
+| [`toKeys(map subject)`](./Functions/ToKeys.md)                         | `list`             | Returns a list of keys from the given map.                    |
+| [`toNumber(string value, number radix = 10)`](./Functions/ToNumber.md) | `number` or `null` | Converts the given string to a number.                        |
+| [`toRadix(number value, number radix = 10)`](./Functions/ToRadix.md)   | `string`           | Converts the given number to a string in the specified radix. |
+| [`toString(any subject)`](./Functions/ToString.md)                     | `string`           | Converts the given value to a string.                         |
+| [`toTypeName(any subject)`](./Functions/ToTypeName.md)                 | `string`           | Returns the type name of the given value as a string.         |
+| [`toValues(map subject)`](./Functions/ToValues.md)                     | `list`             | Returns a list of values from the given map.                  |
+
 ## Other
 
 Other functions do not fit into any of the other categories.
