@@ -17,6 +17,6 @@ public abstract class StepLangException : Exception
         ErrorCode = errorCode;
 
         // ReSharper disable once VirtualMemberCallInConstructor
-        HelpLink = $"https://github.com/ricardoboss/STEP/blob/main/StepLang.Wiki/Errors/{errorCode}.md";
+        HelpLink = $"https://github.com/ricardoboss/STEP/wiki/{ErrorCode}";
     }
 }
