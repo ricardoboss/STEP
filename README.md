@@ -19,23 +19,12 @@ It is inspired by languages like Python, JavaScript and C#.
 
 ## Features
 
-- **Easy to learn and use**
-    - STEP is designed to be easy to learn and use.
-    - It has a simple syntax and a small set of features.
-- **Statically typed**
-    - STEP is statically typed.
-- **Interpreted**
-    - STEP is interpreted.
-    - This means that you don't need to compile your code before you can run it.
-- **Cross-platform**
-    - STEP is cross-platform.
-    - This means that you can run it on Windows, Linux and macOS.
-- **Open source**
-    - STEP is open source.
-    - This means that you can contribute to the language and its ecosystem.
-- **Extensible**
-    - STEP is extensible.
-    - This means that you can write your own functions and libraries and import them anywhere.
+- **Easy to learn and use** — It has a simple syntax and a small set of features.
+- **Statically typed** — You need to declare the type of a variable before you can use it.
+- **Interpreted** — You don't need to compile your code before you can run it.
+- **Cross-platform** — You can run it on Windows, Linux and macOS.
+- **Open source** — You can contribute to the language and its ecosystem.
+- **Extensible** — You can write your own functions and libraries and import them anywhere.
 
 ## Installation
 
@@ -49,7 +38,7 @@ STEP has a standard framework of functions you can use in your programs.
 An overview of all functions can be found in the [Functions](https://github.com/ricardoboss/STEP/wiki/Function) section of the wiki.
 
 Additionally, STEP has very graceful error handling.
-All errors are documented in the [Errors](https://github.com/ricardoboss/STEP/wiki//Errors) section of the wiki.
+All errors are documented in the [Errors](https://github.com/ricardoboss/STEP/wiki/Errors) section of the wiki.
 
 ## Contributing
 
