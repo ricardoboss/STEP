@@ -1,7 +1,4 @@
-> # **Work In Progress**
->
-> The current state of this document does not reflect the final design.
-> It is merely a draft.
+# Introduction
 
 A code style is commonly referred to as the way code is written in the literal sense.
 It specifies where and how certain tokens should be placed and dictates use of punctuation and white spaces.
