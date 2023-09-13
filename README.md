@@ -34,6 +34,8 @@ Check out the [installation guide](https://github.com/ricardoboss/STEP/wiki/Comm
 
 ## Documentation
 
+To get started using STEP, head over to the [Guide](https://github.com/ricardoboss/STEP/wiki/Guide).
+
 STEP has a standard framework of functions you can use in your programs.
 An overview of all functions can be found in the [Functions](https://github.com/ricardoboss/STEP/wiki/Function) section of the wiki.
 
