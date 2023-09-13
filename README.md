@@ -41,15 +41,15 @@ It is inspired by languages like Python, JavaScript and C#.
 
 To use STEP, you need to set up the STEP CLI.
 
-Check out the [installation guide](./Command-Line-Interface) for more information.
+Check out the [installation guide](https://github.com/ricardoboss/STEP/wiki/Command-Line-Interface) for more information.
 
 ## Documentation
 
 STEP has a standard framework of functions you can use in your programs.
-An overview of all functions can be found in the [Functions](./Functions) section of the wiki.
+An overview of all functions can be found in the [Functions](https://github.com/ricardoboss/STEP/wiki/Function) section of the wiki.
 
 Additionally, STEP has very graceful error handling.
-All errors are documented in the [Errors](./Errors) section of the wiki.
+All errors are documented in the [Errors](https://github.com/ricardoboss/STEP/wiki//Errors) section of the wiki.
 
 ## Contributing
 
