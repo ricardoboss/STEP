@@ -3,6 +3,9 @@
         <a href="./Home">Home</a>
     </li>
     <li>
+        <a href="./Guide">Guide</a>
+    </li>
+    <li>
         <a href="./Help">Help</a>
     </li>
     <li>

@@ -11,87 +11,53 @@
   </span>
 </p>
 
-Behold, a new programming language arrives:
+# Welcome 👋
 
-```step
-number pi = 3.141592
+STEP is a programming language that is designed to be easy to learn and use.
 
-string name = "John"
-if (name == "John") {
-	println("Hello, ", name)
-} else {
-	println("Who are you?")
-}
+It is inspired by languages like Python, JavaScript and C#.
 
-string guess
-number parsedGuess
-number tries = 0
-while (tries <= 3) {
-	print("Guess PI: ")
-	guess = readline()
-	parsedGuess = parse("number", guess)
-	if (parsedGuess == null) {
-		println("Enter a valid number!")
+## Features
 
-		tries++
+- **Easy to learn and use**
+    - STEP is designed to be easy to learn and use.
+    - It has a simple syntax and a small set of features.
+- **Statically typed**
+    - STEP is statically typed.
+- **Interpreted**
+    - STEP is interpreted.
+    - This means that you don't need to compile your code before you can run it.
+- **Cross-platform**
+    - STEP is cross-platform.
+    - This means that you can run it on Windows, Linux and macOS.
+- **Open source**
+    - STEP is open source.
+    - This means that you can contribute to the language and its ecosystem.
+- **Extensible**
+    - STEP is extensible.
+    - This means that you can write your own functions and libraries and import them anywhere.
 
-		continue
-	}
+## Installation
 
-	if (parsedGuess == pi) {
-		println("Close enough!")
-		break
-	} else {
-		if (parsedGuess > 4 || parsedGuess < 3) {
-			println("Way off! ", 3 - tries, " tries left.")
-		} else {
-			println("Nope, try again. ", 3 - tries, " tries left.")
-		}
-	}
+To use STEP, you need to set up the STEP CLI.
 
-	tries++
-}
+Check out the [installation guide](./Command-Line-Interface) for more information.
 
-print("Goodbye", EOL)
-```
+## Documentation
 
-To get started yourself, head over to the [Wiki](https://github.com/ricardoboss/STEP/wiki)
+STEP has a standard framework of functions you can use in your programs.
+An overview of all functions can be found in the [Functions](./Functions) section of the wiki.
 
-## What is this?
+Additionally, STEP has very graceful error handling.
+All errors are documented in the [Errors](./Errors) section of the wiki.
 
-This repository contains an interpreter and command line interface for the STEP programming language.
+## Contributing
 
-## What is STEP?
-
-STEP is a programming language designed to be simple and easy to learn.
-Is is a statically typed language with a C-like syntax.
-
-## Why is this?
-
-The main reason this exists is because I want to learn about programming languages and how they are designed.
-Another reason was my desire to create a language that can be taught to people who have never programmed before.
-
-## What does it do better than other languages?
-
-It uses very little keywords and not many symbols, so rookie programmers can focus on the important stuff.
-Like many other languages, it also uses C-like syntax, which is very common and prepares new programmers for other,
-more advanced languages.
-
-## How can I learn it?
-
-Take a look at the [`StepLang/Examples`](./StepLang/Examples) folder.
-It contains a few examples of STEP code, which you can run using the interpreter.
-
-Tutorials are planned in https://github.com/ricardoboss/STEP/issues/29.
-
-If you ever need help, feel free to join @ricardoboss' [Discord server](https://discord.gg/ySpmcdCqFN).
-
-## Can I contribute?
-
-Of course!
-Make sure to read [`CONTRIBUTING.md`](./CONTRIBUTING.md) and make yourself familiar with the workflow.
+If you want to contribute to STEP, check out the [Contributing](./CONTRIBUTING.md) section in the repository.
 
 Check out the [`good first issue` issues](https://github.com/ricardoboss/STEP/contribute) to get started.
+
+If you ever need help, feel free to join @ricardoboss' [Discord server](https://discord.gg/ySpmcdCqFN).
 
 ## License
 
