@@ -17,8 +17,8 @@ They are categorized by how they interact with the given values and what they re
 
 Mutating functions modify the given value (`list` or `map`) and usually return nothing (i.e. `void`).
 
-| Function                                                                                                      | Returns | Description                                                                                                      |
-|---------------------------------------------------------------------------------------------------------------|---------|------------------------------------------------------------------------------------------------------------------|
+| Function                                                                                         | Returns | Description                                                                                                      |
+|--------------------------------------------------------------------------------------------------|---------|------------------------------------------------------------------------------------------------------------------|
 | [`doAdd(list subject, any element)`](./DoAdd)                                                    | `void`  | Adds the given element to the end of the list.                                                                   |
 | [`doRemove(list subject, any element)`](./DoRemove)                                              | `void`  | Removes the first occurrence of the given element from the list.                                                 |
 | [`doRemoveAt(list subject, number index)`](./DoRemoveAt)                                         | `void`  | Removes the element at the given index from the list given to it and returns it.                                 |
@@ -32,8 +32,8 @@ Mutating functions modify the given value (`list` or `map`) and usually return n
 Pure functions can be called with the same arguments and always returns the same value.
 They do not modify any of the given values.
 
-| Function                                                                                                                                                                                  | Returns                      | Description                                                                                                                                                              |
-|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Function                                                                                                                                                                     | Returns                      | Description                                                                                                                                                              |
+|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | [`substring(string subject, number start, number length)`](./Substring)                                                                                                      | `string` or `null`           | Takes a string and returns a certain part of the string, based on a start and a length.                                                                                  |
 | [`length(string text)`<br>`length(list myList)`<br>`length(map myMap)`](./Length)                                                                                            | `number`                     | Takes a string, list, or map, and returns the count of characters or items.                                                                                              |
 | [`indexOf(string subject, string substring)`<br>`indexOf(list subject, any element)`<br>`indexOf(map subject, any value)`](./IndexOf)                                        | `number`, `string` or `null` | Returns the index of the first occurrence of a substring in a string or of an element in a list or the key of the first occurence of a value in a map.                   |
@@ -45,8 +45,8 @@ They do not modify any of the given values.
 | [`reversed(list subject)`](./Reversed)                                                                                                                                       | `list`                       | Returns a new list with the elements in reverse order.                                                                                                                   |
 | [`sorted(list list, function compare = compareTo)`](./Sorted)                                                                                                                | `list`                       | Takes a list and returns a new list with the same elements but sorted in ascending order.                                                                                |
 | [`compareTo(number a, number b)`<br>`compareTo(string a, string b)`<br>`compareTo(bool a, bool b)`<br>`compareTo(list a, list b)`<br>`compareTo(map a, map b)`](./CompareTo) | `number`                     | Takes two arguments of the same type and returns a number indicating whether the first argument is less than, equal to, or greater than compared to the second argument. |
-| [`sin(number x)`](./Sin)<br>[`cos(number x)`](./Cos)<br>[`tan(number x)`](./Tan)                                                                   | `number`                     | Takes a number and returns the sine, cosine or tangent of the number.                                                                                                    |
-| [`min(number ...x)`](./Min)<br>[`max(number ...x)`](./Max)                                                                                                      | `number`                     | Returns the smallest/biggest value from a list of numbers.                                                                                                               |
+| [`sin(number x)`](./Sin)<br>[`cos(number x)`](./Cos)<br>[`tan(number x)`](./Tan)                                                                                             | `number`                     | Takes a number and returns the sine, cosine or tangent of the number.                                                                                                    |
+| [`min(number ...x)`](./Min)<br>[`max(number ...x)`](./Max)                                                                                                                   | `number`                     | Returns the smallest/biggest value from a list of numbers.                                                                                                               |
 | [`clamp(number min, number max, number x)`](./Clamp)                                                                                                                         | `number`                     | Returns a value that is clamped between two values.                                                                                                                      |
 | [`interpolate(number a, number b, number t)`](./Interpolate)                                                                                                                 | `number`                     | Calculates a linear interpolation between two values based on a delta.                                                                                                   |
 | [`abs(number x)`](./Abs)                                                                                                                                                     | `number`                     | Returns the absolute value of a number.                                                                                                                                  |
@@ -60,8 +60,8 @@ They do not modify any of the given values.
 
 Converting functions convert the given value to a different type or retrieve an emerging property of the given value.
 
-| Function                                                               | Returns            | Description                                                   |
-|------------------------------------------------------------------------|--------------------|---------------------------------------------------------------|
+| Function                                                  | Returns            | Description                                                   |
+|-----------------------------------------------------------|--------------------|---------------------------------------------------------------|
 | [`fromJson(string json)`](./FromJson)                     | `any`              | Converts the given JSON string to a STEP value.               |
 | [`toBool(any subject)`](./ToBool)                         | `bool`             | Converts the given value to a bool.                           |
 | [`toJson(any subject)`](./ToJson)                         | `string`           | Converts the given value to a JSON string.                    |
@@ -76,8 +76,8 @@ Converting functions convert the given value to a different type or retrieve an 
 
 Other functions do not fit into any of the other categories.
 
-| Function                                          | Returns  | Description                                                       |
-|---------------------------------------------------|----------|-------------------------------------------------------------------|
+| Function                             | Returns  | Description                                                       |
+|--------------------------------------|----------|-------------------------------------------------------------------|
 | [`random()`](./Random)               | `number` | Returns a random number between 0 and 1.                          |
 | [`seed()`](./Seed)                   | `number` | Initializes the random number generator.                          |
 | [`print(any ...value)`](./Print)     | `void`   | Writes a value to `StdOut`.                                       |
