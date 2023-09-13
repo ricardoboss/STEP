@@ -7,6 +7,9 @@ public class SeedFunction : NativeFunction
 {
     public const string Identifier = "seed";
 
+    /// <inheritdoc />
+    public override IEnumerable<(ResultType [] types, string identifier)> Parameters => new (ResultType [] types, string identifier)[] { (new [] { ResultType.Number }, "seed") };
+
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
         CheckArgumentCount(arguments, 0, 1);
@@ -21,6 +24,4 @@ public class SeedFunction : NativeFunction
 
         return VoidResult.Instance;
     }
-
-    protected override string DebugParamsString => "number? seed";
 }
