@@ -1,6 +1,6 @@
 # Description
 
-The `seed` function seeds the random number generator.
+The `seed` function initializes the random number generator.
 
 # Syntax
 
