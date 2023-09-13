@@ -6,6 +6,9 @@
         <a href="./Help">Help</a>
     </li>
     <li>
+        <a href="./Command-Line-Interface">Command Line Interface</a>
+    </li>
+    <li>
         <a href="./Functions">Functions</a>
         <ul>
             <li>
