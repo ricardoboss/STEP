@@ -1,6 +1,7 @@
 # Description
 
-The `compareTo` function takes two arguments of the same type and returns a number indicating whether the first argument is less than, equal to, or greater than compared to the second argument.
+The `compareTo` function takes two arguments of the same type and returns a number indicating whether the
+first argument is less than, equal to, or greater than compared to the second argument.
 
 # Syntax
 
