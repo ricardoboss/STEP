@@ -13,7 +13,7 @@
                     <details>
                         <summary>Mutating</summary>
                         <ol>
-                            <li><a href="./Functions/DoAdd">doAdd</a></li>
+                            <li><a href="./DoAdd">doAdd</a></li>
                         </ol>
                     </details>
                 </li>
@@ -21,7 +21,7 @@
                     <details>
                         <summary>Pure</summary>
                         <ol>
-                            <li><a href="./Functions/Substring">substring</a></li>
+                            <li><a href="./Substring">substring</a></li>
                         </ol>
                     </details>
                 </li>
@@ -29,7 +29,7 @@
                     <details>
                         <summary>Converting</summary>
                         <ol>
-                            <li><a href="./Functions/FromJson">fromJson</a></li>
+                            <li><a href="./FromJson">fromJson</a></li>
                         </ol>
                     </details>
                 </li>
@@ -37,7 +37,7 @@
                     <details>
                         <summary>Other</summary>
                         <ol>
-                            <li><a href="./Functions/Random">random</a></li>
+                            <li><a href="./Random">random</a></li>
                         </ol>
                     </details>
                 </li>
