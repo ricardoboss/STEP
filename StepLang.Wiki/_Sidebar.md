@@ -8,7 +8,7 @@
     <li>
         <details>
             <summary><a href="./Functions">Functions</a></summary>
-            <ol>
+            <ul>
                 <li>
                     <details>
                         <summary>Mutating</summary>
@@ -41,7 +41,7 @@
                         </ol>
                     </details>
                 </li>
-            </ol>
+            </ul>
         </details>
     </li>
     <li>
