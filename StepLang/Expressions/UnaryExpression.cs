@@ -5,6 +5,26 @@ namespace StepLang.Expressions;
 
 public class UnaryExpression : Expression
 {
+    public static Expression Not(Expression expression)
+    {
+        return new UnaryExpression("!", expression, result =>
+        {
+            var value = result.ExpectBool().Value;
+
+            return new BoolResult(!value);
+        });
+    }
+
+    public static Expression Negate(Expression expression)
+    {
+        return new UnaryExpression("-", expression, result =>
+        {
+            var value = result.ExpectNumber().Value;
+
+            return new NumberResult(-value);
+        });
+    }
+
     private readonly string debugName;
     private readonly Expression expression;
     private readonly Func<ExpressionResult, ExpressionResult> transform;

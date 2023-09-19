@@ -8,7 +8,7 @@ public class ConvertedFunction : ListManipulationFunction
 {
     public const string Identifier = "converted";
 
-    protected override IAsyncEnumerable<ExpressionResult> EvaluateListManipulationAsync(Interpreter interpreter, IAsyncEnumerable<ConstantExpression[]> arguments,
+    protected override IAsyncEnumerable<ExpressionResult> EvaluateListManipulationAsync(Interpreter interpreter, IAsyncEnumerable<LiteralExpression[]> arguments,
         FunctionDefinition callback, CancellationToken cancellationToken = default)
     {
         return arguments.SelectAwait(async args => await callback.EvaluateAsync(interpreter, args, cancellationToken));

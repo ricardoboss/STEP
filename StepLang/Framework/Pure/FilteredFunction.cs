@@ -8,7 +8,7 @@ public class FilteredFunction : ListManipulationFunction
 {
     public const string Identifier = "filtered";
 
-    protected override IAsyncEnumerable<ExpressionResult> EvaluateListManipulationAsync(Interpreter interpreter, IAsyncEnumerable<ConstantExpression[]> arguments, FunctionDefinition callback, CancellationToken cancellationToken = default)
+    protected override IAsyncEnumerable<ExpressionResult> EvaluateListManipulationAsync(Interpreter interpreter, IAsyncEnumerable<LiteralExpression[]> arguments, FunctionDefinition callback, CancellationToken cancellationToken = default)
     {
         return arguments
             .WhereAwait(async args =>

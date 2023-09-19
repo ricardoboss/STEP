@@ -114,7 +114,7 @@ public class StatementParser
 
         Expression expression;
         if (expressionTokens.Count == 0)
-            expression = Expression.Constant(1);
+            expression = LiteralExpression.Number(1);
         else
             expression = await ExpressionParser.ParseAsync(expressionTokens, cancellationToken);
 
@@ -132,7 +132,7 @@ public class StatementParser
 
         Expression expression;
         if (expressionTokens.Count == 0)
-            expression = Expression.Constant(1);
+            expression = LiteralExpression.Number(1);
         else
             expression = await ExpressionParser.ParseAsync(expressionTokens, cancellationToken);
 

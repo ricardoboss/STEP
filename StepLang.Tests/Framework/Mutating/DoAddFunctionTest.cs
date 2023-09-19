@@ -33,11 +33,11 @@ public class DoAddFunctionTest
     {
         public DoAddData()
         {
-            Add(ListResult.Empty, ConstantExpression.Str("test"));
-            Add(ListResult.Empty, ConstantExpression.Number(1));
-            Add(ListResult.Empty, ConstantExpression.True);
-            Add(ListResult.Empty, Expression.Add(ConstantExpression.Number(1), ConstantExpression.Number(2)));
-            Add(ListResult.From(BoolResult.True), ConstantExpression.False);
+            Add(ListResult.Empty, LiteralExpression.Str("test"));
+            Add(ListResult.Empty, LiteralExpression.Number(1));
+            Add(ListResult.Empty, LiteralExpression.True);
+            Add(ListResult.Empty, BinaryExpression.Add(LiteralExpression.Number(1), LiteralExpression.Number(2)));
+            Add(ListResult.From(BoolResult.True), LiteralExpression.False);
         }
     }
 }
