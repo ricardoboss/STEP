@@ -1,6 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using StepLang.Parsing.Expressions;
+using StepLang.Expressions.Results;
 
 namespace StepLang.Framework.Conversion;
 
