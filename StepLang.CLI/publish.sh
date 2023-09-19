@@ -8,7 +8,7 @@ platforms=(
   "osx-x64"
   "linux-arm64"
   "win-arm64"
-#  "osx-arm64" # disable arm64 macOS builds until a workflow for signing them is created
+  "osx-arm64"
 )
 frameworkVersion="net7.0"
 
@@ -49,6 +49,12 @@ for platform in "${platforms[@]}"; do
     chmod +x "$outputPath"
 
     echo -e "\t✅ built $outputPath"
+
+    if [[ "$platform" == "osx-arm64" ]]; then
+      codesign --force --timestamp --entitlements entitlements.plist --sign "$APPLE_SIGNING_ID" "$outputPath"
+
+      echo -e "\t🔐 signed $outputPath"
+    fi
 done
 
 echo "🔨 Building platform-independent binary..."
