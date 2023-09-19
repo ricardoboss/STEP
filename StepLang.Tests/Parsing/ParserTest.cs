@@ -1,7 +1,7 @@
+using StepLang.Expressions;
 using StepLang.Interpreting;
 using StepLang.Parsing;
-using StepLang.Parsing.Expressions;
-using StepLang.Parsing.Statements;
+using StepLang.Statements;
 
 namespace StepLang.Tests.Parsing;
 

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using StepLang.Interpreting;
-using StepLang.Parsing.Statements;
+using StepLang.Statements;
 using StepLang.Tokenizing;
 
 namespace StepLang.Tests.Integration;

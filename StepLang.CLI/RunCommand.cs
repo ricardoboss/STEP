@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using StepLang.Interpreting;
-using StepLang.Parsing.Statements;
+using StepLang.Statements;
 using StepLang.Tokenizing;
 
 namespace StepLang.CLI;

@@ -1,7 +1,8 @@
 using System.Runtime.InteropServices;
+using StepLang.Expressions;
+using StepLang.Expressions.Results;
 using StepLang.Framework.Other;
 using StepLang.Interpreting;
-using StepLang.Parsing.Expressions;
 
 namespace StepLang.Tests.Framework.Other;
 

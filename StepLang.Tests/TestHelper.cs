@@ -1,4 +1,4 @@
-using StepLang.Parsing.Statements;
+using StepLang.Statements;
 using StepLang.Tokenizing;
 
 namespace StepLang.Tests;
