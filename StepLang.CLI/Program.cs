@@ -4,6 +4,7 @@ using System.CommandLine.Invocation;
 using System.CommandLine.IO;
 using System.CommandLine.Parsing;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
 using cmdwtf;
 
 namespace StepLang.CLI;
@@ -127,7 +128,7 @@ internal static class Program
                                    Version:     {GitVersionInformation.Sha} ({GitVersionInformation.MajorMinorPatch}+{GitVersionInformation.CommitsSinceVersionSource})
                                    Branch:      {GitVersionInformation.BranchName}
                                    CLR Version: {Environment.Version}
-                                   OS Version:  {Environment.OSVersion}
+                                   OS Version:  {RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})
                                    """);
     }
 }
