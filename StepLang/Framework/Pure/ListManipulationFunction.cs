@@ -26,10 +26,10 @@ public abstract class ListManipulationFunction : NativeFunction
         return new ListResult(result);
     }
 
-    protected virtual IAsyncEnumerable<ConstantExpression[]> PrepareArgsForCallback(IEnumerable<ExpressionResult> list, FunctionDefinition callback)
+    protected virtual IAsyncEnumerable<LiteralExpression[]> PrepareArgsForCallback(IEnumerable<ExpressionResult> list, FunctionDefinition callback)
     {
         var callbackParameters = callback.Parameters.ToList();
-        Func<ExpressionResult, int, ConstantExpression[]> argsConverter;
+        Func<ExpressionResult, int, LiteralExpression[]> argsConverter;
 
         switch (callbackParameters.Count)
         {
@@ -41,8 +41,8 @@ public abstract class ListManipulationFunction : NativeFunction
 
                 argsConverter = (element, index) =>
                 {
-                    var elementExpression = element.ToExpression();
-                    var indexExpression = ConstantExpression.Number(index);
+                    var elementExpression = element.ToLiteralExpression();
+                    var indexExpression = LiteralExpression.Number(index);
 
                     return new[] { elementExpression, indexExpression };
                 };
@@ -51,7 +51,7 @@ public abstract class ListManipulationFunction : NativeFunction
             default:
                 argsConverter = (element, _) =>
                 {
-                    return new[] { element.ToExpression() };
+                    return new[] { element.ToLiteralExpression() };
                 };
 
                 break;
@@ -60,5 +60,5 @@ public abstract class ListManipulationFunction : NativeFunction
         return list.Select(argsConverter).ToAsyncEnumerable();
     }
 
-    protected abstract IAsyncEnumerable<ExpressionResult> EvaluateListManipulationAsync(Interpreter interpreter, IAsyncEnumerable<ConstantExpression[]> arguments, FunctionDefinition callback, CancellationToken cancellationToken = default);
+    protected abstract IAsyncEnumerable<ExpressionResult> EvaluateListManipulationAsync(Interpreter interpreter, IAsyncEnumerable<LiteralExpression[]> arguments, FunctionDefinition callback, CancellationToken cancellationToken = default);
 }

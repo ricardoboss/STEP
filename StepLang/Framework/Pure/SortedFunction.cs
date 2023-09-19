@@ -23,10 +23,10 @@ public class SortedFunction : ListManipulationFunction
         else
             callback = new CompareToFunction().ToResult();
 
-        return await base.EvaluateAsync(interpreter, new[] { arguments[0], callback.ToExpression() }, cancellationToken);
+        return await base.EvaluateAsync(interpreter, new[] { arguments[0], callback.ToLiteralExpression() }, cancellationToken);
     }
 
-    protected override IAsyncEnumerable<ConstantExpression[]> PrepareArgsForCallback(IEnumerable<ExpressionResult> list, FunctionDefinition callback)
+    protected override IAsyncEnumerable<LiteralExpression[]> PrepareArgsForCallback(IEnumerable<ExpressionResult> list, FunctionDefinition callback)
     {
         var callbackParameters = callback.Parameters.ToList();
         if (callbackParameters.Count != 2)
@@ -35,10 +35,10 @@ public class SortedFunction : ListManipulationFunction
         if (!callbackParameters[0].types.SequenceEqual(callbackParameters[1].types))
             throw new InvalidArgumentTypeException(null, $"Both parameters of callback function must have the same type, but are {string.Join("|", callbackParameters[0].types.Select(t => t.ToTypeName()))} and {string.Join("|", callbackParameters[1].types.Select(t => t.ToTypeName()))}");
 
-        return list.Select(e => new[] { e.ToExpression() }).ToAsyncEnumerable();
+        return list.Select(e => new[] { e.ToLiteralExpression() }).ToAsyncEnumerable();
     }
 
-    protected override async IAsyncEnumerable<ExpressionResult> EvaluateListManipulationAsync(Interpreter interpreter, IAsyncEnumerable<ConstantExpression[]> arguments,
+    protected override async IAsyncEnumerable<ExpressionResult> EvaluateListManipulationAsync(Interpreter interpreter, IAsyncEnumerable<LiteralExpression[]> arguments,
         FunctionDefinition callback, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var arr = await arguments.ToArrayAsync(cancellationToken);

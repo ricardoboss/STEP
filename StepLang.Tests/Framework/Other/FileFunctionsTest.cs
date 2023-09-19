@@ -23,37 +23,37 @@ public class FileFunctionsTest
         var fileReadFunction = new FileReadFunction();
         var fileDeleteFunction = new FileDeleteFunction();
 
-        var preWriteExistsResult = await fileExistsFunction.EvaluateAsync(interpreter, new List<Expression> { ConstantExpression.Str(filename) });
+        var preWriteExistsResult = await fileExistsFunction.EvaluateAsync(interpreter, new List<Expression> { LiteralExpression.Str(filename) });
 
         Assert.IsType<BoolResult>(preWriteExistsResult);
         Assert.False(preWriteExistsResult.ExpectBool().Value);
 
-        var writeResult = await fileWriteFunction.EvaluateAsync(interpreter, new List<Expression> { ConstantExpression.Str(filename), ConstantExpression.Str(content) });
+        var writeResult = await fileWriteFunction.EvaluateAsync(interpreter, new List<Expression> { LiteralExpression.Str(filename), LiteralExpression.Str(content) });
 
         Assert.IsType<BoolResult>(writeResult);
         Assert.True(writeResult.ExpectBool().Value);
 
-        var postWriteExistsResult = await fileExistsFunction.EvaluateAsync(interpreter, new List<Expression> { ConstantExpression.Str(filename) });
+        var postWriteExistsResult = await fileExistsFunction.EvaluateAsync(interpreter, new List<Expression> { LiteralExpression.Str(filename) });
 
         Assert.IsType<BoolResult>(postWriteExistsResult);
         Assert.True(postWriteExistsResult.ExpectBool().Value);
 
-        var firstReadResult = await fileReadFunction.EvaluateAsync(interpreter, new List<Expression> { ConstantExpression.Str(filename) });
+        var firstReadResult = await fileReadFunction.EvaluateAsync(interpreter, new List<Expression> { LiteralExpression.Str(filename) });
 
         Assert.IsType<StringResult>(firstReadResult);
         Assert.Equal(content, firstReadResult.ExpectString().Value);
 
-        var appendResult = await fileWriteFunction.EvaluateAsync(interpreter, new List<Expression> { ConstantExpression.Str(filename), ConstantExpression.Str(content), ConstantExpression.True });
+        var appendResult = await fileWriteFunction.EvaluateAsync(interpreter, new List<Expression> { LiteralExpression.Str(filename), LiteralExpression.Str(content), LiteralExpression.True });
 
         Assert.IsType<BoolResult>(appendResult);
         Assert.True(appendResult.ExpectBool().Value);
 
-        var secondReadResult = await fileReadFunction.EvaluateAsync(interpreter, new List<Expression> { ConstantExpression.Str(filename) });
+        var secondReadResult = await fileReadFunction.EvaluateAsync(interpreter, new List<Expression> { LiteralExpression.Str(filename) });
 
         Assert.IsType<StringResult>(secondReadResult);
         Assert.Equal(content + content, secondReadResult.ExpectString().Value);
 
-        var deleteResult = await fileDeleteFunction.EvaluateAsync(interpreter, new List<Expression> { ConstantExpression.Str(filename) });
+        var deleteResult = await fileDeleteFunction.EvaluateAsync(interpreter, new List<Expression> { LiteralExpression.Str(filename) });
 
         Assert.IsType<BoolResult>(deleteResult);
         Assert.True(deleteResult.ExpectBool().Value);

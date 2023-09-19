@@ -26,7 +26,7 @@ public class LengthFunctionTest
     public async Task TestEvaluateWithVariableAsync()
     {
         var interpreter = new Interpreter();
-        interpreter.CurrentScope.SetVariable("foo", ConstantExpression.Str("Hello").Result);
+        interpreter.CurrentScope.SetVariable("foo", LiteralExpression.Str("Hello").Result);
 
         var function = new LengthFunction();
         var result = await function.EvaluateAsync(interpreter, new[] { new VariableExpression(new(TokenType.Identifier, "foo", null)) });
@@ -42,7 +42,7 @@ public class LengthFunctionTest
         var interpreter = new Interpreter();
         var function = new LengthFunction();
 
-        await Assert.ThrowsAsync<InvalidArgumentTypeException>(() => function.EvaluateAsync(interpreter, new[] { ConstantExpression.Number(0) }));
+        await Assert.ThrowsAsync<InvalidArgumentTypeException>(() => function.EvaluateAsync(interpreter, new[] { LiteralExpression.Number(0) }));
     }
 
     [SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Used by xUnit")]
@@ -50,19 +50,19 @@ public class LengthFunctionTest
     {
         public LengthData()
         {
-            Add(ConstantExpression.Str(""), new NumberResult(0));
-            Add(ConstantExpression.Str("Hello"), new NumberResult(5));
+            Add(LiteralExpression.Str(""), new NumberResult(0));
+            Add(LiteralExpression.Str("Hello"), new NumberResult(5));
 
             var list = new ListExpression(new List<Expression>
             {
-                ConstantExpression.Str("A"),
-                ConstantExpression.Number(1),
-                ConstantExpression.Bool(true),
+                LiteralExpression.Str("A"),
+                LiteralExpression.Number(1),
+                LiteralExpression.Bool(true),
             });
 
             Add(list, new NumberResult(3));
 
-            var constantList = ConstantExpression.List(new List<ExpressionResult>(new[]
+            var constantList = LiteralExpression.List(new List<ExpressionResult>(new[]
             {
                 new NumberResult(123),
             }));
@@ -71,16 +71,16 @@ public class LengthFunctionTest
             var map = new MapExpression(new Dictionary<string, Expression>
             {
                 {
-                    "Foo", ConstantExpression.Str("A")
+                    "Foo", LiteralExpression.Str("A")
                 },
                 {
-                    "Bar", ConstantExpression.Number(1)
+                    "Bar", LiteralExpression.Number(1)
                 },
                 {
-                    "Baz", ConstantExpression.Bool(true)
+                    "Baz", LiteralExpression.Bool(true)
                 },
                 {
-                    "Bum", ConstantExpression.Str("lol")
+                    "Bum", LiteralExpression.Str("lol")
                 },
             });
 

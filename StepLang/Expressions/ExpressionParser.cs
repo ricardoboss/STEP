@@ -131,7 +131,7 @@ public class ExpressionParser
 
             var keyExpression = await ParseAsync(keyTokens, cancellationToken);
 
-            if (keyExpression is not ConstantExpression { Result: StringResult { Value: { } key } })
+            if (keyExpression is not LiteralExpression { Result: StringResult { Value: { } key } })
                 throw new UnexpectedTokenException(keyTokens[0], TokenType.LiteralString);
 
             var valueExpression = await ParseAsync(valueTokens, cancellationToken);
@@ -163,7 +163,7 @@ public class ExpressionParser
             // dequeue operator tokens after right value
             _ = tokenQueue.Dequeue(opPostLength);
 
-            left = Expression.FromOperator(op, left, right);
+            left = BinaryExpression.FromOperator(op, left, right);
         }
 
         return left;
@@ -191,15 +191,15 @@ public class ExpressionParser
 
                 return new IdentifierFunctionCallExpression(currentToken, expressions);
             case TokenType.LiteralNumber when double.TryParse(currentToken.Value, NumberStyles.Any, CultureInfo.InvariantCulture, out var value):
-                return Expression.Constant(value);
+                return LiteralExpression.Number(value);
             case TokenType.LiteralNumber:
                 throw new FormatException("Invalid number format.");
             case TokenType.LiteralBoolean when bool.TryParse(currentToken.Value, out var value):
-                return Expression.Constant(value);
+                return LiteralExpression.Bool(value);
             case TokenType.LiteralBoolean:
                 throw new FormatException($"Invalid bool format: {currentToken.Value}");
             case TokenType.LiteralString:
-                return Expression.Constant(currentToken.Value);
+                return LiteralExpression.Str(currentToken.Value);
             case TokenType.OpeningParentheses:
                 var nextType = tokenQueue.PeekType();
                 if (nextType is TokenType.ClosingParentheses)
@@ -250,11 +250,11 @@ public class ExpressionParser
             case TokenType.ExclamationMarkSymbol:
                 var invertedExpression = await ParseUnaryExpression(cancellationToken);
 
-                return Expression.Not(invertedExpression);
+                return UnaryExpression.Not(invertedExpression);
             case TokenType.MinusSymbol:
                 var negatedExpression = await ParseUnaryExpression(cancellationToken);
 
-                return Expression.Negate(negatedExpression);
+                return UnaryExpression.Negate(negatedExpression);
             default:
                 throw new UnexpectedTokenException(currentToken, TokenType.Identifier, TokenType.LiteralNumber, TokenType.LiteralBoolean, TokenType.LiteralString, TokenType.OpeningParentheses, TokenType.OpeningSquareBracket, TokenType.OpeningCurlyBracket);
         }
