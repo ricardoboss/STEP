@@ -32,7 +32,8 @@ public class TokenGenerator : ITokenGenerator
         var issuer = configuration.GetJwtIssuer();
         var audience = configuration.GetJwtAudience();
 
-        var descriptor = new SecurityTokenDescriptor {
+        var descriptor = new SecurityTokenDescriptor
+        {
             Subject = new(claims),
             Expires = DateTime.UtcNow.AddDays(30),
             Issuer = issuer,
