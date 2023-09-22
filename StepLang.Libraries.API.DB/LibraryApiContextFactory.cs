@@ -5,7 +5,7 @@ namespace StepLang.Libraries.API.DB;
 
 public class LibraryApiContextFactory : IDesignTimeDbContextFactory<LibraryApiContext>
 {
-    public LibraryApiContext CreateDbContext(string [] args)
+    public LibraryApiContext CreateDbContext(string[] args)
     {
         var builder = new DbContextOptionsBuilder<LibraryApiContext>();
 

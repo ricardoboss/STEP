@@ -38,7 +38,8 @@ public static class LibraryInitCommand
             JsonSerializer.Serialize(library,
                 new JsonSerializerOptions
                 {
-                    WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                    WriteIndented = true,
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                 }));
 
         await Console.Out.WriteLineAsync($"Created library '{name}' at '{libraryFilePath}'");
