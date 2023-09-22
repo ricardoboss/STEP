@@ -1,3 +1,3 @@
 namespace StepLang.Libraries.Client;
 
-public record Credentials(string Token, string DefaultAddress);
+public record Credentials(string Token, string BaseAddress);

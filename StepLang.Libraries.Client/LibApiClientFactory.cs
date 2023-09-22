@@ -1,39 +1,32 @@
-using System.Text.Json;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Http;
 
 namespace StepLang.Libraries.Client;
 
 public class LibApiClientFactory : ITypedHttpClientFactory<LibApiClient>
 {
-    private readonly Credentials? credentials;
+    public const string DefaultApiBaseAddress = "https://lib.step-lang.dev/api/";
 
-    public LibApiClientFactory(Credentials? credentials)
+    private readonly LibApiCredentialManager? credentialManager;
+    private readonly IConfiguration configuration;
+
+    public LibApiClientFactory(LibApiCredentialManager? credentialManager, IConfiguration configuration)
     {
-        this.credentials = credentials;
+        this.credentialManager = credentialManager;
+        this.configuration = configuration;
     }
+
+    private string? GetConfiguredBaseAddress() => configuration["LibApi:BaseAddress"];
 
     public LibApiClient CreateClient(HttpClient httpClient)
     {
-        var c = credentials ?? TryReadCredentials().Result;
+        var credentials = credentialManager?.TryReadCredentials();
 
-        httpClient.BaseAddress = new(c?.DefaultAddress ?? "https://localhost:7022/");
+        httpClient.BaseAddress = new(GetConfiguredBaseAddress() ?? credentials?.BaseAddress ?? DefaultApiBaseAddress);
 
-        if (c?.Token is { } token)
+        if (credentials?.Token is { } token)
             httpClient.DefaultRequestHeaders.Authorization = new("Bearer", token);
 
         return new(httpClient);
-    }
-
-    private static async Task<Credentials?> TryReadCredentials()
-    {
-        var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        var credentialsPath = Path.Combine(appData, "STEP", "credentials.json");
-
-        if (!File.Exists(credentialsPath))
-            return null;
-
-        await using var stream = File.OpenRead(credentialsPath);
-
-        return await JsonSerializer.DeserializeAsync<Credentials>(stream);
     }
 }

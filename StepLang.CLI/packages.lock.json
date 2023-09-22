@@ -154,6 +154,7 @@
       "steplang.libraries.client": {
         "type": "Project",
         "dependencies": {
+          "Microsoft.Extensions.Configuration.Abstractions": "[7.0.0, )",
           "StepLang.Libraries": "[1.0.0, )"
         }
       },
@@ -175,6 +176,15 @@
         "requested": "[1.0.1, )",
         "resolved": "1.0.1",
         "contentHash": "2XZIjeMNLYzeUyuxxn1IrWm04J4MiP4NnTyJHU3ToLXIBltAObpp3r3WIS6xHzwqGsex3YEZSXYxxpn2J1/o1Q=="
+      },
+      "Microsoft.Extensions.Configuration.Abstractions": {
+        "type": "CentralTransitive",
+        "requested": "[7.0.0, )",
+        "resolved": "7.0.0",
+        "contentHash": "f34u2eaqIjNO9YLHBz8rozVZ+TcFiFs0F3r7nUJd7FRkVSxk8u4OpoK226mi49MwexHOR2ibP9MFvRUaLilcQQ==",
+        "dependencies": {
+          "Microsoft.Extensions.Primitives": "7.0.0"
+        }
       },
       "Microsoft.Extensions.Http": {
         "type": "CentralTransitive",
