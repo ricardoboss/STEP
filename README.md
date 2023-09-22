@@ -15,7 +15,7 @@
 
 STEP is a programming language that is designed to be easy to learn and use.
 
-It is inspired by languages like Python, JavaScript and C#.
+It is inspired by languages like Python, JavaScript, Dart and C#.
 
 ## Features
 
