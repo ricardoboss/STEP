@@ -2,12 +2,13 @@ namespace StepLang.Libraries.API.Extensions;
 
 public static class LibraryVersionExtensions
 {
-    public static BriefLibraryDto ToBriefDto(this DB.Entities.LibraryVersion version)
+    public static BriefLibraryVersion ToBriefDto(this DB.Entities.LibraryVersion version, string downloadUrl)
     {
         return new(
             version.Library.Name,
-            version.Version.ToSemVersion().ToDto(),
-            version.Dependencies.Select(d => d.Name)
+            version.Version,
+            version.Dependencies.Select(d => d.Name),
+            downloadUrl
         );
     }
 }

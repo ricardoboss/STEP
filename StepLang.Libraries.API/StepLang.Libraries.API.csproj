@@ -10,6 +10,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
         <PackageReference Include="Swashbuckle.AspNetCore" />
     </ItemGroup>
@@ -24,7 +25,11 @@
     <ItemGroup>
       <ProjectReference Include="..\StepLang.Libraries.API.DB\StepLang.Libraries.API.DB.csproj" />
       <ProjectReference Include="..\StepLang.Libraries\StepLang.Libraries.csproj" />
+
+
     </ItemGroup>
+
+
 
 
 

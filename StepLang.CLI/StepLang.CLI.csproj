@@ -51,6 +51,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="test\" />
+      <None Remove="test\library.json" />
     </ItemGroup>
 </Project>

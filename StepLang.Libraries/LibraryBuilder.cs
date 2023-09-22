@@ -7,7 +7,7 @@ public class LibraryBuilder
     private string? name;
     private string? version;
     private string? author;
-    private List<Dependency>? dependencies;
+    private Dictionary<string, string>? dependencies;
     private List<string>? files;
 
     public static LibraryBuilder From(Library library)
@@ -17,50 +17,51 @@ public class LibraryBuilder
             name = library.Name,
             version = library.Version,
             author = library.Author,
-            dependencies = library.Dependencies?.ToList(),
-            files = library.Files?.ToList(),
+            dependencies = library.Dependencies,
+            files = library.Files,
         };
     }
 
-    public LibraryBuilder WithName(string name)
+    public LibraryBuilder WithName(string newName)
     {
-        this.name = name;
+        name = newName;
 
         return this;
     }
 
-    public LibraryBuilder WithVersion(SemVersion version)
+    public LibraryBuilder WithVersion(SemVersion newVersion)
     {
-        this.version = version.ToString();
+        version = newVersion.ToString();
 
         return this;
     }
 
-    public LibraryBuilder WithAuthor(string author)
+    public LibraryBuilder WithAuthor(string newAuthor)
     {
-        this.author = author;
+        author = newAuthor;
 
         return this;
     }
 
-    public LibraryBuilder WithDependencies(IEnumerable<Dependency>? dependencies)
+    public LibraryBuilder WithDependencies(Dictionary<string, string>? newDependencies)
     {
-        this.dependencies = dependencies?.ToList();
+        dependencies = newDependencies;
 
         return this;
     }
 
-    public LibraryBuilder WithDependency(Dependency dependency)
+    public LibraryBuilder WithDependency(string dependencyName, SemVersionRange versionRange)
     {
         dependencies ??= new();
-        dependencies.Add(dependency);
+        if (!dependencies.TryAdd(dependencyName, versionRange.ToString()!))
+            dependencies[dependencyName] = versionRange.ToString()!;
 
         return this;
     }
 
-    public LibraryBuilder WithFiles(IEnumerable<string>? files)
+    public LibraryBuilder WithFiles(IEnumerable<string>? newFiles)
     {
-        this.files = files?.ToList();
+        files = newFiles?.ToList();
 
         return this;
     }

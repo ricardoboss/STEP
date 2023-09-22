@@ -1,8 +1,8 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Semver;
 using StepLang.Libraries;
 using StepLang.Libraries.Client;
-using StepLang.Libraries.Client.Extensions;
 
 namespace StepLang.CLI;
 
@@ -17,6 +17,15 @@ public static class LibraryAddCommand
         var libraryJson = await File.ReadAllTextAsync(libraryFilePath);
         var library = JsonSerializer.Deserialize<Library>(libraryJson) ?? throw new InvalidOperationException("Unable to read library.json");
 
+        if (library.Dependencies?.ContainsKey(name) ?? false)
+        {
+            await Console.Out.WriteLineAsync($"A dependency on {name} already exists");
+            await Console.Out.WriteAsync("Update existing dependency? [y/N] ");
+            var response = await Console.In.ReadLineAsync();
+            if (response?.Trim().ToLowerInvariant() != "y")
+                return 0;
+        }
+
         SemVersionRange semVersionRange;
         if (versionRange is null)
         {
@@ -29,15 +38,20 @@ public static class LibraryAddCommand
         else
         {
             semVersionRange = SemVersionRange.Parse(versionRange);
+            var latestCompatible = await GetLatestVersionThatSatisfies(name, semVersionRange);
+            if (latestCompatible is null)
+                throw new InvalidOperationException($"Unable to find a library named '{name}' that satisfies '{semVersionRange}'");
         }
 
-        var dependency = new Dependency(name, semVersionRange);
-
         var newLibrary = LibraryBuilder.From(library)
-            .WithDependency(dependency)
+            .WithDependency(name, semVersionRange)
             .Build();
 
-        await File.WriteAllTextAsync(libraryFilePath, JsonSerializer.Serialize(newLibrary));
+        await File.WriteAllTextAsync(libraryFilePath, JsonSerializer.Serialize(newLibrary, new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        }));
 
         await Console.Out.WriteLineAsync($"Successfully added '{name}' to library.json");
 
@@ -47,8 +61,22 @@ public static class LibraryAddCommand
     private static async Task<SemVersion?> GetLatestVersion(string name)
     {
         using var httpClient = new HttpClient();
-        var apiClient = new LibApiClientFactory().CreateClient(httpClient);
+        var apiClient = new LibApiClientFactory(null).CreateClient(httpClient);
         var briefLibrary = await apiClient.GetLibraryAsync(name);
-        return briefLibrary?.Version.ToSemVersion();
+        if (briefLibrary is null)
+            return null;
+
+        return SemVersion.Parse(briefLibrary.Version, SemVersionStyles.Strict);
+    }
+
+    private static async Task<SemVersion?> GetLatestVersionThatSatisfies(string name, SemVersionRange range)
+    {
+        using var httpClient = new HttpClient();
+        var apiClient = new LibApiClientFactory(null).CreateClient(httpClient);
+        var briefLibrary = await apiClient.GetLibraryAsync(name, range.ToString());
+        if (briefLibrary is null)
+            return null;
+
+        return SemVersion.Parse(briefLibrary.Version, SemVersionStyles.Strict);
     }
 }

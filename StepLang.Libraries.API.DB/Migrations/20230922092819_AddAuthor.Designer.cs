@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using StepLang.Libraries.API.DB;
@@ -11,9 +12,11 @@ using StepLang.Libraries.API.DB;
 namespace StepLang.Libraries.API.DB.Migrations
 {
     [DbContext(typeof(LibraryApiContext))]
-    partial class LibraryApiContextModelSnapshot : ModelSnapshot
+    [Migration("20230922092819_AddAuthor")]
+    partial class AddAuthor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,7 +41,7 @@ namespace StepLang.Libraries.API.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Authors");
+                    b.ToTable("Author");
                 });
 
             modelBuilder.Entity("StepLang.Libraries.API.DB.Entities.Library", b =>
@@ -48,6 +51,12 @@ namespace StepLang.Libraries.API.DB.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("AuthorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("DependencyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("DependentId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid?>("LatestVersionId")
@@ -61,6 +70,10 @@ namespace StepLang.Libraries.API.DB.Migrations
 
                     b.HasIndex("AuthorId");
 
+                    b.HasIndex("DependencyId");
+
+                    b.HasIndex("DependentId");
+
                     b.HasIndex("LatestVersionId")
                         .IsUnique();
 
@@ -73,28 +86,22 @@ namespace StepLang.Libraries.API.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("LibraryId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("LibraryJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Version")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LibraryId");
+
                     b.ToTable("LibraryVersions");
-                });
-
-            modelBuilder.Entity("StepLang.Libraries.API.DB.Entities.LibraryVersionDependency", b =>
-                {
-                    b.Property<Guid>("DependencyId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("VersionId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("DependencyId", "VersionId");
-
-                    b.HasIndex("VersionId");
-
-                    b.ToTable("LibraryVersionDependency");
                 });
 
             modelBuilder.Entity("StepLang.Libraries.API.DB.Entities.Library", b =>
@@ -105,6 +112,14 @@ namespace StepLang.Libraries.API.DB.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("StepLang.Libraries.API.DB.Entities.LibraryVersion", null)
+                        .WithMany("Dependencies")
+                        .HasForeignKey("DependencyId");
+
+                    b.HasOne("StepLang.Libraries.API.DB.Entities.LibraryVersion", null)
+                        .WithMany("Dependents")
+                        .HasForeignKey("DependentId");
+
                     b.HasOne("StepLang.Libraries.API.DB.Entities.LibraryVersion", "LatestVersion")
                         .WithOne("Library")
                         .HasForeignKey("StepLang.Libraries.API.DB.Entities.Library", "LatestVersionId");
@@ -114,23 +129,11 @@ namespace StepLang.Libraries.API.DB.Migrations
                     b.Navigation("LatestVersion");
                 });
 
-            modelBuilder.Entity("StepLang.Libraries.API.DB.Entities.LibraryVersionDependency", b =>
+            modelBuilder.Entity("StepLang.Libraries.API.DB.Entities.LibraryVersion", b =>
                 {
-                    b.HasOne("StepLang.Libraries.API.DB.Entities.Library", "Dependency")
-                        .WithMany()
-                        .HasForeignKey("DependencyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("StepLang.Libraries.API.DB.Entities.LibraryVersion", "Version")
-                        .WithMany()
-                        .HasForeignKey("VersionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Dependency");
-
-                    b.Navigation("Version");
+                    b.HasOne("StepLang.Libraries.API.DB.Entities.Library", null)
+                        .WithMany("Versions")
+                        .HasForeignKey("LibraryId");
                 });
 
             modelBuilder.Entity("StepLang.Libraries.API.DB.Entities.Author", b =>
@@ -138,8 +141,17 @@ namespace StepLang.Libraries.API.DB.Migrations
                     b.Navigation("Libraries");
                 });
 
+            modelBuilder.Entity("StepLang.Libraries.API.DB.Entities.Library", b =>
+                {
+                    b.Navigation("Versions");
+                });
+
             modelBuilder.Entity("StepLang.Libraries.API.DB.Entities.LibraryVersion", b =>
                 {
+                    b.Navigation("Dependencies");
+
+                    b.Navigation("Dependents");
+
                     b.Navigation("Library")
                         .IsRequired();
                 });

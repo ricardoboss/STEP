@@ -1,8 +1,16 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using StepLang.Libraries.API.DB;
+using StepLang.Libraries.API.DB.Entities;
+using StepLang.Libraries.API.Extensions;
 using StepLang.Libraries.API.Filters;
+using StepLang.Libraries.API.Interfaces;
+using StepLang.Libraries.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers(options => options.Filters.Add<NullResultToNotFoundFilter>());
 
 // Add services to the container.
 builder.Services.AddDbContext<LibraryApiContext>(options =>
@@ -13,7 +21,25 @@ builder.Services.AddDbContext<LibraryApiContext>(options =>
     options.UseNpgsql(connectionString);
 });
 
-builder.Services.AddControllers(options => options.Filters.Add<NullResultToNotFoundFilter>());
+builder.Services.AddSingleton<IPasswordHasher<Author>, PasswordHasher<Author>>();
+builder.Services.AddSingleton<ILibraryStorage, FilesystemLibraryStorage>();
+builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new()
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration.GetJwtIssuer(),
+            ValidAudience = builder.Configuration.GetJwtAudience(),
+            IssuerSigningKey = builder.Configuration.GetJwtSecretKey(),
+        };
+    });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -37,6 +63,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

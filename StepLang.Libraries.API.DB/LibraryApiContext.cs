@@ -13,6 +13,8 @@ public class LibraryApiContext : DbContext
 
     public DbSet<LibraryVersion> LibraryVersions { get; set; } = null!;
 
+    public DbSet<Author> Authors { get; set; } = null!;
+
     public async Task InitializeAsync(CancellationToken cancellationToken = default)
     {
         await Database.MigrateAsync(cancellationToken);
@@ -30,9 +32,11 @@ public class LibraryApiContext : DbContext
             .HasMany<LibraryVersion>(l => l.Versions);
 
         modelBuilder.Entity<LibraryVersion>()
-            .HasMany<Library>(v => v.Dependencies);
-
-        modelBuilder.Entity<LibraryVersion>()
-            .HasMany<Library>(v => v.Dependents);
+            .HasMany<Library>(v => v.Dependencies)
+            .WithMany(l => l.Versions)
+            .UsingEntity<LibraryVersionDependency>(
+                j => j.HasOne(d => d.Dependency).WithMany(),
+                j => j.HasOne(d => d.Version).WithMany()
+            );
     }
 }

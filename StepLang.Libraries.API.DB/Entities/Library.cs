@@ -1,10 +1,12 @@
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace StepLang.Libraries.API.DB.Entities;
 
 public class Library
 {
     public Guid Id { get; set; }
+
+    public Guid AuthorId { get; set; }
+
+    public Author Author { get; set; } = null!;
 
     public string Name { get; set; } = null!;
 
@@ -12,6 +14,5 @@ public class Library
 
     public LibraryVersion? LatestVersion { get; set; }
 
-    [ForeignKey(nameof(LibraryVersion.Library))]
     public ICollection<LibraryVersion> Versions { get; set; } = null!;
 }

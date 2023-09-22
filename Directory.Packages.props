@@ -5,6 +5,7 @@
     <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.11" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="7.0.11" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="7.0.11" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.11" />
@@ -17,6 +18,7 @@
     <PackageVersion Include="Spectre.Console.Testing" Version="0.47.0" />
     <PackageVersion Include="Microsoft.Extensions.Http" Version="7.0.0" />
     <PackageVersion Include="Semver" Version="2.3.0" />
+    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="6.15.1" />
     <PackageVersion Include="System.Linq.Async" Version="6.0.1" />
     <PackageVersion Include="IDisposableAnalyzers" Version="4.0.6">
       <PrivateAssets>all</PrivateAssets>

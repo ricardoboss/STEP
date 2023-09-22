@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using StepLang.Libraries.API.DB;
@@ -11,9 +12,11 @@ using StepLang.Libraries.API.DB;
 namespace StepLang.Libraries.API.DB.Migrations
 {
     [DbContext(typeof(LibraryApiContext))]
-    partial class LibraryApiContextModelSnapshot : ModelSnapshot
+    [Migration("20230922094202_UpdateDependencyRelationship")]
+    partial class UpdateDependencyRelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -73,6 +76,10 @@ namespace StepLang.Libraries.API.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("LibraryJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Version")
                         .IsRequired()
                         .HasColumnType("text");
@@ -95,6 +102,34 @@ namespace StepLang.Libraries.API.DB.Migrations
                     b.HasIndex("VersionId");
 
                     b.ToTable("LibraryVersionDependency");
+                });
+
+            modelBuilder.Entity("StepLang.Libraries.API.DB.Entities.Token", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserAgent")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.ToTable("Tokens");
                 });
 
             modelBuilder.Entity("StepLang.Libraries.API.DB.Entities.Library", b =>
@@ -133,9 +168,22 @@ namespace StepLang.Libraries.API.DB.Migrations
                     b.Navigation("Version");
                 });
 
+            modelBuilder.Entity("StepLang.Libraries.API.DB.Entities.Token", b =>
+                {
+                    b.HasOne("StepLang.Libraries.API.DB.Entities.Author", "Author")
+                        .WithMany("Tokens")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+                });
+
             modelBuilder.Entity("StepLang.Libraries.API.DB.Entities.Author", b =>
                 {
                     b.Navigation("Libraries");
+
+                    b.Navigation("Tokens");
                 });
 
             modelBuilder.Entity("StepLang.Libraries.API.DB.Entities.LibraryVersion", b =>
