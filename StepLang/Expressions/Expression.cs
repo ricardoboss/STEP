@@ -1,8 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
-using StepLang.Parsing;
 
 namespace StepLang.Expressions;
 
