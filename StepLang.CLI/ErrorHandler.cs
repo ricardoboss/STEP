@@ -30,14 +30,14 @@ internal static class ErrorHandler
 
         IEnumerable<string> outputLines;
 
-        var exceptionName = $"[white on red] {e.ErrorCode}: {e.GetType().Name} [/]";
+        var exceptionName = $"[white on red bold] {e.ErrorCode}: {e.GetType().Name} [/]{Environment.NewLine}";
 
-        var message = Environment.NewLine + "\t" + e.Message + Environment.NewLine;
+        var message = $"{Environment.NewLine}\t{e.Message}{Environment.NewLine}";
 
         if (e.Location is { } location)
         {
             var sourceCode = location.File.Exists ? File.ReadAllText(location.File.FullName) : "";
-            var lines = new Highlighter().Highlight(sourceCode, ColorScheme.Bright).ToArray();
+            var lines = new Highlighter(ColorScheme.Bright).Highlight(sourceCode).ToArray();
             var contextStartLine = Math.Max(0, location.Line - 1 - contextLineCount);
             var contextEndLine = Math.Min(lines.Length, location.Line + contextLineCount);
             var lineNumber = contextStartLine;
@@ -73,10 +73,10 @@ internal static class ErrorHandler
 
             var locationString = $"at [green]{location.File.FullName}[/]:{location.Line}";
 
-            outputLines = contextLines.Append(locationString);
+            outputLines = contextLines.Prepend(locationString);
         }
         else
-            outputLines = new[] { e.StackTrace ?? string.Empty };
+            outputLines = new[] { $"[grey]{e.StackTrace ?? string.Empty}[/]" };
 
         outputLines = outputLines.Prepend(message).Prepend(exceptionName);
 
