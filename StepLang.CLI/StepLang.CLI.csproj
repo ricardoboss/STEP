@@ -23,34 +23,17 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
         <PackageReference Include="Spectre.Console.Cli" />
         <PackageReference Include="System.Linq.Async"/>
         <PackageReference Include="ToStringWithoutOverrideAnalyzer">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-    </ItemGroup>
-
-    <ItemGroup>
+        <ProjectReference Include="..\StepLang\StepLang.csproj"/>
+        <ProjectReference Include="..\StepLang.Libraries\StepLang.Libraries.csproj" />
         <ProjectReference Include="..\StepLang.Libraries.Client\StepLang.Libraries.Client.csproj" />
         <ProjectReference Include="..\StepLang.Tooling.Formatting\StepLang.Tooling.Formatting.csproj"/>
         <ProjectReference Include="..\StepLang.Tooling.Highlighting\StepLang.Tooling.Highlighting.csproj" />
-        <ProjectReference Include="..\StepLang.Libraries\StepLang.Libraries.csproj" />
-        <ProjectReference Include="..\StepLang\StepLang.csproj"/>
-        <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
-            <HintPath>C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\7.0.11\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
-        </Reference>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
-        <PackageReference Include="Spectre.Console.Cli" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
-        <HintPath>C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\7.0.11\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
-      </Reference>
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Remove="test\library.json" />
     </ItemGroup>
 </Project>
