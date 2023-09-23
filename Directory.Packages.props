@@ -5,11 +5,18 @@
     <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="7.0.11" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="7.0.11" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.11" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.11" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageVersion Include="cmdwtf.BuildTimestampGenerator" Version="1.0.1" />
     <PackageVersion Include="GitVersion.MsBuild" Version="5.12.0" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     <PackageVersion Include="Spectre.Console.Cli" Version="0.47.0" />
     <PackageVersion Include="Spectre.Console.Testing" Version="0.47.0" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="7.0.0" />
+    <PackageVersion Include="Semver" Version="2.3.0" />
     <PackageVersion Include="System.Linq.Async" Version="6.0.1" />
     <PackageVersion Include="IDisposableAnalyzers" Version="4.0.6">
       <PrivateAssets>all</PrivateAssets>
