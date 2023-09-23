@@ -7,9 +7,10 @@
   <ItemGroup>
     <PackageVersion Include="cmdwtf.BuildTimestampGenerator" Version="1.0.1" />
     <PackageVersion Include="GitVersion.MsBuild" Version="5.12.0" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+    <PackageVersion Include="Spectre.Console.Cli" Version="0.47.0" />
+    <PackageVersion Include="Spectre.Console.Testing" Version="0.47.0" />
     <PackageVersion Include="System.Linq.Async" Version="6.0.1" />
-    <PackageVersion Include="Pastel" Version="4.1.0" />
-    <PackageVersion Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
     <PackageVersion Include="IDisposableAnalyzers" Version="4.0.6">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
