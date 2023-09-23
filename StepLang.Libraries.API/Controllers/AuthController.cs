@@ -91,6 +91,6 @@ public class AuthController : ControllerBase
         if (author is null)
             return StatusCode(StatusCodes.Status403Forbidden, AuthCheckResult.NoAuthor());
 
-        return Ok(AuthCheckResult.Success());
+        return Ok(AuthCheckResult.Success(author.Username));
     }
 }
