@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Spectre.Console.Cli;
+using StepLang.Libraries.Client;
 
 namespace StepLang.CLI.Commands;
 
@@ -7,13 +8,16 @@ namespace StepLang.CLI.Commands;
 [SuppressMessage("Performance", "CA1812: Avoid uninstantiated internal classes")]
 internal sealed class LibraryAuthLogoutCommand : AsyncCommand<HiddenGlobalCommandSettings>
 {
+    private readonly LibApiCredentialManager credentialManager;
+
+    public LibraryAuthLogoutCommand(LibApiCredentialManager credentialManager)
+    {
+        this.credentialManager = credentialManager;
+    }
+
     public override async Task<int> ExecuteAsync(CommandContext context, HiddenGlobalCommandSettings settings)
     {
-        var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        var credentialsPath = new FileInfo(Path.Combine(appData, "STEP", "credentials.json"));
-
-        if (credentialsPath.Exists)
-            credentialsPath.Delete();
+        credentialManager.DestroyCredentials();
 
         await Console.Out.WriteLineAsync("Credentials deleted.");
 

@@ -20,7 +20,7 @@ internal sealed class LibraryAuthCheckCommand : AsyncCommand<HiddenGlobalCommand
         var result = await apiClient.CheckAsync();
         if (result is null)
         {
-            await Console.Out.WriteLineAsync("Not authenticated.");
+            await Console.Out.WriteLineAsync("Request failed.");
 
             return 1;
         }

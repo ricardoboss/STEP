@@ -1,5 +1,5 @@
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Text.Json;
 using Spectre.Console.Cli;
 using StepLang.Libraries.API;
 using StepLang.Libraries.Client;
@@ -15,10 +15,12 @@ internal sealed class LibraryAuthRegisterCommand : AsyncCommand<LibraryAuthRegis
     }
 
     private readonly LibApiClient apiClient;
+    private readonly LibApiCredentialManager credentialManager;
 
-    public LibraryAuthRegisterCommand(LibApiClient apiClient)
+    public LibraryAuthRegisterCommand(LibApiClient apiClient, LibApiCredentialManager credentialManager)
     {
         this.apiClient = apiClient;
+        this.credentialManager = credentialManager;
     }
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
@@ -45,24 +47,11 @@ internal sealed class LibraryAuthRegisterCommand : AsyncCommand<LibraryAuthRegis
             return 2;
         }
 
-        await Console.Out.WriteLineAsync();
-        await Console.Out.WriteLineAsync("Registration successful!");
-        await Console.Out.WriteLineAsync();
+        Debug.Assert(result.Token is not null);
 
+        credentialManager.StoreCredentials(Credentials.TokenOnly(result.Token), true);
 
-        var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        var credentialsPath = new FileInfo(Path.Combine(appData, "STEP", "credentials.json"));
-
-        credentialsPath.Directory!.Create();
-
-        await using var stream = credentialsPath.Create();
-
-        // TODO: standardize this
-        var credentials = new Credentials(result.Token!, "https://localhost:7022/");
-
-        await JsonSerializer.SerializeAsync(stream, credentials);
-
-        await Console.Out.WriteLineAsync("Credentials saved to " + credentialsPath.FullName);
+        await Console.Out.WriteLineAsync("Registration successful and credentials saved.");
 
         return 0;
     }

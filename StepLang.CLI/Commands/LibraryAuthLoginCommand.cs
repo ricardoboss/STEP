@@ -1,5 +1,5 @@
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Text.Json;
 using Spectre.Console.Cli;
 using StepLang.Libraries.API;
 using StepLang.Libraries.Client;
@@ -15,10 +15,12 @@ internal sealed class LibraryAuthLoginCommand : AsyncCommand<LibraryAuthLoginCom
     }
 
     private readonly LibApiClient apiClient;
+    private readonly LibApiCredentialManager credentialManager;
 
-    public LibraryAuthLoginCommand(LibApiClient apiClient)
+    public LibraryAuthLoginCommand(LibApiClient apiClient, LibApiCredentialManager credentialManager)
     {
         this.apiClient = apiClient;
+        this.credentialManager = credentialManager;
     }
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
@@ -45,25 +47,11 @@ internal sealed class LibraryAuthLoginCommand : AsyncCommand<LibraryAuthLoginCom
             return 2;
         }
 
-        await Console.Out.WriteLineAsync();
-        await Console.Out.WriteLineAsync("Login successful!");
-        await Console.Out.WriteLineAsync();
+        Debug.Assert(result.Token is not null);
 
+        credentialManager.StoreCredentials(Credentials.TokenOnly(result.Token), true);
 
-        var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        var credentialsPath = new FileInfo(Path.Combine(appData, "STEP", "credentials.json"));
-
-        credentialsPath.Directory!.Create();
-
-        await using var stream = credentialsPath.Create();
-
-        // TODO: standardize this
-        // MAYBE: encrypt token with system user account
-        var credentials = new Credentials(result.Token!, "https://localhost:7022/");
-
-        await JsonSerializer.SerializeAsync(stream, credentials);
-
-        await Console.Out.WriteLineAsync("Credentials saved to " + credentialsPath.FullName);
+        await Console.Out.WriteLineAsync("Credentials saved.");
 
         return 0;
     }
