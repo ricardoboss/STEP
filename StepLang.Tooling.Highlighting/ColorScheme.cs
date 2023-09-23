@@ -8,12 +8,12 @@ public record ColorScheme(Style Default, Style Keyword, Style Type, Style Identi
 {
     public static ColorScheme Bright { get; } = new(
         new(Color.White, Color.Transparent, false, false, false, false),
+        new(Color.PaleVioletRed, Color.Transparent, false, false, false, false),
+        new(Color.Turquoise, Color.Transparent, false, false, false, false),
+        new(Color.Beige, Color.Transparent, false, false, false, false),
+        new(Color.DarkSeaGreen, Color.Transparent, false, false, false, false),
         new(Color.Yellow, Color.Transparent, false, false, false, false),
-        new(Color.Cyan, Color.Transparent, false, false, false, false),
-        new(Color.White, Color.Transparent, false, false, false, false),
-        new(Color.Green, Color.Transparent, false, false, false, false),
-        new(Color.Magenta, Color.Transparent, false, false, false, false),
-        new(Color.Magenta, Color.Transparent, false, false, false, false),
+        new(Color.CadetBlue, Color.Transparent, false, false, false, false),
         new(Color.Gray, Color.Transparent, false, false, false, false),
         new(Color.White, Color.Transparent, false, false, false, false),
         new(Color.White, Color.Transparent, false, false, false, false)

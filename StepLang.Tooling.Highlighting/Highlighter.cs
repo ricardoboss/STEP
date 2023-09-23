@@ -4,17 +4,24 @@ namespace StepLang.Tooling.Highlighting;
 
 public class Highlighter
 {
-    public IEnumerable<IEnumerable<StyledToken>> Highlight(string sourceCode, ColorScheme scheme)
+    private readonly ColorScheme scheme;
+
+    public Highlighter(ColorScheme scheme)
+    {
+        this.scheme = scheme;
+    }
+
+    public IEnumerable<IEnumerable<StyledToken>> Highlight(string sourceCode)
     {
         var lines = sourceCode.ReplaceLineEndings().Split(Environment.NewLine);
 
         foreach (var line in lines)
         {
-            yield return HighlightLine(line, scheme);
+            yield return HighlightLine(line);
         }
     }
 
-    public IEnumerable<StyledToken> HighlightLine(string lineCode, ColorScheme scheme)
+    private IEnumerable<StyledToken> HighlightLine(string lineCode)
     {
         var tokenizer = new Tokenizer(false);
         tokenizer.Add(lineCode);
