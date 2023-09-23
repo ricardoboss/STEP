@@ -47,7 +47,7 @@ internal sealed class FormatCommand : AsyncCommand<FormatCommand.Settings>
             files.Add(f.File);
 
             AnsiConsole.MarkupLineInterpolated(
-                $"Applied analyzer [darkmagenta]'{f.Analyzer.Name}'[/] to [darkcyan]'{f.File.Name}'[/]");
+                $"Applied analyzer [darkmagenta]'{f.Analyzer.Name}'[/] to [cyan]'{f.File.Name}'[/]");
         };
 
         var analyzers = new DefaultAnalyzerSet();
@@ -60,7 +60,7 @@ internal sealed class FormatCommand : AsyncCommand<FormatCommand.Settings>
             );
 
         AnsiConsole.MarkupLineInterpolated(
-            $"{(settings.DryRun ? "Would have fixed" : "Fixed")} [green]{files.Count.ToString(CultureInfo.InvariantCulture)}[/] file(s) in [darkcyan]{results.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)}[/] seconds.");
+            $"{(settings.DryRun ? "Would have fixed" : "Fixed")} [green]{files.Count.ToString(CultureInfo.InvariantCulture)}[/] file(s) in [cyan]{results.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)}[/] seconds.");
 
         if (settings.SetExitCode)
             return results.AppliedFixes > 0 ? 1 : 0;
@@ -75,18 +75,18 @@ internal sealed class FormatCommand : AsyncCommand<FormatCommand.Settings>
         if (File.Exists(fileOrDir))
         {
             var file = new FileInfo(fileOrDir);
-            AnsiConsole.MarkupLineInterpolated($"Formatting file [darkblue]'{file.FullName}'[/]...");
+            AnsiConsole.MarkupLineInterpolated($"Formatting file [blue]'{file.FullName}'[/]...");
             result = await fixer.FixAsync(analyzers, file);
         }
         else if (Directory.Exists(fileOrDir))
         {
             var dir = new DirectoryInfo(fileOrDir);
-            AnsiConsole.MarkupLineInterpolated($"Formatting directory [darkblue]'{dir.FullName}'[/]...");
+            AnsiConsole.MarkupLineInterpolated($"Formatting directory [blue]'{dir.FullName}'[/]...");
             result = await fixer.FixAsync(analyzers, dir);
         }
         else
         {
-            AnsiConsole.MarkupLineInterpolated($"The path [darkblue]'{fileOrDir}'[/] is not a file or directory.");
+            AnsiConsole.MarkupLineInterpolated($"The path [blue]'{fileOrDir}'[/] is not a file or directory.");
 
             return FixerResult.None;
         }
