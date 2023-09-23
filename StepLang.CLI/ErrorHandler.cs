@@ -1,15 +1,17 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Spectre.Console;
+using StepLang.Tokenizing;
+using StepLang.Tooling.Highlighting;
 
 namespace StepLang.CLI;
 
 [ExcludeFromCodeCoverage]
 internal static class ErrorHandler
 {
-    public static void HandleException(Exception e) => AnsiConsole.MarkupLineInterpolated(FormatError(e));
+    public static void HandleException(Exception e) => AnsiConsole.MarkupLine(FormatError(e));
 
-    private static FormattableString FormatError(Exception e)
+    private static string FormatError(Exception e)
     {
         return e switch
         {
@@ -18,43 +20,60 @@ internal static class ErrorHandler
         };
     }
 
-    private static FormattableString FormatError(string type, string message) => $"[red]! {type}[/]: {message}";
+    private static string FormatError(string type, string message) => $"[red]! {type}[/]: {message}";
 
-    private static FormattableString FormatGeneralException(Exception e) => FormatError(e.GetType().Name, e.Message + Environment.NewLine + e.StackTrace);
+    private static string FormatGeneralException(Exception e) => FormatError(e.GetType().Name, e.Message + Environment.NewLine + e.StackTrace);
 
-    private static FormattableString FormatStepLangException(StepLangException e)
+    private static string FormatStepLangException(StepLangException e)
     {
         const int contextLineCount = 4;
 
         IEnumerable<string> outputLines;
 
-        var exceptionName = " " + e.ErrorCode + ": " + e.GetType().Name + " ";
+        var exceptionName = $"[white on red] {e.ErrorCode}: {e.GetType().Name} [/]";
 
         var message = Environment.NewLine + "\t" + e.Message + Environment.NewLine;
 
         if (e.Location is { } location)
         {
             var sourceCode = location.File.Exists ? File.ReadAllText(location.File.FullName) : "";
-            var lines = sourceCode.ReplaceLineEndings().Split(Environment.NewLine);
+            var lines = new Highlighter().Highlight(sourceCode, ColorScheme.Bright).ToArray();
             var contextStartLine = Math.Max(0, location.Line - 1 - contextLineCount);
             var contextEndLine = Math.Min(lines.Length, location.Line + contextLineCount);
             var lineNumber = contextStartLine;
             var lineNumberWidth = contextEndLine.ToString(CultureInfo.InvariantCulture).Length;
-            var contextLines = lines[contextStartLine..contextEndLine].Select(l =>
+            var contextLines = lines[contextStartLine..contextEndLine].Select(tokens =>
             {
-                var prefix = lineNumber == location.Line - 1 ? "> " : "  ";
+                var lineContents = tokens.Aggregate("", (current, t) =>
+                {
+                    var f = $"[#{t.Style.Foreground.ToArgb() & 0xFFFFFF:X6}]";
+
+                    if (t.Type is TokenType.LiteralString)
+                        f += "\"";
+
+                    f += t.Text;
+
+                    if (t.Type is TokenType.LiteralString)
+                        f += "\"";
+
+                    f += "[/]";
+
+                    return current + f;
+                });
+
+                var prefix = lineNumber == location.Line - 1 ? "[red]>[/] " : "  ";
 
                 var displayLineNumber = (lineNumber + 1).ToString(CultureInfo.InvariantCulture);
-                var line = prefix + $"{displayLineNumber.PadLeft(lineNumberWidth) + "|"} {l}";
+                var line = prefix + $"[grey]{displayLineNumber.PadLeft(lineNumberWidth)} |[/] {lineContents}";
 
                 lineNumber++;
 
                 return line;
             });
 
-            var locationString = $"at {location.File.FullName}:{location.Line}";
+            var locationString = $"at [green]{location.File.FullName}[/]:{location.Line}";
 
-            outputLines = contextLines.Prepend(locationString);
+            outputLines = contextLines.Append(locationString);
         }
         else
             outputLines = new[] { e.StackTrace ?? string.Empty };
@@ -62,11 +81,11 @@ internal static class ErrorHandler
         outputLines = outputLines.Prepend(message).Prepend(exceptionName);
 
         if (e.HelpText is { } helpText)
-            outputLines = outputLines.Append(Environment.NewLine + "Tip: " + helpText);
+            outputLines = outputLines.Append($"{Environment.NewLine}[blue]Tip[/]: {helpText}");
 
         if (e.HelpLink is { } helpLink)
-            outputLines = outputLines.Append(Environment.NewLine + "See also: " + helpLink);
+            outputLines = outputLines.Append($"{Environment.NewLine}[blue]See also[/]: [link]{helpLink}[/]");
 
-        return $"{Environment.NewLine}{string.Join(Environment.NewLine, outputLines)}";
+        return Environment.NewLine + string.Join(Environment.NewLine, outputLines);
     }
 }
