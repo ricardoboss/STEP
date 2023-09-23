@@ -69,7 +69,7 @@ public sealed class ServiceCollectionTypeRegistrar : IServiceCollection, ITypeRe
         return services.Contains(item);
     }
 
-    public void CopyTo(ServiceDescriptor [] array, int arrayIndex)
+    public void CopyTo(ServiceDescriptor[] array, int arrayIndex)
     {
         services.CopyTo(array, arrayIndex);
     }
