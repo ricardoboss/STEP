@@ -4,10 +4,14 @@ using Spectre.Console;
 using Spectre.Console.Cli;
 using StepLang.CLI;
 using StepLang.CLI.Commands;
+using StepLang.Libraries.Client;
 
 const string slogan = "STEP - Simple Transition to Elevated Programming";
 
 await using var services = new ServiceCollectionTypeRegistrar();
+
+services.AddLibApiCredentialManager();
+services.AddLibApiClient();
 
 var app = new CommandApp<DefaultCommand>(services)
         .WithDescription(slogan + Environment.NewLine + "Version: " + GitVersionInformation.FullSemVer)
@@ -17,7 +21,6 @@ app.Configure(config =>
 {
     config
         .SetApplicationName("step")
-        .SetApplicationVersion(GitVersionInformation.FullSemVer)
         .CaseSensitivity(CaseSensitivity.None)
         .UseStrictParsing()
 #if DEBUG
@@ -59,6 +62,13 @@ app.Configure(config =>
             .WithDescription("Initialize a new library.")
             .WithExample("library init")
             .WithExample("library init --name MyLibrary --author \"John Doe\"")
+            ;
+
+        library.AddCommand<LibraryAddCommand>("add")
+            .WithDescription("Add a library dependency.")
+            .WithExample("library add MyLibrary")
+            .WithExample("library add MyLibrary 1.*")
+            .WithExample("library add MyLibrary ^1.0.0")
             ;
 
         library.AddCommand<LibraryPublishCommand>("publish")

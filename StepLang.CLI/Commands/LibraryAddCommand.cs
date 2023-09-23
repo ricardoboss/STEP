@@ -22,6 +22,13 @@ internal sealed class LibraryAddCommand : AsyncCommand<LibraryAddCommand.Setting
         public string? VersionRange { get; init; }
     }
 
+    private readonly LibApiClient apiClient;
+
+    public LibraryAddCommand(LibApiClient apiClient)
+    {
+        this.apiClient = apiClient;
+    }
+
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
         var library = Library.FromCurrentDir();
@@ -64,10 +71,8 @@ internal sealed class LibraryAddCommand : AsyncCommand<LibraryAddCommand.Setting
         return 0;
     }
 
-    private static async Task<SemVersion?> GetLatestVersion(string name)
+    private async Task<SemVersion?> GetLatestVersion(string name)
     {
-        using var httpClient = new HttpClient();
-        var apiClient = new LibApiClientFactory(null).CreateClient(httpClient);
         var briefLibrary = await apiClient.GetLibraryAsync(name);
         if (briefLibrary is null)
             return null;
@@ -75,10 +80,8 @@ internal sealed class LibraryAddCommand : AsyncCommand<LibraryAddCommand.Setting
         return SemVersion.Parse(briefLibrary.Version, SemVersionStyles.Strict);
     }
 
-    private static async Task<SemVersion?> GetLatestVersionThatSatisfies(string name, SemVersionRange range)
+    private async Task<SemVersion?> GetLatestVersionThatSatisfies(string name, SemVersionRange range)
     {
-        using var httpClient = new HttpClient();
-        var apiClient = new LibApiClientFactory(null).CreateClient(httpClient);
         var briefLibrary = await apiClient.GetLibraryAsync(name, range.ToString());
         if (briefLibrary is null)
             return null;

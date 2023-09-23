@@ -15,6 +15,13 @@ internal sealed class LibraryPublishCommand : AsyncCommand<LibraryPublishCommand
     {
     }
 
+    private readonly LibApiClient apiClient;
+
+    public LibraryPublishCommand(LibApiClient apiClient)
+    {
+        this.apiClient = apiClient;
+    }
+
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
         var library = Library.FromCurrentDir();
@@ -61,9 +68,6 @@ internal sealed class LibraryPublishCommand : AsyncCommand<LibraryPublishCommand
         }
 
         zipStream.Position = 0;
-
-        using var httpClient = new HttpClient();
-        var apiClient = new LibApiClientFactory(null).CreateClient(httpClient);
 
         var result = await apiClient.UploadLibraryAsync(newLibrary.Name, newLibrary.Version!, zipStream);
         if (result is null)

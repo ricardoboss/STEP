@@ -14,6 +14,13 @@ internal sealed class LibraryAuthLoginCommand : AsyncCommand<LibraryAuthLoginCom
     {
     }
 
+    private readonly LibApiClient apiClient;
+
+    public LibraryAuthLoginCommand(LibApiClient apiClient)
+    {
+        this.apiClient = apiClient;
+    }
+
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
         await Console.Out.WriteAsync("Username: ");
@@ -23,11 +30,7 @@ internal sealed class LibraryAuthLoginCommand : AsyncCommand<LibraryAuthLoginCom
         var password = Console.ReadLine() ?? throw new InvalidOperationException("Password must be set");
 
         var request = new CreateTokenRequest(username, password);
-
-        using var httpClient = new HttpClient();
-        var apiClient = new LibApiClientFactory(null).CreateClient(httpClient);
         var result = await apiClient.CreateTokenAsync(request);
-
         if (result == null)
         {
             await Console.Error.WriteLineAsync("Create token request failed");
@@ -54,6 +57,8 @@ internal sealed class LibraryAuthLoginCommand : AsyncCommand<LibraryAuthLoginCom
 
         await using var stream = credentialsPath.Create();
 
+        // TODO: standardize this
+        // MAYBE: encrypt token with system user account
         var credentials = new Credentials(result.Token!, "https://localhost:7022/");
 
         await JsonSerializer.SerializeAsync(stream, credentials);

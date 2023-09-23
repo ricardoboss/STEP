@@ -14,6 +14,13 @@ internal sealed class LibraryAuthRegisterCommand : AsyncCommand<LibraryAuthRegis
     {
     }
 
+    private readonly LibApiClient apiClient;
+
+    public LibraryAuthRegisterCommand(LibApiClient apiClient)
+    {
+        this.apiClient = apiClient;
+    }
+
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
         await Console.Out.WriteAsync("Username: ");
@@ -23,11 +30,7 @@ internal sealed class LibraryAuthRegisterCommand : AsyncCommand<LibraryAuthRegis
         var password = Console.ReadLine() ?? throw new InvalidOperationException("Password must be set");
 
         var request = new RegisterRequest(username, password);
-
-        using var httpClient = new HttpClient();
-        var apiClient = new LibApiClientFactory(null).CreateClient(httpClient);
         var result = await apiClient.RegisterAsync(request);
-
         if (result == null)
         {
             await Console.Error.WriteLineAsync("Registration request failed");
@@ -54,6 +57,7 @@ internal sealed class LibraryAuthRegisterCommand : AsyncCommand<LibraryAuthRegis
 
         await using var stream = credentialsPath.Create();
 
+        // TODO: standardize this
         var credentials = new Credentials(result.Token!, "https://localhost:7022/");
 
         await JsonSerializer.SerializeAsync(stream, credentials);

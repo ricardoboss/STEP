@@ -8,20 +8,31 @@ namespace StepLang.CLI.Commands;
 [SuppressMessage("Performance", "CA1812: Avoid uninstantiated internal classes")]
 internal sealed class LibraryAuthCheckCommand : AsyncCommand<HiddenGlobalCommandSettings>
 {
+    private readonly LibApiClient apiClient;
+
+    public LibraryAuthCheckCommand(LibApiClient apiClient)
+    {
+        this.apiClient = apiClient;
+    }
+
     public override async Task<int> ExecuteAsync(CommandContext context, HiddenGlobalCommandSettings settings)
     {
-        using var httpClient = new HttpClient();
-        var apiClient = new LibApiClientFactory(null).CreateClient(httpClient);
         var result = await apiClient.CheckAsync();
+        if (result is null)
+        {
+            await Console.Out.WriteLineAsync("Not authenticated.");
 
-        if (result?.Code == "success")
+            return 1;
+        }
+
+        if (result.Code == "success")
         {
             await Console.Out.WriteLineAsync("Successfully authenticated.");
 
             return 0;
         }
 
-        await Console.Error.WriteLineAsync("Authentication failed: " + result?.Message + " (" + result?.Code + ")");
+        await Console.Error.WriteLineAsync($"Authentication failed: {result.Message} ({result.Code})");
 
         return 1;
     }
