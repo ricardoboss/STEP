@@ -1,7 +1,5 @@
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Spectre.Console.Cli;
 using StepLang.Libraries;
 
@@ -24,8 +22,7 @@ internal sealed class LibraryInitCommand : AsyncCommand<LibraryInitCommand.Setti
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        var libraryFilePath = Path.Combine(Directory.GetCurrentDirectory(), "library.json");
-        if (File.Exists(libraryFilePath))
+        if (Library.IsCurrentDirLibrary())
             throw new InvalidOperationException("library.json already exists");
 
         var builder = new LibraryBuilder();
@@ -48,17 +45,9 @@ internal sealed class LibraryInitCommand : AsyncCommand<LibraryInitCommand.Setti
         builder.WithVersion(new(0, 1, 0));
         builder.WithFiles(new List<string>());
 
-        var library = builder.Build();
+        builder.Build().SaveToCurrentDir();
 
-        await File.WriteAllTextAsync(libraryFilePath,
-            JsonSerializer.Serialize(library,
-                new JsonSerializerOptions
-                {
-                    WriteIndented = true,
-                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                }));
-
-        await Console.Out.WriteLineAsync($"Created library '{name}' at '{libraryFilePath}'");
+        await Console.Out.WriteLineAsync($"Created library '{name}'");
 
         return 0;
     }

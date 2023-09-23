@@ -1,7 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO.Compression;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Semver;
 using Spectre.Console.Cli;
 using StepLang.Libraries;
@@ -19,12 +17,7 @@ internal sealed class LibraryPublishCommand : AsyncCommand<LibraryPublishCommand
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        var libraryFilePath = Path.Combine(Directory.GetCurrentDirectory(), "library.json");
-        if (!File.Exists(libraryFilePath))
-            throw new InvalidOperationException("Not in a library");
-
-        var libraryJson = await File.ReadAllTextAsync(libraryFilePath);
-        var library = JsonSerializer.Deserialize<Library>(libraryJson) ?? throw new InvalidOperationException("Unable to read library.json");
+        var library = Library.FromCurrentDir();
 
         var defaultVersion = "";
         if (library.Version is { } version)
@@ -49,15 +42,10 @@ internal sealed class LibraryPublishCommand : AsyncCommand<LibraryPublishCommand
 
         var newLibrary = LibraryBuilder.From(library)
             .WithVersion(newVersion)
-            .Build();
+            .Build()
+            .SaveToCurrentDir();
 
-        await File.WriteAllTextAsync(libraryFilePath, JsonSerializer.Serialize(newLibrary, new JsonSerializerOptions
-        {
-            WriteIndented = true,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-        }));
-
-        // pack all files in the current directory, not ignored by .stepignore, into a single zip stream
+        // TODO implement .stepignore
         using var zipStream = new MemoryStream();
         using (var zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Create, true))
         {

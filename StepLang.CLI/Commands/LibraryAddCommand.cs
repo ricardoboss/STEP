@@ -1,7 +1,5 @@
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Semver;
 using Spectre.Console.Cli;
 using StepLang.Libraries;
@@ -26,12 +24,7 @@ internal sealed class LibraryAddCommand : AsyncCommand<LibraryAddCommand.Setting
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        var libraryFilePath = Path.Combine(Directory.GetCurrentDirectory(), "library.json");
-        if (!File.Exists(libraryFilePath))
-            throw new InvalidOperationException("Not in a library");
-
-        var libraryJson = await File.ReadAllTextAsync(libraryFilePath);
-        var library = JsonSerializer.Deserialize<Library>(libraryJson) ?? throw new InvalidOperationException("Unable to read library.json");
+        var library = Library.FromCurrentDir();
 
         if (library.Dependencies?.ContainsKey(settings.Name) ?? false)
         {
@@ -56,18 +49,15 @@ internal sealed class LibraryAddCommand : AsyncCommand<LibraryAddCommand.Setting
             semVersionRange = SemVersionRange.Parse(settings.VersionRange);
             var latestCompatible = await GetLatestVersionThatSatisfies(settings.Name, semVersionRange);
             if (latestCompatible is null)
-                throw new InvalidOperationException($"Unable to find a library named '{settings.Name}' that satisfies '{semVersionRange}'");
+                throw new InvalidOperationException(
+                    $"Unable to find a library named '{settings.Name}' that satisfies '{semVersionRange}'");
         }
 
-        var newLibrary = LibraryBuilder.From(library)
+        library
+            .Modify()
             .WithDependency(settings.Name, semVersionRange)
-            .Build();
-
-        await File.WriteAllTextAsync(libraryFilePath, JsonSerializer.Serialize(newLibrary, new JsonSerializerOptions
-        {
-            WriteIndented = true,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-        }));
+            .Build()
+            .SaveToCurrentDir();
 
         await Console.Out.WriteLineAsync($"Successfully added '{settings.Name}' to library.json");
 
