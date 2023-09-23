@@ -9,10 +9,16 @@ public class Tokenizer
 {
     private readonly StringBuilder tokenBuilder = new();
     private readonly CharacterQueue characterQueue = new();
+    private readonly bool strict;
 
     private TokenLocation? stringStartLocation;
     private char? stringQuote;
     private bool escaped;
+
+    public Tokenizer(bool strict = true)
+    {
+        this.strict = strict;
+    }
 
     public void Add(IEnumerable<char> characters) => characterQueue.Enqueue(characters);
 
@@ -65,7 +71,7 @@ public class Tokenizer
                 yield return token;
         }
 
-        if (stringQuote.HasValue)
+        if (stringQuote.HasValue && strict)
             throw new UnterminatedStringException(stringStartLocation, stringQuote!.Value);
 
         if (tokenBuilder.Length == 0)
@@ -173,7 +179,7 @@ public class Tokenizer
         if (!allowIdentifier)
             return null;
 
-        if (tokenValue.IsValidIdentifier())
+        if (tokenValue.IsValidIdentifier() || !strict)
             return FinalizeToken(TokenType.Identifier);
 
         throw new InvalidIdentifierException(characterQueue.CurrentLocation, tokenValue);

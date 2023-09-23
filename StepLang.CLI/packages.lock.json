@@ -84,6 +84,12 @@
           "System.Linq.Async": "[6.0.1, )"
         }
       },
+      "steplang.tooling.highlighting": {
+        "type": "Project",
+        "dependencies": {
+          "StepLang": "[1.0.0, )"
+        }
+      },
       "cmdwtf.BuildTimestampGenerator": {
         "type": "CentralTransitive",
         "requested": "[1.0.1, )",

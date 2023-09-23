@@ -1056,6 +1056,7 @@
           "Spectre.Console.Cli": "[0.47.0, )",
           "StepLang": "[1.0.0, )",
           "StepLang.Tooling.Formatting": "[1.0.0, )",
+          "StepLang.Tooling.Highlighting": "[1.0.0, )",
           "System.Linq.Async": "[6.0.1, )"
         }
       },
@@ -1071,6 +1072,12 @@
         "dependencies": {
           "StepLang": "[1.0.0, )",
           "System.Linq.Async": "[6.0.1, )"
+        }
+      },
+      "steplang.tooling.highlighting": {
+        "type": "Project",
+        "dependencies": {
+          "StepLang": "[1.0.0, )"
         }
       },
       "cmdwtf.BuildTimestampGenerator": {
