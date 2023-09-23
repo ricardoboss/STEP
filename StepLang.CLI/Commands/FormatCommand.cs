@@ -14,7 +14,7 @@ internal sealed class FormatCommand : AsyncCommand<FormatCommand.Settings>
 {
     public sealed class Settings : HiddenGlobalCommandSettings
     {
-        [CommandArgument(0, "<file-or-dir>")]
+        [CommandArgument(0, "[file-or-dir]")]
         [Description("One or more paths to files or directories to format.")]
         public string[]? FilesOrDirs { get; init; }
 
