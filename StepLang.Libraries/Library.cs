@@ -23,7 +23,7 @@ public record Library(string Name, string? Version, string? Author, Dictionary<s
 
         var libraryJson = File.ReadAllText(path);
 
-        return FromJson(libraryJson) ?? throw new InvalidOperationException($"Unable to read {path}");;
+        return FromJson(libraryJson) ?? throw new InvalidOperationException($"Unable to read {path}");
     }
 
     public static Library? FromJson(string json)
