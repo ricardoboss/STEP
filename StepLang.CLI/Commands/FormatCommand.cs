@@ -36,7 +36,7 @@ internal sealed class FormatCommand : AsyncCommand<FormatCommand.Settings>
 
         var filesOrDirs = settings.FilesOrDirs;
         if (filesOrDirs.Length == 0)
-            filesOrDirs = new [] { "." };
+            filesOrDirs = new[] { "." };
 
         IFixer fixer = settings.DryRun ? new DryRunFixer() : new DefaultFixer();
 
