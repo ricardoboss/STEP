@@ -22,8 +22,8 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Pastel"/>
-        <PackageReference Include="System.CommandLine"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+        <PackageReference Include="Spectre.Console.Cli" />
         <PackageReference Include="System.Linq.Async"/>
         <PackageReference Include="ToStringWithoutOverrideAnalyzer">
             <PrivateAssets>all</PrivateAssets>
@@ -34,5 +34,11 @@
     <ItemGroup>
         <ProjectReference Include="..\StepLang.Tooling.Formatting\StepLang.Tooling.Formatting.csproj"/>
         <ProjectReference Include="..\StepLang\StepLang.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
+        <HintPath>C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\7.0.11\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+      </Reference>
     </ItemGroup>
 </Project>

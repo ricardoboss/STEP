@@ -1,21 +1,15 @@
-using System.CommandLine.Invocation;
-using System.CommandLine.IO;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using Pastel;
+using Spectre.Console;
 
 namespace StepLang.CLI;
 
 [ExcludeFromCodeCoverage]
 internal static class ErrorHandler
 {
-    public static void HandleException(Exception e, InvocationContext c)
-    {
-        c.Console.Error.WriteLine(FormatError(e));
-        c.Console.Error.WriteLine();
-    }
+    public static void HandleException(Exception e) => AnsiConsole.MarkupLineInterpolated(FormatError(e));
 
-    private static string FormatError(Exception e)
+    private static FormattableString FormatError(Exception e)
     {
         return e switch
         {
@@ -24,19 +18,17 @@ internal static class ErrorHandler
         };
     }
 
-    private static string FormatError(string type, string message) => ("! " + type + ": ").Pastel(ConsoleColor.Red) + message;
+    private static FormattableString FormatError(string type, string message) => $"[red]! {type}[/]: {message}";
 
-    private static string FormatGeneralException(Exception e) => FormatError(e.GetType().Name, e.Message + Environment.NewLine + e.StackTrace.Pastel(ConsoleColor.DarkGray));
+    private static FormattableString FormatGeneralException(Exception e) => FormatError(e.GetType().Name, e.Message + Environment.NewLine + e.StackTrace);
 
-    private static string FormatStepLangException(StepLangException e)
+    private static FormattableString FormatStepLangException(StepLangException e)
     {
         const int contextLineCount = 4;
 
         IEnumerable<string> outputLines;
 
-        var exceptionName = (" " + e.ErrorCode + ": " + e.GetType().Name + " ")
-            .Pastel(ConsoleColor.White)
-            .PastelBg(ConsoleColor.Red);
+        var exceptionName = " " + e.ErrorCode + ": " + e.GetType().Name + " ";
 
         var message = Environment.NewLine + "\t" + e.Message + Environment.NewLine;
 
@@ -50,31 +42,31 @@ internal static class ErrorHandler
             var lineNumberWidth = contextEndLine.ToString(CultureInfo.InvariantCulture).Length;
             var contextLines = lines[contextStartLine..contextEndLine].Select(l =>
             {
-                var prefix = lineNumber == location.Line - 1 ? $"{">".Pastel(ConsoleColor.Red)} " : "  ";
+                var prefix = lineNumber == location.Line - 1 ? "> " : "  ";
 
                 var displayLineNumber = (lineNumber + 1).ToString(CultureInfo.InvariantCulture);
-                var line = prefix + $"{(displayLineNumber.PadLeft(lineNumberWidth) + "|").Pastel(ConsoleColor.Gray)} {l}";
+                var line = prefix + $"{displayLineNumber.PadLeft(lineNumberWidth) + "|"} {l}";
 
                 lineNumber++;
 
                 return line;
             });
 
-            var locationString = $"at {location.File.FullName.Pastel(ConsoleColor.Green)}:{location.Line}";
+            var locationString = $"at {location.File.FullName}:{location.Line}";
 
             outputLines = contextLines.Prepend(locationString);
         }
         else
-            outputLines = new[] { (e.StackTrace ?? string.Empty).Pastel(ConsoleColor.Gray) };
+            outputLines = new[] { e.StackTrace ?? string.Empty };
 
         outputLines = outputLines.Prepend(message).Prepend(exceptionName);
 
         if (e.HelpText is { } helpText)
-            outputLines = outputLines.Append(Environment.NewLine + "Tip: ".Pastel(ConsoleColor.DarkCyan) + helpText);
+            outputLines = outputLines.Append(Environment.NewLine + "Tip: " + helpText);
 
         if (e.HelpLink is { } helpLink)
-            outputLines = outputLines.Append(Environment.NewLine + "See also: ".Pastel(ConsoleColor.DarkCyan) + helpLink);
+            outputLines = outputLines.Append(Environment.NewLine + "See also: " + helpLink);
 
-        return Environment.NewLine + string.Join(Environment.NewLine, outputLines);
+        return $"{Environment.NewLine}{string.Join(Environment.NewLine, outputLines)}";
     }
 }
