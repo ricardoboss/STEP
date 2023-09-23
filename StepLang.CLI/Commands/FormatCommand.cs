@@ -16,7 +16,7 @@ internal sealed class FormatCommand : AsyncCommand<FormatCommand.Settings>
     {
         [CommandArgument(0, "<file-or-dir>")]
         [Description("One or more paths to files or directories to format.")]
-        public string[] FilesOrDirs { get; init; } = null!;
+        public string[]? FilesOrDirs { get; init; }
 
         [CommandOption("-d|--dry-run")]
         [DefaultValue(false)]
@@ -35,7 +35,7 @@ internal sealed class FormatCommand : AsyncCommand<FormatCommand.Settings>
             AnsiConsole.MarkupLineInterpolated($"[yellow][bold]Dry run mode enabled.[/] No files will be modified.[/]");
 
         var filesOrDirs = settings.FilesOrDirs;
-        if (filesOrDirs.Length == 0)
+        if (filesOrDirs is null or { Length: 0 })
             filesOrDirs = new[] { "." };
 
         IFixer fixer = settings.DryRun ? new DryRunFixer() : new DefaultFixer();
