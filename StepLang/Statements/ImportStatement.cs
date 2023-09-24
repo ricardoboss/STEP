@@ -23,13 +23,13 @@ internal sealed class ImportStatement : Statement
     {
         FileInfo fileInfo;
         if (Location is null)
-            fileInfo = new(filePathToken.Value);
-        else if (Path.IsPathRooted(filePathToken.Value))
-            fileInfo = new(filePathToken.Value);
+            fileInfo = new(filePathToken.StringValue);
+        else if (Path.IsPathRooted(filePathToken.StringValue))
+            fileInfo = new(filePathToken.StringValue);
         else
         {
             var currentDirectory = Path.GetDirectoryName(Location.File.FullName) ?? throw new InvalidOperationException();
-            var resolvedPath = Path.Combine(currentDirectory, filePathToken.Value);
+            var resolvedPath = Path.Combine(currentDirectory, filePathToken.StringValue);
 
             fileInfo = new(resolvedPath);
         }

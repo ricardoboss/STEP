@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using Spectre.Console;
-using StepLang.Tokenizing;
+using StepLang.CLI.Widgets;
+using StepLang.Tooling.Formatting;
 using StepLang.Tooling.Highlighting;
 
 namespace StepLang.CLI;
@@ -9,83 +9,74 @@ namespace StepLang.CLI;
 [ExcludeFromCodeCoverage]
 internal static class ErrorHandler
 {
-    public static void HandleException(Exception e) => AnsiConsole.MarkupLine(FormatError(e));
-
-    private static string FormatError(Exception e)
+    public static void HandleException(Exception e)
     {
-        return e switch
+        if (e is StepLangException sle)
         {
-            StepLangException sle => FormatStepLangException(sle),
-            _ => FormatGeneralException(e),
-        };
+            HandleStepLangException(sle);
+
+            return;
+        }
+
+        AnsiConsole.WriteException(e);
     }
 
-    private static string FormatError(string type, string message) => $"[red]! {type}[/]: {message}";
-
-    private static string FormatGeneralException(Exception e) => FormatError(e.GetType().Name, e.Message + Environment.NewLine + e.StackTrace);
-
-    private static string FormatStepLangException(StepLangException e)
+    private static void HandleStepLangException(StepLangException e)
     {
-        const int contextLineCount = 4;
+        AnsiConsole.Write(new Rule($"[red] {e.ErrorCode}: {e.GetType().Name} [/]")
+            .LeftJustified()
+            .RuleStyle("red dim"));
 
-        IEnumerable<string> outputLines;
-
-        var exceptionName = $"[white on red bold] {e.ErrorCode}: {e.GetType().Name} [/]{Environment.NewLine}";
-
-        var message = $"{Environment.NewLine}\t{e.Message}{Environment.NewLine}";
+        AnsiConsole.Write(new Padder(new Text(e.Message)));
 
         if (e.Location is { } location)
         {
-            var sourceCode = location.File.Exists ? File.ReadAllText(location.File.FullName) : "";
-            var lines = new Highlighter(ColorScheme.Bright).Highlight(sourceCode).ToArray();
-            var contextStartLine = Math.Max(0, location.Line - 1 - contextLineCount);
-            var contextEndLine = Math.Min(lines.Length, location.Line + contextLineCount);
-            var lineNumber = contextStartLine;
-            var lineNumberWidth = contextEndLine.ToString(CultureInfo.InvariantCulture).Length;
-            var contextLines = lines[contextStartLine..contextEndLine].Select(tokens =>
+            var details = new DefinitionList();
+
+            if (location.File.Exists)
             {
-                var lineContents = tokens.Aggregate("", (current, t) =>
-                {
-                    var f = $"[#{t.Style.Foreground.ToArgb() & 0xFFFFFF:X6}]";
+                details.Items.Add(new(
+                    new Markup("[bold]File[/]"),
+                    new TextPath(location.File.FullName)
+                ));
+            }
 
-                    if (t.Type is TokenType.LiteralString)
-                        f += "\"";
+            details.Items.Add(new(
+                new Markup("[bold]Location[/]"),
+                new Text($"line {location.Line}, column {location.Column}")
+            ));
 
-                    f += t.Text;
+            AnsiConsole.Write(details);
 
-                    if (t.Type is TokenType.LiteralString)
-                        f += "\"";
+            if (location.File.Exists)
+            {
+                const int contextLineCount = 5;
 
-                    f += "[/]";
+                var lines = File.ReadAllText(location.File.FullName).SplitLines().ToArray();
+                var contextStartLine = Math.Max(0, location.Line - 1 - contextLineCount);
+                var contextEndLine = Math.Min(lines.Length, location.Line + contextLineCount);
+                var contextLines = lines[contextStartLine..contextEndLine];
+                var context = string.Join(Environment.NewLine, contextLines);
 
-                    return current + f;
-                });
+                var code = new Code(context, ColorScheme.Pale, true, contextStartLine, location.Line);
 
-                var prefix = lineNumber == location.Line - 1 ? "[red]>[/] " : "  ";
+                var codePanel = new Panel(code)
+                        .Header("[bold]Code[/]", Justify.Left)
+                        .RoundedBorder()
+                        .BorderStyle("grey")
+                        .Padding(1, 0, 2, 0)
+                    ;
 
-                var displayLineNumber = (lineNumber + 1).ToString(CultureInfo.InvariantCulture);
-                var line = prefix + $"[grey]{displayLineNumber.PadLeft(lineNumberWidth)} |[/] {lineContents}";
-
-                lineNumber++;
-
-                return line;
-            });
-
-            var locationString = $"at [green]{location.File.FullName}[/]:{location.Line}";
-
-            outputLines = contextLines.Prepend(locationString);
+                AnsiConsole.Write(codePanel);
+            }
         }
-        else
-            outputLines = new[] { $"[grey]{e.StackTrace ?? string.Empty}[/]" };
-
-        outputLines = outputLines.Prepend(message).Prepend(exceptionName);
 
         if (e.HelpText is { } helpText)
-            outputLines = outputLines.Append($"{Environment.NewLine}[blue]Tip[/]: {helpText}");
+            AnsiConsole.Write(new Padder(new Markup($"[aqua]Tip[/]: {helpText}"), new(0, 1, 0, 0)));
 
         if (e.HelpLink is { } helpLink)
-            outputLines = outputLines.Append($"{Environment.NewLine}[blue]See also[/]: [link]{helpLink}[/]");
+            AnsiConsole.Write(new Padder(new Markup($"[aqua]See also[/]: [link]{helpLink}[/]"), new(0, 1, 0, 0)));
 
-        return Environment.NewLine + string.Join(Environment.NewLine, outputLines);
+        AnsiConsole.WriteLine();
     }
 }

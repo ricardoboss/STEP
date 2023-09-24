@@ -23,6 +23,12 @@ public class Token
         Location = location;
     }
 
+    public string StringValue => Type switch
+    {
+        TokenType.LiteralString => Value[1..^1], // cut off the quotes
+        _ => Value,
+    };
+
     [ExcludeFromCodeCoverage]
     public override string ToString()
     {

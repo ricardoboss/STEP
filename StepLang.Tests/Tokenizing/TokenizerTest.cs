@@ -15,7 +15,8 @@ public class TokenizerTest
 
         Assert.Single(tokens);
         Assert.Equal(TokenType.LiteralString, tokens[0].Type);
-        Assert.Equal("abc", tokens[0].Value);
+        Assert.Equal(source, tokens[0].Value);
+        Assert.Equal("abc", tokens[0].StringValue);
     }
 
     [Fact]
@@ -29,7 +30,7 @@ public class TokenizerTest
 
         Assert.Single(tokens);
         Assert.Equal(TokenType.LiteralString, tokens[0].Type);
-        Assert.Equal("\n", tokens[0].Value);
+        Assert.Equal("\n", tokens[0].StringValue);
     }
 
     [Fact]
@@ -89,7 +90,8 @@ public class TokenizerTest
 
         Assert.Single(tokens);
         Assert.Equal(TokenType.LiteralString, tokens[0].Type);
-        Assert.Equal("abc def", tokens[0].Value);
+        Assert.Equal(source, tokens[0].Value);
+        Assert.Equal("abc def", tokens[0].StringValue);
     }
 
     [Theory]
@@ -102,7 +104,7 @@ public class TokenizerTest
 
         Assert.Single(tokens);
         Assert.Equal(TokenType.LiteralString, tokens[0].Type);
-        Assert.Equal(expected, tokens[0].Value);
+        Assert.Equal(expected, tokens[0].StringValue);
     }
 
     [Theory]
@@ -201,7 +203,7 @@ public class TokenizerTest
         Assert.Equal(TokenType.OpeningParentheses, tokens[1].Type);
         Assert.Equal("(", tokens[1].Value);
         Assert.Equal(TokenType.LiteralString, tokens[2].Type);
-        Assert.Equal("hello", tokens[2].Value);
+        Assert.Equal("\"hello\"", tokens[2].Value);
         Assert.Equal(TokenType.ClosingParentheses, tokens[3].Type);
         Assert.Equal(")", tokens[3].Value);
     }
@@ -235,7 +237,7 @@ public class TokenizerTest
         Assert.Equal(TokenType.OpeningParentheses, tokens[8].Type);
         Assert.Equal("(", tokens[8].Value);
         Assert.Equal(TokenType.LiteralString, tokens[9].Type);
-        Assert.Equal("text", tokens[9].Value);
+        Assert.Equal("\"text\"", tokens[9].Value);
         Assert.Equal(TokenType.ClosingParentheses, tokens[10].Type);
         Assert.Equal(")", tokens[10].Value);
         Assert.Equal(TokenType.Whitespace, tokens[11].Type);
@@ -257,7 +259,7 @@ public class TokenizerTest
         Assert.Equal(TokenType.Identifier, tokens[0].Type);
         Assert.Equal("identifier", tokens[0].Value);
         Assert.Equal(TokenType.LiteralString, tokens[1].Type);
-        Assert.Equal("", tokens[1].Value);
+        Assert.Equal("\"\"", tokens[1].Value);
     }
 
     [Fact]

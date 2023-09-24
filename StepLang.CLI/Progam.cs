@@ -43,6 +43,11 @@ app.Configure(config =>
         .WithExample("format . --dry-run")
         .WithExample("format foo/bar main.step --set-exit-code")
         ;
+
+    config.AddCommand<HighlightCommand>("highlight")
+        .WithDescription("Highlight a .step-file and print it to the console.")
+        .WithExample("highlight my-script.step")
+        ;
 });
 
 return await app.RunAsync(args);
