@@ -6,7 +6,7 @@ public record ColorScheme(Style Default, Style Keyword, Style Type, Style Identi
     Style Bool, Style Comment,
     Style Operator, Style Punctuation)
 {
-    public static IEnumerable<string> Names => new[] {"Pale", "Dim", "Mono"};
+    public static IEnumerable<string> Names => new[] { "Pale", "Dim", "Mono" };
 
     public static ColorScheme ByName(string name)
     {
