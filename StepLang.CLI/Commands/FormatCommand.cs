@@ -43,12 +43,9 @@ internal sealed class FormatCommand : AsyncCommand<FormatCommand.Settings>
         var checkedFiles = new HashSet<FileInfo>();
         var fixedFiles = new HashSet<FileInfo>();
 
-        fixer.BeforeApplyFix += (_, f) =>
-        {
-            checkedFiles.Add(f.File);
-        };
+        fixer.OnCheck += (_, f) => checkedFiles.Add(f.File);
 
-        fixer.AfterApplyFix += (_, f) =>
+        fixer.OnFixed += (_, f) =>
         {
             fixedFiles.Add(f.File);
 

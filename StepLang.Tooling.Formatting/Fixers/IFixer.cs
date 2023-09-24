@@ -4,9 +4,9 @@ namespace StepLang.Tooling.Formatting.Fixers;
 
 public interface IFixer
 {
-    public event EventHandler<BeforeFixerRanEventArgs>? BeforeApplyFix;
+    public event EventHandler<BeforeFixerRanEventArgs>? OnCheck;
 
-    public event EventHandler<AfterFixerRanEventArgs>? AfterApplyFix;
+    public event EventHandler<AfterFixerRanEventArgs>? OnFixed;
 
     public bool ThrowOnFailure { get; init; }
 

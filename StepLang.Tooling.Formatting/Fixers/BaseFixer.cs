@@ -57,14 +57,14 @@ public abstract class BaseFixer : IFixer
         );
     }
 
-    public event EventHandler<BeforeFixerRanEventArgs>? BeforeApplyFix;
+    public event EventHandler<BeforeFixerRanEventArgs>? OnCheck;
 
-    public event EventHandler<AfterFixerRanEventArgs>? AfterApplyFix;
+    public event EventHandler<AfterFixerRanEventArgs>? OnFixed;
 
     public virtual async Task<FixerResult> FixAsync(IAnalyzer analyzer, FileInfo file,
         CancellationToken cancellationToken = default)
     {
-        BeforeApplyFix?.Invoke(this, new(file, analyzer));
+        OnCheck?.Invoke(this, new(file, analyzer));
 
         Stopwatch sw = new();
 
@@ -99,7 +99,7 @@ public abstract class BaseFixer : IFixer
 
         var fixApplicatorResult = await ApplyResult(analysisResult, file, cancellationToken);
 
-        AfterApplyFix?.Invoke(this, new(file, analyzer));
+        OnFixed?.Invoke(this, new(file, analyzer));
 
         return fixApplicatorResult with { Elapsed = fixApplicatorResult.Elapsed + runDuration };
     }
