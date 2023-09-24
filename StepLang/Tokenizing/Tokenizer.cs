@@ -35,8 +35,8 @@ public class Tokenizer
 
             if (stringQuote.HasValue)
             {
-                var token = HandleString(character);
-                if (token is not null)
+                var tokens = HandleString(character);
+                foreach (var token in tokens)
                     yield return token;
 
                 continue;
@@ -46,6 +46,8 @@ public class Tokenizer
             {
                 if (TryFinalizePreviousToken() is { } previousToken)
                     yield return previousToken;
+
+                tokenBuilder.Append(character);
 
                 stringQuote = character;
                 stringStartLocation = characterQueue.CurrentLocation;
@@ -87,7 +89,7 @@ public class Tokenizer
             yield return previousToken;
 
         tokenBuilder.Append(character);
-        foreach (var commentCharacter in characterQueue.DequeueUntil('\n'))
+        foreach (var commentCharacter in characterQueue.DequeueUntil('\n').TakeWhile(c => c is not '\r'))
             tokenBuilder.Append(commentCharacter);
 
         yield return FinalizeToken(TokenType.LineComment);
@@ -105,7 +107,7 @@ public class Tokenizer
         return token;
     }
 
-    private Token? HandleString(char c)
+    private IEnumerable<Token> HandleString(char c)
     {
         if (escaped)
         {
@@ -115,27 +117,51 @@ public class Tokenizer
 
             escaped = false;
 
-            return null;
+            yield break;
         }
 
         if (c == stringQuote)
         {
+            tokenBuilder.Append(c);
+
             stringQuote = null;
             stringStartLocation = null;
 
-            return FinalizeToken(TokenType.LiteralString);
+            yield return FinalizeToken(TokenType.LiteralString);
+            yield break;
         }
 
         if (c is '\\')
         {
             escaped = true;
 
-            return null;
+            yield break;
+        }
+
+        // if (c is '\r' && characterQueue.TryPeek(out var nextCharacter) && nextCharacter is '\n')
+        // {
+        //     // skip \r in new lines
+        //     yield break;
+        // }
+
+        // strings can't contain unescaped control characters
+        if (char.IsControl(c))
+        {
+            if (strict)
+                throw new UnterminatedStringException(stringStartLocation!, stringQuote!.Value);
+
+            stringQuote = null;
+            stringStartLocation = null;
+
+            yield return FinalizeToken(TokenType.LiteralString);
+
+            if (c is '\n')
+                yield return new(TokenType.NewLine, c.ToString(), characterQueue.CurrentLocation);
+
+            yield break;
         }
 
         tokenBuilder.Append(c);
-
-        return null;
     }
 
     private IEnumerable<Token> HandleChar(char c)

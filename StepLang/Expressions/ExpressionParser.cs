@@ -199,7 +199,7 @@ public class ExpressionParser
             case TokenType.LiteralBoolean:
                 throw new FormatException($"Invalid bool format: {currentToken.Value}");
             case TokenType.LiteralString:
-                return LiteralExpression.Str(currentToken.Value);
+                return LiteralExpression.Str(currentToken.StringValue);
             case TokenType.OpeningParentheses:
                 var nextType = tokenQueue.PeekType();
                 if (nextType is TokenType.ClosingParentheses)

@@ -11,20 +11,10 @@ public class Highlighter
         this.scheme = scheme;
     }
 
-    public IEnumerable<IEnumerable<StyledToken>> Highlight(string sourceCode)
-    {
-        var lines = sourceCode.ReplaceLineEndings().Split(Environment.NewLine);
-
-        foreach (var line in lines)
-        {
-            yield return HighlightLine(line);
-        }
-    }
-
-    private IEnumerable<StyledToken> HighlightLine(string lineCode)
+    public IEnumerable<StyledToken> Highlight(string sourceCode)
     {
         var tokenizer = new Tokenizer(false);
-        tokenizer.Add(lineCode);
+        tokenizer.Add(sourceCode);
         foreach (var token in tokenizer.Tokenize())
         {
             yield return new(token.Type, token.Value, GetStyle(token.Type, scheme));
