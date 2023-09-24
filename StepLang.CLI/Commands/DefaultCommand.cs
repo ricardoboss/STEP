@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace StepLang.CLI.Commands;
@@ -19,7 +20,14 @@ internal sealed class DefaultCommand : AsyncCommand<DefaultCommand.Settings>
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
         if (settings.File == null)
-            return 0;
+        {
+            if (settings is not { Info: false, Version: false })
+                return 0;
+
+            AnsiConsole.MarkupLine("[red]No file specified.[/]");
+
+            return 1;
+        }
 
         var runCommand = new RunCommand();
 
