@@ -8,7 +8,7 @@ namespace StepLang.CLI.Commands;
 [SuppressMessage("Performance", "CA1812: Avoid uninstantiated internal classes")]
 internal sealed class DefaultCommand : AsyncCommand<DefaultCommand.Settings>
 {
-    public sealed class Settings : ShownGlobalCommandSettings
+    public sealed class Settings : VisibleGlobalCommandSettings
     {
         [CommandArgument(0, "[file]")]
         [Description("The path to a .step-file to run.")]

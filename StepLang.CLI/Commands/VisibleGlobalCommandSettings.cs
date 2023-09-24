@@ -3,7 +3,7 @@ using Spectre.Console.Cli;
 
 namespace StepLang.CLI.Commands;
 
-public class ShownGlobalCommandSettings : CommandSettings, IGlobalCommandSettings
+public class VisibleGlobalCommandSettings : CommandSettings, IGlobalCommandSettings
 {
     [CommandOption(IGlobalCommandSettings.InfoOptionName)]
     [Description(IGlobalCommandSettings.InfoOptionDescription)]
