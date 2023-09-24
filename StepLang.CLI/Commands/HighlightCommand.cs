@@ -51,7 +51,7 @@ internal sealed class HighlightCommand : AsyncCommand<HighlightCommand.Settings>
 
         if (settings.File is null)
         {
-            AnsiConsole.MarkupLine("[red]Error:[/] No file specified.");
+            AnsiConsole.MarkupLine("[red]No file specified.[/]");
 
             return 1;
         }
