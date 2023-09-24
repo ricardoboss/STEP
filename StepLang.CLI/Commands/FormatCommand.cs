@@ -40,11 +40,17 @@ internal sealed class FormatCommand : AsyncCommand<FormatCommand.Settings>
 
         IFixer fixer = settings.DryRun ? new DryRunFixer() : new DefaultFixer();
 
-        var files = new HashSet<FileInfo>();
+        var checkedFiles = new HashSet<FileInfo>();
+        var fixedFiles = new HashSet<FileInfo>();
+
+        fixer.BeforeApplyFix += (_, f) =>
+        {
+            checkedFiles.Add(f.File);
+        };
 
         fixer.AfterApplyFix += (_, f) =>
         {
-            files.Add(f.File);
+            fixedFiles.Add(f.File);
 
             AnsiConsole.MarkupLineInterpolated(
                 $"Applied analyzer [darkmagenta]'{f.Analyzer.Name}'[/] to [cyan]'{f.File.Name}'[/]");
@@ -60,7 +66,7 @@ internal sealed class FormatCommand : AsyncCommand<FormatCommand.Settings>
             );
 
         AnsiConsole.MarkupLineInterpolated(
-            $"{(settings.DryRun ? "Would have fixed" : "Fixed")} [green]{files.Count.ToString(CultureInfo.InvariantCulture)}[/] file(s) in [cyan]{results.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)}[/] seconds.");
+            $"Checked [green]{checkedFiles.Count.ToString(CultureInfo.InvariantCulture)}[/] file(s) and {(settings.DryRun ? "would have fixed" : "fixed")} [yellow]{fixedFiles.Count.ToString(CultureInfo.InvariantCulture)}[/] file(s) in [cyan]{results.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)}[/] seconds.");
 
         if (settings.SetExitCode)
             return results.AppliedFixes > 0 ? 1 : 0;
@@ -75,13 +81,13 @@ internal sealed class FormatCommand : AsyncCommand<FormatCommand.Settings>
         if (File.Exists(fileOrDir))
         {
             var file = new FileInfo(fileOrDir);
-            AnsiConsole.MarkupLineInterpolated($"Formatting file [blue]'{file.FullName}'[/]...");
+            AnsiConsole.MarkupLineInterpolated($"Checking file [blue]'{file.FullName}'[/]...");
             result = await fixer.FixAsync(analyzers, file);
         }
         else if (Directory.Exists(fileOrDir))
         {
             var dir = new DirectoryInfo(fileOrDir);
-            AnsiConsole.MarkupLineInterpolated($"Formatting directory [blue]'{dir.FullName}'[/]...");
+            AnsiConsole.MarkupLineInterpolated($"Checking directory [blue]'{dir.FullName}'[/]...");
             result = await fixer.FixAsync(analyzers, dir);
         }
         else
