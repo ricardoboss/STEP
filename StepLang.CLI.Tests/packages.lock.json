@@ -369,14 +369,6 @@
           "System.Threading.Tasks": "4.3.0"
         }
       },
-      "System.ComponentModel": {
-        "type": "Transitive",
-        "resolved": "4.0.1",
-        "contentHash": "oBZFnm7seFiVfugsIyOvQCWobNZs7FzqDV/B7tx20Ep/l3UUFCPDkdTnCNaJZTU27zjeODmy2C/cP60u3D4c9w==",
-        "dependencies": {
-          "System.Runtime": "4.1.0"
-        }
-      },
       "System.Console": {
         "type": "Transitive",
         "resolved": "4.3.0",
@@ -1092,15 +1084,30 @@
           "xunit.extensibility.core": "[2.4.2]"
         }
       },
+      "leap.client": {
+        "type": "Project",
+        "dependencies": {
+          "Leap.Common": "[1.0.0, )",
+          "Microsoft.Extensions.Configuration.Abstractions": "[7.0.0, )"
+        }
+      },
+      "leap.common": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Extensions.Http": "[7.0.0, )",
+          "Semver": "[2.3.0, )",
+          "System.IdentityModel.Tokens.Jwt": "[6.15.1, )"
+        }
+      },
       "step": {
         "type": "Project",
         "dependencies": {
+          "Leap.Client": "[1.0.0, )",
+          "Leap.Common": "[1.0.0, )",
           "Microsoft.Extensions.Configuration": "[7.0.0, )",
           "Microsoft.Extensions.DependencyInjection": "[7.0.0, )",
           "Spectre.Console.Cli": "[0.47.0, )",
           "StepLang": "[1.0.0, )",
-          "StepLang.Libraries": "[1.0.0, )",
-          "StepLang.Libraries.Client": "[1.0.0, )",
           "StepLang.Tooling.Formatting": "[1.0.0, )",
           "StepLang.Tooling.Highlighting": "[1.0.0, )",
           "System.Linq.Async": "[6.0.1, )"
@@ -1111,21 +1118,6 @@
         "dependencies": {
           "System.Linq.Async": "[6.0.1, )",
           "cmdwtf.BuildTimestampGenerator": "[1.0.1, )"
-        }
-      },
-      "steplang.libraries": {
-        "type": "Project",
-        "dependencies": {
-          "Microsoft.Extensions.Http": "[7.0.0, )",
-          "Semver": "[2.3.0, )",
-          "System.IdentityModel.Tokens.Jwt": "[6.15.1, )"
-        }
-      },
-      "steplang.libraries.client": {
-        "type": "Project",
-        "dependencies": {
-          "Microsoft.Extensions.Configuration.Abstractions": "[7.0.0, )",
-          "StepLang.Libraries": "[1.0.0, )"
         }
       },
       "steplang.tooling.formatting": {

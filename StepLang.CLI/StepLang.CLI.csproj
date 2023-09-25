@@ -31,8 +31,8 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <ProjectReference Include="..\StepLang\StepLang.csproj"/>
-        <ProjectReference Include="..\StepLang.Libraries\StepLang.Libraries.csproj" />
-        <ProjectReference Include="..\StepLang.Libraries.Client\StepLang.Libraries.Client.csproj" />
+        <ProjectReference Include="..\Leap.Common\Leap.Common.csproj" />
+        <ProjectReference Include="..\Leap.Client\Leap.Client.csproj" />
         <ProjectReference Include="..\StepLang.Tooling.Formatting\StepLang.Tooling.Formatting.csproj"/>
         <ProjectReference Include="..\StepLang.Tooling.Highlighting\StepLang.Tooling.Highlighting.csproj" />
     </ItemGroup>

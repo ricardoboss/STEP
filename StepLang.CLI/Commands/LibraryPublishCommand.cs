@@ -2,8 +2,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO.Compression;
 using Semver;
 using Spectre.Console.Cli;
-using StepLang.Libraries;
-using StepLang.Libraries.Client;
+using Leap.Common;
+using Leap.Client;
 
 namespace StepLang.CLI.Commands;
 

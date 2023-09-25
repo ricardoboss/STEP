@@ -1,9 +1,9 @@
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using Leap.Client;
 using Semver;
 using Spectre.Console.Cli;
-using StepLang.Libraries;
-using StepLang.Libraries.Client;
+using Leap.Common;
 
 namespace StepLang.CLI.Commands;
 

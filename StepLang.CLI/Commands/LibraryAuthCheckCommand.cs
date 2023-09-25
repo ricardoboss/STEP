@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Spectre.Console.Cli;
-using StepLang.Libraries.Client;
+using Leap.Client;
 
 namespace StepLang.CLI.Commands;
 

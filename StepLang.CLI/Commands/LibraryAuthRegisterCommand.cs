@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Spectre.Console.Cli;
-using StepLang.Libraries.API;
-using StepLang.Libraries.Client;
+using Leap.Common.API;
+using Leap.Client;
 
 namespace StepLang.CLI.Commands;
 

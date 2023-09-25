@@ -54,15 +54,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang.Wiki", "StepLang.W
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{7DB97B10-29C3-4217-8911-2B36058B50D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang.Libraries", "StepLang.Libraries\StepLang.Libraries.csproj", "{A28CE60E-EB45-4016-9426-961ADE24404F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Leap.Common", "Leap.Common\Leap.Common.csproj", "{A28CE60E-EB45-4016-9426-961ADE24404F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang.Libraries.API", "StepLang.Libraries.API\StepLang.Libraries.API.csproj", "{797C39AA-4ECE-4ED5-8165-2C92CA13C625}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Leap.API", "Leap.API\Leap.API.csproj", "{797C39AA-4ECE-4ED5-8165-2C92CA13C625}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{BE344EA7-2B41-437A-A1CD-DAF8C65A8BE5}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LEAP", "LEAP", "{BE344EA7-2B41-437A-A1CD-DAF8C65A8BE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang.Libraries.Client", "StepLang.Libraries.Client\StepLang.Libraries.Client.csproj", "{ADF7241E-7A68-40B8-AE86-085BD1F58D89}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Leap.Client", "Leap.Client\Leap.Client.csproj", "{ADF7241E-7A68-40B8-AE86-085BD1F58D89}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang.Libraries.API.DB", "StepLang.Libraries.API.DB\StepLang.Libraries.API.DB.csproj", "{A6EACCAD-FDC3-49F2-9B48-04F121BDC35A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Leap.API.DB", "Leap.API.DB\Leap.API.DB.csproj", "{A6EACCAD-FDC3-49F2-9B48-04F121BDC35A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
