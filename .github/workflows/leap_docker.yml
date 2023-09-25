@@ -11,7 +11,11 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [self-hosted, ubuntu-latest]
+
+    runs-on: ${{ matrix.os }}
 
     permissions:
       packages: write
