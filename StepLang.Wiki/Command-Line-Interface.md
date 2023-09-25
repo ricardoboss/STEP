@@ -55,4 +55,4 @@ step <command or path> [options]
 
 - `--version`: Print the version number
 - `--info`: Print the version number and other information
-- `-?`, `-h`, `--help`:  Show help and usage information
+- `-h`, `--help`:  Show help and usage information
