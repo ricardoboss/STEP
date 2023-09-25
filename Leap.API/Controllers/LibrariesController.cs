@@ -120,16 +120,14 @@ public class LibrariesController : ControllerBase
         if (authorIdStr is null || !Guid.TryParse(authorIdStr, out var authorId))
             return Unauthorized(UploadResult.Unauthorized());
 
-        var uploader = await context.Authors
-            .Include(a => a.Libraries)
-            .FirstOrDefaultAsync(a => a.Id == authorId, cancellationToken);
-
+        var uploader = await context.Authors.FirstOrDefaultAsync(a => a.Id == authorId, cancellationToken);
         if (uploader is null)
             return Unauthorized(UploadResult.Unauthorized());
 
         var library = await context.Libraries
             .Include(l => l.LatestVersion)
             .Include(l => l.Versions)
+            .Include(l => l.Maintainers)
             .FirstOrDefaultAsync(l => l.Name == name, cancellationToken);
 
         if (library is null)
@@ -142,21 +140,19 @@ public class LibrariesController : ControllerBase
             {
                 Name = name,
                 Author = author,
-                Maintainer = uploader,
+                Maintainers = new List<Author>(),
                 Versions = new List<LibraryVersion>(),
             };
 
             await context.Libraries.AddAsync(library, cancellationToken);
 
+            library.Maintainers.Add(uploader);
             uploader.Libraries.Add(library);
         }
         else
         {
-            // TODO: add ability for multiple users to upload versions for a single package (i.e. make author <=> package relation n to m instead of 1 to n)
-
-            // check if the current author owns the library
-            if (uploader.Libraries.All(l => l.Name != name))
-                return StatusCode(StatusCodes.Status403Forbidden, UploadResult.OwnerMismatch());
+            if (!library.Maintainers.Contains(uploader))
+                return StatusCode(StatusCodes.Status403Forbidden, UploadResult.NotAMaintainer());
         }
 
         SemVersion newVersionSemVer;

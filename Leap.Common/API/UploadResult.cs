@@ -18,5 +18,5 @@ public record UploadResult(string Code, string Message, BriefLibraryVersion? Ver
 
     public static UploadResult Unauthorized() => new("unauthorized", "Unauthorized.");
 
-    public static UploadResult OwnerMismatch() => new("owner_mismatch", "The current user is not the owner of the library.");
+    public static UploadResult NotAMaintainer() => new("not_a_maintainer", "The current user is not a maintainer of the library.");
 }
