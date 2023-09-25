@@ -16,10 +16,10 @@ namespace Leap.API.Controllers;
 [Route("[controller]/{name}")]
 public class LibrariesController : ControllerBase
 {
-    private readonly LibraryApiContext context;
+    private readonly LeapApiDbContext context;
     private readonly ILibraryStorage storage;
 
-    public LibrariesController(LibraryApiContext context, ILibraryStorage storage)
+    public LibrariesController(LeapApiDbContext context, ILibraryStorage storage)
     {
         this.context = context;
         this.storage = storage;

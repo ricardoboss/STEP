@@ -14,11 +14,11 @@ namespace Leap.API.Controllers;
 [Route("[controller]/[action]")]
 public class AuthController : ControllerBase
 {
-    private readonly LibraryApiContext context;
+    private readonly LeapApiDbContext context;
     private readonly IPasswordHasher<Author> passwordHasher;
     private readonly ITokenGenerator tokenGenerator;
 
-    public AuthController(LibraryApiContext context, ITokenGenerator tokenGenerator, IPasswordHasher<Author> passwordHasher)
+    public AuthController(LeapApiDbContext context, ITokenGenerator tokenGenerator, IPasswordHasher<Author> passwordHasher)
     {
         this.context = context;
         this.tokenGenerator = tokenGenerator;

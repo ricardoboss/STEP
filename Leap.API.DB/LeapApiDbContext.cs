@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Leap.API.DB;
 
-public class LibraryApiContext : DbContext
+public class LeapApiDbContext : DbContext
 {
-    public LibraryApiContext(DbContextOptions<LibraryApiContext> options) : base(options)
+    public LeapApiDbContext(DbContextOptions<LeapApiDbContext> options) : base(options)
     {
     }
 

@@ -6,20 +6,13 @@ using Leap.API.Interfaces;
 using Leap.API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers(options => options.Filters.Add<NullResultToNotFoundFilter>());
 
 // Add services to the container.
-builder.Services.AddDbContext<LibraryApiContext>(options =>
-{
-    var connectionString = builder.Configuration.GetConnectionString("LibraryAPI") ??
-                           throw new("Connection string 'LibraryAPI' is not set");
-
-    options.UseNpgsql(connectionString);
-});
+builder.Services.AddDbContext<LeapApiDbContext>(options => LeapApiDbContextFactory.ConfigureDbContext(options, builder.Configuration));
 
 builder.Services.AddSingleton<IPasswordHasher<Author>, PasswordHasher<Author>>();
 builder.Services.AddSingleton<ILibraryStorage, FilesystemLibraryStorage>();
@@ -49,7 +42,7 @@ var app = builder.Build();
 
 await using (var scope = app.Services.CreateAsyncScope())
 {
-    var context = scope.ServiceProvider.GetRequiredService<LibraryApiContext>();
+    var context = scope.ServiceProvider.GetRequiredService<LeapApiDbContext>();
 
     await context.InitializeAsync();
 }
