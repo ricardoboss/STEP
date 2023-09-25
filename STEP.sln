@@ -32,8 +32,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		.github\workflows\wiki.yml = .github\workflows\wiki.yml
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StepLang.Wiki", "StepLang.Wiki\StepLang.Wiki.csproj", "{C7B31C5F-7112-4CFB-BBC0-15764540545D}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StepLang.Tooling.Formatting", "StepLang.Tooling.Formatting\StepLang.Tooling.Formatting.csproj", "{728ABD46-2621-45BC-ACB1-0EF00267DCCC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tooling", "Tooling", "{A9BE3B66-38F1-454B-9A12-E1BF21E307CF}"
@@ -51,6 +49,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang.CLI.Tests", "StepLang.CLI.Tests\StepLang.CLI.Tests.csproj", "{7C6CA345-D208-4C8E-B9E1-6A3621921AFA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang.Tooling.Highlighting", "StepLang.Tooling.Highlighting\StepLang.Tooling.Highlighting.csproj", "{4C0CFABA-DFA6-43EA-BEA3-29CB8A1E83A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang.Wiki", "StepLang.Wiki\StepLang.Wiki.proj", "{3BE9363F-EC32-4325-87C7-B8BDF8F8B139}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{7DB97B10-29C3-4217-8911-2B36058B50D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -96,5 +98,6 @@ Global
 		{995634A6-466A-41FB-BD99-D95F782EE11D} = {83F45B93-DF47-468E-A956-38826263C018}
 		{851A3A44-33F7-45C6-86E9-914C5A76749B} = {83F45B93-DF47-468E-A956-38826263C018}
 		{4C0CFABA-DFA6-43EA-BEA3-29CB8A1E83A0} = {A9BE3B66-38F1-454B-9A12-E1BF21E307CF}
+		{3BE9363F-EC32-4325-87C7-B8BDF8F8B139} = {7DB97B10-29C3-4217-8911-2B36058B50D6}
 	EndGlobalSection
 EndGlobal
