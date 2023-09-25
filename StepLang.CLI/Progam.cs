@@ -1,14 +1,26 @@
 using System.Runtime.InteropServices;
 using cmdwtf;
+using Leap.Client;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using StepLang.CLI;
 using StepLang.CLI.Commands;
-using Leap.Client;
 
 const string slogan = "STEP - Simple Transition to Elevated Programming";
 
 await using var services = new ServiceCollectionTypeRegistrar();
+
+var environmentName = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Production";
+using var configurationManager = new ConfigurationManager();
+var configuration = configurationManager
+    .AddJsonFile("appsettings.json", true)
+    .AddJsonFile($"appsettings.{environmentName}.json", true)
+    .AddJsonFile("appsettings.local.json", true)
+    .Build()
+    ;
+services.AddSingleton<IConfiguration>(configuration);
 
 services.AddLibApiCredentialManager();
 services.AddLibApiClient();
