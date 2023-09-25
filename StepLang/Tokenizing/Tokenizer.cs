@@ -138,12 +138,6 @@ public class Tokenizer
             yield break;
         }
 
-        // if (c is '\r' && characterQueue.TryPeek(out var nextCharacter) && nextCharacter is '\n')
-        // {
-        //     // skip \r in new lines
-        //     yield break;
-        // }
-
         // strings can't contain unescaped control characters
         if (char.IsControl(c))
         {
