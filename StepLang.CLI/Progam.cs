@@ -22,8 +22,8 @@ var configuration = configurationManager
     ;
 services.AddSingleton<IConfiguration>(configuration);
 
-services.AddLibApiCredentialManager();
-services.AddLibApiClient();
+services.AddLeapCredentialManager();
+services.AddLeapClient();
 
 var app = new CommandApp<DefaultCommand>(services)
         .WithDescription(slogan + Environment.NewLine + "Version: " + GitVersionInformation.FullSemVer)

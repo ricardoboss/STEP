@@ -14,7 +14,7 @@ public class LeapApiClientFactory : ITypedHttpClientFactory<LeapApiClient>
         this.configuration = configuration;
     }
 
-    private string? GetConfiguredBaseAddress() => configuration["LibApi:BaseAddress"];
+    private string? GetConfiguredBaseAddress() => configuration["LeapApi:BaseAddress"];
 
     public LeapApiClient CreateClient(HttpClient httpClient)
     {

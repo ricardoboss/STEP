@@ -4,7 +4,7 @@ namespace Leap.Client;
 
 public static class LeapApiClientExtensions
 {
-    public static IHttpClientBuilder AddLibApiClient(this IServiceCollection services)
+    public static IHttpClientBuilder AddLeapClient(this IServiceCollection services)
     {
         return services
             .AddSingleton<LeapApiClientFactory>()
@@ -12,7 +12,7 @@ public static class LeapApiClientExtensions
                 sp.GetRequiredService<LeapApiClientFactory>().CreateClient(http));
     }
 
-    public static IServiceCollection AddLibApiCredentialManager(this IServiceCollection services)
+    public static IServiceCollection AddLeapCredentialManager(this IServiceCollection services)
     {
         return services.AddSingleton<LeapApiCredentialManager>();
     }
