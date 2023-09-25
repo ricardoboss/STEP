@@ -9,7 +9,7 @@ COPY ["Leap.API/Leap.API.csproj", "Leap.API/"]
 COPY ["Directory.Packages.props", "./"]
 RUN dotnet restore "Leap.API/Leap.API.csproj"
 COPY . .
-WORKDIR "/src/StepLang.LibAPI"
+WORKDIR "/src/Leap.API"
 RUN dotnet build "Leap.API.csproj" -c Release -o /app/build
 
 FROM build AS publish
