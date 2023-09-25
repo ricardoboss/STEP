@@ -35,6 +35,14 @@ public class LeapApiDbContext : DbContext
             .HasMany<Author>(l => l.Maintainers)
             .WithMany(a => a.Libraries);
 
+        modelBuilder.Entity<Library>()
+            .HasIndex(l => new
+            {
+                l.Author,
+                l.Name,
+            })
+            .IsUnique();
+
         modelBuilder.Entity<LibraryVersion>()
             .HasMany<Library>(v => v.Dependencies)
             .WithMany(l => l.Versions)
