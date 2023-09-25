@@ -1,0 +1,43 @@
+name: LEAP API Docker Image CI
+
+on:
+  push:
+    branches:
+      - main
+      - experiments/lib-api
+    paths:
+      - Leap.*
+
+env:
+  IMAGE_NAME: leap
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    permissions:
+      packages: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Log in to registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+
+      - name: Build & Push image
+        run: |
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          [ "$VERSION" == "main" ] && VERSION=latest
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+          docker build \
+            --file ./Leap.API/Dockerfile \
+            --tag $IMAGE_ID:$VERSION \
+            --label "runnumber=${GITHUB_RUN_ID}" \
+            ./backend
+          docker push $IMAGE_ID:$VERSION
