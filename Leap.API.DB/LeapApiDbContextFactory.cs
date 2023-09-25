@@ -14,6 +14,7 @@ public class LeapApiDbContextFactory : IDesignTimeDbContextFactory<LeapApiDbCont
         var environmentName = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Production";
         var configuration = new ConfigurationManager()
             .AddJsonFile("appsettings.json", true)
+            .AddJsonFile("appsettings.DB.json", true)
             .AddJsonFile($"appsettings.{environmentName}.json", true)
             .AddJsonFile("appsettings.local.json", true)
             .Build()

@@ -18,7 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="appsettings.json" Condition="'$(Configuration)' == 'Debug'">
+      <Content Include="appsettings.DB.json" Condition="'$(Configuration)' == 'Debug'">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
