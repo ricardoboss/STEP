@@ -150,6 +150,8 @@ public class AuthController : ControllerBase
             return StatusCode(StatusCodes.Status403Forbidden, AuthCheckResult.NoAuthor());
         }
 
+        logger.LogTrace("Check authentication request succeeded for author {Author}", author);
+
         return Ok(AuthCheckResult.Success(author.Username));
     }
 }
