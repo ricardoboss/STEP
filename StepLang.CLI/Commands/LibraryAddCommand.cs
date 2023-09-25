@@ -1,14 +1,30 @@
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Semver;
+using Spectre.Console.Cli;
 using StepLang.Libraries;
 using StepLang.Libraries.Client;
 
-namespace StepLang.CLI;
+namespace StepLang.CLI.Commands;
 
-public static class LibraryAddCommand
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+[SuppressMessage("Performance", "CA1812: Avoid uninstantiated internal classes")]
+internal sealed class LibraryAddCommand : AsyncCommand<LibraryAddCommand.Settings>
 {
-    public static async Task<int> Invoke(string name, string? versionRange)
+    public sealed class Settings : HiddenGlobalCommandSettings
+    {
+        [CommandArgument(0, "<name>")]
+        [Description("The name of the library to add.")]
+        public string Name { get; init; } = null!;
+
+        [CommandArgument(1, "[version]")]
+        [Description("The version or version range of the library to add.")]
+        public string? VersionRange { get; init; }
+    }
+
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
         var libraryFilePath = Path.Combine(Directory.GetCurrentDirectory(), "library.json");
         if (!File.Exists(libraryFilePath))
@@ -17,9 +33,9 @@ public static class LibraryAddCommand
         var libraryJson = await File.ReadAllTextAsync(libraryFilePath);
         var library = JsonSerializer.Deserialize<Library>(libraryJson) ?? throw new InvalidOperationException("Unable to read library.json");
 
-        if (library.Dependencies?.ContainsKey(name) ?? false)
+        if (library.Dependencies?.ContainsKey(settings.Name) ?? false)
         {
-            await Console.Out.WriteLineAsync($"A dependency on {name} already exists");
+            await Console.Out.WriteLineAsync($"A dependency on {settings.Name} already exists");
             await Console.Out.WriteAsync("Update existing dependency? [y/N] ");
             var response = await Console.In.ReadLineAsync();
             if (response?.Trim().ToLowerInvariant() != "y")
@@ -27,24 +43,24 @@ public static class LibraryAddCommand
         }
 
         SemVersionRange semVersionRange;
-        if (versionRange is null)
+        if (settings.VersionRange is null)
         {
-            var latest = await GetLatestVersion(name);
+            var latest = await GetLatestVersion(settings.Name);
             if (latest is null)
-                throw new InvalidOperationException($"Unable to find a library named '{name}'");
+                throw new InvalidOperationException($"Unable to find a library named '{settings.Name}'");
 
             semVersionRange = SemVersionRange.AtLeast(latest);
         }
         else
         {
-            semVersionRange = SemVersionRange.Parse(versionRange);
-            var latestCompatible = await GetLatestVersionThatSatisfies(name, semVersionRange);
+            semVersionRange = SemVersionRange.Parse(settings.VersionRange);
+            var latestCompatible = await GetLatestVersionThatSatisfies(settings.Name, semVersionRange);
             if (latestCompatible is null)
-                throw new InvalidOperationException($"Unable to find a library named '{name}' that satisfies '{semVersionRange}'");
+                throw new InvalidOperationException($"Unable to find a library named '{settings.Name}' that satisfies '{semVersionRange}'");
         }
 
         var newLibrary = LibraryBuilder.From(library)
-            .WithDependency(name, semVersionRange)
+            .WithDependency(settings.Name, semVersionRange)
             .Build();
 
         await File.WriteAllTextAsync(libraryFilePath, JsonSerializer.Serialize(newLibrary, new JsonSerializerOptions
@@ -53,7 +69,7 @@ public static class LibraryAddCommand
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         }));
 
-        await Console.Out.WriteLineAsync($"Successfully added '{name}' to library.json");
+        await Console.Out.WriteLineAsync($"Successfully added '{settings.Name}' to library.json");
 
         return 0;
     }

@@ -1,10 +1,14 @@
+using System.Diagnostics.CodeAnalysis;
+using Spectre.Console.Cli;
 using StepLang.Libraries.Client;
 
-namespace StepLang.CLI;
+namespace StepLang.CLI.Commands;
 
-public static class LibraryAuthCheckCommand
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+[SuppressMessage("Performance", "CA1812: Avoid uninstantiated internal classes")]
+internal sealed class LibraryAuthCheckCommand : AsyncCommand<HiddenGlobalCommandSettings>
 {
-    public static async Task<int> Invoke()
+    public override async Task<int> ExecuteAsync(CommandContext context, HiddenGlobalCommandSettings settings)
     {
         using var httpClient = new HttpClient();
         var apiClient = new LibApiClientFactory(null).CreateClient(httpClient);

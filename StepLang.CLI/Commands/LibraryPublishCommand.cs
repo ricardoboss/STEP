@@ -1,15 +1,23 @@
+using System.Diagnostics.CodeAnalysis;
 using System.IO.Compression;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Semver;
+using Spectre.Console.Cli;
 using StepLang.Libraries;
 using StepLang.Libraries.Client;
 
-namespace StepLang.CLI;
+namespace StepLang.CLI.Commands;
 
-public static class LibraryPublishCommand
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+[SuppressMessage("Performance", "CA1812: Avoid uninstantiated internal classes")]
+internal sealed class LibraryPublishCommand : AsyncCommand<LibraryPublishCommand.Settings>
 {
-    public static async Task<int> Invoke()
+    public sealed class Settings : HiddenGlobalCommandSettings
+    {
+    }
+
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
         var libraryFilePath = Path.Combine(Directory.GetCurrentDirectory(), "library.json");
         if (!File.Exists(libraryFilePath))
@@ -31,7 +39,7 @@ public static class LibraryPublishCommand
             if (library.Version is null)
                 throw new InvalidOperationException("A version is required for the first publish.");
 
-            newVersion = library.Version;
+            newVersion = SemVersion.Parse(library.Version, SemVersionStyles.Strict);
         }
         else
         {

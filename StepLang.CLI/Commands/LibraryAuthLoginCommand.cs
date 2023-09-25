@@ -1,12 +1,20 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
+using Spectre.Console.Cli;
 using StepLang.Libraries.API;
 using StepLang.Libraries.Client;
 
-namespace StepLang.CLI;
+namespace StepLang.CLI.Commands;
 
-public static class LibraryAuthRegisterCommand
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+[SuppressMessage("Performance", "CA1812: Avoid uninstantiated internal classes")]
+internal sealed class LibraryAuthLoginCommand : AsyncCommand<LibraryAuthLoginCommand.Settings>
 {
-    public static async Task<int> Invoke()
+    public sealed class Settings : HiddenGlobalCommandSettings
+    {
+    }
+
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
         await Console.Out.WriteAsync("Username: ");
         var username = Console.ReadLine() ?? throw new InvalidOperationException("Username must be set");
@@ -14,28 +22,28 @@ public static class LibraryAuthRegisterCommand
         await Console.Out.WriteAsync("Password: ");
         var password = Console.ReadLine() ?? throw new InvalidOperationException("Password must be set");
 
-        var request = new RegisterRequest(username, password);
+        var request = new CreateTokenRequest(username, password);
 
         using var httpClient = new HttpClient();
         var apiClient = new LibApiClientFactory(null).CreateClient(httpClient);
-        var result = await apiClient.RegisterAsync(request);
+        var result = await apiClient.CreateTokenAsync(request);
 
         if (result == null)
         {
-            await Console.Error.WriteLineAsync("Registration request failed");
+            await Console.Error.WriteLineAsync("Create token request failed");
 
             return 1;
         }
 
         if (result.Code != "success")
         {
-            await Console.Error.WriteLineAsync("Registration request failed: " + result.Message + " (" + result.Code + ")");
+            await Console.Error.WriteLineAsync("Create token request failed: " + result.Message + " (" + result.Code + ")");
 
             return 2;
         }
 
         await Console.Out.WriteLineAsync();
-        await Console.Out.WriteLineAsync("Registration successful!");
+        await Console.Out.WriteLineAsync("Login successful!");
         await Console.Out.WriteLineAsync();
 
 

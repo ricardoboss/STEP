@@ -1,12 +1,28 @@
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Spectre.Console.Cli;
 using StepLang.Libraries;
 
-namespace StepLang.CLI;
+namespace StepLang.CLI.Commands;
 
-public static class LibraryInitCommand
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+[SuppressMessage("Performance", "CA1812: Avoid uninstantiated internal classes")]
+internal sealed class LibraryInitCommand : AsyncCommand<LibraryInitCommand.Settings>
 {
-    public static async Task<int> Invoke(string? name)
+    public sealed class Settings : HiddenGlobalCommandSettings
+    {
+        [CommandOption("-n|--name <name>")]
+        [Description("The name of the library to create.")]
+        public string? Name { get; init; }
+
+        [CommandOption("-a|--author <author>")]
+        [Description("The author of the library to create.")]
+        public string? Author { get; init; }
+    }
+
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
         var libraryFilePath = Path.Combine(Directory.GetCurrentDirectory(), "library.json");
         if (File.Exists(libraryFilePath))
@@ -14,6 +30,7 @@ public static class LibraryInitCommand
 
         var builder = new LibraryBuilder();
 
+        var name = settings.Name;
         if (name is null)
         {
             await Console.Out.WriteAsync("Name: ");

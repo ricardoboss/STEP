@@ -50,47 +50,92 @@ app.Configure(config =>
         .WithExample("highlight my-script.step -t mono")
         .WithExample("highlight --list-themes")
         ;
+
+    config.AddBranch("library", library =>
+    {
+        library.SetDescription("Manage libraries.");
+
+        library.AddCommand<LibraryInitCommand>("init")
+            .WithDescription("Initialize a new library.")
+            .WithExample("library init")
+            .WithExample("library init --name MyLibrary --author \"John Doe\"")
+            ;
+
+        library.AddCommand<LibraryPublishCommand>("publish")
+            .WithDescription("Publish a library.")
+            .WithExample("library publish")
+            .WithExample("library publish --version 1.2.3")
+            ;
+
+        library.AddBranch("auth", auth =>
+        {
+            auth.SetDescription("Manage authentication against STEP library.");
+
+            auth.AddCommand<LibraryAuthRegisterCommand>("register")
+                .WithDescription("Register a new library account.")
+                .WithExample("library auth register")
+                ;
+
+            auth.AddCommand<LibraryAuthLoginCommand>("login")
+                .WithDescription("Login to a library account.")
+                .WithExample("library auth login")
+                ;
+
+            auth.AddCommand<LibraryAuthLogoutCommand>("logout")
+                .WithDescription("Logout of a library account.")
+                .WithExample("library auth logout")
+                ;
+
+            auth.AddCommand<LibraryAuthCheckCommand>("check")
+                .WithDescription("Check if logged in to a library account.")
+                .WithExample("library auth check")
+                ;
+        });
+    });
 });
 
 return await app.RunAsync(args);
 
-internal sealed class OptionInterceptor : ICommandInterceptor
+namespace StepLang.CLI
 {
-    public void Intercept(CommandContext context, CommandSettings settings)
+    internal sealed class OptionInterceptor : ICommandInterceptor
     {
-        if (settings is not IGlobalCommandSettings globalSettings)
-            return;
-
-        if (globalSettings.Version)
+        public void Intercept(CommandContext context, CommandSettings settings)
         {
-            HandleVersionOption();
+            if (settings is not IGlobalCommandSettings globalSettings)
+                return;
+
+            if (globalSettings.Version)
+            {
+                HandleVersionOption();
+            }
+            else if (globalSettings.Info)
+            {
+                HandleInfoOption();
+            }
         }
-        else if (globalSettings.Info)
+
+        private static void HandleVersionOption() => AnsiConsole.WriteLine(GitVersionInformation.FullSemVer);
+
+        private static void HandleInfoOption()
         {
-            HandleInfoOption();
+            var data = new Dictionary<string, string>
+            {
+                { "Build Date", $"{BuildTimestamp.BuildTimeUtc:yyyy-MM-dd HH:mm:ss} UTC" },
+                { "Version", $"{GitVersionInformation.Sha} ({GitVersionInformation.FullSemVer})" },
+                { "Branch", GitVersionInformation.BranchName },
+                { "CLR Version", Environment.Version.ToString() },
+                { "OS Version", $"{RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})" },
+            };
+
+            var infoGrid = new Grid().AddColumns(2);
+
+            var headerStyle = new Style(decoration: Decoration.Bold);
+
+            foreach (var (name, value) in data)
+                infoGrid.AddRow(new Text(name, headerStyle).RightJustified(), new Text(value));
+
+            AnsiConsole.Write(infoGrid);
         }
-    }
-
-    private static void HandleVersionOption() => AnsiConsole.WriteLine(GitVersionInformation.FullSemVer);
-
-    private static void HandleInfoOption()
-    {
-        var data = new Dictionary<string, string>
-        {
-            { "Build Date", $"{BuildTimestamp.BuildTimeUtc:yyyy-MM-dd HH:mm:ss} UTC" },
-            { "Version", $"{GitVersionInformation.Sha} ({GitVersionInformation.FullSemVer})" },
-            { "Branch", GitVersionInformation.BranchName },
-            { "CLR Version", Environment.Version.ToString() },
-            { "OS Version", $"{RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})" },
-        };
-
-        var infoGrid = new Grid().AddColumns(2);
-
-        var headerStyle = new Style(decoration: Decoration.Bold);
-
-        foreach (var (name, value) in data)
-            infoGrid.AddRow(new Text(name, headerStyle).RightJustified(), new Text(value));
-
-        AnsiConsole.Write(infoGrid);
     }
 }
