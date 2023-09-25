@@ -13,9 +13,9 @@ public class LeapApiClient
         this.httpClient = httpClient;
     }
 
-    public async Task<BriefLibraryVersion?> GetLibraryAsync(string name, string? version = null, CancellationToken cancellationToken = default)
+    public async Task<BriefLibraryVersion?> GetLibraryAsync(string author, string name, string? version = null, CancellationToken cancellationToken = default)
     {
-        var uri = $"libraries/{name}";
+        var uri = $"libraries/{author}/{name}";
         if (version is not null)
             uri += $"/{version}";
 
@@ -29,9 +29,9 @@ public class LeapApiClient
         return await response.Content.ReadFromJsonAsync<BriefLibraryVersion?>(cancellationToken: cancellationToken);
     }
 
-    public async Task<UploadResult?> UploadLibraryAsync(string name, string version, Stream stream, CancellationToken cancellationToken = default)
+    public async Task<UploadResult?> UploadLibraryAsync(string author, string name, string version, Stream stream, CancellationToken cancellationToken = default)
     {
-        var uri = $"libraries/{name}/{version}";
+        var uri = $"libraries/{author}/{name}/{version}";
         var response = await httpClient.PostAsync(uri, new StreamContent(stream), cancellationToken);
 
         return await response.Content.ReadFromJsonAsync<UploadResult>(cancellationToken: cancellationToken);

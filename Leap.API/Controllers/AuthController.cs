@@ -3,6 +3,7 @@ using Leap.API.DB;
 using Leap.API.DB.Entities;
 using Leap.API.Interfaces;
 using Leap.API.Services;
+using Leap.Common;
 using Leap.Common.API;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -33,6 +34,15 @@ public class AuthController : ControllerBase
         var existingAuthor = await context.Authors.FirstOrDefaultAsync(u => u.Username == request.Username);
         if (existingAuthor is not null)
             return Conflict(RegisterResult.UsernameExists());
+
+        try
+        {
+            request.Validate();
+        }
+        catch (ValidationException e)
+        {
+            return UnprocessableEntity(RegisterResult.Invalid(e.Message));
+        }
 
         var author = new Author
         {

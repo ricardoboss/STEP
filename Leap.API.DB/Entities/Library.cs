@@ -4,9 +4,11 @@ public class Library
 {
     public Guid Id { get; set; }
 
-    public Guid AuthorId { get; set; }
+    public Guid MaintainerId { get; set; }
 
-    public Author Author { get; set; } = null!;
+    public Author Maintainer { get; set; } = null!;
+
+    public string Author { get; set; } = null!;
 
     public string Name { get; set; } = null!;
 

@@ -7,8 +7,11 @@ namespace Leap.Common;
 public partial record Library(string Name, string? Version, string? Author, Dictionary<string, string>? Dependencies,
     List<string>? Files)
 {
-    [GeneratedRegex("[a-z][a-z-]{0,16}[a-z]/[a-z][a-z-]{0,16}[a-z]")]
-    private static partial Regex LibraryNameRegex();
+    [GeneratedRegex("[a-z][-a-z]{0,16}[a-z]")]
+    public static partial Regex UsernameRegex();
+
+    [GeneratedRegex("[a-z][-a-z]{0,16}[a-z]")]
+    public static partial Regex NameRegex();
 
     public static bool IsCurrentDirLibrary()
     {
@@ -35,13 +38,19 @@ public partial record Library(string Name, string? Version, string? Author, Dict
         return JsonSerializer.Deserialize<Library>(json)?.Validate();
     }
 
-    public static void ValidateName(string name)
+    public static void ValidateName(string libraryName)
     {
-        if (name.Split('/').Length != 2)
-            throw new ArgumentException("Library name must match '<user>/<library>' pattern", nameof(name));
+        var parts = libraryName.Split('/');
+        if (parts.Length != 2)
+            throw new ValidationException("Library name must match '<author>/<library>' pattern");
 
-        if (!LibraryNameRegex().IsMatch(name))
-            throw new ArgumentException("Library name must only contain lowercase characters and hyphens (-) and must start and end with a character", nameof(name));
+        var (author, name) = (parts[0], parts[1]);
+
+        if (!UsernameRegex().IsMatch(author))
+            throw new ValidationException("User name must only contain lowercase characters and hyphens (-) and must start and end with a character.");
+
+        if (!NameRegex().IsMatch(name))
+            throw new ValidationException("Library name must only contain lowercase characters and hyphens (-) and must start and end with a character");
     }
 
     public Library Validate()
@@ -76,4 +85,8 @@ public partial record Library(string Name, string? Version, string? Author, Dict
     {
         return SaveTo(Path.Combine(Directory.GetCurrentDirectory(), "library.json"));
     }
+
+    public string NameAuthorPart => Name.Split('/')[0];
+
+    public string NameLibraryPart => Name.Split('/')[1];
 }

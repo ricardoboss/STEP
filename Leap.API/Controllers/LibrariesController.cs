@@ -13,7 +13,7 @@ using Semver;
 namespace Leap.API.Controllers;
 
 [ApiController]
-[Route("[controller]/{name}")]
+[Route("[controller]/{author}/{name}")]
 public class LibrariesController : ControllerBase
 {
     private readonly LeapApiDbContext context;
@@ -25,23 +25,23 @@ public class LibrariesController : ControllerBase
         this.storage = storage;
     }
 
-    private string GetDownloadUrl(string name, string version) => Url.ActionLink("Download", "Libraries", new
+    private string GetDownloadUrl(string author, string name, string version) => Url.ActionLink("Download", "Libraries", new
     {
-        name,
+        name = $"{author}/{name}",
         version,
     }) ?? throw new("Failed to generate download URL.");
 
     [HttpGet("{version?}")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(BriefLibraryVersion), StatusCodes.Status200OK)]
-    public async Task<BriefLibraryVersion?> Get(string name, string? version, CancellationToken cancellationToken = default)
+    public async Task<BriefLibraryVersion?> Get(string author, string name, string? version, CancellationToken cancellationToken = default)
     {
         var library = await context.Libraries
             .Include(library => library.LatestVersion)
             .ThenInclude(v => v!.Dependencies)
             .Include(library => library.Versions)
             .ThenInclude(v => v.Dependencies)
-            .FirstOrDefaultAsync(l => l.Name == name, cancellationToken);
+            .FirstOrDefaultAsync(l => l.Author == author && l.Name == name, cancellationToken);
 
         if (library is null)
             return null;
@@ -73,7 +73,7 @@ public class LibrariesController : ControllerBase
         if (libraryVersion is null)
             return null;
 
-        var downloadUrl = GetDownloadUrl(name, libraryVersion.Version);
+        var downloadUrl = GetDownloadUrl(author, name, libraryVersion.Version);
 
         return libraryVersion.ToBriefDto(downloadUrl);
     }
@@ -81,22 +81,22 @@ public class LibrariesController : ControllerBase
     [HttpGet("{version}/download")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(FileStreamResult), StatusCodes.Status200OK)]
-    public async Task<IActionResult> Download(string name, string version, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Download(string author, string name, string version, CancellationToken cancellationToken = default)
     {
         try
         {
-            if (!await storage.ExistsAsync(name, version, cancellationToken))
+            if (!await storage.ExistsAsync(author, name, version, cancellationToken))
                 return NotFound();
 
-            await storage.UpdateMetadataAsync(name, version, metadata =>
+            await storage.UpdateMetadataAsync(author, name, version, metadata =>
             {
                 metadata.TryAdd("Downloads", 0);
                 metadata["Downloads"]++;
             }, cancellationToken);
 
-            await using var stream = await storage.OpenReadAsync(name, version, cancellationToken);
+            await using var stream = await storage.OpenReadAsync(author, name, version, cancellationToken);
 
-            return File(stream, "application/zip", $"{name}-{version}.zip");
+            return File(stream, "application/zip", $"{author}-{name}-{version}.zip");
         }
         catch (Exception)
         {
@@ -111,7 +111,7 @@ public class LibrariesController : ControllerBase
     [ProducesResponseType(typeof(UploadResult), StatusCodes.Status413PayloadTooLarge)]
     [ProducesResponseType(typeof(UploadResult), StatusCodes.Status422UnprocessableEntity)]
     [ProducesResponseType(typeof(UploadResult), StatusCodes.Status200OK)]
-    public async Task<IActionResult> Upload(string name, string version, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Upload(string author, string name, string version, CancellationToken cancellationToken = default)
     {
         if (!User.HasClaim(c => c.Type == TokenGenerator.IdClaim))
             return Unauthorized(UploadResult.Unauthorized());
@@ -120,11 +120,11 @@ public class LibrariesController : ControllerBase
         if (authorIdStr is null || !Guid.TryParse(authorIdStr, out var authorId))
             return Unauthorized(UploadResult.Unauthorized());
 
-        var author = await context.Authors
-            .Include(author => author.Libraries)
+        var uploader = await context.Authors
+            .Include(a => a.Libraries)
             .FirstOrDefaultAsync(a => a.Id == authorId, cancellationToken);
 
-        if (author is null)
+        if (uploader is null)
             return Unauthorized(UploadResult.Unauthorized());
 
         var library = await context.Libraries
@@ -134,21 +134,28 @@ public class LibrariesController : ControllerBase
 
         if (library is null)
         {
+            if (uploader.Username != author)
+                // cannot create a library for another user
+                return Unauthorized(UploadResult.Unauthorized());
+
             library = new()
             {
                 Name = name,
                 Author = author,
+                Maintainer = uploader,
                 Versions = new List<LibraryVersion>(),
             };
 
             await context.Libraries.AddAsync(library, cancellationToken);
 
-            author.Libraries.Add(library);
+            uploader.Libraries.Add(library);
         }
         else
         {
+            // TODO: add ability for multiple users to upload versions for a single package (i.e. make author <=> package relation n to m instead of 1 to n)
+
             // check if the current author owns the library
-            if (author.Libraries.All(l => l.Name != name))
+            if (uploader.Libraries.All(l => l.Name != name))
                 return StatusCode(StatusCodes.Status403Forbidden, UploadResult.OwnerMismatch());
         }
 
@@ -186,7 +193,7 @@ public class LibrariesController : ControllerBase
                 return StatusCode(StatusCodes.Status413PayloadTooLarge, UploadResult.TooLarge(size.Value, maxUploadSize));
         }
 
-        await using var targetStream = storage.OpenWrite(name, version, cancellationToken);
+        await using var targetStream = storage.OpenWrite(author, name, version, cancellationToken);
 
         await Request.Body.CopyToAsync(targetStream, cancellationToken);
 
@@ -203,7 +210,7 @@ public class LibrariesController : ControllerBase
 
         await context.SaveChangesAsync(cancellationToken);
 
-        var downloadUrl = GetDownloadUrl(name, version);
+        var downloadUrl = GetDownloadUrl(author, name, version);
 
         return Ok(UploadResult.Success(name, version, libraryVersion.ToBriefDto(downloadUrl)));
     }

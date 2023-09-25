@@ -56,6 +56,7 @@ internal sealed class LeapPublishCommand : AsyncCommand<LeapPublishCommand.Setti
         using var zipStream = new MemoryStream();
         using (var zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Create, true))
         {
+            // TODO use newLibrary.Files
             var files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*", SearchOption.AllDirectories);
             foreach (var file in files)
             {
@@ -69,7 +70,7 @@ internal sealed class LeapPublishCommand : AsyncCommand<LeapPublishCommand.Setti
 
         zipStream.Position = 0;
 
-        var result = await apiClient.UploadLibraryAsync(newLibrary.Name, newLibrary.Version!, zipStream);
+        var result = await apiClient.UploadLibraryAsync(newLibrary.NameAuthorPart, newLibrary.NameLibraryPart, newLibrary.Version!, zipStream);
         if (result is null)
         {
             await Console.Error.WriteLineAsync("Failed to upload library.");

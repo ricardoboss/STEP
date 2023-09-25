@@ -42,22 +42,32 @@ internal sealed class LeapAddCommand : AsyncCommand<LeapAddCommand.Settings>
                 return 0;
         }
 
+        var parts = settings.Name.Split('/');
+        if (parts.Length != 2)
+        {
+            await Console.Error.WriteLineAsync("Library names must have the form '<author>/<library>'");
+
+            return 1;
+        }
+
+        var (author, name) = (parts[0], parts[1]);
+
         SemVersionRange semVersionRange;
         if (settings.VersionRange is null)
         {
-            var latest = await GetLatestVersion(settings.Name);
+            var latest = await GetLatestVersion(author, name);
             if (latest is null)
-                throw new InvalidOperationException($"Unable to find a library named '{settings.Name}'");
+                throw new InvalidOperationException($"Unable to find a library named '{author}/{name}'");
 
             semVersionRange = SemVersionRange.AtLeast(latest);
         }
         else
         {
             semVersionRange = SemVersionRange.Parse(settings.VersionRange);
-            var latestCompatible = await GetLatestVersionThatSatisfies(settings.Name, semVersionRange);
+            var latestCompatible = await GetLatestVersionThatSatisfies(author, name, semVersionRange);
             if (latestCompatible is null)
                 throw new InvalidOperationException(
-                    $"Unable to find a library named '{settings.Name}' that satisfies '{semVersionRange}'");
+                    $"Unable to find a library named '{author}/{name}' that satisfies '{semVersionRange}'");
         }
 
         library
@@ -66,23 +76,23 @@ internal sealed class LeapAddCommand : AsyncCommand<LeapAddCommand.Settings>
             .Build()
             .SaveToCurrentDir();
 
-        await Console.Out.WriteLineAsync($"Successfully added '{settings.Name}' to library.json");
+        await Console.Out.WriteLineAsync($"Successfully added '{author}/{name}' to library.json");
 
         return 0;
     }
 
-    private async Task<SemVersion?> GetLatestVersion(string name)
+    private async Task<SemVersion?> GetLatestVersion(string author, string name)
     {
-        var briefLibrary = await apiClient.GetLibraryAsync(name);
+        var briefLibrary = await apiClient.GetLibraryAsync(author, name);
         if (briefLibrary is null)
             return null;
 
         return SemVersion.Parse(briefLibrary.Version, SemVersionStyles.Strict);
     }
 
-    private async Task<SemVersion?> GetLatestVersionThatSatisfies(string name, SemVersionRange range)
+    private async Task<SemVersion?> GetLatestVersionThatSatisfies(string author, string name, SemVersionRange range)
     {
-        var briefLibrary = await apiClient.GetLibraryAsync(name, range.ToString());
+        var briefLibrary = await apiClient.GetLibraryAsync(author, name, range.ToString());
         if (briefLibrary is null)
             return null;
 
