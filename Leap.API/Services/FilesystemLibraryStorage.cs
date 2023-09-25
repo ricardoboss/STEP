@@ -6,10 +6,12 @@ namespace Leap.API.Services;
 public class FilesystemLibraryStorage : ILibraryStorage
 {
     private readonly IConfiguration configuration;
+    private readonly ILogger<FilesystemLibraryStorage> logger;
 
-    public FilesystemLibraryStorage(IConfiguration configuration)
+    public FilesystemLibraryStorage(IConfiguration configuration, ILogger<FilesystemLibraryStorage> logger)
     {
         this.configuration = configuration;
+        this.logger = logger;
     }
 
     private readonly Dictionary<string, DirectoryInfo> libraryVersionDirectoryCache = new();
@@ -69,8 +71,11 @@ public class FilesystemLibraryStorage : ILibraryStorage
         if (!metadataFile.Exists)
             throw new("Library version does not have metadata.");
 
+        logger.LogTrace("Reading metadata for {Author}/{Name}@{Version} from {Path}", author, name, version, metadataFile.FullName);
+
         await using var stream = metadataFile.OpenRead();
 
+        // FIXME: this won't work
         var metadata = await JsonSerializer.DeserializeAsync<Dictionary<string, dynamic>>(stream, cancellationToken: cancellationToken);
         if (metadata is null)
             throw new("Failed to deserialize metadata.");
@@ -83,6 +88,8 @@ public class FilesystemLibraryStorage : ILibraryStorage
     {
         var libraryVersionDirectory = GetLibraryVersionDirectory(author, name, version, true);
         var metadataFile = new FileInfo(Path.Combine(libraryVersionDirectory.FullName, "metadata.json"));
+
+        logger.LogTrace("Writing metadata for {Author}/{Name}@{Version} to {Path}", author, name, version, metadataFile.FullName);
 
         await using var stream = metadataFile.OpenWrite();
 
@@ -101,6 +108,8 @@ public class FilesystemLibraryStorage : ILibraryStorage
 
         var libraryFile = new FileInfo(Path.Combine(libraryVersionDirectory.FullName, "library.zip"));
 
+        logger.LogTrace("Reading library for {Author}/{Name}@{Version} from {Path}", author, name, version, libraryFile.FullName);
+
         if (!libraryFile.Exists)
             throw new("Library version does not have a library file.");
 
@@ -111,6 +120,8 @@ public class FilesystemLibraryStorage : ILibraryStorage
     public Stream OpenWrite(string author, string name, string version, CancellationToken cancellationToken = default)
     {
         var libraryVersionDirectory = GetLibraryVersionDirectory(author, name, version, true);
+
+        logger.LogTrace("Writing library for {Author}/{Name}@{Version} to {Path}", author, name, version, libraryVersionDirectory.FullName);
 
         var libraryFile = new FileInfo(Path.Combine(libraryVersionDirectory.FullName, "library.zip"));
 
@@ -125,6 +136,8 @@ public class FilesystemLibraryStorage : ILibraryStorage
 
         var libraryVersionDirectory = GetLibraryVersionDirectory(author, name, version);
 
+        logger.LogTrace("Deleting library version {Author}/{Name}@{Version} from {Path}", author, name, version, libraryVersionDirectory.FullName);
+
         libraryVersionDirectory.Delete(true);
     }
 
@@ -134,6 +147,8 @@ public class FilesystemLibraryStorage : ILibraryStorage
         var libraryDirectory = GetLibraryDirectory(author, name);
         if (!libraryDirectory.Exists)
             throw new("Library does not exist.");
+
+        logger.LogTrace("Deleting library {Author}/{Name} from {Path}", author, name, libraryDirectory.FullName);
 
         libraryDirectory.Delete(true);
 

@@ -15,4 +15,7 @@ public class Library
     public ICollection<Author> Maintainers { get; set; } = null!;
 
     public ICollection<LibraryVersion> Versions { get; set; } = null!;
+
+    /// <inheritdoc />
+    public override string ToString() => $"Library(Id={Id}, Author={Author}, Name={Name}, LatestVersion={LatestVersion?.Version})";
 }
