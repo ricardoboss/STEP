@@ -18,11 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Migrations\" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Content Include="appsettings.json">
+      <Content Include="appsettings.json" Condition="'$(Configuration)' == 'Debug'">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
