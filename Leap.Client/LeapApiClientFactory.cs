@@ -5,8 +5,6 @@ namespace Leap.Client;
 
 public class LeapApiClientFactory : ITypedHttpClientFactory<LeapApiClient>
 {
-    public const string DefaultApiBaseAddress = "https://lib.step-lang.dev/api/";
-
     private readonly LeapApiCredentialManager? credentialManager;
     private readonly IConfiguration configuration;
 
@@ -22,7 +20,7 @@ public class LeapApiClientFactory : ITypedHttpClientFactory<LeapApiClient>
     {
         var credentials = credentialManager?.TryReadCredentials();
 
-        httpClient.BaseAddress = new(GetConfiguredBaseAddress() ?? credentials?.BaseAddress ?? DefaultApiBaseAddress);
+        httpClient.BaseAddress = new(GetConfiguredBaseAddress() ?? credentials?.BaseAddress ?? Credentials.DefaultApiBaseAddress);
 
         if (credentials?.Token is { } token)
             httpClient.DefaultRequestHeaders.Authorization = new("Bearer", token);
