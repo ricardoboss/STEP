@@ -24,6 +24,8 @@ public class LibraryBuilder
 
     public LibraryBuilder WithName(string newName)
     {
+        Library.ValidateName(newName);
+
         name = newName;
 
         return this;
