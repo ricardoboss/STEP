@@ -5,16 +5,17 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["StepLang.LibApi/StepLang.LibApi.csproj", "StepLang.LibApi/"]
-RUN dotnet restore "StepLang.LibApi/StepLang.LibApi.csproj"
+COPY ["Leap.Api/Leap.Api.csproj", "Leap.Api/"]
+COPY ["Directory.Packages.props", "./"]
+RUN dotnet restore "Leap.Api/Leap.Api.csproj"
 COPY . .
 WORKDIR "/src/StepLang.LibApi"
-RUN dotnet build "StepLang.LibApi.csproj" -c Release -o /app/build
+RUN dotnet build "Leap.Api.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "StepLang.LibApi.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Leap.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "StepLang.LibApi.dll"]
+ENTRYPOINT ["dotnet", "Leap.Api.dll"]
