@@ -6,7 +6,7 @@ on:
       - main
       - experiments/lib-api
     paths:
-      - Leap.*
+      - Leap.*/**
 
 env:
   IMAGE_NAME: leap
