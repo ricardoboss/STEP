@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Leap.Client;
 
-public class LibApiCredentialManager
+public class LeapApiCredentialManager
 {
     private static string? defaultCredentialsPath;
     private static string DefaultCredentialsPath
@@ -21,7 +21,7 @@ public class LibApiCredentialManager
 
     private readonly IConfiguration configuration;
 
-    public LibApiCredentialManager(IConfiguration configuration)
+    public LeapApiCredentialManager(IConfiguration configuration)
     {
         this.configuration = configuration;
     }

@@ -8,16 +8,16 @@ namespace StepLang.CLI.Commands;
 
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 [SuppressMessage("Performance", "CA1812: Avoid uninstantiated internal classes")]
-internal sealed class LibraryAuthRegisterCommand : AsyncCommand<LibraryAuthRegisterCommand.Settings>
+internal sealed class LeapAuthLoginCommand : AsyncCommand<LeapAuthLoginCommand.Settings>
 {
     public sealed class Settings : HiddenGlobalCommandSettings
     {
     }
 
-    private readonly LibApiClient apiClient;
-    private readonly LibApiCredentialManager credentialManager;
+    private readonly LeapApiClient apiClient;
+    private readonly LeapApiCredentialManager credentialManager;
 
-    public LibraryAuthRegisterCommand(LibApiClient apiClient, LibApiCredentialManager credentialManager)
+    public LeapAuthLoginCommand(LeapApiClient apiClient, LeapApiCredentialManager credentialManager)
     {
         this.apiClient = apiClient;
         this.credentialManager = credentialManager;
@@ -31,18 +31,18 @@ internal sealed class LibraryAuthRegisterCommand : AsyncCommand<LibraryAuthRegis
         await Console.Out.WriteAsync("Password: ");
         var password = Console.ReadLine() ?? throw new InvalidOperationException("Password must be set");
 
-        var request = new RegisterRequest(username, password);
-        var result = await apiClient.RegisterAsync(request);
+        var request = new CreateTokenRequest(username, password);
+        var result = await apiClient.CreateTokenAsync(request);
         if (result == null)
         {
-            await Console.Error.WriteLineAsync("Registration request failed");
+            await Console.Error.WriteLineAsync("Create token request failed");
 
             return 1;
         }
 
         if (result.Code != "success")
         {
-            await Console.Error.WriteLineAsync("Registration request failed: " + result.Message + " (" + result.Code + ")");
+            await Console.Error.WriteLineAsync("Create token request failed: " + result.Message + " (" + result.Code + ")");
 
             return 2;
         }
@@ -51,7 +51,7 @@ internal sealed class LibraryAuthRegisterCommand : AsyncCommand<LibraryAuthRegis
 
         credentialManager.StoreCredentials(Credentials.TokenOnly(result.Token), true);
 
-        await Console.Out.WriteLineAsync("Registration successful and credentials saved.");
+        await Console.Out.WriteLineAsync("Credentials saved.");
 
         return 0;
     }

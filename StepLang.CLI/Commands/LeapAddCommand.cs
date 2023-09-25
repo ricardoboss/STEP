@@ -9,7 +9,7 @@ namespace StepLang.CLI.Commands;
 
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 [SuppressMessage("Performance", "CA1812: Avoid uninstantiated internal classes")]
-internal sealed class LibraryAddCommand : AsyncCommand<LibraryAddCommand.Settings>
+internal sealed class LeapAddCommand : AsyncCommand<LeapAddCommand.Settings>
 {
     public sealed class Settings : HiddenGlobalCommandSettings
     {
@@ -22,9 +22,9 @@ internal sealed class LibraryAddCommand : AsyncCommand<LibraryAddCommand.Setting
         public string? VersionRange { get; init; }
     }
 
-    private readonly LibApiClient apiClient;
+    private readonly LeapApiClient apiClient;
 
-    public LibraryAddCommand(LibApiClient apiClient)
+    public LeapAddCommand(LeapApiClient apiClient)
     {
         this.apiClient = apiClient;
     }

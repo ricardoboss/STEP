@@ -7,7 +7,7 @@ namespace StepLang.CLI.Commands;
 
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 [SuppressMessage("Performance", "CA1812: Avoid uninstantiated internal classes")]
-internal sealed class LibraryInitCommand : AsyncCommand<LibraryInitCommand.Settings>
+internal sealed class LeapInitCommand : AsyncCommand<LeapInitCommand.Settings>
 {
     public sealed class Settings : HiddenGlobalCommandSettings
     {

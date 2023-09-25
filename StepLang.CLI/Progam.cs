@@ -54,49 +54,49 @@ app.Configure(config =>
         .WithExample("highlight --list-themes")
         ;
 
-    config.AddBranch("leap", library =>
+    config.AddBranch("leap", leap =>
     {
-        library.SetDescription("Manage libraries.");
+        leap.SetDescription("Manage libraries for LEAP (Library ExchAnge Platform).");
 
-        library.AddCommand<LibraryInitCommand>("init")
+        leap.AddCommand<LeapInitCommand>("init")
             .WithDescription("Initialize a new library.")
             .WithExample("leap init")
             .WithExample("leap init --name MyLibrary --author \"John Doe\"")
             ;
 
-        library.AddCommand<LibraryAddCommand>("add")
+        leap.AddCommand<LeapAddCommand>("add")
             .WithDescription("Add a library dependency.")
             .WithExample("leap add MyLibrary")
             .WithExample("leap add MyLibrary 1.*")
             .WithExample("leap add MyLibrary ^1.0.0")
             ;
 
-        library.AddCommand<LibraryPublishCommand>("publish")
+        leap.AddCommand<LeapPublishCommand>("publish")
             .WithDescription("Publish a library. (requires authentication)")
             .WithExample("leap publish")
             .WithExample("leap publish --version 1.2.3")
             ;
 
-        library.AddBranch("auth", auth =>
+        leap.AddBranch("auth", auth =>
         {
-            auth.SetDescription("Manage authentication for LEAP.");
+            auth.SetDescription("Manage authentication for LEAP (Library ExchAnge Platform).");
 
-            auth.AddCommand<LibraryAuthRegisterCommand>("register")
+            auth.AddCommand<LeapAuthRegisterCommand>("register")
                 .WithDescription("Register a new LEAP account.")
                 .WithExample("leap auth register")
                 ;
 
-            auth.AddCommand<LibraryAuthLoginCommand>("login")
+            auth.AddCommand<LeapAuthLoginCommand>("login")
                 .WithDescription("Login to a LEAP account.")
                 .WithExample("leap auth login")
                 ;
 
-            auth.AddCommand<LibraryAuthLogoutCommand>("logout")
+            auth.AddCommand<LeapAuthLogoutCommand>("logout")
                 .WithDescription("Logout of a LEAP account.")
                 .WithExample("leap auth logout")
                 ;
 
-            auth.AddCommand<LibraryAuthCheckCommand>("check")
+            auth.AddCommand<LeapAuthCheckCommand>("check")
                 .WithDescription("Check if logged in to a LEAP account.")
                 .WithExample("leap auth check")
                 ;

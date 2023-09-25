@@ -3,14 +3,14 @@ using Microsoft.Extensions.Http;
 
 namespace Leap.Client;
 
-public class LibApiClientFactory : ITypedHttpClientFactory<LibApiClient>
+public class LeapApiClientFactory : ITypedHttpClientFactory<LeapApiClient>
 {
     public const string DefaultApiBaseAddress = "https://lib.step-lang.dev/api/";
 
-    private readonly LibApiCredentialManager? credentialManager;
+    private readonly LeapApiCredentialManager? credentialManager;
     private readonly IConfiguration configuration;
 
-    public LibApiClientFactory(LibApiCredentialManager? credentialManager, IConfiguration configuration)
+    public LeapApiClientFactory(LeapApiCredentialManager? credentialManager, IConfiguration configuration)
     {
         this.credentialManager = credentialManager;
         this.configuration = configuration;
@@ -18,7 +18,7 @@ public class LibApiClientFactory : ITypedHttpClientFactory<LibApiClient>
 
     private string? GetConfiguredBaseAddress() => configuration["LibApi:BaseAddress"];
 
-    public LibApiClient CreateClient(HttpClient httpClient)
+    public LeapApiClient CreateClient(HttpClient httpClient)
     {
         var credentials = credentialManager?.TryReadCredentials();
 

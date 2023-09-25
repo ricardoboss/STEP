@@ -6,11 +6,11 @@ namespace StepLang.CLI.Commands;
 
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 [SuppressMessage("Performance", "CA1812: Avoid uninstantiated internal classes")]
-internal sealed class LibraryAuthLogoutCommand : AsyncCommand<HiddenGlobalCommandSettings>
+internal sealed class LeapAuthLogoutCommand : AsyncCommand<HiddenGlobalCommandSettings>
 {
-    private readonly LibApiCredentialManager credentialManager;
+    private readonly LeapApiCredentialManager credentialManager;
 
-    public LibraryAuthLogoutCommand(LibApiCredentialManager credentialManager)
+    public LeapAuthLogoutCommand(LeapApiCredentialManager credentialManager)
     {
         this.credentialManager = credentialManager;
     }

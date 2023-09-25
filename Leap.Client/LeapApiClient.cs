@@ -4,11 +4,11 @@ using Leap.Common.API;
 
 namespace Leap.Client;
 
-public class LibApiClient
+public class LeapApiClient
 {
     private readonly HttpClient httpClient;
 
-    public LibApiClient(HttpClient httpClient)
+    public LeapApiClient(HttpClient httpClient)
     {
         this.httpClient = httpClient;
     }
