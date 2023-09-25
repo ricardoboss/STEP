@@ -47,6 +47,8 @@ app.Configure(config =>
     config.AddCommand<HighlightCommand>("highlight")
         .WithDescription("Highlight a .step-file and print it to the console.")
         .WithExample("highlight my-script.step")
+        .WithExample("highlight my-script.step -t mono")
+        .WithExample("highlight --list-themes")
         ;
 });
 
