@@ -6,6 +6,7 @@ using Leap.API.Interfaces;
 using Leap.API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Events;
 
@@ -54,7 +55,29 @@ try
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
+    builder.Services.AddSwaggerGen(options =>
+    {
+        var scheme = new OpenApiSecurityScheme
+        {
+            BearerFormat = "JWT",
+            Name = "JWT Authentication",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.Http,
+            Scheme = JwtBearerDefaults.AuthenticationScheme,
+            Reference = new()
+            {
+                Id = JwtBearerDefaults.AuthenticationScheme,
+                Type = ReferenceType.SecurityScheme,
+            },
+        };
+
+        options.AddSecurityDefinition(scheme.Reference.Id, scheme);
+
+        options.AddSecurityRequirement(new()
+        {
+            { scheme, Array.Empty<string>() },
+        });
+    });
 
     var app = builder.Build();
 
