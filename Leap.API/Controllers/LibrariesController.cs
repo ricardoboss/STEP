@@ -186,13 +186,14 @@ public class LibrariesController : ControllerBase
             {
                 Name = name,
                 Author = author,
-                Maintainers = new List<Author>(),
+                Maintainers = new List<Author>
+                {
+                    uploader,
+                },
                 Versions = new List<LibraryVersion>(),
             };
 
             await context.Libraries.AddAsync(library, cancellationToken);
-
-            library.Maintainers.Add(uploader);
             uploader.Libraries.Add(library);
 
             logger.LogInformation("Created a new library {Library} for uploader {Uploader}", library, uploader);
