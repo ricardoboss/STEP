@@ -262,16 +262,6 @@
           "Microsoft.Extensions.Logging.Abstractions": "6.0.0"
         }
       },
-      "PasswordRulesSharp": {
-        "type": "Transitive",
-        "resolved": "2.0.0",
-        "contentHash": "yaGuJKNJbHToedKy18GUSxZqwUAR6s2LLfITfeZIbpe5WTOFRWZPp+TqImHLkBCZJYRugKxgZ9CCtSsjJZ8sgw==",
-        "dependencies": {
-          "IndexRange": "1.0.2",
-          "NodaTime": "3.1.6",
-          "System.ComponentModel.Annotations": "5.0.0"
-        }
-      },
       "Serilog": {
         "type": "Transitive",
         "resolved": "2.12.0",
@@ -483,6 +473,17 @@
           "Microsoft.EntityFrameworkCore.Abstractions": "[7.0.11, 8.0.0)",
           "Microsoft.EntityFrameworkCore.Relational": "[7.0.11, 8.0.0)",
           "Npgsql": "7.0.6"
+        }
+      },
+      "PasswordRulesSharp": {
+        "type": "CentralTransitive",
+        "requested": "[2.0.0, )",
+        "resolved": "2.0.0",
+        "contentHash": "yaGuJKNJbHToedKy18GUSxZqwUAR6s2LLfITfeZIbpe5WTOFRWZPp+TqImHLkBCZJYRugKxgZ9CCtSsjJZ8sgw==",
+        "dependencies": {
+          "IndexRange": "1.0.2",
+          "NodaTime": "3.1.6",
+          "System.ComponentModel.Annotations": "5.0.0"
         }
       },
       "Semver": {

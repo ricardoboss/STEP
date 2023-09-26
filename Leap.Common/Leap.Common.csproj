@@ -13,5 +13,4 @@
       <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
     </ItemGroup>
 
-
 </Project>
