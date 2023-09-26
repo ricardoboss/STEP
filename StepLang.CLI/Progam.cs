@@ -7,6 +7,8 @@ using Spectre.Console;
 using Spectre.Console.Cli;
 using StepLang.CLI;
 using StepLang.CLI.Commands;
+using StepLang.CLI.Commands.Leap;
+using StepLang.CLI.Commands.Leap.Auth;
 
 const string slogan = "STEP - Simple Transition to Elevated Programming";
 

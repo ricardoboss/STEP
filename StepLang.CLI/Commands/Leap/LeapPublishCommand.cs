@@ -1,11 +1,11 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO.Compression;
+using Leap.Client;
+using Leap.Common;
 using Semver;
 using Spectre.Console.Cli;
-using Leap.Common;
-using Leap.Client;
 
-namespace StepLang.CLI.Commands;
+namespace StepLang.CLI.Commands.Leap;
 
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 [SuppressMessage("Performance", "CA1812: Avoid uninstantiated internal classes")]
