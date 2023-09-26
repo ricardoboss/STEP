@@ -60,16 +60,16 @@ public class FilesystemLibraryStorage : ILibraryStorage
     }
 
     /// <inheritdoc />
-    public async Task<StorageMetadata> GetMetadataAsync(string author, string name, string version, CancellationToken cancellationToken = default)
+    public async Task<StorageMetadata?> GetMetadataAsync(string author, string name, string version, CancellationToken cancellationToken = default)
     {
         if (!await ExistsAsync(author, name, version, cancellationToken))
-            throw new("Library version does not exist.");
+            return null;
 
         var libraryVersionDirectory = GetLibraryVersionDirectory(author, name, version);
         var metadataFile = new FileInfo(Path.Combine(libraryVersionDirectory.FullName, "metadata.json"));
 
         if (!metadataFile.Exists)
-            throw new("Library version does not have metadata.");
+            return null;
 
         logger.LogTrace("Reading metadata for {Author}/{Name}@{Version} from {Path}", author, name, version, metadataFile.FullName);
 

@@ -6,7 +6,7 @@ public interface ILibraryStorage
 {
     public Task<bool> ExistsAsync(string author, string name, string version, CancellationToken cancellationToken = default);
 
-    public Task<StorageMetadata> GetMetadataAsync(string author, string name, string version, CancellationToken cancellationToken = default);
+    public Task<StorageMetadata?> GetMetadataAsync(string author, string name, string version, CancellationToken cancellationToken = default);
 
     public Task SetMetadataAsync(string author, string name, string version, StorageMetadata metadata, CancellationToken cancellationToken = default);
 
