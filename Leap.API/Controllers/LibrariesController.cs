@@ -29,7 +29,8 @@ public class LibrariesController : ControllerBase
 
     private string GetDownloadUrl(string author, string name, string version) => Url.ActionLink("Download", "Libraries", new
     {
-        name = $"{author}/{name}",
+        author,
+        name,
         version,
     }) ?? throw new("Failed to generate download URL.");
 
