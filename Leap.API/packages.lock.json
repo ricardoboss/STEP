@@ -49,6 +49,11 @@
           "Swashbuckle.AspNetCore.SwaggerUI": "6.5.0"
         }
       },
+      "IndexRange": {
+        "type": "Transitive",
+        "resolved": "1.0.2",
+        "contentHash": "BxTYJba0X+rMh7kyA2fYpOrFR3+bIVnBT/VzRinlAe7UZmHGcZk2SoWEIXzqnSFdkfCoi4K0QoHoE/nc71lmDg=="
+      },
       "Microsoft.CSharp": {
         "type": "Transitive",
         "resolved": "4.5.0",
@@ -241,12 +246,30 @@
         "resolved": "1.4.3",
         "contentHash": "rURwggB+QZYcSVbDr7HSdhw/FELvMlriW10OeOzjPT7pstefMo7IThhtNtDudxbXhW+lj0NfX72Ka5EDsG8x6w=="
       },
+      "NodaTime": {
+        "type": "Transitive",
+        "resolved": "3.1.6",
+        "contentHash": "0ZGOyyLldBHYhFpDi22YcXDuAjj3bI33ChGJyp4/dP2gbhpIIVAKaIgU0h+1oUlh/LgA/UKeyJkWOCW2wHYfIg==",
+        "dependencies": {
+          "System.Runtime.CompilerServices.Unsafe": "4.7.1"
+        }
+      },
       "Npgsql": {
         "type": "Transitive",
         "resolved": "7.0.6",
         "contentHash": "TAqvwRnm3NJ0QvN7cvu6geJkbI0XPzGVRElVY5hF4gsgA+BnE12x6GM1TLhdeq+7ZKvvo3BD8jXKnXmr3tvdEw==",
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "6.0.0"
+        }
+      },
+      "PasswordRulesSharp": {
+        "type": "Transitive",
+        "resolved": "2.0.0",
+        "contentHash": "yaGuJKNJbHToedKy18GUSxZqwUAR6s2LLfITfeZIbpe5WTOFRWZPp+TqImHLkBCZJYRugKxgZ9CCtSsjJZ8sgw==",
+        "dependencies": {
+          "IndexRange": "1.0.2",
+          "NodaTime": "3.1.6",
+          "System.ComponentModel.Annotations": "5.0.0"
         }
       },
       "Serilog": {
@@ -338,6 +361,16 @@
         "resolved": "6.5.0",
         "contentHash": "OvbvxX+wL8skxTBttcBsVxdh73Fag4xwqEU2edh4JMn7Ws/xJHnY/JB1e9RoCb6XpDxUF3hD9A0Z1lEUx40Pfw=="
       },
+      "System.ComponentModel.Annotations": {
+        "type": "Transitive",
+        "resolved": "5.0.0",
+        "contentHash": "dMkqfy2el8A8/I76n2Hi1oBFEbG1SfxD2l5nhwXV3XjlnOmwxJlQbYpJH4W51odnU9sARCSAgv7S3CyAFMkpYg=="
+      },
+      "System.Runtime.CompilerServices.Unsafe": {
+        "type": "Transitive",
+        "resolved": "4.7.1",
+        "contentHash": "zOHkQmzPCn5zm/BH+cxC1XbUS3P4Yoi3xzW7eRgVpDR2tPGSzyMZ17Ig1iRkfJuY0nhxkQQde8pgePNiA7z7TQ=="
+      },
       "System.Security.Cryptography.Cng": {
         "type": "Transitive",
         "resolved": "4.5.0",
@@ -369,6 +402,7 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.Http": "[7.0.0, )",
+          "PasswordRulesSharp": "[2.0.0, )",
           "Semver": "[2.3.0, )",
           "System.IdentityModel.Tokens.Jwt": "[6.15.1, )"
         }
