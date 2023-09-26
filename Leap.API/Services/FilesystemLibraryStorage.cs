@@ -60,7 +60,7 @@ public class FilesystemLibraryStorage : ILibraryStorage
     }
 
     /// <inheritdoc />
-    public async Task<Dictionary<string, dynamic>> GetMetadataAsync(string author, string name, string version, CancellationToken cancellationToken = default)
+    public async Task<StorageMetadata> GetMetadataAsync(string author, string name, string version, CancellationToken cancellationToken = default)
     {
         if (!await ExistsAsync(author, name, version, cancellationToken))
             throw new("Library version does not exist.");
@@ -75,8 +75,7 @@ public class FilesystemLibraryStorage : ILibraryStorage
 
         await using var stream = metadataFile.OpenRead();
 
-        // FIXME: this won't work
-        var metadata = await JsonSerializer.DeserializeAsync<Dictionary<string, dynamic>>(stream, cancellationToken: cancellationToken);
+        var metadata = await JsonSerializer.DeserializeAsync<StorageMetadata>(stream, cancellationToken: cancellationToken);
         if (metadata is null)
             throw new("Failed to deserialize metadata.");
 
@@ -84,7 +83,7 @@ public class FilesystemLibraryStorage : ILibraryStorage
     }
 
     /// <inheritdoc />
-    public async Task SetMetadataAsync(string author, string name, string version, Dictionary<string, dynamic> metadata, CancellationToken cancellationToken = default)
+    public async Task SetMetadataAsync(string author, string name, string version, StorageMetadata metadata, CancellationToken cancellationToken = default)
     {
         var libraryVersionDirectory = GetLibraryVersionDirectory(author, name, version, true);
         var metadataFile = new FileInfo(Path.Combine(libraryVersionDirectory.FullName, "metadata.json"));
