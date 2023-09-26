@@ -61,6 +61,10 @@ internal sealed class LeapPublishCommand : AsyncCommand<LeapPublishCommand.Setti
             foreach (var file in files)
             {
                 var relativePath = Path.GetRelativePath(Directory.GetCurrentDirectory(), file);
+
+                // TODO: consolidate file selection and ignore downloaded libraries directory
+                if (relativePath.Contains("libraries")) continue;
+
                 var entry = zipArchive.CreateEntry(relativePath);
                 await using var entryStream = entry.Open();
                 await using var fileStream = File.OpenRead(file);

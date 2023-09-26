@@ -89,6 +89,11 @@ app.Configure(config =>
             .WithExample("leap publish --version 1.2.3")
             ;
 
+        leap.AddCommand<LeapInstallCommand>("install")
+            .WithDescription("Install all dependencies")
+            .WithExample("leap install")
+            ;
+
         leap.AddBranch("auth", auth =>
         {
             auth.SetDescription("Manage authentication for LEAP (Library ExchAnge Platform).");
