@@ -196,6 +196,8 @@ public class LibrariesController : ControllerBase
             await context.Libraries.AddAsync(library, cancellationToken);
             uploader.Libraries.Add(library);
 
+            await context.SaveChangesAsync(cancellationToken);
+
             logger.LogInformation("Created a new library {Library} for uploader {Uploader}", library, uploader);
         }
         else if (!library.Maintainers.Contains(uploader))
