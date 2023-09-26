@@ -140,7 +140,7 @@ public class LibrariesController : ControllerBase
         {
             logger.LogTrace("Upload request rejected because of a missing ID claim");
 
-            return Unauthorized(UploadResult.Unauthorized());
+            return Unauthorized(UploadResult.Unauthorized("Missing ID claim."));
         }
 
         var authorIdStr = User.FindFirstValue(TokenGenerator.IdClaim);
@@ -148,15 +148,17 @@ public class LibrariesController : ControllerBase
         {
             logger.LogTrace("Upload request rejected because of an invalid ID claim (ID: '{Id}')", authorIdStr);
 
-            return Unauthorized(UploadResult.Unauthorized());
+            return Unauthorized(UploadResult.Unauthorized("Invalid ID claim."));
         }
 
-        var uploader = await context.Authors.FirstOrDefaultAsync(a => a.Id == authorId, cancellationToken);
+        var uploader = await context.Authors
+            .Include(a => a.Libraries)
+            .FirstOrDefaultAsync(a => a.Id == authorId, cancellationToken);
         if (uploader is null)
         {
             logger.LogTrace("Upload request rejected because no user with ID {Id} could be found", authorId);
 
-            return Unauthorized(UploadResult.Unauthorized());
+            return Unauthorized(UploadResult.Unauthorized("User not found."));
         }
 
         logger.LogTrace("Found uploader {Uploader}", uploader);
@@ -175,8 +177,7 @@ public class LibrariesController : ControllerBase
             {
                 logger.LogInformation("Upload request rejected because the uploader username ({Uploader}) doesn't match the library author name ('{Author}')", uploader, author);
 
-                // cannot create a library for another user
-                return Unauthorized(UploadResult.Unauthorized());
+                return Unauthorized(UploadResult.Unauthorized("Cannot create a library for another user."));
             }
 
             library = new()

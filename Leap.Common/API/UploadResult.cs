@@ -16,7 +16,7 @@ public record UploadResult(string Code, string Message, BriefLibraryVersion? Ver
 
     public static UploadResult Success(string name, string version, BriefLibraryVersion brief) => new("success", $"Version '{version}' of {name} uploaded successfully.", brief);
 
-    public static UploadResult Unauthorized() => new("unauthorized", "Unauthorized.");
+    public static UploadResult Unauthorized(string message) => new("unauthorized", $"Unauthorized. {message}");
 
     public static UploadResult NotAMaintainer() => new("not_a_maintainer", "The current user is not a maintainer of the library.");
 }
