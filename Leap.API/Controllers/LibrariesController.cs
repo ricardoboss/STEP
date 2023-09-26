@@ -109,7 +109,9 @@ public class LibrariesController : ControllerBase
                 logger.LogTrace("Increased download count for {Author}/{Name}@{Version} to {Downloads} downloads", author, name, version, metadata.Downloads);
             }, cancellationToken);
 
-            await using var stream = await storage.OpenReadAsync(author, name, version, cancellationToken);
+            var stream = await storage.OpenReadAsync(author, name, version, cancellationToken);
+
+            HttpContext.Response.RegisterForDisposeAsync(stream);
 
             var filename = $"{author}-{name}-{version}.zip";
 
