@@ -86,7 +86,9 @@ public partial record Library(string Name, string? Version, string? Author, Dict
         return SaveTo(Path.Combine(Directory.GetCurrentDirectory(), "library.json"));
     }
 
+    [JsonIgnore]
     public string NameAuthorPart => Name.Split('/')[0];
 
+    [JsonIgnore]
     public string NameLibraryPart => Name.Split('/')[1];
 }
