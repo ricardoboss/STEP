@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using Leap.Common;
 using Spectre.Console.Cli;
+using StepLang.CLI.Commands.Settings;
 
 namespace StepLang.CLI.Commands.Leap;
 

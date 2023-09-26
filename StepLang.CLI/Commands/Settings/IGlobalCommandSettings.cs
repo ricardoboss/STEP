@@ -1,4 +1,4 @@
-namespace StepLang.CLI.Commands;
+namespace StepLang.CLI.Commands.Settings;
 
 internal interface IGlobalCommandSettings
 {

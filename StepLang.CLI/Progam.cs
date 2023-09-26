@@ -9,6 +9,7 @@ using StepLang.CLI;
 using StepLang.CLI.Commands;
 using StepLang.CLI.Commands.Leap;
 using StepLang.CLI.Commands.Leap.Auth;
+using StepLang.CLI.Commands.Settings;
 
 const string slogan = "STEP - Simple Transition to Elevated Programming";
 
