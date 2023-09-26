@@ -27,7 +27,7 @@ internal sealed class LeapAuthCheckCommand : AsyncCommand<HiddenGlobalCommandSet
 
         if (result.Code == "success")
         {
-            await Console.Out.WriteLineAsync("Successfully authenticated.");
+            await Console.Out.WriteLineAsync($"Authentication successful: {result.Message}");
 
             return 0;
         }
