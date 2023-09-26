@@ -10,7 +10,7 @@ public static class LibraryVersionExtensions
             version.Library.Author,
             version.Library.Name,
             version.Version,
-            version.Dependencies.Select(d => d.Name),
+            version.Dependencies.ToDictionary(d => d.Dependency.Name, d => d.VersionRange),
             downloadUrl
         );
     }

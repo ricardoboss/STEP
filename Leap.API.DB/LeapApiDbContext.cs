@@ -25,11 +25,11 @@ public class LeapApiDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<Library>()
-            .HasOne<LibraryVersion>(l => l.LatestVersion)
-            .WithOne(v => v.Library);
+            .HasOne<LibraryVersion>(l => l.LatestVersion);
 
         modelBuilder.Entity<Library>()
-            .HasMany<LibraryVersion>(l => l.Versions);
+            .HasMany<LibraryVersion>(l => l.Versions)
+            .WithOne(v => v.Library);
 
         modelBuilder.Entity<Library>()
             .HasMany<Author>(l => l.Maintainers)
@@ -43,12 +43,19 @@ public class LeapApiDbContext : DbContext
             })
             .IsUnique();
 
+        modelBuilder.Entity<LibraryVersionDependency>()
+            .HasKey(d => new
+            {
+                d.VersionId,
+                d.DependencyId,
+            });
+
+        modelBuilder.Entity<Library>()
+            .HasMany<LibraryVersionDependency>(l => l.Dependents)
+            .WithOne(d => d.Dependency);
+
         modelBuilder.Entity<LibraryVersion>()
-            .HasMany<Library>(v => v.Dependencies)
-            .WithMany(l => l.Versions)
-            .UsingEntity<LibraryVersionDependency>(
-                j => j.HasOne(d => d.Dependency).WithMany(),
-                j => j.HasOne(d => d.Version).WithMany()
-            );
+            .HasMany<LibraryVersionDependency>(v => v.Dependencies)
+            .WithOne(l => l.Version);
     }
 }

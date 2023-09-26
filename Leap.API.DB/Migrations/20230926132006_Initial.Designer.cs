@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Leap.API.DB.Migrations
 {
     [DbContext(typeof(LeapApiDbContext))]
-    [Migration("20230925111954_RenameAuthorToMaintainerAndAddNewAuthorColumn")]
-    partial class RenameAuthorToMaintainerAndAddNewAuthorColumn
+    [Migration("20230926132006_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,21 @@ namespace Leap.API.DB.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("AuthorLibrary", b =>
+                {
+                    b.Property<Guid>("LibrariesId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("MaintainersId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("LibrariesId", "MaintainersId");
+
+                    b.HasIndex("MaintainersId");
+
+                    b.ToTable("AuthorLibrary");
+                });
 
             modelBuilder.Entity("Leap.API.DB.Entities.Author", b =>
                 {
@@ -57,19 +72,16 @@ namespace Leap.API.DB.Migrations
                     b.Property<Guid?>("LatestVersionId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("MaintainerId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LatestVersionId")
-                        .IsUnique();
+                    b.HasIndex("LatestVersionId");
 
-                    b.HasIndex("MaintainerId");
+                    b.HasIndex("Author", "Name")
+                        .IsUnique();
 
                     b.ToTable("Libraries");
                 });
@@ -80,57 +92,84 @@ namespace Leap.API.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("LibraryId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Version")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LibraryId");
+
                     b.ToTable("LibraryVersions");
                 });
 
             modelBuilder.Entity("Leap.API.DB.Entities.LibraryVersionDependency", b =>
                 {
-                    b.Property<Guid>("DependencyId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("VersionId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("DependencyId", "VersionId");
+                    b.Property<Guid>("DependencyId")
+                        .HasColumnType("uuid");
 
-                    b.HasIndex("VersionId");
+                    b.Property<string>("VersionRange")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("VersionId", "DependencyId");
+
+                    b.HasIndex("DependencyId");
 
                     b.ToTable("LibraryVersionDependency");
+                });
+
+            modelBuilder.Entity("AuthorLibrary", b =>
+                {
+                    b.HasOne("Leap.API.DB.Entities.Library", null)
+                        .WithMany()
+                        .HasForeignKey("LibrariesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Leap.API.DB.Entities.Author", null)
+                        .WithMany()
+                        .HasForeignKey("MaintainersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Leap.API.DB.Entities.Library", b =>
                 {
                     b.HasOne("Leap.API.DB.Entities.LibraryVersion", "LatestVersion")
-                        .WithOne("Library")
-                        .HasForeignKey("Leap.API.DB.Entities.Library", "LatestVersionId");
+                        .WithMany()
+                        .HasForeignKey("LatestVersionId");
 
-                    b.HasOne("Leap.API.DB.Entities.Author", "Maintainer")
-                        .WithMany("Libraries")
-                        .HasForeignKey("MaintainerId")
+                    b.Navigation("LatestVersion");
+                });
+
+            modelBuilder.Entity("Leap.API.DB.Entities.LibraryVersion", b =>
+                {
+                    b.HasOne("Leap.API.DB.Entities.Library", "Library")
+                        .WithMany("Versions")
+                        .HasForeignKey("LibraryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("LatestVersion");
-
-                    b.Navigation("Maintainer");
+                    b.Navigation("Library");
                 });
 
             modelBuilder.Entity("Leap.API.DB.Entities.LibraryVersionDependency", b =>
                 {
                     b.HasOne("Leap.API.DB.Entities.Library", "Dependency")
-                        .WithMany()
+                        .WithMany("Dependents")
                         .HasForeignKey("DependencyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Leap.API.DB.Entities.LibraryVersion", "Version")
-                        .WithMany()
+                        .WithMany("Dependencies")
                         .HasForeignKey("VersionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -140,15 +179,16 @@ namespace Leap.API.DB.Migrations
                     b.Navigation("Version");
                 });
 
-            modelBuilder.Entity("Leap.API.DB.Entities.Author", b =>
+            modelBuilder.Entity("Leap.API.DB.Entities.Library", b =>
                 {
-                    b.Navigation("Libraries");
+                    b.Navigation("Dependents");
+
+                    b.Navigation("Versions");
                 });
 
             modelBuilder.Entity("Leap.API.DB.Entities.LibraryVersion", b =>
                 {
-                    b.Navigation("Library")
-                        .IsRequired();
+                    b.Navigation("Dependencies");
                 });
 #pragma warning restore 612, 618
         }

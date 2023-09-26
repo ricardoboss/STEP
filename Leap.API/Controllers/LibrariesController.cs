@@ -272,7 +272,7 @@ public class LibrariesController : ControllerBase
         {
             Version = version,
             Library = library,
-            Dependencies = new List<Library>(),
+            Dependencies = new List<LibraryVersionDependency>(),
         };
 
         await context.LibraryVersions.AddAsync(libraryVersion, cancellationToken);

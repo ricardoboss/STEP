@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Leap.API.DB.Migrations
 {
     [DbContext(typeof(LeapApiDbContext))]
-    partial class LibraryApiContextModelSnapshot : ModelSnapshot
+    partial class LeapApiDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -75,8 +75,7 @@ namespace Leap.API.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LatestVersionId")
-                        .IsUnique();
+                    b.HasIndex("LatestVersionId");
 
                     b.HasIndex("Author", "Name")
                         .IsUnique();
@@ -90,26 +89,35 @@ namespace Leap.API.DB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("LibraryId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Version")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LibraryId");
+
                     b.ToTable("LibraryVersions");
                 });
 
             modelBuilder.Entity("Leap.API.DB.Entities.LibraryVersionDependency", b =>
                 {
-                    b.Property<Guid>("DependencyId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("VersionId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("DependencyId", "VersionId");
+                    b.Property<Guid>("DependencyId")
+                        .HasColumnType("uuid");
 
-                    b.HasIndex("VersionId");
+                    b.Property<string>("VersionRange")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("VersionId", "DependencyId");
+
+                    b.HasIndex("DependencyId");
 
                     b.ToTable("LibraryVersionDependency");
                 });
@@ -132,22 +140,33 @@ namespace Leap.API.DB.Migrations
             modelBuilder.Entity("Leap.API.DB.Entities.Library", b =>
                 {
                     b.HasOne("Leap.API.DB.Entities.LibraryVersion", "LatestVersion")
-                        .WithOne("Library")
-                        .HasForeignKey("Leap.API.DB.Entities.Library", "LatestVersionId");
+                        .WithMany()
+                        .HasForeignKey("LatestVersionId");
 
                     b.Navigation("LatestVersion");
+                });
+
+            modelBuilder.Entity("Leap.API.DB.Entities.LibraryVersion", b =>
+                {
+                    b.HasOne("Leap.API.DB.Entities.Library", "Library")
+                        .WithMany("Versions")
+                        .HasForeignKey("LibraryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Library");
                 });
 
             modelBuilder.Entity("Leap.API.DB.Entities.LibraryVersionDependency", b =>
                 {
                     b.HasOne("Leap.API.DB.Entities.Library", "Dependency")
-                        .WithMany()
+                        .WithMany("Dependents")
                         .HasForeignKey("DependencyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Leap.API.DB.Entities.LibraryVersion", "Version")
-                        .WithMany()
+                        .WithMany("Dependencies")
                         .HasForeignKey("VersionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -157,10 +176,16 @@ namespace Leap.API.DB.Migrations
                     b.Navigation("Version");
                 });
 
+            modelBuilder.Entity("Leap.API.DB.Entities.Library", b =>
+                {
+                    b.Navigation("Dependents");
+
+                    b.Navigation("Versions");
+                });
+
             modelBuilder.Entity("Leap.API.DB.Entities.LibraryVersion", b =>
                 {
-                    b.Navigation("Library")
-                        .IsRequired();
+                    b.Navigation("Dependencies");
                 });
 #pragma warning restore 612, 618
         }
