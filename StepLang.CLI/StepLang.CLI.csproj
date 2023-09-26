@@ -37,4 +37,10 @@
         <ProjectReference Include="..\StepLang.Tooling.Formatting\StepLang.Tooling.Formatting.csproj"/>
         <ProjectReference Include="..\StepLang.Tooling.Highlighting\StepLang.Tooling.Highlighting.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="appsettings.local.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
 </Project>
