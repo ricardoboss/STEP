@@ -4,13 +4,37 @@ using System.Text.RegularExpressions;
 
 namespace Leap.Common;
 
-public partial record Library(string Name, string? Version, string? Author, Dictionary<string, string>? Dependencies,
-    List<string>? Files)
+public partial class Library
 {
-    [GeneratedRegex("[a-z][-a-z]{0,16}[a-z]")]
+    [JsonIgnore]
+    public string NameAuthorPart => GetAuthorPart(Name);
+
+    [JsonIgnore]
+    public string NameLibraryPart => GetLibraryPart(Name);
+
+    public string Name { get; set; }
+
+    public string? Version { get; set; }
+
+    public string? Author { get; set; }
+
+    public Dictionary<string, string>? Dependencies { get; set; }
+
+    public List<string>? Files { get; set; }
+
+    public Library(string name, string? version, string? author, Dictionary<string, string>? dependencies, List<string>? files)
+    {
+        Name = name;
+        Version = version;
+        Author = author;
+        Dependencies = dependencies;
+        Files = files;
+    }
+
+    [GeneratedRegex("^[a-z][-a-z]{0,16}[a-z]$")]
     public static partial Regex UsernameRegex();
 
-    [GeneratedRegex("[a-z][-a-z]{0,16}[a-z]")]
+    [GeneratedRegex("^[a-z][-a-z]{0,16}[a-z]$")]
     public static partial Regex NameRegex();
 
     public static bool IsCurrentDirLibrary()
@@ -47,11 +71,15 @@ public partial record Library(string Name, string? Version, string? Author, Dict
         var (author, name) = (parts[0], parts[1]);
 
         if (!UsernameRegex().IsMatch(author))
-            throw new ValidationException("User name must only contain lowercase characters and hyphens (-) and must start and end with a character.");
+            throw new ValidationException("Author must only contain lowercase characters and hyphens (-) and must start and end with a character.");
 
         if (!NameRegex().IsMatch(name))
             throw new ValidationException("Library name must only contain lowercase characters and hyphens (-) and must start and end with a character");
     }
+
+    public static string GetAuthorPart(string name) => name.Split('/')[0];
+
+    public static string GetLibraryPart(string name) => name.Split('/')[0];
 
     public Library Validate()
     {
@@ -85,10 +113,4 @@ public partial record Library(string Name, string? Version, string? Author, Dict
     {
         return SaveTo(Path.Combine(Directory.GetCurrentDirectory(), "library.json"));
     }
-
-    [JsonIgnore]
-    public string NameAuthorPart => Name.Split('/')[0];
-
-    [JsonIgnore]
-    public string NameLibraryPart => Name.Split('/')[1];
 }
