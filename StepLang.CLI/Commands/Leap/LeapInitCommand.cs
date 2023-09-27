@@ -1,7 +1,9 @@
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using Leap.Common;
+using Spectre.Console;
 using Spectre.Console.Cli;
+using StepLang.CLI.Extensions;
 using StepLang.CLI.Settings;
 
 namespace StepLang.CLI.Commands.Leap;
@@ -21,35 +23,52 @@ internal sealed class LeapInitCommand : AsyncCommand<LeapInitCommand.Settings>
         public string? Author { get; init; }
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
         if (Library.IsCurrentDirLibrary())
-            throw new InvalidOperationException("library.json already exists");
+        {
+            AnsiConsole.MarkupLine("[red]Error: Current directory is already a library.[/]");
+
+            return Task.FromResult(1);
+        }
 
         var builder = new LibraryBuilder();
 
-        var name = settings.Name;
-        if (name is null)
+        string name;
+        do
         {
-            await Console.Out.WriteAsync("Name: ");
-            name = Console.ReadLine() ?? throw new InvalidOperationException("Name must be set");
-        }
+            name = settings.Name ?? AnsiConsole.Ask<string>("Name of the library: ");
+
+            try
+            {
+                Library.ValidateName(name);
+
+                break;
+            }
+            catch (ValidationException ve)
+            {
+                AnsiConsole.MarkupLineInterpolated($"[red]Invalid library name: {ve.Message}[/]");
+            }
+        } while (true);
+
+        var author = settings.Author ?? AnsiConsole.Ask("Your name:", Library.GetAuthorPart(name));
 
         builder.WithName(name);
-
-        await Console.Out.WriteAsync("Author [enter to skip]: ");
-        var author = Console.ReadLine();
         if (!string.IsNullOrWhiteSpace(author))
             builder.WithAuthor(author);
 
+        // MAYBE: ask the user if they want to add a description
+
         // add some defaults
-        builder.WithVersion(new(0, 1, 0));
+        builder.WithVersion(new(1, 0, 0));
+
+        // MAYBE: ask the user if they want all files in the current dir to be included in the library
         builder.WithFiles(new List<string>());
 
-        builder.Build().SaveToCurrentDir();
+        var library = builder.Build().SaveToCurrentDir();
 
-        await Console.Out.WriteLineAsync($"Created library '{name}'");
+        AnsiConsole.MarkupLine($"Created library '{library.MarkupName()}'");
 
-        return 0;
+        return Task.FromResult(0);
     }
 }

@@ -42,13 +42,16 @@ internal static partial class ErrorHandler
             .Select(l => r.Match(l))
             .Select(m =>
             {
+                if (!m.Success)
+                    return new(new Markup($"[red]{m.Value}[/]"));
+
                 var method = m.Groups["method"].Value;
                 var file = m.Groups["file"].Value;
                 var line = m.Groups["line"].Value;
 
                 var methodParts = method.Split('.');
                 var methodSignature = methodParts[^1];
-                var typeName = methodParts[^2];
+                var typeName = methodParts.Length > 1 ? methodParts[^2] : "???";
                 // var namespaceName = string.Join('.', methodParts[..^2]);
 
                 var node = new TreeNode(new Markup($"[#bbbbbb]{typeName}[/].[bold]{methodSignature}[/]"));

@@ -9,6 +9,7 @@ using StepLang.CLI;
 using StepLang.CLI.Commands;
 using StepLang.CLI.Commands.Leap;
 using StepLang.CLI.Commands.Leap.Auth;
+using StepLang.CLI.Services;
 using StepLang.CLI.Settings;
 
 const string slogan = "STEP - Simple Transition to Elevated Programming";
@@ -27,6 +28,7 @@ services.AddSingleton<IConfiguration>(configuration);
 
 services.AddLeapCredentialManager();
 services.AddLeapClient();
+services.AddSingleton<InteractiveLibraryManager>();
 
 var app = new CommandApp<DefaultCommand>(services)
         .WithDescription(slogan + Environment.NewLine + "Version: " + GitVersionInformation.FullSemVer)
