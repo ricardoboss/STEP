@@ -35,6 +35,13 @@ internal sealed class LeapGetCommand : AsyncCommand<LeapGetCommand.Settings>
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
         var library = Library.FromCurrentDir();
+        if (library.Dependencies is null or { Count: 0 })
+        {
+            AnsiConsole.MarkupLineInterpolated($"No dependencies to resolve.");
+
+            return 0;
+        }
+
         var dependencies = new HashSet<BriefLibraryVersion>();
 
         AnsiConsole.MarkupLineInterpolated($"Resolving dependencies...");
@@ -43,6 +50,16 @@ internal sealed class LeapGetCommand : AsyncCommand<LeapGetCommand.Settings>
 
         AnsiConsole.MarkupLineInterpolated($"Resolved {dependencies.Count} dependencies");
 
+        if (dependencies.Count == 0)
+        {
+            AnsiConsole.MarkupLineInterpolated($"No dependencies to install.");
+
+            return 0;
+        }
+
+        AnsiConsole.MarkupLineInterpolated($"Installing dependencies...");
+
+        // TODO: move everything below to a separate class
         var cacheDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".leap_cache");
         var dependenciesDir = Path.Combine(Directory.GetCurrentDirectory(), "libraries");
 
@@ -85,6 +102,8 @@ internal sealed class LeapGetCommand : AsyncCommand<LeapGetCommand.Settings>
                 AnsiConsole.MarkupLineInterpolated($"[bold]{dependencyName}[/] installed");
             })
         );
+
+        AnsiConsole.MarkupLineInterpolated($"Installed {dependencies.Count} dependencies");
 
         return 0;
     }
