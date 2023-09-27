@@ -43,26 +43,27 @@ internal sealed class InteractiveLibraryManager
             }
         }
 
+        var authorPart = Library.GetAuthorPart(dependencyName);
+        var libraryPart = Library.GetLibraryPart(dependencyName);
+
         SemVersionRange semVersionRange;
         if (versionRange is null)
         {
-            var latest = await apiClient.GetLatestVersion(library.NameAuthorPart, library.NameLibraryPart);
+            var latest = await apiClient.GetLatestVersion(authorPart, libraryPart);
             if (latest is null)
             {
-                AnsiConsole.MarkupLineInterpolated($"Could not find the latest version of {library.MarkupName()}. Specify a version manually.");
+                AnsiConsole.MarkupLineInterpolated($"[red]Could not find {dependencyName}[/]");
 
                 return false;
             }
 
             semVersionRange = SemVersionRange.AtLeast(latest);
 
-            AnsiConsole.MarkupLineInterpolated($"Using the latest version: {latest.Markup()}");
+            AnsiConsole.MarkupLineInterpolated($"Using the latest version as minimum: [blue]{latest}[/]");
         }
         else
         {
             semVersionRange = SemVersionRange.Parse(versionRange);
-
-            AnsiConsole.MarkupLineInterpolated($"Using the specified version range: {semVersionRange.Markup()}");
         }
 
         library.Dependencies ??= new();
