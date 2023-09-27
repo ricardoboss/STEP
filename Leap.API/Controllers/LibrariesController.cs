@@ -52,20 +52,17 @@ public class LibrariesController : ControllerBase
         LibraryVersion? libraryVersion;
         if (version is null)
         {
-            if (library.LatestVersion is null)
-                return NotFound();
-
             libraryVersion = library.LatestVersion;
-        }
-        else if (SemVersion.TryParse(version, SemVersionStyles.Strict, out var semVersion))
-        {
-            libraryVersion = library.Versions.FirstOrDefault(v => SemVersion.Parse(v.Version, SemVersionStyles.Strict) == semVersion);
         }
         else if (SemVersionRange.TryParse(version, out var semVersionRange))
         {
             libraryVersion = library.Versions
                 .Where(v => semVersionRange.Contains(SemVersion.Parse(v.Version, SemVersionStyles.Strict)))
                 .MaxBy(v => SemVersion.Parse(v.Version, SemVersionStyles.Strict));
+        }
+        else if (SemVersion.TryParse(version, SemVersionStyles.Strict, out var semVersion))
+        {
+            libraryVersion = library.Versions.FirstOrDefault(v => SemVersion.Parse(v.Version, SemVersionStyles.Strict) == semVersion);
         }
         else
         {
