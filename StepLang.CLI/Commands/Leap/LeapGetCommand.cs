@@ -12,7 +12,7 @@ namespace StepLang.CLI.Commands.Leap;
 
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 [SuppressMessage("Performance", "CA1812: Avoid uninstantiated internal classes")]
-internal sealed class LeapInstallCommand : AsyncCommand<LeapInstallCommand.Settings>
+internal sealed class LeapGetCommand : AsyncCommand<LeapGetCommand.Settings>
 {
     public sealed class Settings : HiddenGlobalCommandSettings
     {
@@ -25,7 +25,7 @@ internal sealed class LeapInstallCommand : AsyncCommand<LeapInstallCommand.Setti
     private readonly HttpClient httpClient;
     private readonly LeapApiClient apiClient;
 
-    public LeapInstallCommand(LeapApiClient apiClient, HttpClient httpClient)
+    public LeapGetCommand(LeapApiClient apiClient, HttpClient httpClient)
     {
         this.apiClient = apiClient;
         this.httpClient = httpClient;

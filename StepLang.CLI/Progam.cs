@@ -75,10 +75,10 @@ app.Configure(config =>
     {
         leap.SetDescription("Manage libraries for LEAP (Library ExchAnge Platform).");
 
-        leap.AddCommand<LeapInitCommand>("init")
-            .WithDescription("Initialize a new library.")
-            .WithExample("leap init")
-            .WithExample("leap init --name MyLibrary --author \"John Doe\"")
+        leap.AddCommand<LeapCreateCommand>("create")
+            .WithDescription("Create a new library in the current folder.")
+            .WithExample("leap create")
+            .WithExample("leap create --name john/my-library --author \"John Doe\"")
             ;
 
         leap.AddCommand<LeapAddCommand>("add")
@@ -94,9 +94,9 @@ app.Configure(config =>
             .WithExample("leap publish --version 1.2.3")
             ;
 
-        leap.AddCommand<LeapInstallCommand>("install")
-            .WithDescription("Install all dependencies")
-            .WithExample("leap install")
+        leap.AddCommand<LeapGetCommand>("get")
+            .WithDescription("Get all dependencies")
+            .WithExample("leap get")
             ;
 
         leap.AddBranch("auth", auth =>
