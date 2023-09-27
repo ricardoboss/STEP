@@ -4,7 +4,7 @@ using Leap.Client;
 using Leap.Common;
 using Semver;
 using Spectre.Console.Cli;
-using StepLang.CLI.Commands.Settings;
+using StepLang.CLI.Settings;
 
 namespace StepLang.CLI.Commands.Leap;
 

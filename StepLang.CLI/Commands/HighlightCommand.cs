@@ -2,8 +2,8 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using Spectre.Console;
 using Spectre.Console.Cli;
-using StepLang.CLI.Commands.Settings;
 using StepLang.CLI.Converter;
+using StepLang.CLI.Settings;
 using StepLang.CLI.Widgets;
 using StepLang.Tooling.Highlighting;
 

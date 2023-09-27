@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Spectre.Console;
 using Spectre.Console.Cli;
-using StepLang.CLI.Commands.Settings;
+using StepLang.CLI.Settings;
 using StepLang.Tooling.Formatting.AnalyzerSet;
 using StepLang.Tooling.Formatting.Fixers;
 

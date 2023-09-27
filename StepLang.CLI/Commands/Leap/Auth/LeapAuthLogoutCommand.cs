@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Leap.Client;
 using Spectre.Console.Cli;
-using StepLang.CLI.Commands.Settings;
+using StepLang.CLI.Settings;
 
 namespace StepLang.CLI.Commands.Leap.Auth;
 

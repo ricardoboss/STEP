@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using Spectre.Console.Cli;
-using StepLang.CLI.Commands.Settings;
+using StepLang.CLI.Settings;
 using StepLang.Interpreting;
 using StepLang.Statements;
 using StepLang.Tokenizing;

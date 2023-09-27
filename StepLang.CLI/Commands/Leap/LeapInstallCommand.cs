@@ -6,7 +6,7 @@ using Leap.Common;
 using Leap.Common.API;
 using Spectre.Console;
 using Spectre.Console.Cli;
-using StepLang.CLI.Commands.Settings;
+using StepLang.CLI.Settings;
 
 namespace StepLang.CLI.Commands.Leap;
 
