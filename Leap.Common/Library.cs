@@ -79,7 +79,7 @@ public partial class Library
 
     public static string GetAuthorPart(string name) => name.Split('/')[0];
 
-    public static string GetLibraryPart(string name) => name.Split('/')[0];
+    public static string GetLibraryPart(string name) => name.Split('/')[1];
 
     public Library Validate()
     {
