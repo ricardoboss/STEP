@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		LICENSE.md = LICENSE.md
 		NuGet.Config = NuGet.Config
 		README.md = README.md
+		.gitmodules = .gitmodules
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StepLang.Tests", "StepLang.Tests\StepLang.Tests.csproj", "{CB5E44DF-C1D2-4DA9-8175-FD76F8D95A42}"
@@ -30,6 +31,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		.github\workflows\publish.yml = .github\workflows\publish.yml
 		.github\workflows\step.yml = .github\workflows\step.yml
 		.github\workflows\wiki.yml = .github\workflows\wiki.yml
+		.github\workflows\homepage.yml = .github\workflows\homepage.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StepLang.Tooling.Formatting", "StepLang.Tooling.Formatting\StepLang.Tooling.Formatting.csproj", "{728ABD46-2621-45BC-ACB1-0EF00267DCCC}"
@@ -53,6 +55,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang.Wiki", "StepLang.Wiki\StepLang.Wiki.proj", "{3BE9363F-EC32-4325-87C7-B8BDF8F8B139}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{7DB97B10-29C3-4217-8911-2B36058B50D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang.Homepage", "StepLang.Homepage\StepLang.Homepage.proj", "{9F92D1B5-7391-4F60-8E38-08E9438BECCF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -99,5 +103,6 @@ Global
 		{851A3A44-33F7-45C6-86E9-914C5A76749B} = {83F45B93-DF47-468E-A956-38826263C018}
 		{4C0CFABA-DFA6-43EA-BEA3-29CB8A1E83A0} = {A9BE3B66-38F1-454B-9A12-E1BF21E307CF}
 		{3BE9363F-EC32-4325-87C7-B8BDF8F8B139} = {7DB97B10-29C3-4217-8911-2B36058B50D6}
+		{9F92D1B5-7391-4F60-8E38-08E9438BECCF} = {7DB97B10-29C3-4217-8911-2B36058B50D6}
 	EndGlobalSection
 EndGlobal

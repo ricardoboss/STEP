@@ -1,4 +1,4 @@
-﻿<img src="docs/logo.svg" align="left" alt="STEP" width="120" height="120">
+﻿<img src="StepLang.Homepage/images/logo.svg" align="left" alt="STEP" width="120" height="120">
 
 <p>
   <h1>STEP</h1>
