@@ -1,0 +1,3 @@
+[submodule "StepLang.Homepage/templates/discordfx"]
+	path = StepLang.Homepage/templates/discordfx
+	url = https://github.com/jbltx/DiscordFX
