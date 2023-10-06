@@ -38,4 +38,17 @@
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
     </ItemGroup>
+
+    <Target Name="Copy DLLs to Homepage" AfterTargets="Build">
+        <PropertyGroup>
+            <HomepageBinDir>$(SolutionDir)StepLang.Homepage\bin</HomepageBinDir>
+        </PropertyGroup>
+
+        <ItemGroup>
+            <BuiltDlls Include="bin/**/*.dll" />
+        </ItemGroup>
+
+        <Copy SourceFiles="@(BuiltDlls)" DestinationFolder="$(HomepageBinDir)\%(RecursiveDir)" SkipUnchangedFiles="false" />
+        <Message Text="Copied @(BuiltDlls) to $(HomepageBinDir)" Importance="high" />
+    </Target>
 </Project>
