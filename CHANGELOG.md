@@ -1,4 +1,4 @@
-# Next release
+# v2.0.0
 
 * Use strong types for expression results by @ricardoboss in https://github.com/ricardoboss/STEP/pull/12
 * Use JSON source generators to enable trimming by @ricardoboss in https://github.com/ricardoboss/STEP/pull/14
