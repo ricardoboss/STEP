@@ -76,11 +76,12 @@ Converting functions convert the given value to a different type or retrieve an 
 
 Other functions do not fit into any of the other categories.
 
-| Function                             | Returns  | Description                                                       |
-|--------------------------------------|----------|-------------------------------------------------------------------|
-| [`random()`](./Random)               | `number` | Returns a random number between 0 and 1.                          |
-| [`seed()`](./Seed)                   | `number` | Initializes the random number generator.                          |
-| [`print(any ...value)`](./Print)     | `void`   | Writes a value to `StdOut`.                                       |
-| [`println(any ...value)`](./Println) | `void`   | writes a value to `StdOut` and appends a new line.                |
-| [`readline()`](./Readline)           | `string` | Reads a line from `StdIn` and returns it as a string.             |
-| [`read()`](./Read)                   | `string` | Reads a single character from `StdIn` and returns it as a string. |
+| Function                                    | Returns  | Description                                                                                    |
+|---------------------------------------------|----------|------------------------------------------------------------------------------------------------|
+| [`random()`](./Random)                      | `number` | Returns a random number between 0 and 1.                                                       |
+| [`seed()`](./Seed)                          | `number` | Initializes the random number generator.                                                       |
+| [`print(any ...value)`](./Print)            | `void`   | Writes a value to `StdOut`.                                                                    |
+| [`println(any ...value)`](./Println)        | `void`   | writes a value to `StdOut` and appends a new line.                                             |
+| [`readline()`](./Readline)                  | `string` | Reads a line from `StdIn` and returns it as a string.                                          |
+| [`read()`](./Read)                          | `string` | Reads a single character from `StdIn` and returns it as a string.                              |
+| [`fetch(string url, map options)`](./Fetch) | `string` | Makes a request to a URL and returns the response as a string or `null` if the request failed. |
