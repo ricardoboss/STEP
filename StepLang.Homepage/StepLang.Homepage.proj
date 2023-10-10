@@ -17,7 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="images\" />
-      <Folder Include="templates\" />
+        <Folder Include="images\" />
+        <Folder Include="templates\" />
     </ItemGroup>
 </Project>
