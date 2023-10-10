@@ -11,7 +11,7 @@ public class FetchFunction : NativeFunction
 {
     public const string Identifier = "fetch";
 
-    public override IEnumerable<(ResultType [] types, string identifier)> Parameters => new []
+    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[]
         { (new [] { ResultType.Str }, "url"), (new [] { ResultType.Map }, "options") };
 
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter,
