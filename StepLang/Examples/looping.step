@@ -6,3 +6,34 @@ while (i != 10) {
 }
 
 print("done", EOL)
+
+list l = [1, 2, 3, 4]
+
+// iterate over the list values
+foreach (number n in l) {
+	print(n, EOL)
+}
+
+// iterate over the list values and keys
+foreach (number k: number v in l) {
+	print(k, ": ", v, EOL)
+}
+
+map m = {"a": 1, "b": 2, "c": 3}
+
+// iterate over the map values
+foreach (number n2 in m) {
+	print(n2, EOL)
+}
+
+// iterate over the map values and keys
+foreach (string k2: number v2 in m) {
+	print(k2, ": ", v2, EOL)
+}
+
+// declare key and value variables before usage
+string k3
+number v3
+foreach (k3: v3 in m) {
+	print(k3, ": ", v3, EOL)
+}

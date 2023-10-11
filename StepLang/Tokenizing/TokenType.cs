@@ -41,6 +41,8 @@ public enum TokenType
     ClosingSquareBracket,
     ColonSymbol,
     ImportKeyword,
+    ForEachKeyword,
+    InKeyword,
 }
 
 public static class TokenTypes
@@ -87,6 +89,8 @@ public static class TokenTypes
             TokenType.ClosingSquareBracket => "']'",
             TokenType.ColonSymbol => "':'",
             TokenType.ImportKeyword => "'import'",
+            TokenType.ForEachKeyword => "'foreach'",
+            TokenType.InKeyword => "'in'",
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, "Unknown token type"),
         };
     }
@@ -124,6 +128,8 @@ public static class TokenTypes
             TokenType.UnderscoreSymbol => "_",
             TokenType.OpeningSquareBracket => "[",
             TokenType.ClosingSquareBracket => "]",
+            TokenType.ForEachKeyword => "foreach",
+            TokenType.InKeyword => "in",
             _ => throw new InvalidOperationException("Token type does not have a static code representation"),
         };
     }
@@ -157,6 +163,12 @@ public static class TokenTypes
                 return true;
             case "IMPORT":
                 type = TokenType.ImportKeyword;
+                return true;
+            case "FOREACH":
+                type = TokenType.ForEachKeyword;
+                return true;
+            case "IN":
+                type = TokenType.InKeyword;
                 return true;
         }
 
