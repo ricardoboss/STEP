@@ -59,6 +59,9 @@ public class StatementParser
                 case TokenType.WhileKeyword:
                     yield return await ParseWhileLoop(token, cancellationToken);
                     continue;
+                case TokenType.ForEachKeyword:
+                    yield return await ParseForEachLoop(token, cancellationToken);
+                    continue;
                 case TokenType.ReturnKeyword:
                     yield return await ParseReturnStatement(token, cancellationToken);
                     continue;
@@ -185,6 +188,70 @@ public class StatementParser
         {
             Location = whileToken.Location,
         };
+    }
+
+    private async Task<Statement> ParseForEachLoop(Token foreachToken, CancellationToken cancellationToken)
+    {
+        // looping: foreach ([[type name] <identifier>: ] [type name] <identifier> in <expression>) { [statement]* }
+
+        var openingParenthesesToken = tokenQueue.Dequeue(TokenType.OpeningParentheses);
+
+        var firstExpression = ParseForEachParamExpression();
+        Expression? keyVariableExpression;
+        Expression? valueVariableExpression;
+        if (tokenQueue.PeekType() is TokenType.ColonSymbol)
+        {
+            keyVariableExpression = firstExpression;
+
+            tokenQueue.Dequeue(TokenType.ColonSymbol);
+
+            valueVariableExpression = ParseForEachParamExpression();
+        }
+        else
+        {
+            keyVariableExpression = null;
+            valueVariableExpression = firstExpression;
+        }
+
+        tokenQueue.Dequeue(TokenType.InKeyword);
+
+        var iterableExpressionTokens = tokenQueue.DequeueUntil(TokenType.ClosingParentheses);
+        tokenQueue.Dequeue(TokenType.ClosingParentheses);
+
+        tokenQueue.Dequeue(TokenType.OpeningCurlyBracket);
+        var statementsTokens = tokenQueue.DequeueUntil(TokenType.ClosingCurlyBracket);
+        tokenQueue.Dequeue(TokenType.ClosingCurlyBracket);
+
+        var iterableExpression = await ExpressionParser.ParseAsync(iterableExpressionTokens, cancellationToken);
+        var statements = await ParseStatements(statementsTokens, cancellationToken).ToListAsync(cancellationToken);
+
+        return new ForEachStatement(keyVariableExpression, valueVariableExpression, iterableExpression, statements)
+        {
+            Location = foreachToken.Location,
+        };
+
+        Expression ParseForEachParamExpression()
+        {
+            if (tokenQueue.PeekType() is TokenType.TypeName)
+            {
+                var firstType = tokenQueue.Dequeue(TokenType.TypeName);
+                var firstIdentifier = tokenQueue.Dequeue(TokenType.Identifier);
+
+                return new VariableDeclarationExpression(firstType, firstIdentifier);
+            }
+
+            if (tokenQueue.PeekType() is TokenType.Identifier)
+            {
+                var firstIdentifier = tokenQueue.Dequeue(TokenType.Identifier);
+
+                return new VariableExpression(firstIdentifier);
+            }
+
+            if (tokenQueue.TryDequeue(out var token))
+                throw new UnexpectedTokenException(token, TokenType.TypeName, TokenType.Identifier);
+
+            throw new UnexpectedEndOfTokensException(openingParenthesesToken.Location);
+        }
     }
 
     private async Task<Statement> ParseIfStatement(Token ifToken, CancellationToken cancellationToken)
@@ -379,9 +446,10 @@ public class StatementParser
         // variable declaration: <type name> <identifier> = <expression>
 
         var identifier = tokenQueue.Dequeue(TokenType.Identifier);
+        var declarationExpression = new VariableDeclarationExpression(typeToken, identifier);
 
         if (!tokenQueue.TryPeekType(out var nextType) || nextType is TokenType.NewLine)
-            return new VariableDeclarationStatement(typeToken, identifier, null);
+            return new VariableDeclarationStatement(declarationExpression, null);
 
         var equalsToken = tokenQueue.Dequeue(TokenType.EqualsSymbol);
 
@@ -395,7 +463,7 @@ public class StatementParser
             throw new MissingValueExpressionException(equalsToken, e);
         }
 
-        return new VariableDeclarationStatement(typeToken, identifier, expression);
+        return new VariableDeclarationStatement(declarationExpression, expression);
     }
 
     private static IAsyncEnumerable<Statement> ParseStatements(IEnumerable<Token> tokens, CancellationToken cancellationToken)

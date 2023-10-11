@@ -101,6 +101,14 @@ public class Scope
         }
     }
 
+    public bool Exists(string identifier, bool includeParent)
+    {
+        if (includeParent)
+            return TryGetVariable(identifier, out _);
+
+        return identifiers.ContainsKey(identifier);
+    }
+
     internal bool TryGetVariable(string identifier, [NotNullWhen(true)] out Variable? variable)
     {
         if (identifiers.TryGetValue(identifier, out variable))
