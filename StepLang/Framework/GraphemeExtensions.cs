@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text;
 
 namespace StepLang.Framework;
 
@@ -68,5 +69,39 @@ internal static class GraphemeExtensions
         }
 
         return null;
+    }
+
+    public static int GraphemeIndexOf(this string str, string value, int startIndex = 0)
+    {
+        var normalized = value.Normalize(NormalizationForm.FormD);
+        var normalizedLength = normalized.GraphemeLength();
+
+        for (var i = startIndex; i < normalizedLength; i++)
+        {
+            var current = str.GraphemeSubstring(i, normalizedLength);
+            if (current == normalized)
+                return i;
+        }
+
+        return -1;
+    }
+
+    public static bool GraphemeStartsWith(this string str, string value)
+    {
+        var normalized = value.Normalize(NormalizationForm.FormD);
+        var normalizedLength = normalized.GraphemeLength();
+
+        var current = str.GraphemeSubstring(0, normalizedLength);
+        return current == normalized;
+    }
+
+    public static bool GraphemeEndsWith(this string str, string value)
+    {
+        var normalized = value.Normalize(NormalizationForm.FormD);
+        var normalizedLength = normalized.GraphemeLength();
+        var valueLength = str.GraphemeLength();
+
+        var current = str.GraphemeSubstring(valueLength - normalizedLength, normalizedLength);
+        return current == normalized;
     }
 }

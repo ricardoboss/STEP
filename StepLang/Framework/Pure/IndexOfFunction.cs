@@ -29,7 +29,7 @@ public class IndexOfFunction : NativeFunction
         {
             ListResult list => new NumberResult(list.Value.IndexOf(value)),
             MapResult map => GetMapKey(map, value),
-            StringResult str => new NumberResult(str.Value.IndexOf(value.ExpectString().Value, StringComparison.Ordinal)),
+            StringResult str => new NumberResult(str.Value.GraphemeIndexOf(value.ExpectString().Value)),
             _ => NullResult.Instance,
         };
     }

@@ -19,6 +19,6 @@ public class EndsWithFunction : NativeFunction
         var subject = await subjectExpression.EvaluateAsync(interpreter, r => r.ExpectString().Value, cancellationToken);
         var suffix = await prefixExpression.EvaluateAsync(interpreter, r => r.ExpectString().Value, cancellationToken);
 
-        return new BoolResult(subject.EndsWith(suffix, StringComparison.Ordinal));
+        return new BoolResult(subject.GraphemeEndsWith(suffix));
     }
 }
