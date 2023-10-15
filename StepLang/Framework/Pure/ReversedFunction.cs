@@ -8,14 +8,18 @@ public class ReversedFunction : NativeFunction
 {
     public const string Identifier = "reversed";
 
-    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.List }, "subject") };
+    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.List, ResultType.Str }, "subject") };
 
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
         CheckArgumentCount(arguments);
 
-        var subjectResult = await arguments.Single().EvaluateAsync(interpreter, r => r.ExpectList(), cancellationToken);
-        var reversed = subjectResult.DeepClone().Value.Reverse().ToList();
-        return new ListResult(reversed);
+        var subjectResult = await arguments.Single().EvaluateAsync(interpreter, cancellationToken);
+        return subjectResult.ResultType switch
+        {
+            ResultType.List => new ListResult(subjectResult.ExpectList().DeepClone().Value.Reverse().ToList()),
+            ResultType.Str => new StringResult(subjectResult.ExpectString().Value.ReverseGraphemes()),
+            _ => throw new InvalidResultTypeException(subjectResult.ResultType, ResultType.List, ResultType.Str),
+        };
     }
 }
