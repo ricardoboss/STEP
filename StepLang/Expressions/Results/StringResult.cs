@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace StepLang.Expressions.Results;
 
 public class StringResult : ComparableValueExpressionResult<string>
@@ -11,7 +13,10 @@ public class StringResult : ComparableValueExpressionResult<string>
 
     protected override int CompareToInternal(ComparableValueExpressionResult<string> other)
     {
-        return string.Compare(Value, other.Value, StringComparison.Ordinal);
+        var normalizedA = Value.Normalize(NormalizationForm.FormD);
+        var normalizedB = other.Value.Normalize(NormalizationForm.FormD);
+
+        return string.Compare(normalizedA, normalizedB, StringComparison.Ordinal);
     }
 
     protected override bool EqualsInternal(ExpressionResult other)
