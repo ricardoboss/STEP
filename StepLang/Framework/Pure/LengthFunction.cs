@@ -18,7 +18,7 @@ public class LengthFunction : NativeFunction
 
         return subjectResult switch
         {
-            StringResult { Value: var str } => new NumberResult(str.Length),
+            StringResult { Value: var str } => new NumberResult(str.GraphemeLength()),
             ListResult { Value: var list } => new NumberResult(list.Count),
             MapResult { Value: var map } => new NumberResult(map.Count),
             _ => throw new InvalidArgumentTypeException(null, Parameters.Single().types, subjectResult),

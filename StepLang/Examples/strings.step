@@ -4,6 +4,9 @@ println(foo)
 println(foo[0])
 println(foo[6])
 
+println("🤷‍♂️"[0])
+println("a🤷‍♂️"[1])
+
 println("\ta")
 
 println(indexOf(foo, "world"))

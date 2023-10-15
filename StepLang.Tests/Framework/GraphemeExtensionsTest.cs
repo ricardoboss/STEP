@@ -1,0 +1,55 @@
+using StepLang.Framework;
+
+namespace StepLang.Tests.Framework;
+
+public class GraphemeExtensionsTest
+{
+    [Theory]
+    [InlineData("", 0, null)]
+    [InlineData("", -1, null)]
+    [InlineData("", 1, null)]
+    [InlineData("a", 0, "a")]
+    [InlineData("a", -1, null)]
+    [InlineData("a", 1, null)]
+    [InlineData("abc", 1, "b")]
+    [InlineData("a🤷‍♂️b", 0, "a")]
+    [InlineData("a🤷‍♂️b", 1, "🤷‍♂️")]
+    [InlineData("🤷‍♂️ab", 0, "🤷‍♂️")]
+    [InlineData("🤷‍♂️ab", 1, "a")]
+    [InlineData("a🤷‍♂️b", 2, "b")]
+    public void TestGraphemeAt(string str, int index, string? expected)
+    {
+        var actual = str.GraphemeAt(index);
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData("", 0)]
+    [InlineData("a", 1)]
+    [InlineData("abc", 3)]
+    [InlineData("a🤷‍♂️b", 3)]
+    public void TestGraphemeLength(string str, int expected)
+    {
+        var actual = str.GraphemeLength();
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData("", 0, 0, "")]
+    [InlineData("a", 0, 1, "a")]
+    [InlineData("a", 0, 2, "a")]
+    [InlineData("a", 1, 1, "")]
+    [InlineData("abc", 1, 2, "bc")]
+    [InlineData("a🤷‍♂️b", 0, 1, "a")]
+    [InlineData("a🤷‍♂️b", 1, 1, "🤷‍♂️")]
+    [InlineData("a🤷‍♂️b", 1, 2, "🤷‍♂️b")]
+    [InlineData("a🤷‍♂️b", 0, 2, "a🤷‍♂️")]
+    public void TestGraphemeSubstring(string str, int start, int length, string expected)
+    {
+        var actual = str.GraphemeSubstring(start, length);
+
+        Assert.Equal(expected, actual);
+    }
+}
