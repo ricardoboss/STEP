@@ -17,3 +17,5 @@ length("Hello"): 5
 length(""): 0
 length(" "): 1
 length("🤷‍♂️"): 1
+reversed("🤷‍♂️"): 🤷‍♂️
+reversed("a🤷‍♂️b"): b🤷‍♂️a

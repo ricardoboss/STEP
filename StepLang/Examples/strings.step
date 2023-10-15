@@ -24,3 +24,6 @@ println("length(\"Hello\"): ", length("Hello"))
 println("length(\"\"): ", length(""))
 println("length(\" \"): ", length(" "))
 println("length(\"🤷‍♂️\"): ", length("🤷‍♂️"))
+
+println("reversed(\"🤷‍♂️\"): ", reversed("🤷‍♂️"))
+println("reversed(\"a🤷‍♂️b\"): ", reversed("a🤷‍♂️b"))
