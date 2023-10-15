@@ -73,13 +73,14 @@ internal static class GraphemeExtensions
 
     public static int GraphemeIndexOf(this string str, string value, int startIndex = 0)
     {
-        var normalized = value.Normalize(NormalizationForm.FormD);
-        var normalizedLength = normalized.GraphemeLength();
+        var strNormalizedLength = str.GraphemeLength();
+        var valueNormalized = value.Normalize(NormalizationForm.FormD);
+        var valueNormalizedLength = valueNormalized.GraphemeLength();
 
-        for (var i = startIndex; i < normalizedLength; i++)
+        for (var i = startIndex; i < strNormalizedLength; i++)
         {
-            var current = str.GraphemeSubstring(i, normalizedLength);
-            if (current == normalized)
+            var current = str.GraphemeSubstring(i, valueNormalizedLength);
+            if (current == valueNormalized)
                 return i;
         }
 
