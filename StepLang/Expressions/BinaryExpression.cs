@@ -1,5 +1,6 @@
 using System.Globalization;
 using StepLang.Expressions.Results;
+using StepLang.Framework;
 using StepLang.Interpreting;
 using StepLang.Parsing;
 
@@ -247,11 +248,11 @@ public class BinaryExpression : Expression
                     {
                         var value = a.ExpectString().Value;
                         var index = b.ExpectInteger().RoundedIntValue;
+                        var grapheme = value.GraphemeAt(index);
+                        if (grapheme == null)
+                            throw new IndexOutOfBoundsException(index, value.GraphemeLength());
 
-                        if (index < 0 || index >= value.Length)
-                            throw new IndexOutOfBoundsException(index, value.Length);
-
-                        return new StringResult(value[index].ToString());
+                        return new StringResult(grapheme);
                     }
                 default:
                     var indexRepresentation = b switch

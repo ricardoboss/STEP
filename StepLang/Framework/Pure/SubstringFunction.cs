@@ -21,18 +21,7 @@ public class SubstringFunction : NativeFunction
         var start = await startExp.EvaluateAsync(interpreter, r => r.ExpectNumber().RoundedIntValue, cancellationToken);
         var length = await lengthExp.EvaluateAsync(interpreter, r => r.ExpectNumber().RoundedIntValue, cancellationToken);
 
-        if (length <= 0)
-            return StringResult.Empty;
-
-        if (start < 0)
-            start = subject.Length + start;
-
-        if (start < 0 || start >= subject.Length)
-            return StringResult.Empty;
-
-        length = Math.Min(length, subject.Length - start);
-
-        var substring = subject.Substring(start, length);
+        var substring = subject.GraphemeSubstring(start, length);
 
         return new StringResult(substring);
     }
