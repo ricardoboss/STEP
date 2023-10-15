@@ -27,3 +27,4 @@ println("length(\"🤷‍♂️\"): ", length("🤷‍♂️"))
 
 println("reversed(\"🤷‍♂️\"): ", reversed("🤷‍♂️"))
 println("reversed(\"a🤷‍♂️b\"): ", reversed("a🤷‍♂️b"))
+println("reversed(\"a👨‍👩‍👦‍👦b\"): ", reversed("a👨‍👩‍👦‍👦b"))
