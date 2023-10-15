@@ -105,4 +105,17 @@ internal static class GraphemeExtensions
         var current = str.GraphemeSubstring(valueLength - normalizedLength, normalizedLength);
         return current == normalized;
     }
+
+    public static string ReverseGraphemes(this string str)
+    {
+        var enumerator = StringInfo.GetTextElementEnumerator(str);
+        var count = 0;
+        var graphemes = new string[str.GraphemeLength()];
+        while (enumerator.MoveNext())
+            graphemes[count++] = enumerator.GetTextElement();
+
+        Array.Reverse(graphemes);
+
+        return string.Concat(graphemes);
+    }
 }
