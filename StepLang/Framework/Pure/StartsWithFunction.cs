@@ -19,6 +19,6 @@ public class StartsWithFunction : NativeFunction
         var subject = await subjectExpression.EvaluateAsync(interpreter, r => r.ExpectString().Value, cancellationToken);
         var prefix = await prefixExpression.EvaluateAsync(interpreter, r => r.ExpectString().Value, cancellationToken);
 
-        return new BoolResult(subject.StartsWith(prefix, StringComparison.Ordinal));
+        return new BoolResult(subject.GraphemeStartsWith(prefix));
     }
 }
