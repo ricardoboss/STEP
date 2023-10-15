@@ -1,19 +1,19 @@
-﻿hello world!
-h
-w
-🤷‍♂️
-🤷‍♂️
-	a
-6
--1
-True
-False
-True
-False
-True
-False
-12
-5
-0
-1
-1
+﻿foo: hello world!
+foo[0]: h
+foo[6]: w
+"🤷‍♂️"[0]: 🤷‍♂️
+"a🤷‍♂️"[1]: 🤷‍♂️
+"\ta": 	a
+indexOf(foo, "world"): 6
+indexOf(foo, "bar"): -1
+contains(foo, "world"): True
+contains(foo, "bar"): False
+startsWith(foo, "hello"): True
+startsWith(foo, "world"): False
+endsWith(foo, "world!"): True
+endsWith(foo, "hello"): False
+length(foo): 12
+length("Hello"): 5
+length(""): 0
+length(" "): 1
+length("🤷‍♂️"): 1
