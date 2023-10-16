@@ -5,7 +5,7 @@ We value your input and appreciate your efforts to make our project better.
 
 ## Table of Contents
 
-1. [How Can You Contribute?](#how-can-you-contribute)
+1. [Ways to Contribute](#ways-to-contribute)
 2. [Code of Conduct](#code-of-conduct)
 3. [Getting Started](#getting-started)
     - [Forking the Repository](#forking-the-repository)
@@ -16,9 +16,10 @@ We value your input and appreciate your efforts to make our project better.
 5. [Submitting a Pull Request](#submitting-a-pull-request)
 6. [Code Review](#code-review)
 7. [Community](#community)
-8. [Feedback and Questions](#feedback-and-questions)
+8. [Licensing](#licensing)
+9. [Feedback and Questions](#feedback-and-questions)
 
-## How Can You Contribute?
+## Ways to Contribute
 
 There are several ways you can contribute to STEP:
 
@@ -69,11 +70,16 @@ all contributors.
    - Make sure your changes are not out-of-scope for the issue you are working on
    - Create small commits and put the idea behind each change in the commit message
 
+3. Write tests
+   - To add integration tests, create a new file in the `StepLang/Examples` folder, then add a file with the same name and the extension `.out` with the expected output
+   - To add unit tests, create new Xunit tests in the appropriate `StepLang.Tests` folder
+
 ### Coding Guidelines
 
 Make sure your code is properly formatted and follows our coding guidelines:
 
 - Format your code using `dotnet format`
+  - Run `dotnet tool install -g dotnet-format` to install it
 - Follow the [C# Coding Conventions](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions)
 - Follow the [.NET Design Guidelines](https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/)
 
@@ -92,6 +98,27 @@ Make sure your code is properly formatted and follows our coding guidelines:
 
 Join our community on [Discord](https://discord.gg/ySpmcdCqFN) to connect with other contributors, ask questions, and
 discuss development.
+
+In case you want to contact the maintainers privately, you can reach out to us here:
+
+- E-Mail:
+  - General: [info@step-lang.dev](mailto:info@step-lang.dev)
+  - Ricardo Boss: [mail@ricardoboss.de](mailto:mail@ricardoboss.de?subject=STEP%20Contribution)
+- Discord:
+  - Ricardo boss: [mizzle_de](https://discord.com/users/158966029286899713)
+
+## Licensing
+
+When you submit a contribution to the STEP project, you are agreeing to license your code under the same open-source
+license as the rest of the project, as specified in our project's license file (LICENSE.md).
+
+While you retain the copyright to your code, it will be available to the public under the project's license terms.
+Ensure that any third-party code or libraries in your contribution are compatible with our project's license.
+
+Note that the project maintainers may update the license in the future, and contributions made after a license change
+will be subject to the new terms. Your submission acknowledges and accepts these licensing terms.
+
+Thank you for your contribution to STEP!
 
 ## Feedback and Questions
 
