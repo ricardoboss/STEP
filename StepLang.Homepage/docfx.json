@@ -47,6 +47,7 @@
       "_appTitle": "STEP Programming Language",
       "_appName": "STEP",
       "_appLogoPath": "images/logo.svg",
+      "_appFaviconPath": "images/logo.svg",
       "_enableSearch": true
     },
     "globalMetadataFiles": [],
