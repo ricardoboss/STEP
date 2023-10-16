@@ -27,6 +27,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Fetch all history for all tags and branches
+        run: |
+          git fetch --prune --unshallow
+
       - name: Install .NET
         uses: actions/setup-dotnet@v3
         with:
