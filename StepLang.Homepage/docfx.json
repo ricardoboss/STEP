@@ -57,6 +57,11 @@
     ],
     "postProcessors": [],
     "keepFileLink": false,
-    "disableGitFeatures": false
+    "disableGitFeatures": false,
+    "sitemap": {
+      "baseUrl": "https://step-lang.dev",
+      "priority": 0.1,
+      "changefreq": "monthly"
+    }
   }
 }
