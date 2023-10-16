@@ -19,7 +19,7 @@ It is inspired by languages like Python, JavaScript, Dart and C#.
 
 To use STEP, you need to set up the STEP CLI.
 
-Check out the [installation guide](/Command-Line-Interface) for more information.
+Check out the [installation guide](https://github.com/ricardoboss/STEP/wiki/Command-Line-Interface) for more information.
 
 ## Documentation
 
