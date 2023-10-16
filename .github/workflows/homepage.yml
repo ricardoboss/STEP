@@ -1,4 +1,4 @@
-name: Generate Homepage
+name: Generate & Deploy Homepage
 
 on:
   push:
@@ -9,10 +9,19 @@ on:
       - 'StepLang.Homepage/**'
 
 jobs:
-  publish-docs:
-    name: Publish Homepage
+  deploy:
+    name: Deploy Homepage
 
     runs-on: ubuntu-latest
+
+    permissions:
+      pages: write      # to deploy to Pages
+      id-token: write   # to verify the deployment originates from an appropriate source
+
+    # Deploy to the github-pages environment
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Checkout
@@ -36,9 +45,18 @@ jobs:
       - name: Generate Homepage
         run: docfx StepLang.Homepage/docfx.json
 
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
-        if: github.ref == 'refs/heads/main'
+      - name: Fix permissions
+        run: |
+          chmod -c -R +rX "StepLang.Homepage/_site/" | while read line; do
+            echo "::warning title=Invalid file permissions automatically fixed::$line"
+          done
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v2
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: StepLang.Homepage/_site
+          path: StepLang.Homepage/_site
+
+      - name: Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/main'
+        id: deployment
+        uses: actions/deploy-pages@v2
