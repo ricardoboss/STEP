@@ -165,6 +165,7 @@ jobs:
           appstore-connect-username: ${{ secrets.NOTARIZATION_USERNAME }}
           appstore-connect-password: ${{ secrets.NOTARIZATION_PASSWORD }}
           appstore-connect-team-id: ${{ secrets.NOTARIZATION_TEAM_ID }}
+          primary-bundle-id: de.ricardoboss.step
 
       - name: Verify notarization
         shell: bash
