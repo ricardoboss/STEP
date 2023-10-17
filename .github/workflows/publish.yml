@@ -91,11 +91,47 @@ jobs:
           APPLE_SIGNING_ID: ${{ secrets.APPLE_SIGNING_ID }}
         run: pushd StepLang.CLI && ./publish.sh && popd
 
-      - name: Upload Artifacts
+      - name: Upload Artifacts (step-linux-x64)
         uses: actions/upload-artifact@v3
         with:
-          name: binaries
-          path: StepLang.CLI/publish/*
+          name: step-linux-x64
+          path: StepLang.CLI/publish/step-linux-x64
+
+      - name: Upload Artifacts (step-linux-arm64)
+        uses: actions/upload-artifact@v3
+        with:
+          name: step-linux-arm64
+          path: StepLang.CLI/publish/step-linux-arm64
+
+      - name: Upload Artifacts (step-win-x64)
+        uses: actions/upload-artifact@v3
+        with:
+          name: step-windows-x64
+          path: StepLang.CLI/publish/step-win-x64
+
+      - name: Upload Artifacts (step-win-arm64)
+        uses: actions/upload-artifact@v3
+        with:
+          name: step-windows-arm64
+          path: StepLang.CLI/publish/step-win-arm64
+
+      - name: Upload Artifacts (step-osx-x64)
+        uses: actions/upload-artifact@v3
+        with:
+          name: step-osx-x64
+          path: StepLang.CLI/publish/step-osx-x64
+
+      - name: Upload Artifacts (step-osx-arm64)
+        uses: actions/upload-artifact@v3
+        with:
+          name: step-osx-arm64
+          path: StepLang.CLI/publish/step-osx-arm64
+
+      - name: Upload Artifacts (step)
+        uses: actions/upload-artifact@v3
+        with:
+          name: step
+          path: StepLang.CLI/publish/step.zip
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
