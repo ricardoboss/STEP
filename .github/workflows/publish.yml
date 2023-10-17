@@ -151,12 +151,8 @@ jobs:
       - name: Code Sign Binary
         env:
           APPLE_SIGNING_ID: ${{ secrets.APPLE_SIGNING_ID }}
-        run: |
-          # Force the codesignature
-          codesign --force --timestamp --entitlements StepLang.CLI/entitlements.plist --sign "$APPLE_SIGNING_ID" ./artifact/step-osx-arm64
-
-          # Verify the code signature
-          codesign -v ./artifact/step-osx-arm64 --verbose
+        shell: bash
+        run: codesign --force --timestamp --entitlements StepLang.CLI/entitlements.plist --sign "$APPLE_SIGNING_ID" ./artifact/step-osx-arm64
 
       - name: Notarize Binary
         uses: lando/notarize-action@v2
