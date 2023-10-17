@@ -20,7 +20,7 @@ rm -rf publish
 mkdir -p publish
 
 echo "📦 Restoring dependencies..."
-dotnet restore --verbosity quiet --nologo
+dotnet restore --verbosity quiet --nologo --locked-mode
 
 # iterate over all platforms to build and publish each
 for platform in "${platforms[@]}"; do
