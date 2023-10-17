@@ -107,13 +107,13 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: step-windows-x64
-          path: StepLang.CLI/publish/step-win-x64
+          path: StepLang.CLI/publish/step-win-x64.exe
 
       - name: Upload Artifacts (step-win-arm64)
         uses: actions/upload-artifact@v3
         with:
           name: step-windows-arm64
-          path: StepLang.CLI/publish/step-win-arm64
+          path: StepLang.CLI/publish/step-win-arm64.exe
 
       - name: Upload Artifacts (step-osx-x64)
         uses: actions/upload-artifact@v3
