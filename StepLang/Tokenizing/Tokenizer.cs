@@ -187,8 +187,13 @@ public class Tokenizer
         if (tokenValue.IsKnownTypeName())
             return FinalizeToken(TokenType.TypeName);
 
-        if (tokenValue.TryParseKeyword(out var tmpType))
-            return FinalizeToken(tmpType.Value);
+        // keywords are only valid if they are not surrounded by alphanumeric characters
+        var nextCharAvailable = characterQueue.TryPeek(out var nextChar);
+        if (!nextCharAvailable || nextCharAvailable && !char.IsLetterOrDigit(nextChar))
+        {
+            if (tokenValue.TryParseKeyword(out var tmpType))
+                return FinalizeToken(tmpType.Value);
+        }
 
         if (double.TryParse(tokenValue, NumberStyles.Any, CultureInfo.InvariantCulture, out _))
             return FinalizeToken(TokenType.LiteralNumber);

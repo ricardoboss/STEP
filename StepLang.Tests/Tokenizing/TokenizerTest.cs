@@ -286,4 +286,31 @@ public class TokenizerTest
         Assert.Equal("TOK002", exception.ErrorCode);
         Assert.Equal('\"', exception.StringDelimiter);
     }
+
+    [Fact]
+    public void TestTokenizeKeywordInIdentifier()
+    {
+        // identifier "ifempty" contains the keyword "if"
+        const string source = "println(ifempty(\"abc\", \"b\"))";
+
+        var tokenizer = new Tokenizer();
+        tokenizer.Add(source);
+        var tokens = tokenizer.Tokenize().ToList();
+
+        Assert.Equal(10, tokens.Count);
+        Assert.Equal(TokenType.Identifier, tokens[0].Type);
+        Assert.Equal("println", tokens[0].Value);
+        Assert.Equal(TokenType.OpeningParentheses, tokens[1].Type);
+        Assert.Equal(TokenType.Identifier, tokens[2].Type);
+        Assert.Equal("ifempty", tokens[2].Value);
+        Assert.Equal(TokenType.OpeningParentheses, tokens[3].Type);
+        Assert.Equal(TokenType.LiteralString, tokens[4].Type);
+        Assert.Equal("\"abc\"", tokens[4].Value);
+        Assert.Equal(TokenType.CommaSymbol, tokens[5].Type);
+        Assert.Equal(TokenType.Whitespace, tokens[6].Type);
+        Assert.Equal(TokenType.LiteralString, tokens[7].Type);
+        Assert.Equal("\"b\"", tokens[7].Value);
+        Assert.Equal(TokenType.ClosingParentheses, tokens[8].Type);
+        Assert.Equal(TokenType.ClosingParentheses, tokens[9].Type);
+    }
 }
