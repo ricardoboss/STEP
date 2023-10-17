@@ -10,9 +10,6 @@
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-        <PublishTrimmed>true</PublishTrimmed>
-        <PublishSingleFile>true</PublishSingleFile>
-        <SelfContained>true</SelfContained>
         <DebugType>embedded</DebugType>
 
         <!-- TODO: Treat errors as warnings and remove partial trimming as soon as https://github.com/spectreconsole/spectre.console/issues/955 is resolved -->

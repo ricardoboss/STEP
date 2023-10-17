@@ -26,7 +26,7 @@ dotnet restore --verbosity quiet --nologo --locked-mode
 for platform in "${platforms[@]}"; do
     echo "🔨 Building for $platform..."
 
-    dotnet publish --configuration Release --runtime "$platform" --framework "$frameworkVersion" --verbosity quiet --nologo
+    dotnet publish --configuration Release --runtime "$platform" --framework "$frameworkVersion" --verbosity quiet --nologo --self-contained true /p:PublishTrimmed=true /p:PublishSingleFile=true
 
     sourceFilename="step"
     if [[ "$platform" == "win-x64" || "$platform" == "win-arm64" ]]; then
@@ -60,7 +60,7 @@ done
 echo "🔨 Building platform-independent binary..."
 
 # build platform-independent binary
-dotnet publish --configuration Release --framework "$frameworkVersion" --verbosity quiet --nologo --self-contained false /p:PublishTrimmed=false /p:PublishSingleFile=false
+dotnet publish --configuration Release --framework "$frameworkVersion" --verbosity quiet --nologo
 
 # remove platform-dependent binary
 rm bin/Release/$frameworkVersion/publish/step
