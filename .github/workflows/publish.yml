@@ -44,10 +44,10 @@ jobs:
         run: dotnet restore --locked-mode
 
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build --configuration Release --framework "net7.0" --no-restore
 
       - name: Test
-        run: dotnet test --configuration Release --no-build
+        run: dotnet test --configuration Release --framework "net7.0" --no-build
 
       - name: Publish
         run: pushd StepLang.CLI && ./publish.sh && popd
