@@ -162,6 +162,7 @@ jobs:
           appstore-connect-password: ${{ secrets.NOTARIZATION_PASSWORD }}
           appstore-connect-team-id: ${{ secrets.NOTARIZATION_TEAM_ID }}
           primary-bundle-id: de.ricardoboss.step
+          verbose: true
 
       - name: Verify notarization
         shell: bash
