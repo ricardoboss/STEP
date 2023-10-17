@@ -3,11 +3,11 @@
 set -e
 
 platforms=(
-#  "linux-x64"
-#  "win-x64"
-#  "osx-x64"
-#  "linux-arm64"
-#  "win-arm64"
+  "linux-x64"
+  "win-x64"
+  "osx-x64"
+  "linux-arm64"
+  "win-arm64"
   "osx-arm64"
 )
 frameworkVersion="net7.0"
