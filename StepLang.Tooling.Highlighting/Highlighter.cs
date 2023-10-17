@@ -58,6 +58,8 @@ public class Highlighter
         TokenType.ClosingSquareBracket => scheme.Punctuation,
         TokenType.ColonSymbol => scheme.Punctuation,
         TokenType.ImportKeyword => scheme.Keyword,
+        TokenType.ForEachKeyword => scheme.Keyword,
+        TokenType.InKeyword => scheme.Keyword,
         _ => scheme.Default,
     };
 }
