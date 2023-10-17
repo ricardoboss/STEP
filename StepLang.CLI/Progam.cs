@@ -7,9 +7,7 @@ using StepLang.CLI.Commands;
 
 const string slogan = "STEP - Simple Transition to Elevated Programming";
 
-await using var services = new ServiceCollectionTypeRegistrar();
-
-var app = new CommandApp<DefaultCommand>(services)
+var app = new CommandApp<DefaultCommand>()
         .WithDescription(slogan + Environment.NewLine + "Version: " + GitVersionInformation.FullSemVer)
     ;
 

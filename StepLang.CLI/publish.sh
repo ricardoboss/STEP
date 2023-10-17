@@ -13,18 +13,20 @@ platforms=(
 frameworkVersion="net7.0"
 
 echo "🗑️ Cleaning up..."
+dotnet clean --verbosity quiet --nologo
 
-# clean up any built files
-rm -rf bin obj publish
-
-# move published binaries to publish folder
+# clean publish folder
+rm -rf publish
 mkdir -p publish
+
+echo "📦 Restoring dependencies..."
+dotnet restore --verbosity quiet --nologo
 
 # iterate over all platforms to build and publish each
 for platform in "${platforms[@]}"; do
     echo "🔨 Building for $platform..."
 
-    dotnet publish --configuration Release --runtime "$platform" --framework "$frameworkVersion" --verbosity quiet --nologo --self-contained true /p:PublishSingleFile=true /p:PublishTrimmed=true
+    dotnet publish --configuration Release --runtime "$platform" --framework "$frameworkVersion" --verbosity quiet --nologo
 
     sourceFilename="step"
     if [[ "$platform" == "win-x64" || "$platform" == "win-arm64" ]]; then
@@ -52,7 +54,7 @@ done
 echo "🔨 Building platform-independent binary..."
 
 # build platform-independent binary
-dotnet publish --configuration Release --framework "$frameworkVersion" --verbosity quiet --nologo
+dotnet publish --configuration Release --framework "$frameworkVersion" --verbosity quiet --nologo --self-contained false /p:PublishTrimmed=false /p:PublishSingleFile=false
 
 # remove platform-dependent binary
 rm bin/Release/$frameworkVersion/publish/step
@@ -61,3 +63,5 @@ rm bin/Release/$frameworkVersion/publish/step
 zip -jq publish/step bin/Release/$frameworkVersion/publish/*
 
 echo -e "\t✅ built publish/step.zip"
+
+echo "✅ Done!"

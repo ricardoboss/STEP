@@ -10,7 +10,14 @@
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <PublishTrimmed>true</PublishTrimmed>
+        <PublishSingleFile>true</PublishSingleFile>
+        <SelfContained>true</SelfContained>
+        <DebugType>embedded</DebugType>
+
+        <!-- TODO: Treat errors as warnings and remove partial trimming as soon as https://github.com/spectreconsole/spectre.console/issues/955 is resolved -->
+        <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+        <TrimMode>partial</TrimMode>
     </PropertyGroup>
 
     <ItemGroup>
@@ -37,9 +44,4 @@
         <ProjectReference Include="..\StepLang\StepLang.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-      <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
-        <HintPath>C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\7.0.11\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
-      </Reference>
-    </ItemGroup>
 </Project>
