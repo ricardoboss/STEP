@@ -22,6 +22,12 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        os: [linux, win, osx]
+        arch: [x64, arm64]
+        dotnet: [7.0]
+
     env:
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
       DOTNET_CLI_TELEMETRY_OPTOUT: true
@@ -35,7 +41,7 @@ jobs:
       - name: Install .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 7.x
+          dotnet-version: ${{ matrix.dotnet }}
 
       - name: Cache NuGet packages
         uses: actions/cache@v3
@@ -45,59 +51,43 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuget-
 
-      - name: Restore dependencies
+      - name: Restore Dependencies
         run: dotnet restore --locked-mode --nologo
 
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet publish --configuration Release --no-restore --runtime ${{ matrix.os }}-${{ matrix.arch }} --framework net${{ matrix.dotnet }} --self-contained true /p:PublishTrimmed=true /p:PublishSingleFile=true
 
-      - name: Test
-        run: dotnet test --configuration Release --no-build
+      - name: Prepare Artifact
+        env:
+          frameworkVersion: ${{ matrix.dotnet }}
+          platform: ${{ matrix.os }}-${{ matrix.arch }}
+        run: |
+          mkdir -p publish
 
-      - name: Publish Binaries
-        run: pushd StepLang.CLI && ./publish.sh && popd
+          sourceFilename="step"
+          if [[ "$platform" == "win-x64" || "$platform" == "win-arm64" ]]; then
+              sourceFilename="$sourceFilename.exe"
+          fi
 
-      - name: Upload Artifacts (step-linux-x64)
+          targetFilename="step-$platform"
+          if [[ "$platform" == "win-x64" || "$platform" == "win-arm64" ]]; then
+              targetFilename="$targetFilename.exe"
+          fi
+
+          outputPath="publish/$targetFilename"
+
+          # move built binary to publish folder
+          mv "bin/Release/$frameworkVersion/$platform/publish/$sourceFilename" "$outputPath"
+
+          chmod +x "$outputPath"
+
+          echo "Created $outputPath"
+
+      - name: Upload Artifact (step-${{ matrix.os }}-${{ matrix.arch }})
         uses: actions/upload-artifact@v3
         with:
-          name: step-linux-x64
-          path: StepLang.CLI/publish/step-linux-x64
-
-      - name: Upload Artifacts (step-linux-arm64)
-        uses: actions/upload-artifact@v3
-        with:
-          name: step-linux-arm64
-          path: StepLang.CLI/publish/step-linux-arm64
-
-      - name: Upload Artifacts (step-win-x64)
-        uses: actions/upload-artifact@v3
-        with:
-          name: step-windows-x64
-          path: StepLang.CLI/publish/step-win-x64.exe
-
-      - name: Upload Artifacts (step-win-arm64)
-        uses: actions/upload-artifact@v3
-        with:
-          name: step-windows-arm64
-          path: StepLang.CLI/publish/step-win-arm64.exe
-
-      - name: Upload Artifacts (step-osx-x64)
-        uses: actions/upload-artifact@v3
-        with:
-          name: step-osx-x64
-          path: StepLang.CLI/publish/step-osx-x64
-
-      - name: Upload Artifacts (step-osx-arm64)
-        uses: actions/upload-artifact@v3
-        with:
-          name: step-osx-arm64
-          path: StepLang.CLI/publish/step-osx-arm64
-
-      - name: Upload Artifacts (step)
-        uses: actions/upload-artifact@v3
-        with:
-          name: step
-          path: StepLang.CLI/publish/step.zip
+          name: step-${{ matrix.os }}-${{ matrix.arch }}
+          path: StepLang.CLI/publish/step-${{ matrix.os }}-${{ matrix.arch }}*
 
   sign-macos:
     name: Sign macOS binary
