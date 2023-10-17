@@ -6,6 +6,7 @@
         <Nullable>enable</Nullable>
         <LangVersion>default</LangVersion>
         <AnalysisMode>All</AnalysisMode>
+        <IsTrimmable>false</IsTrimmable>
     </PropertyGroup>
 
     <ItemGroup>
