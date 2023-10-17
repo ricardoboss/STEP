@@ -86,10 +86,16 @@ jobs:
       - name: Test
         run: dotnet test --configuration Release --no-build
 
-      - name: Publish
+      - name: Publish Binaries
         env:
           APPLE_SIGNING_ID: ${{ secrets.APPLE_SIGNING_ID }}
         run: pushd StepLang.CLI && ./publish.sh && popd
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: binaries
+          path: StepLang.CLI/publish/*
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
