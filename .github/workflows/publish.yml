@@ -59,7 +59,7 @@ jobs:
 
       - name: Prepare Artifact
         env:
-          frameworkVersion: ${{ matrix.dotnet }}
+          frameworkVersion: net${{ matrix.dotnet }}
           platform: ${{ matrix.os }}-${{ matrix.arch }}
         run: |
           mkdir -p publish
@@ -77,7 +77,7 @@ jobs:
           outputPath="publish/$targetFilename"
 
           # move built binary to publish folder
-          mv "bin/Release/$frameworkVersion/$platform/publish/$sourceFilename" "$outputPath"
+          mv "StepLang.CLI/bin/Release/$frameworkVersion/$platform/publish/$sourceFilename" "$outputPath"
 
           chmod +x "$outputPath"
 
