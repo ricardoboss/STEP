@@ -55,7 +55,7 @@ jobs:
         run: dotnet restore --nologo --force-evaluate --runtime ${{ matrix.os }}-${{ matrix.arch }}
 
       - name: Build
-        run: dotnet publish --project StepLang.CLI/StepLang.CLI.csproj --configuration Release --no-restore --runtime ${{ matrix.os }}-${{ matrix.arch }} --framework net${{ matrix.dotnet }} --self-contained true /p:PublishTrimmed=true /p:PublishSingleFile=true
+        run: dotnet publish StepLang.CLI/StepLang.CLI.csproj --configuration Release --no-restore --runtime ${{ matrix.os }}-${{ matrix.arch }} --framework net${{ matrix.dotnet }} --self-contained true /p:PublishTrimmed=true /p:PublishSingleFile=true
 
       - name: Prepare Artifact
         env:
