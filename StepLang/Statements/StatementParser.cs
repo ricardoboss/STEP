@@ -194,7 +194,7 @@ public class StatementParser
     {
         // looping: foreach ([[type name] <identifier>: ] [type name] <identifier> in <expression>) { [statement]* }
 
-        var openingParenthesesToken = tokenQueue.Dequeue(TokenType.OpeningParentheses);
+        tokenQueue.Dequeue(TokenType.OpeningParentheses);
 
         var firstExpression = ParseForEachParamExpression();
         Expression? keyVariableExpression;
@@ -235,25 +235,25 @@ public class StatementParser
             switch (tokenQueue.PeekType())
             {
                 case TokenType.TypeName:
-                {
-                    var typeToken = tokenQueue.Dequeue(TokenType.TypeName);
-                    var identifierToken = tokenQueue.Dequeue(TokenType.Identifier);
+                    {
+                        var typeToken = tokenQueue.Dequeue(TokenType.TypeName);
+                        var identifierToken = tokenQueue.Dequeue(TokenType.Identifier);
 
-                    return new VariableDeclarationExpression(typeToken, identifierToken);
-                }
+                        return new VariableDeclarationExpression(typeToken, identifierToken);
+                    }
                 case TokenType.Identifier:
-                {
-                    var identifierToken = tokenQueue.Dequeue(TokenType.Identifier);
+                    {
+                        var identifierToken = tokenQueue.Dequeue(TokenType.Identifier);
 
-                    return new VariableExpression(identifierToken);
-                }
+                        return new VariableExpression(identifierToken);
+                    }
                 default:
-                {
-                    // PeekType already throws if the queue is empty, we can safely dequeue here
-                    var token = tokenQueue.Dequeue();
+                    {
+                        // PeekType already throws if the queue is empty, we can safely dequeue here
+                        var token = tokenQueue.Dequeue();
 
-                    throw new UnexpectedTokenException(token, TokenType.TypeName, TokenType.Identifier);
-                }
+                        throw new UnexpectedTokenException(token, TokenType.TypeName, TokenType.Identifier);
+                    }
             }
         }
     }
