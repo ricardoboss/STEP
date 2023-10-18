@@ -94,7 +94,7 @@ map ages = {
     "Jane": 39,
     "Joe": 45
 }
-foreach (string name, number age in ages) {
+foreach (string name: number age in ages) {
     println(name, " is ", age, " years old")
 }
 ```
