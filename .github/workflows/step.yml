@@ -43,7 +43,7 @@ jobs:
             ${{ runner.os }}-nuget-
 
       - name: Restore dependencies
-        run: dotnet restore --locked-mode
+        run: dotnet restore
 
       - name: Run step format
         run: dotnet run --project StepLang.CLI/StepLang.CLI.csproj -- format --set-exit-code --dry-run
