@@ -87,7 +87,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: step-${{ matrix.os }}-${{ matrix.arch }}
-          path: StepLang.CLI/publish/step-${{ matrix.os }}-${{ matrix.arch }}*
+          path: publish/step-${{ matrix.os }}-${{ matrix.arch }}*
 
   sign-macos:
     name: Sign macOS binary
