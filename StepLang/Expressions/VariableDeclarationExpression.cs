@@ -27,7 +27,8 @@ public class VariableDeclarationExpression : Expression
     /// <inheritdoc />
     public override Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
-        if (interpreter.CurrentScope.Exists(Identifier.Value, false)) {
+        if (interpreter.CurrentScope.Exists(Identifier.Value, false))
+        {
             throw new VariableAlreadyDeclaredException(Identifier);
         }
 
