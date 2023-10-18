@@ -52,7 +52,7 @@ jobs:
             ${{ runner.os }}-nuget-
 
       - name: Restore Dependencies
-        run: dotnet restore --locked-mode --nologo --runtime ${{ matrix.os }}-${{ matrix.arch }}
+        run: dotnet restore --nologo --force-evaluate --runtime ${{ matrix.os }}-${{ matrix.arch }}
 
       - name: Build
         run: dotnet publish --configuration Release --no-restore --runtime ${{ matrix.os }}-${{ matrix.arch }} --framework net${{ matrix.dotnet }} --self-contained true /p:PublishTrimmed=true /p:PublishSingleFile=true
