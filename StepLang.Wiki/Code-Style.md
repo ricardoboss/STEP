@@ -81,14 +81,20 @@ while (i < 10) {
 
 ### 2.2.2 Foreach loops
 
-The foreach loop can be used to iterate over a list of values:
+The foreach loop can be used to iterate over a list or map. With a list, you give the current item a local variable.
+For example, given a list `names`, you could iterate with a variable `string name`, which will automatically be
+assigned the respective value each time.
 
 ```step
 list names = ["John", "Jane", "Joe"]
 foreach (string name in names) {
     println(name)
 }
+```
 
+In the case of a map, you need to give both the key and the value a variable each, like so:
+
+```step
 map ages = {
     "John": 42,
     "Jane": 39,
