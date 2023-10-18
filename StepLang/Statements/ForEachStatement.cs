@@ -79,7 +79,8 @@ public class ForEachStatement : Statement
                 }
             }
 
-            try {
+            try
+            {
                 interpreter.CurrentScope.UpdateValue(valueToken, pair.Value);
             }
             catch (IncompatibleVariableTypeException e)
