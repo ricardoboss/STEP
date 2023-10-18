@@ -232,25 +232,29 @@ public class StatementParser
 
         Expression ParseForEachParamExpression()
         {
-            if (tokenQueue.PeekType() is TokenType.TypeName)
+            switch (tokenQueue.PeekType())
             {
-                var firstType = tokenQueue.Dequeue(TokenType.TypeName);
-                var firstIdentifier = tokenQueue.Dequeue(TokenType.Identifier);
+                case TokenType.TypeName:
+                {
+                    var typeToken = tokenQueue.Dequeue(TokenType.TypeName);
+                    var identifierToken = tokenQueue.Dequeue(TokenType.Identifier);
 
-                return new VariableDeclarationExpression(firstType, firstIdentifier);
+                    return new VariableDeclarationExpression(typeToken, identifierToken);
+                }
+                case TokenType.Identifier:
+                {
+                    var identifierToken = tokenQueue.Dequeue(TokenType.Identifier);
+
+                    return new VariableExpression(identifierToken);
+                }
+                default:
+                {
+                    // PeekType already throws if the queue is empty, we can safely dequeue here
+                    var token = tokenQueue.Dequeue();
+
+                    throw new UnexpectedTokenException(token, TokenType.TypeName, TokenType.Identifier);
+                }
             }
-
-            if (tokenQueue.PeekType() is TokenType.Identifier)
-            {
-                var firstIdentifier = tokenQueue.Dequeue(TokenType.Identifier);
-
-                return new VariableExpression(firstIdentifier);
-            }
-
-            if (tokenQueue.TryDequeue(out var token))
-                throw new UnexpectedTokenException(token, TokenType.TypeName, TokenType.Identifier);
-
-            throw new UnexpectedEndOfTokensException(openingParenthesesToken.Location);
         }
     }
 
