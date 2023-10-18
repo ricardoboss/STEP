@@ -104,7 +104,7 @@ jobs:
           fetch-depth: 0
 
       - name: Download artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: step-osx-arm64
           path: ./artifact
@@ -180,43 +180,43 @@ jobs:
 
     steps:
       - name: Download binaries (step)
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: step
           path: ./artifacts
 
       - name: Download binaries (step-linux-x64)
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: step-linux-x64
           path: ./artifacts
 
       - name: Download binaries (step-linux-arm64)
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: step-linux-arm64
           path: ./artifacts
 
       - name: Download binaries (step-win-x64)
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: step-windows-x64
           path: ./artifacts
 
       - name: Download binaries (step-win-arm64)
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: step-windows-arm64
           path: ./artifacts
 
       - name: Download binaries (step-osx-x64)
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: step-osx-x64
           path: ./artifacts
 
       - name: Download binaries (step-osx-arm64-signed)
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: step-osx-arm64-signed
           path: ./artifacts
