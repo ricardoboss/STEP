@@ -10,7 +10,7 @@ internal static class Program
     [DynamicDependency(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.PublicNestedTypes, typeof(RunCommand))]
     [DynamicDependency(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.PublicNestedTypes, typeof(FormatCommand))]
     [DynamicDependency(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.PublicNestedTypes, typeof(HighlightCommand))]
-    public static async Task<int> Main(string [] args)
+    public static async Task<int> Main(string[] args)
     {
         const string slogan = "STEP - Simple Transition to Elevated Programming";
 
