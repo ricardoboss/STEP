@@ -48,6 +48,8 @@ STEP has the following token types:
   - `continue`
   - `return`
   - `import`
+  - `foreach`
+  - `in`
 - comments (e.g. `// This is a comment`)
 
 Keywords cannot be used as identifiers.
