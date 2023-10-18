@@ -66,6 +66,9 @@ Since anonymous code blocks have no associated keyword, the braces are placed on
 ## 2.2 Loops
 
 Loops are used to repeat a block of code multiple times until a certain condition is met.
+
+### 2.2.1 While loops
+
 The most common loop is the `while`-loop:
 
 ```step
@@ -73,6 +76,26 @@ number i = 0
 while (i < 10) {
 	println(i)
 	i = i + 1
+}
+```
+
+### 2.2.2 Foreach loops
+
+The foreach loop can be used to iterate over a list of values:
+
+```step
+list names = ["John", "Jane", "Joe"]
+foreach (string name in names) {
+    println(name)
+}
+
+map ages = {
+    "John": 42,
+    "Jane": 39,
+    "Joe": 45
+}
+foreach (string name, number age in ages) {
+    println(name, " is ", age, " years old")
 }
 ```
 
