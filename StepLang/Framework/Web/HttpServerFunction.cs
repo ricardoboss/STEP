@@ -121,15 +121,14 @@ public class HttpServerFunction : NativeFunction
                     }, c);
 
                     IDictionary<string, ExpressionResult> responseMap;
-                    if (responseResult.ResultType is ResultType.Map)
+                    if (responseResult is MapResult map)
                     {
-                        responseMap = responseResult.ExpectMap().Value;
+                        responseMap = map.Value;
                     }
                     else
                     {
                         responseMap = new Dictionary<string, ExpressionResult>
                         {
-                            ["status"] = new NumberResult(200),
                             ["body"] = responseResult,
                         };
                     }
