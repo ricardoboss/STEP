@@ -77,6 +77,16 @@
             </li>
             <li>
                 <details>
+                    <summary>Web</summary>
+                    <ul>
+                        <li><a href="./Fetch">fetch</a></li>
+                        <li><a href="./HttpServer">httpServer</a></li>
+                        <li><a href="./FileResponse">fileResponse</a></li>
+                    </ul>
+                </details>
+            </li>
+            <li>
+                <details>
                     <summary>Other</summary>
                     <ul>
                         <li><a href="./Random">random</a></li>
