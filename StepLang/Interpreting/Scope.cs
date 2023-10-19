@@ -86,7 +86,6 @@ public class Scope
         // web functions
         CreateVariable(FetchFunction.Identifier, new FetchFunction().ToResult());
         CreateVariable(HttpServerFunction.Identifier, new HttpServerFunction().ToResult());
-        CreateVariable(StringResponseFunction.Identifier, new StringResponseFunction().ToResult());
         CreateVariable(FileResponseFunction.Identifier, new FileResponseFunction().ToResult());
 
         CreateVariable("null", NullResult.Instance);
