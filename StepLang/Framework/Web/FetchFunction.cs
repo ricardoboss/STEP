@@ -6,7 +6,7 @@ using StepLang.Interpreting;
 using StepLang.Parsing;
 using StepLang.Tokenizing;
 
-namespace StepLang.Framework.Other;
+namespace StepLang.Framework.Web;
 
 public class FetchFunction : GenericFunction<StringResult, MapResult>
 {

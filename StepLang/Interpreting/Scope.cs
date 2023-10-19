@@ -5,6 +5,7 @@ using StepLang.Framework.Conversion;
 using StepLang.Framework.Mutating;
 using StepLang.Framework.Other;
 using StepLang.Framework.Pure;
+using StepLang.Framework.Web;
 using StepLang.Tokenizing;
 
 namespace StepLang.Interpreting;
@@ -83,6 +84,11 @@ public class Scope
         CreateVariable(FileDeleteFunction.Identifier, new FileDeleteFunction().ToResult());
         CreateVariable(SeedFunction.Identifier, new SeedFunction().ToResult());
         CreateVariable(RandomFunction.Identifier, new RandomFunction().ToResult());
+
+        // web functions
+        CreateVariable(FetchFunction.Identifier, new FetchFunction().ToResult());
+        CreateVariable(HttpServerFunction.Identifier, new HttpServerFunction().ToResult());
+        CreateVariable(FileResponseFunction.Identifier, new FileResponseFunction().ToResult());
 
         CreateVariable("null", NullResult.Instance);
 
