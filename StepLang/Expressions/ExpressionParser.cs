@@ -86,7 +86,7 @@ public class ExpressionParser
         {
             if (token.Type is TokenType.CommaSymbol && expressionDepth == 0 && codeBlockDepth == 0 && listDepth == 0)
                 yield return await FinalizeGroup();
-            else
+            else if (token.Type is not (TokenType.Whitespace or TokenType.NewLine))
             {
                 currentGroup.Enqueue(token);
 

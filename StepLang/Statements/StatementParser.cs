@@ -143,11 +143,7 @@ public class StatementParser
     {
         // return: return <expression>
 
-        var expressionTokens = tokenQueue.DequeueUntil(TokenType.NewLine);
-
-        tokenQueue.Dequeue(TokenType.NewLine);
-
-        var expression = await ExpressionParser.ParseAsync(expressionTokens, cancellationToken);
+        var expression = await ParseValueExpression(cancellationToken);
 
         return new ReturnStatement(expression)
         {
@@ -316,7 +312,6 @@ public class StatementParser
 
     private async Task<Expression> ParseValueExpression(CancellationToken cancellationToken)
     {
-        // FIXME: this does not work with multi-line values like function definitions
         var expressionTokens = tokenQueue.DequeueUntil(TokenType.NewLine);
 
         if (tokenQueue.IsNotEmpty)
