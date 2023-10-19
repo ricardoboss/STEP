@@ -5,7 +5,7 @@ using StepLang.Expressions.Results;
 using StepLang.Framework.Conversion;
 using StepLang.Interpreting;
 
-namespace StepLang.Framework.Other;
+namespace StepLang.Framework.Web;
 
 public class FetchFunction : NativeFunction
 {
