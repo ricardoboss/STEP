@@ -92,18 +92,28 @@ foreach (string name in names) {
 }
 ```
 
-In the case of a map, you need to give both the key and the value a variable each, like so:
+You can also assign the index of the current item to a local variable, by using this syntax:
+
+```step
+foreach (number index: string name in names) {
+    println(index, ": ", name)
+}
+```
+
+Instead of a `list`, you can also iterate over a `map`:
 
 ```step
 map ages = {
     "John": 42,
     "Jane": 39,
-    "Joe": 45
+    "Joe": 21
 }
 foreach (string name: number age in ages) {
-    println(name, " is ", age, " years old")
+    println(name, ": ", age)
 }
 ```
+
+In this case, the local variables are assigned the key and value of the current item.
 
 ## 2.3 Functions
 
