@@ -72,6 +72,16 @@ Converting functions convert the given value to a different type or retrieve an 
 | [`toTypeName(any subject)`](./ToTypeName)                 | `string`           | Returns the type name of the given value as a string.         |
 | [`toValues(map subject)`](./ToValues)                     | `list`             | Returns a list of values from the given map.                  |
 
+## Web
+
+Functions for working with the web and web technologies.
+
+| Function                                                                                                                 | Returns  | Description                                                                                                             |
+|--------------------------------------------------------------------------------------------------------------------------|----------|-------------------------------------------------------------------------------------------------------------------------|
+| [`fetch(string url, map options)`](./Fetch)                                                                              | `string` | Makes a request to a URL and returns the response as a string or `null` if the request failed.                          |
+| [`httpServer(number port, function requestHandler)`<br>`httpServer(map options, function requestHandler)`](./HttpServer) | `void`   | Starts a HTTP server on the specified port/with the specified options and calls the callback for each incoming request. |
+| [`fileResponse(string path)`](./FileResponse)                                                                            | `map`    | Reads the file contents and returns a map that can be returned from a `httpServer` request handler.                     |
+
 ## Other
 
 Other functions do not fit into any of the other categories.
@@ -84,4 +94,3 @@ Other functions do not fit into any of the other categories.
 | [`println(any ...value)`](./Println)        | `void`   | writes a value to `StdOut` and appends a new line.                                             |
 | [`readline()`](./Readline)                  | `string` | Reads a line from `StdIn` and returns it as a string.                                          |
 | [`read()`](./Read)                          | `string` | Reads a single character from `StdIn` and returns it as a string.                              |
-| [`fetch(string url, map options)`](./Fetch) | `string` | Makes a request to a URL and returns the response as a string or `null` if the request failed. |
