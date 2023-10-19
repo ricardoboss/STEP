@@ -184,13 +184,13 @@ public class Tokenizer
     {
         var tokenValue = tokenBuilder.ToString();
 
-        if (tokenValue.IsKnownTypeName())
-            return FinalizeToken(TokenType.TypeName);
-
         // keywords are only valid if they are not surrounded by alphanumeric characters
         var nextCharAvailable = characterQueue.TryPeek(out var nextChar);
         if (!nextCharAvailable || nextCharAvailable && !char.IsLetterOrDigit(nextChar))
         {
+            if (tokenValue.IsKnownTypeName())
+                return FinalizeToken(TokenType.TypeName);
+
             if (tokenValue.TryParseKeyword(out var tmpType))
                 return FinalizeToken(tmpType.Value);
         }
