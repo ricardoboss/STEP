@@ -244,7 +244,7 @@ public class StatementParser
 
                         var identifierToken = tokenQueue.Dequeue(TokenType.Identifier);
 
-                        return new VariableDeclarationExpression(typeToken, identifierToken, nullabilityIndicatorToken);
+                        return new VariableDeclarationExpression(typeToken, nullabilityIndicatorToken, identifierToken);
                     }
                 case TokenType.Identifier:
                     {
@@ -452,14 +452,14 @@ public class StatementParser
 
     private async Task<Statement> ParseVariableDeclaration(Token typeToken, CancellationToken cancellationToken = default)
     {
-        // variable declaration: <type name>[?] <identifier> = <expression>
+        // variable declaration: <type name>[?] <identifier> [= <expression>]
 
         Token? nullableIndicatorToken = null;
         if (tokenQueue.PeekType() is TokenType.QuestionMarkSymbol)
             nullableIndicatorToken = tokenQueue.Dequeue(TokenType.QuestionMarkSymbol);
 
         var identifier = tokenQueue.Dequeue(TokenType.Identifier);
-        var declarationExpression = new VariableDeclarationExpression(typeToken, identifier, nullableIndicatorToken);
+        var declarationExpression = new VariableDeclarationExpression(typeToken, nullableIndicatorToken, identifier);
 
         if (!tokenQueue.TryPeekType(out var nextType) || nextType is TokenType.NewLine)
             return new VariableDeclarationStatement(declarationExpression, null);

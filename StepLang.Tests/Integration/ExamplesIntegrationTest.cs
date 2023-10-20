@@ -43,8 +43,8 @@ public class ExamplesIntegrationTest
         tokenizer.Add(chars);
         var tokens = tokenizer.Tokenize();
         await parser.AddAsync(tokens.ToAsyncEnumerable());
-        var statements = parser.ParseAsync();
-        await interpreter.InterpretAsync(statements);
+        var statements = await parser.ParseAsync().ToListAsync();
+        await interpreter.InterpretAsync(statements.ToAsyncEnumerable());
 
         // assert
         Assert.Equal(expectedExitCode, interpreter.ExitCode);

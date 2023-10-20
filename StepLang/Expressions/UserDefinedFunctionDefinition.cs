@@ -1,23 +1,22 @@
-using System.Diagnostics;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
 using StepLang.Statements;
-using StepLang.Tokenizing;
 
 namespace StepLang.Expressions;
 
 public class UserDefinedFunctionDefinition : FunctionDefinition
 {
-    private readonly IReadOnlyList<(Token type, Token identifier)> parameters;
+    private readonly IReadOnlyList<VariableDeclarationExpression> parameters;
     private readonly IReadOnlyList<Statement> body;
 
-    public UserDefinedFunctionDefinition(IReadOnlyList<(Token type, Token identifier)> parameters, IReadOnlyList<Statement> body)
+    public UserDefinedFunctionDefinition(IReadOnlyList<VariableDeclarationExpression> parameters, IReadOnlyList<Statement> body)
     {
         this.parameters = parameters;
         this.body = body;
     }
 
-    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => parameters.Select(t => (new[] { ValueTypeExtensions.FromTypeName(t.type.Value) }, t.identifier.Value));
+    // FIXME: this doesn't allow nullable types
+    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => parameters.Select(t => (new[] { ValueTypeExtensions.FromTypeName(t.TypeToken.Value) }, t.IdentifierToken.Value));
 
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
@@ -37,27 +36,19 @@ public class UserDefinedFunctionDefinition : FunctionDefinition
     {
         for (var i = 0; i < parameters.Count; i++)
         {
-            var (parameterTypeToken, parameterNameToken) = parameters[i];
-            var argumentExpression = arguments[i];
+            var parameter = parameters[i];
+            var argument = arguments[i];
 
-            await EvaluateParameter(interpreter, parameterTypeToken, parameterNameToken, argumentExpression, cancellationToken);
+            // this will create the variable in the current scope
+            _ = await parameter.EvaluateAsync(interpreter, cancellationToken);
+
+            var argumentValue = await argument.EvaluateAsync(interpreter, cancellationToken);
+
+            interpreter.CurrentScope.UpdateValue(parameter.IdentifierToken, argumentValue);
         }
     }
 
-    private static async Task EvaluateParameter(Interpreter interpreter, Token typeToken, Token nameToken, Expression argument, CancellationToken cancellationToken = default)
-    {
-        Debug.Assert(typeToken.Type == TokenType.TypeName, "typeToken.Type == TokenType.TypeName");
-
-        var parameterType = ValueTypeExtensions.FromTypeName(typeToken.Value);
-
-        var argumentResult = await argument.EvaluateAsync(interpreter, cancellationToken);
-        if (argumentResult is VoidResult || argumentResult.ResultType != parameterType)
-            throw new InvalidArgumentTypeException(typeToken, argumentResult);
-
-        interpreter.CurrentScope.UpdateValue(nameToken, argumentResult);
-    }
-
-    protected override string DebugParamsString => string.Join(", ", parameters.Select(t => $"{t.type} {t.identifier}"));
+    protected override string DebugParamsString => string.Join(", ", parameters.Select(t => t.ToString()));
 
     protected override string DebugBodyString => $"[{body.Count} statements]";
 }
