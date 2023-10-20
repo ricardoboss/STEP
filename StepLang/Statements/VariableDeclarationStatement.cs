@@ -15,7 +15,7 @@ public class VariableDeclarationStatement : Statement
         this.declarationExpression = declarationExpression;
         this.expression = expression;
 
-        Location = declarationExpression.Type.Location;
+        Location = declarationExpression.TypeToken.Location;
     }
 
     /// <inheritdoc />
@@ -32,11 +32,15 @@ public class VariableDeclarationStatement : Statement
         try
         {
             // this will throw if the resulting expression type is not compatible with the variable type
-            interpreter.CurrentScope.UpdateValue(declarationExpression.Identifier, result);
+            interpreter.CurrentScope.UpdateValue(declarationExpression.IdentifierToken, result, onlyCurrentScope: false);
         }
         catch (IncompatibleVariableTypeException e)
         {
-            throw new InvalidVariableAssignmentException(declarationExpression.Type, e);
+            throw new InvalidVariableAssignmentException(declarationExpression.TypeToken, e);
+        }
+        catch (NonNullableVariableAssignmentException e)
+        {
+            throw new InvalidVariableAssignmentException(declarationExpression.TypeToken, e);
         }
     }
 

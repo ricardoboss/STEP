@@ -8,39 +8,53 @@ namespace StepLang.Expressions;
 
 public class VariableDeclarationExpression : Expression
 {
-    public Token Type { get; }
-    public Token Identifier { get; }
+    public Token TypeToken { get; }
+    public Token IdentifierToken { get; }
+    public Token? NullableIndicatorToken { get; }
 
-    public VariableDeclarationExpression(Token type, Token identifier)
+    public bool Nullable => NullableIndicatorToken is not null;
+
+    public VariableDeclarationExpression(Token typeToken, Token identifierToken, Token? nullableIndicatorToken)
     {
-        if (type.Type != TokenType.TypeName)
-            throw new UnexpectedTokenException(type, TokenType.TypeName);
+        if (typeToken.Type != TokenType.TypeName)
+            throw new UnexpectedTokenException(typeToken, TokenType.TypeName);
 
-        Type = type;
+        TypeToken = typeToken;
 
-        if (identifier.Type != TokenType.Identifier)
-            throw new UnexpectedTokenException(identifier, TokenType.Identifier);
+        if (identifierToken.Type != TokenType.Identifier)
+            throw new UnexpectedTokenException(identifierToken, TokenType.Identifier);
 
-        Identifier = identifier;
+        IdentifierToken = identifierToken;
+
+        if (nullableIndicatorToken == null)
+            return;
+
+        if (nullableIndicatorToken.Type != TokenType.QuestionMarkSymbol)
+            throw new UnexpectedTokenException(nullableIndicatorToken, TokenType.QuestionMarkSymbol);
+
+        NullableIndicatorToken = nullableIndicatorToken;
     }
 
     /// <inheritdoc />
-    public override Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
+    public override Task<ExpressionResult> EvaluateAsync(Interpreter interpreter,
+        CancellationToken cancellationToken = default)
     {
-        if (interpreter.CurrentScope.Exists(Identifier.Value, false))
-        {
-            throw new VariableAlreadyDeclaredException(Identifier);
-        }
+        if (interpreter.CurrentScope.Exists(IdentifierToken.Value, false))
+            throw new VariableAlreadyDeclaredException(IdentifierToken);
+
+        var type = ValueTypeExtensions.FromTypeName(TypeToken.Value);
 
         // default value for given type
-        var result = ExpressionResult.DefaultFor(ValueTypeExtensions.FromTypeName(Type.Value));
+        var value = Nullable ?
+            NullResult.Instance :
+            ExpressionResult.DefaultFor(type);
 
         // add variable to current scope
-        interpreter.CurrentScope.SetVariable(Identifier.Value, result);
+        interpreter.CurrentScope.CreateVariable(IdentifierToken, type, value, Nullable);
 
-        return Task.FromResult(result);
+        return Task.FromResult(value);
     }
 
     /// <inheritdoc />
-    protected override string DebugDisplay() => $"{Type} {Identifier}";
+    protected override string DebugDisplay() => $"{TypeToken}{NullableIndicatorToken} {IdentifierToken}";
 }

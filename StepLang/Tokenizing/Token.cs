@@ -16,7 +16,7 @@ public class Token
 
     public int? Column => Location?.Column;
 
-    public Token(TokenType type, string value, TokenLocation? location)
+    public Token(TokenType type, string value, TokenLocation? location = null)
     {
         Type = type;
         Value = value;

@@ -237,9 +237,14 @@ public class StatementParser
                 case TokenType.TypeName:
                     {
                         var typeToken = tokenQueue.Dequeue(TokenType.TypeName);
+
+                        Token? nullabilityIndicatorToken = null;
+                        if (tokenQueue.PeekType() is TokenType.QuestionMarkSymbol)
+                            nullabilityIndicatorToken = tokenQueue.Dequeue(TokenType.QuestionMarkSymbol);
+
                         var identifierToken = tokenQueue.Dequeue(TokenType.Identifier);
 
-                        return new VariableDeclarationExpression(typeToken, identifierToken);
+                        return new VariableDeclarationExpression(typeToken, identifierToken, nullabilityIndicatorToken);
                     }
                 case TokenType.Identifier:
                     {
@@ -412,7 +417,7 @@ public class StatementParser
 
             valueExpTokens = new Token[]
             {
-                new(TokenType.LiteralNumber, "1", null),
+                new(TokenType.LiteralNumber, "1"),
             };
         }
         else
@@ -447,10 +452,14 @@ public class StatementParser
 
     private async Task<Statement> ParseVariableDeclaration(Token typeToken, CancellationToken cancellationToken = default)
     {
-        // variable declaration: <type name> <identifier> = <expression>
+        // variable declaration: <type name>[?] <identifier> = <expression>
+
+        Token? nullableIndicatorToken = null;
+        if (tokenQueue.PeekType() is TokenType.QuestionMarkSymbol)
+            nullableIndicatorToken = tokenQueue.Dequeue(TokenType.QuestionMarkSymbol);
 
         var identifier = tokenQueue.Dequeue(TokenType.Identifier);
-        var declarationExpression = new VariableDeclarationExpression(typeToken, identifier);
+        var declarationExpression = new VariableDeclarationExpression(typeToken, identifier, nullableIndicatorToken);
 
         if (!tokenQueue.TryPeekType(out var nextType) || nextType is TokenType.NewLine)
             return new VariableDeclarationStatement(declarationExpression, null);

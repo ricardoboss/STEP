@@ -30,9 +30,13 @@ public class VariableAssignmentStatement : Statement
 
         try
         {
-            interpreter.CurrentScope.UpdateValue(identifierToken, result);
+            interpreter.CurrentScope.UpdateValue(identifierToken, result, onlyCurrentScope: false);
         }
         catch (IncompatibleVariableTypeException e)
+        {
+            throw new InvalidVariableAssignmentException(identifierToken, e);
+        }
+        catch (NonNullableVariableAssignmentException e)
         {
             throw new InvalidVariableAssignmentException(identifierToken, e);
         }

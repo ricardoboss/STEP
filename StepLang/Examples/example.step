@@ -1,15 +1,15 @@
 // this is not exactly pi (not even possible since its irrational, duh)
 number pi = 3.141592 // close enough
 
-string name = readline()
+string? name = readline()
 if (name == "John") {
 	println("Hello, ", name)
 } else {
 	println("Who are you?")
 }
 
-string guess
-number parsedGuess
+string? guess
+number? parsedGuess
 number tries = 0
 while (tries <= 3) {
 	print("Guess PI: ")

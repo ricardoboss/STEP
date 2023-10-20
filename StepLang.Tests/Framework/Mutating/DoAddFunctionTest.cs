@@ -16,8 +16,8 @@ public class DoAddFunctionTest
         const string listIdentifier = "mylist";
 
         var interpreter = new Interpreter();
-        interpreter.CurrentScope.SetVariable(listIdentifier, list);
-        var listVarExpression = new VariableExpression(new(TokenType.Identifier, listIdentifier, null));
+        interpreter.CurrentScope.CreateVariable(listIdentifier, list);
+        var listVarExpression = new VariableExpression(new(TokenType.Identifier, listIdentifier));
         var function = new DoAddFunction();
 
         var previousCount = list.Value.Count;
