@@ -38,7 +38,7 @@ public class Variable
         if (value.ResultType is ResultType.Null && Nullable)
             return true;
 
-        return Value.ResultType == Type;
+        return value.ResultType == Type;
     }
 
     /// <inheritdoc />
