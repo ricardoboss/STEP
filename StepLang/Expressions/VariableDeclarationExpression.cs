@@ -10,11 +10,11 @@ public class VariableDeclarationExpression : Expression
 {
     public Token TypeToken { get; }
     public Token IdentifierToken { get; }
-    public Token? NullableIndicatorToken { get; }
+    public Token? NullabilityIndicatorToken { get; }
 
-    public bool Nullable => NullableIndicatorToken is not null;
+    public bool Nullable => NullabilityIndicatorToken is not null;
 
-    public VariableDeclarationExpression(Token typeToken, Token identifierToken, Token? nullableIndicatorToken)
+    public VariableDeclarationExpression(Token typeToken, Token? nullabilityIndicatorToken, Token identifierToken)
     {
         if (typeToken.Type != TokenType.TypeName)
             throw new UnexpectedTokenException(typeToken, TokenType.TypeName);
@@ -26,13 +26,13 @@ public class VariableDeclarationExpression : Expression
 
         IdentifierToken = identifierToken;
 
-        if (nullableIndicatorToken == null)
+        if (nullabilityIndicatorToken == null)
             return;
 
-        if (nullableIndicatorToken.Type != TokenType.QuestionMarkSymbol)
-            throw new UnexpectedTokenException(nullableIndicatorToken, TokenType.QuestionMarkSymbol);
+        if (nullabilityIndicatorToken.Type != TokenType.QuestionMarkSymbol)
+            throw new UnexpectedTokenException(nullabilityIndicatorToken, TokenType.QuestionMarkSymbol);
 
-        NullableIndicatorToken = nullableIndicatorToken;
+        NullabilityIndicatorToken = nullabilityIndicatorToken;
     }
 
     /// <inheritdoc />
@@ -56,5 +56,5 @@ public class VariableDeclarationExpression : Expression
     }
 
     /// <inheritdoc />
-    protected override string DebugDisplay() => $"{TypeToken}{NullableIndicatorToken} {IdentifierToken}";
+    protected override string DebugDisplay() => $"{TypeToken}{NullabilityIndicatorToken} {IdentifierToken}";
 }

@@ -286,19 +286,26 @@ public class ExpressionParser
 
     private async Task<Expression> ParseFunctionDefinitionExpression(Token openingParenthesisToken, CancellationToken cancellationToken = default)
     {
-        var parameters = new List<(Token, Token)>(); // (type, name)
+        var parameters = new List<VariableDeclarationExpression>();
 
         tokenQueue.Dequeue(TokenType.OpeningParentheses);
 
+        // parameter declaration: <type name>[?] <identifier>[, <type name>[?] <identifier>]*
         while (tokenQueue.TryPeekType(out var tokenType) && tokenType is TokenType.TypeName)
         {
             var type = tokenQueue.Dequeue(TokenType.TypeName);
+
+            Token? nullabilityIndicator;
+            if (tokenQueue.TryPeekType(out var nextTokenType) && nextTokenType is TokenType.QuestionMarkSymbol)
+                nullabilityIndicator = tokenQueue.Dequeue(TokenType.QuestionMarkSymbol);
+            else
+                nullabilityIndicator = null;
+
             var name = tokenQueue.Dequeue(TokenType.Identifier);
+            parameters.Add(new(type, nullabilityIndicator, name));
 
-            parameters.Add((type, name));
-
-            if (tokenQueue.TryPeekType(out var nextTokenType) && nextTokenType is TokenType.CommaSymbol)
-                _ = tokenQueue.Dequeue();
+            if (tokenQueue.TryPeekType(out nextTokenType) && nextTokenType is TokenType.CommaSymbol)
+                _ = tokenQueue.Dequeue(TokenType.CommaSymbol);
         }
 
         tokenQueue.Dequeue(TokenType.ClosingParentheses);
