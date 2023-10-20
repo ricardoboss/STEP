@@ -26,10 +26,10 @@ public class LengthFunctionTest
     public async Task TestEvaluateWithVariableAsync()
     {
         var interpreter = new Interpreter();
-        interpreter.CurrentScope.SetVariable("foo", LiteralExpression.Str("Hello").Result);
+        interpreter.CurrentScope.CreateVariable("foo", LiteralExpression.Str("Hello").Result);
 
         var function = new LengthFunction();
-        var result = await function.EvaluateAsync(interpreter, new[] { new VariableExpression(new(TokenType.Identifier, "foo", null)) });
+        var result = await function.EvaluateAsync(interpreter, new[] { new VariableExpression(new(TokenType.Identifier, "foo")) });
 
         var numberResult = result.ExpectInteger();
 

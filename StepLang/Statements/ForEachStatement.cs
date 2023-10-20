@@ -36,7 +36,7 @@ public class ForEachStatement : Statement
             {
                 await keyDeclaration.EvaluateAsync(interpreter, cancellationToken);
 
-                keyToken = keyDeclaration.Identifier;
+                keyToken = keyDeclaration.IdentifierToken;
             }
             else
                 throw new InvalidExpressionException(null, "Key expression must be a variable.");
@@ -48,7 +48,7 @@ public class ForEachStatement : Statement
         {
             await valueDeclaration.EvaluateAsync(interpreter, cancellationToken);
 
-            valueToken = valueDeclaration.Identifier;
+            valueToken = valueDeclaration.IdentifierToken;
         }
         else
             throw new InvalidExpressionException(null, "Value expression must be a variable.");
@@ -71,9 +71,13 @@ public class ForEachStatement : Statement
             {
                 try
                 {
-                    interpreter.CurrentScope.UpdateValue(keyToken, pair.Key);
+                    interpreter.CurrentScope.UpdateValue(keyToken, pair.Key, onlyCurrentScope: false);
                 }
                 catch (IncompatibleVariableTypeException e)
+                {
+                    throw new InvalidVariableAssignmentException(keyToken, e);
+                }
+                catch (NonNullableVariableAssignmentException e)
                 {
                     throw new InvalidVariableAssignmentException(keyToken, e);
                 }
@@ -81,9 +85,13 @@ public class ForEachStatement : Statement
 
             try
             {
-                interpreter.CurrentScope.UpdateValue(valueToken, pair.Value);
+                interpreter.CurrentScope.UpdateValue(valueToken, pair.Value, onlyCurrentScope: false);
             }
             catch (IncompatibleVariableTypeException e)
+            {
+                throw new InvalidVariableAssignmentException(valueToken, e);
+            }
+            catch (NonNullableVariableAssignmentException e)
             {
                 throw new InvalidVariableAssignmentException(valueToken, e);
             }

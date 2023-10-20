@@ -5,25 +5,45 @@ namespace StepLang.Interpreting;
 public class Variable
 {
     public string Identifier { get; }
+    public ResultType Type { get; }
+    public bool Nullable { get; }
     public ExpressionResult Value { get; private set; }
 
-    public Variable(string identifier, ExpressionResult value)
+    public Variable(string identifier, ResultType type, bool nullable, ExpressionResult value)
     {
         Identifier = identifier;
+        Type = type;
+        Nullable = nullable;
         Value = value;
     }
 
     public void Assign(ExpressionResult newValue)
     {
-        if (newValue is VoidResult || newValue.ResultType != Value.ResultType)
-            throw new IncompatibleVariableTypeException(this, newValue);
+        if (!Accepts(newValue))
+        {
+            if (Nullable || newValue.ResultType is ResultType.Null)
+                throw new IncompatibleVariableTypeException(this, newValue);
+
+            throw new NonNullableVariableAssignmentException(this, newValue);
+        }
 
         Value = newValue;
+    }
+
+    public bool Accepts(ExpressionResult value)
+    {
+        if (value is VoidResult)
+            return false; // can never assign void to a variable
+
+        if (value.ResultType is ResultType.Null && Nullable)
+            return true;
+
+        return Value.ResultType == Type;
     }
 
     /// <inheritdoc />
     public override string ToString()
     {
-        return $"{Identifier} = {Value}";
+        return $"{Type}{(Nullable ? "?" : "")} {Identifier} = {Value}";
     }
 }

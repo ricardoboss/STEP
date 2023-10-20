@@ -49,13 +49,12 @@ public class UserDefinedFunctionDefinition : FunctionDefinition
         Debug.Assert(typeToken.Type == TokenType.TypeName, "typeToken.Type == TokenType.TypeName");
 
         var parameterType = ValueTypeExtensions.FromTypeName(typeToken.Value);
-        var parameterName = nameToken.Value;
 
         var argumentResult = await argument.EvaluateAsync(interpreter, cancellationToken);
         if (argumentResult is VoidResult || argumentResult.ResultType != parameterType)
             throw new InvalidArgumentTypeException(typeToken, argumentResult);
 
-        interpreter.CurrentScope.SetVariable(parameterName, argumentResult);
+        interpreter.CurrentScope.UpdateValue(nameToken, argumentResult);
     }
 
     protected override string DebugParamsString => string.Join(", ", parameters.Select(t => $"{t.type} {t.identifier}"));
