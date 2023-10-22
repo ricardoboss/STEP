@@ -36,7 +36,7 @@ public class VariableDeclarationExpression : Expression
     }
 
     /// <inheritdoc />
-    public override Task<ExpressionResult> EvaluateAsync(Interpreter interpreter,
+    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter,
         CancellationToken cancellationToken = default)
     {
         if (interpreter.CurrentScope.Exists(IdentifierToken.Value, false))
@@ -52,7 +52,10 @@ public class VariableDeclarationExpression : Expression
         // add variable to current scope
         interpreter.CurrentScope.CreateVariable(IdentifierToken, type, value, Nullable);
 
-        return Task.FromResult(value);
+        if (interpreter.DebugOut is { } debugOut)
+            await debugOut.WriteLineAsync("Created variable: " + this);
+
+        return value;
     }
 
     /// <inheritdoc />

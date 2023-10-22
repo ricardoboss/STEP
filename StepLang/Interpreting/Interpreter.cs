@@ -58,20 +58,28 @@ public class Interpreter
     {
         await foreach (var statement in statements.WithCancellation(cancellationToken))
         {
-            if (DebugOut is not null)
-                await DebugOut.WriteLineAsync(statement.ToString());
-
             if (ContinueDepth > 0)
             {
                 ContinueDepth--;
 
+                if (DebugOut is not null)
+                    await DebugOut.WriteLineAsync("Continuing");
+
                 break;
             }
 
+            if (DebugOut is not null)
+                await DebugOut.WriteLineAsync("Executing: " + statement);
+
             await statement.ExecuteAsync(this, cancellationToken);
 
-            if (CurrentScope.TryGetResult(out _))
-                break;
+            if (!CurrentScope.TryGetResult(out _))
+                continue;
+
+            if (DebugOut is not null)
+                await DebugOut.WriteLineAsync("Result found, breaking");
+
+            break;
         }
     }
 }
