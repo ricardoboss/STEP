@@ -14,11 +14,11 @@ public class ReadFunction : NativeFunction
         CheckArgumentCount(arguments);
 
         if (interpreter.StdIn is not { } stdIn)
-            return Task.FromResult<ExpressionResult>(StringResult.Empty);
+            return Task.FromResult<ExpressionResult>(NullResult.Instance);
 
         var character = stdIn.Read();
         if (character < 0)
-            return Task.FromResult<ExpressionResult>(StringResult.Empty);
+            return Task.FromResult<ExpressionResult>(NullResult.Instance);
 
         return Task.FromResult<ExpressionResult>(new StringResult(char.ConvertFromUtf32(character)));
     }
