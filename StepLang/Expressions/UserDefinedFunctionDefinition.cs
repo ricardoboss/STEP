@@ -23,16 +23,20 @@ public class UserDefinedFunctionDefinition : FunctionDefinition
         if (arguments.Count != parameters.Count)
             throw new InvalidArgumentCountException(parameters.Count, arguments.Count);
 
+        // evaluate args before pushing scope
+        var evaldArgs = await arguments.EvaluateAsync(interpreter, cancellationToken).ToListAsync(cancellationToken);
+
         interpreter.PushScope();
 
-        await EvaluateParameters(interpreter, arguments, cancellationToken);
+        // create the parameter variables in the new scope
+        await EvaluateParameters(interpreter, evaldArgs, cancellationToken);
 
         await interpreter.InterpretAsync(body.ToAsyncEnumerable(), cancellationToken);
 
         return interpreter.PopScope().TryGetResult(out var result) ? result : VoidResult.Instance;
     }
 
-    private async Task EvaluateParameters(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
+    private async Task EvaluateParameters(Interpreter interpreter, IReadOnlyList<ExpressionResult> arguments, CancellationToken cancellationToken = default)
     {
         for (var i = 0; i < parameters.Count; i++)
         {
@@ -42,9 +46,8 @@ public class UserDefinedFunctionDefinition : FunctionDefinition
             // this will create the variable in the current scope
             _ = await parameter.EvaluateAsync(interpreter, cancellationToken);
 
-            var argumentValue = await argument.EvaluateAsync(interpreter, cancellationToken);
-
-            interpreter.CurrentScope.UpdateValue(parameter.IdentifierToken, argumentValue);
+            // and set the value
+            interpreter.CurrentScope.UpdateValue(parameter.IdentifierToken, argument);
         }
     }
 
