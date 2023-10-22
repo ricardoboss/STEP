@@ -28,8 +28,15 @@ public class UserDefinedFunctionDefinition : FunctionDefinition
 
         interpreter.PushScope();
 
-        // create the parameter variables in the new scope
-        await EvaluateParameters(interpreter, evaldArgs, cancellationToken);
+        try
+        {
+            // create the parameter variables in the new scope
+            await EvaluateParameters(interpreter, evaldArgs, cancellationToken);
+        }
+        catch (NonNullableVariableAssignmentException e)
+        {
+            throw new InvalidArgumentTypeException(null, new[] { e.Variable.Type }, e.NewValue);
+        }
 
         await interpreter.InterpretAsync(body.ToAsyncEnumerable(), cancellationToken);
 
