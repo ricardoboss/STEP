@@ -3,8 +3,9 @@
     {
       "src": [
         {
+          "src": "..",
           "files": [
-            "bin/**/*.dll"
+            "StepLang/StepLang.csproj"
           ]
         }
       ],
@@ -13,8 +14,8 @@
       "disableGitFeatures": false,
       "disableDefaultFilter": false,
       "noRestore": false,
-      "namespaceLayout": "flattened",
-      "memberLayout": "samePage",
+      "namespaceLayout": "nested",
+      "memberLayout": "separatePages",
       "EnumSortOrder": "alphabetic",
       "allowCompilationErrors": false
     }
