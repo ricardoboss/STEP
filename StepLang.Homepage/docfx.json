@@ -3,9 +3,8 @@
     {
       "src": [
         {
-          "src": "..",
           "files": [
-            "StepLang/StepLang.csproj"
+            "bin/**/*.*"
           ]
         }
       ],

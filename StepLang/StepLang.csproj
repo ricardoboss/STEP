@@ -55,7 +55,7 @@
         </PropertyGroup>
 
         <ItemGroup>
-            <BuiltDlls Include="bin/**/*.dll" />
+            <BuiltDlls Include="bin/**/*.*" />
         </ItemGroup>
 
         <Copy SourceFiles="@(BuiltDlls)" DestinationFolder="$(HomepageBinDir)\%(RecursiveDir)" SkipUnchangedFiles="false" />
