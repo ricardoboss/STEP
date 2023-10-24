@@ -36,7 +36,7 @@ public class DoAddFunctionTest
             Add(ListResult.Empty, LiteralExpression.Str("test"));
             Add(ListResult.Empty, LiteralExpression.Number(1));
             Add(ListResult.Empty, LiteralExpression.True);
-            Add(ListResult.Empty, BinaryExpression.Add(LiteralExpression.Number(1), LiteralExpression.Number(2)));
+            Add(ListResult.Empty, new AddExpression(LiteralExpression.Number(1), LiteralExpression.Number(2)));
             Add(ListResult.From(BoolResult.True), LiteralExpression.False);
         }
     }
