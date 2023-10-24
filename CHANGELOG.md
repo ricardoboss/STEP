@@ -1,3 +1,7 @@
+# v2.x.0
+
+* Changed "power" operator from `^` to `**` by @ricardoboss in https://github.com/ricardoboss/STEP/pull/102
+
 # v2.0.0
 
 * Use strong types for expression results by @ricardoboss in https://github.com/ricardoboss/STEP/pull/12
