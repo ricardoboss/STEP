@@ -17,32 +17,32 @@ public class IndexExpression : BinaryExpression
         switch (left.ResultType)
         {
             case ResultType.List:
-            {
-                var values = left.ExpectList().Value;
-                var index = right.ExpectInteger().RoundedIntValue;
+                {
+                    var values = left.ExpectList().Value;
+                    var index = right.ExpectInteger().RoundedIntValue;
 
-                if (index < 0 || index >= values.Count)
-                    throw new IndexOutOfBoundsException(index, values.Count);
+                    if (index < 0 || index >= values.Count)
+                        throw new IndexOutOfBoundsException(index, values.Count);
 
-                return values[index];
-            }
+                    return values[index];
+                }
             case ResultType.Map:
-            {
-                var pairs = left.ExpectMap().Value;
-                var key = right.ExpectString().Value;
+                {
+                    var pairs = left.ExpectMap().Value;
+                    var key = right.ExpectString().Value;
 
-                return pairs[key];
-            }
+                    return pairs[key];
+                }
             case ResultType.Str:
-            {
-                var value = left.ExpectString().Value;
-                var index = right.ExpectInteger().RoundedIntValue;
-                var grapheme = value.GraphemeAt(index);
-                if (grapheme == null)
-                    throw new IndexOutOfBoundsException(index, value.GraphemeLength());
+                {
+                    var value = left.ExpectString().Value;
+                    var index = right.ExpectInteger().RoundedIntValue;
+                    var grapheme = value.GraphemeAt(index);
+                    if (grapheme == null)
+                        throw new IndexOutOfBoundsException(index, value.GraphemeLength());
 
-                return new StringResult(grapheme);
-            }
+                    return new StringResult(grapheme);
+                }
             default:
                 var indexRepresentation = right switch
                 {
