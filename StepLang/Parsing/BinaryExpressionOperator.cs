@@ -2,8 +2,8 @@ namespace StepLang.Parsing;
 
 public enum BinaryExpressionOperator
 {
-    Plus,
-    Minus,
+    Add,
+    Subtract,
     Multiply,
     Divide,
     Modulo,
@@ -50,7 +50,7 @@ public static class BinaryExpressionOperatorExtensions
             BinaryExpressionOperator.Index => index,
             BinaryExpressionOperator.Power => power,
             BinaryExpressionOperator.Multiply or BinaryExpressionOperator.Divide or BinaryExpressionOperator.Modulo => multiplicative,
-            BinaryExpressionOperator.Plus or BinaryExpressionOperator.Minus => additive,
+            BinaryExpressionOperator.Add or BinaryExpressionOperator.Subtract => additive,
             BinaryExpressionOperator.BitwiseShiftLeft or BinaryExpressionOperator.BitwiseShiftRight or BinaryExpressionOperator.BitwiseRotateLeft or BinaryExpressionOperator.BitwiseRotateRight => shiftAndRotate,
             BinaryExpressionOperator.GreaterThan or BinaryExpressionOperator.LessThan or BinaryExpressionOperator.GreaterThanOrEqual or BinaryExpressionOperator.LessThanOrEqual => relational,
             BinaryExpressionOperator.Equal or BinaryExpressionOperator.NotEqual => equality,
@@ -61,6 +61,37 @@ public static class BinaryExpressionOperatorExtensions
             BinaryExpressionOperator.LogicalOr => logicalOr,
             BinaryExpressionOperator.Coalesce => coalesce,
             _ => throw new NotImplementedException($"Undefined operator precedence for operator: {op}"),
+        };
+    }
+
+    public static string ToSymbol(this BinaryExpressionOperator op)
+    {
+        return op switch
+        {
+            BinaryExpressionOperator.Add => "+",
+            BinaryExpressionOperator.Subtract => "-",
+            BinaryExpressionOperator.Multiply => "*",
+            BinaryExpressionOperator.Divide => "/",
+            BinaryExpressionOperator.Modulo => "%",
+            BinaryExpressionOperator.Power => "**",
+            BinaryExpressionOperator.GreaterThan => ">",
+            BinaryExpressionOperator.LessThan => "<",
+            BinaryExpressionOperator.GreaterThanOrEqual => ">=",
+            BinaryExpressionOperator.LessThanOrEqual => "<=",
+            BinaryExpressionOperator.Equal => "==",
+            BinaryExpressionOperator.NotEqual => "!=",
+            BinaryExpressionOperator.LogicalAnd => "&&",
+            BinaryExpressionOperator.LogicalOr => "||",
+            BinaryExpressionOperator.BitwiseAnd => "&",
+            BinaryExpressionOperator.BitwiseOr => "|",
+            BinaryExpressionOperator.BitwiseXor => "^",
+            BinaryExpressionOperator.BitwiseShiftLeft => "<<",
+            BinaryExpressionOperator.BitwiseShiftRight => ">>",
+            BinaryExpressionOperator.BitwiseRotateLeft => "<<<",
+            BinaryExpressionOperator.BitwiseRotateRight => ">>>",
+            BinaryExpressionOperator.Coalesce => "??",
+            BinaryExpressionOperator.Index => "[]",
+            _ => throw new NotImplementedException($"Undefined operator symbol for operator: {op}"),
         };
     }
 }
