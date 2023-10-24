@@ -351,6 +351,7 @@ public class ExpressionParser
         switch (operatorTokenType)
         {
             case TokenType.AsteriskSymbol when nextOperatorTokenType is TokenType.AsteriskSymbol:
+                opPreLength = 2;
                 return BinaryExpressionOperator.Power;
             case TokenType.EqualsSymbol when nextOperatorTokenType is TokenType.EqualsSymbol:
                 opPreLength = 2;
