@@ -1,6 +1,6 @@
 # v2.x.0
 
-* Changed "power" operator from `^` to `**` by @ricardoboss in https://github.com/ricardoboss/STEP/pull/102
+* Changed "power" operator from `^` to `**` by @ricardoboss in https://github.com/ricardoboss/STEP/pull/107
 
 # v2.0.0
 
