@@ -274,11 +274,11 @@ public class ExpressionParser
             case TokenType.ExclamationMarkSymbol:
                 var invertedExpression = await ParseUnaryExpression(cancellationToken);
 
-                return UnaryExpression.Not(invertedExpression);
+                return new NotExpression(invertedExpression);
             case TokenType.MinusSymbol:
                 var negatedExpression = await ParseUnaryExpression(cancellationToken);
 
-                return UnaryExpression.Negate(negatedExpression);
+                return new NegateExpression(negatedExpression);
             default:
                 throw new UnexpectedTokenException(currentToken, TokenType.Identifier, TokenType.LiteralNumber, TokenType.LiteralBoolean, TokenType.LiteralString, TokenType.OpeningParentheses, TokenType.OpeningSquareBracket, TokenType.OpeningCurlyBracket);
         }
