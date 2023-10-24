@@ -320,45 +320,49 @@ public class ExpressionParser
         opPreLength = 1;
         opPostLength = 0;
 
-        switch (tokenQueue.PeekType())
+        var operatorTokenType = tokenQueue.PeekType();
+        _ = tokenQueue.TryPeekType(1, out var nextOperatorTokenType);
+
+        // evaluate all operators that are longer than 1 character first
+        switch (operatorTokenType)
         {
+            case TokenType.AsteriskSymbol when nextOperatorTokenType is TokenType.AsteriskSymbol:
+                return BinaryExpressionOperator.Power;
+            case TokenType.EqualsSymbol when nextOperatorTokenType is TokenType.EqualsSymbol:
+                opPreLength = 2;
+                return BinaryExpressionOperator.Equal;
+            case TokenType.ExclamationMarkSymbol when nextOperatorTokenType is TokenType.EqualsSymbol:
+                opPreLength = 2;
+                return BinaryExpressionOperator.NotEqual;
+            case TokenType.GreaterThanSymbol when nextOperatorTokenType is TokenType.EqualsSymbol:
+                opPreLength = 2;
+                return BinaryExpressionOperator.GreaterThanOrEqual;
+            case TokenType.LessThanSymbol when nextOperatorTokenType is TokenType.EqualsSymbol:
+                opPreLength = 2;
+                return BinaryExpressionOperator.LessThanOrEqual;
+            case TokenType.AmpersandSymbol when nextOperatorTokenType is TokenType.AmpersandSymbol:
+                opPreLength = 2;
+                return BinaryExpressionOperator.LogicalAnd;
+            case TokenType.PipeSymbol when nextOperatorTokenType is TokenType.PipeSymbol:
+                opPreLength = 2;
+                return BinaryExpressionOperator.LogicalOr;
+            case TokenType.QuestionMarkSymbol when nextOperatorTokenType is TokenType.QuestionMarkSymbol:
+                opPreLength = 2;
+                return BinaryExpressionOperator.Coalesce;
             case TokenType.PlusSymbol:
-                return BinaryExpressionOperator.Plus;
+                return BinaryExpressionOperator.Add;
             case TokenType.MinusSymbol:
-                return BinaryExpressionOperator.Minus;
-            case TokenType.AsteriskSymbol:
-                return BinaryExpressionOperator.Multiply;
+                return BinaryExpressionOperator.Subtract;
             case TokenType.SlashSymbol:
                 return BinaryExpressionOperator.Divide;
             case TokenType.PercentSymbol:
                 return BinaryExpressionOperator.Modulo;
-            case TokenType.HatSymbol:
-                return BinaryExpressionOperator.Power;
-            case TokenType.EqualsSymbol when tokenQueue.PeekType(1) is TokenType.EqualsSymbol:
-                opPreLength = 2;
-                return BinaryExpressionOperator.Equal;
-            case TokenType.ExclamationMarkSymbol when tokenQueue.PeekType(1) is TokenType.EqualsSymbol:
-                opPreLength = 2;
-                return BinaryExpressionOperator.NotEqual;
-            case TokenType.GreaterThanSymbol when tokenQueue.PeekType(1) is TokenType.EqualsSymbol:
-                opPreLength = 2;
-                return BinaryExpressionOperator.GreaterThanOrEqual;
+            case TokenType.AsteriskSymbol:
+                return BinaryExpressionOperator.Multiply;
             case TokenType.GreaterThanSymbol:
                 return BinaryExpressionOperator.GreaterThan;
-            case TokenType.LessThanSymbol when tokenQueue.PeekType(1) is TokenType.EqualsSymbol:
-                opPreLength = 2;
-                return BinaryExpressionOperator.LessThanOrEqual;
             case TokenType.LessThanSymbol:
                 return BinaryExpressionOperator.LessThan;
-            case TokenType.AmpersandSymbol when tokenQueue.PeekType(1) is TokenType.AmpersandSymbol:
-                opPreLength = 2;
-                return BinaryExpressionOperator.LogicalAnd;
-            case TokenType.PipeSymbol when tokenQueue.PeekType(1) is TokenType.PipeSymbol:
-                opPreLength = 2;
-                return BinaryExpressionOperator.LogicalOr;
-            case TokenType.QuestionMarkSymbol when tokenQueue.PeekType(1) is TokenType.QuestionMarkSymbol:
-                opPreLength = 2;
-                return BinaryExpressionOperator.Coalesce;
             case TokenType.OpeningSquareBracket:
                 opPostLength = 1;
                 return BinaryExpressionOperator.Index;

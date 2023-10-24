@@ -6,287 +6,354 @@ using StepLang.Parsing;
 
 namespace StepLang.Expressions;
 
-public class BinaryExpression : Expression
+public abstract class BinaryExpression : Expression
 {
     public static BinaryExpression FromOperator(BinaryExpressionOperator op, Expression left, Expression right)
     {
         return op switch
         {
-            BinaryExpressionOperator.Power => Power(left, right),
-            BinaryExpressionOperator.Plus => Add(left, right),
-            BinaryExpressionOperator.Minus => Subtract(left, right),
-            BinaryExpressionOperator.Multiply => Multiply(left, right),
-            BinaryExpressionOperator.Divide => Divide(left, right),
-            BinaryExpressionOperator.Modulo => Modulo(left, right),
-            BinaryExpressionOperator.GreaterThan => GreaterThan(left, right),
-            BinaryExpressionOperator.GreaterThanOrEqual => GreaterThanOrEqual(left, right),
-            BinaryExpressionOperator.LessThan => LessThan(left, right),
-            BinaryExpressionOperator.LessThanOrEqual => LessThanOrEqual(left, right),
-            BinaryExpressionOperator.Equal => Equals(left, right),
-            BinaryExpressionOperator.NotEqual => NotEquals(left, right),
-            BinaryExpressionOperator.LogicalAnd => LogicalAnd(left, right),
-            BinaryExpressionOperator.LogicalOr => LogicalOr(left, right),
-            BinaryExpressionOperator.Coalesce => Coalesce(left, right),
-            BinaryExpressionOperator.Index => Index(left, right),
+            BinaryExpressionOperator.Power => new PowerExpression(left, right),
+            BinaryExpressionOperator.Add => new AddExpression(left, right),
+            BinaryExpressionOperator.Subtract => new SubtractExpression(left, right),
+            BinaryExpressionOperator.Multiply => new MultiplyExpression(left, right),
+            BinaryExpressionOperator.Divide => new DivideExpression(left, right),
+            BinaryExpressionOperator.Modulo => new ModuloExpression(left, right),
+            BinaryExpressionOperator.GreaterThan => new GreaterThanExpression(left, right),
+            BinaryExpressionOperator.GreaterThanOrEqual => new GreaterThanOrEqualExpression(left, right),
+            BinaryExpressionOperator.LessThan => new LessThanExpression(left, right),
+            BinaryExpressionOperator.LessThanOrEqual => new LessThanOrEqualExpression(left, right),
+            BinaryExpressionOperator.Equal => new EqualsExpression(left, right),
+            BinaryExpressionOperator.NotEqual => new NotEqualsExpression(left, right),
+            BinaryExpressionOperator.LogicalAnd => new LogicalAndExpression(left, right),
+            BinaryExpressionOperator.LogicalOr => new LogicalOrExpression(left, right),
+            BinaryExpressionOperator.Coalesce => new CoalesceExpression(left, right),
+            BinaryExpressionOperator.Index => new IndexExpression(left, right),
             _ => throw new NotImplementedException($"The operator {op} is not implemented yet"),
         };
     }
 
-    public static BinaryExpression Power(Expression left, Expression right)
-    {
-        return new BinaryExpression("^", left, right, (a, b) =>
-        {
-            if (a is not NumberResult aNumber || b is not NumberResult bNumber)
-                throw new IncompatibleExpressionOperandsException(a, b, "power");
+    private readonly Expression leftExpression;
+    private readonly Expression rightExpression;
+    private readonly BinaryExpressionOperator @operator;
 
-            return new NumberResult(Math.Pow(aNumber.Value, bNumber.Value));
-        });
+    private BinaryExpression(Expression leftExpression, Expression rightExpression, BinaryExpressionOperator @operator)
+    {
+        this.leftExpression = leftExpression;
+        this.rightExpression = rightExpression;
+        this.@operator = @operator;
     }
 
-    public static BinaryExpression Add(Expression left, Expression right)
+    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
     {
-        return new BinaryExpression("+", left, right, (a, b) =>
+        var leftValue = await leftExpression.EvaluateAsync(interpreter, cancellationToken);
+        var rightValue = await rightExpression.EvaluateAsync(interpreter, cancellationToken);
+
+        return Combine(leftValue, rightValue);
+    }
+
+    protected override string DebugDisplay() => $"({leftExpression}) {@operator.ToSymbol()} ({rightExpression})";
+
+    protected abstract ExpressionResult Combine(ExpressionResult left, ExpressionResult right);
+
+    private class AddExpression : BinaryExpression
+    {
+        public AddExpression(Expression leftExpression, Expression rightExpression) : base(leftExpression, rightExpression, BinaryExpressionOperator.Add)
         {
-            return a switch
+        }
+
+        protected override ExpressionResult Combine(ExpressionResult left, ExpressionResult right)
+        {
+            return left switch
             {
-                NumberResult aNumber when b is NumberResult bNumber => new NumberResult(aNumber.Value + bNumber.Value),
-                NumberResult aNumber when b is StringResult bString => new StringResult(aNumber.Value + bString.Value),
-                StringResult aString when b is NumberResult bNumber => new StringResult(aString.Value + bNumber.Value),
-                StringResult aString when b is StringResult bString => new StringResult(aString.Value + bString.Value),
-                _ => throw new IncompatibleExpressionOperandsException(a, b, "add"),
+                NumberResult aNumber when right is NumberResult bNumber => new NumberResult(aNumber.Value + bNumber.Value),
+                NumberResult aNumber when right is StringResult bString => new StringResult(aNumber.Value + bString.Value),
+                StringResult aString when right is NumberResult bNumber => new StringResult(aString.Value + bNumber.Value),
+                StringResult aString when right is StringResult bString => new StringResult(aString.Value + bString.Value),
+                _ => throw new IncompatibleExpressionOperandsException(left, right, "add"),
             };
-        });
+        }
     }
 
-    public static BinaryExpression Subtract(Expression left, Expression right)
+    private class SubtractExpression : BinaryExpression
     {
-        return new BinaryExpression("-", left, right, (a, b) =>
+        public SubtractExpression(Expression leftExpression, Expression rightExpression) : base(leftExpression, rightExpression, BinaryExpressionOperator.Subtract)
+        {
+        }
+
+        protected override ExpressionResult Combine(ExpressionResult a, ExpressionResult b)
         {
             if (a is not NumberResult aNumber || b is not NumberResult bNumber)
                 throw new IncompatibleExpressionOperandsException(a, b, "subtract");
 
             return new NumberResult(aNumber.Value - bNumber.Value);
-        });
+        }
     }
 
-    public static BinaryExpression Multiply(Expression left, Expression right)
+    private class PowerExpression : BinaryExpression
     {
-        return new BinaryExpression("*", left, right, (a, b) =>
+        public PowerExpression(Expression leftExpression, Expression rightExpression) : base(leftExpression, rightExpression, BinaryExpressionOperator.Power)
         {
-            if (a is not NumberResult aNumber || b is not NumberResult bNumber)
-                throw new IncompatibleExpressionOperandsException(a, b, "multiply");
+        }
+
+        protected override ExpressionResult Combine(ExpressionResult left, ExpressionResult right)
+        {
+            if (left is not NumberResult aNumber || right is not NumberResult bNumber)
+                throw new IncompatibleExpressionOperandsException(left, right, "power");
+
+            return new NumberResult(Math.Pow(aNumber.Value, bNumber.Value));
+        }
+    }
+
+    private class MultiplyExpression : BinaryExpression
+    {
+        public MultiplyExpression(Expression leftExpression, Expression rightExpression) : base(leftExpression, rightExpression, BinaryExpressionOperator.Multiply)
+        {
+        }
+
+        protected override ExpressionResult Combine(ExpressionResult left, ExpressionResult right)
+        {
+            if (left is not NumberResult aNumber || right is not NumberResult bNumber)
+                throw new IncompatibleExpressionOperandsException(left, right, "multiply");
 
             return new NumberResult(aNumber.Value * bNumber.Value);
-        });
+        }
     }
 
-    public static BinaryExpression Divide(Expression left, Expression right)
+    private class DivideExpression : BinaryExpression
     {
-        return new BinaryExpression("/", left, right, (a, b) =>
+        public DivideExpression(Expression leftExpression, Expression rightExpression) : base(leftExpression, rightExpression, BinaryExpressionOperator.Divide)
         {
-            if (a is not NumberResult aNumber || b is not NumberResult bNumber)
-                throw new IncompatibleExpressionOperandsException(a, b, "divide");
+        }
+
+        protected override ExpressionResult Combine(ExpressionResult left, ExpressionResult right)
+        {
+            if (left is not NumberResult aNumber || right is not NumberResult bNumber)
+                throw new IncompatibleExpressionOperandsException(left, right, "divide");
 
             // TODO: throw a specific exception when dividing by zero
 
             return new NumberResult(aNumber.Value / bNumber.Value);
-        });
+        }
     }
 
-    public static BinaryExpression Modulo(Expression left, Expression right)
+    private class ModuloExpression : BinaryExpression
     {
-        return new BinaryExpression("%", left, right, (a, b) =>
+        public ModuloExpression(Expression leftExpression, Expression rightExpression) : base(leftExpression, rightExpression, BinaryExpressionOperator.Modulo)
         {
-            if (a is not NumberResult aNumber || b is not NumberResult bNumber)
-                throw new IncompatibleExpressionOperandsException(a, b, "modulo");
+        }
+
+        protected override ExpressionResult Combine(ExpressionResult left, ExpressionResult right)
+        {
+            if (left is not NumberResult aNumber || right is not NumberResult bNumber)
+                throw new IncompatibleExpressionOperandsException(left, right, "modulo");
 
             return new NumberResult(aNumber.Value % bNumber.Value);
-        });
+        }
     }
 
-    public static BinaryExpression LessThan(Expression left, Expression right)
+    private class GreaterThanExpression : BinaryExpression
     {
-        return new BinaryExpression("<", left, right, (a, b) =>
+        public GreaterThanExpression(Expression leftExpression, Expression rightExpression) : base(leftExpression, rightExpression, BinaryExpressionOperator.GreaterThan)
         {
-            if (a is not NumberResult aNumber || b is not NumberResult bNumber)
-                throw new IncompatibleExpressionOperandsException(a, b, "compare (less than)");
+        }
 
-            return new BoolResult(aNumber.Value < bNumber.Value);
-        });
-    }
-
-    public static BinaryExpression LessThanOrEqual(Expression left, Expression right)
-    {
-        return new BinaryExpression("<=", left, right, (a, b) =>
+        protected override ExpressionResult Combine(ExpressionResult left, ExpressionResult right)
         {
-            if (a is not NumberResult aNumber || b is not NumberResult bNumber)
-                throw new IncompatibleExpressionOperandsException(a, b, "compare (less than or equal)");
-
-            return new BoolResult(aNumber.Value <= bNumber.Value);
-        });
-    }
-
-    public static BinaryExpression GreaterThan(Expression left, Expression right)
-    {
-        return new BinaryExpression(">", left, right, (a, b) =>
-        {
-            if (a is not NumberResult aNumber || b is not NumberResult bNumber)
-                throw new IncompatibleExpressionOperandsException(a, b, "compare (greater than)");
+            if (left is not NumberResult aNumber || right is not NumberResult bNumber)
+                throw new IncompatibleExpressionOperandsException(left, right, "compare (greater than)");
 
             return new BoolResult(aNumber.Value > bNumber.Value);
-        });
+        }
     }
 
-    public static BinaryExpression GreaterThanOrEqual(Expression left, Expression right)
+    private class GreaterThanOrEqualExpression : BinaryExpression
     {
-        return new BinaryExpression(">=", left, right, (a, b) =>
+        public GreaterThanOrEqualExpression(Expression leftExpression, Expression rightExpression) : base(leftExpression, rightExpression, BinaryExpressionOperator.GreaterThanOrEqual)
         {
-            if (a is not NumberResult aNumber || b is not NumberResult bNumber)
-                throw new IncompatibleExpressionOperandsException(a, b, "compare (greater than or equal)");
+        }
+
+        protected override ExpressionResult Combine(ExpressionResult left, ExpressionResult right)
+        {
+            if (left is not NumberResult aNumber || right is not NumberResult bNumber)
+                throw new IncompatibleExpressionOperandsException(left, right, "compare (greater than or equal)");
 
             return new BoolResult(aNumber.Value >= bNumber.Value);
-        });
+        }
     }
 
-    public static BinaryExpression Equals(Expression left, Expression right)
+    private class LessThanExpression : BinaryExpression
     {
-        return new BinaryExpression("==", left, right, (a, b) =>
+        public LessThanExpression(Expression leftExpression, Expression rightExpression) : base(leftExpression, rightExpression, BinaryExpressionOperator.LessThan)
         {
-            if (a is VoidResult || b is VoidResult)
-                throw new IncompatibleExpressionOperandsException(a, b, "compare (equals)");
+        }
 
-            if (a is NullResult && b is NullResult)
+        protected override ExpressionResult Combine(ExpressionResult left, ExpressionResult right)
+        {
+            if (left is not NumberResult aNumber || right is not NumberResult bNumber)
+                throw new IncompatibleExpressionOperandsException(left, right, "compare (less than)");
+
+            return new BoolResult(aNumber.Value < bNumber.Value);
+        }
+    }
+
+    private class LessThanOrEqualExpression : BinaryExpression
+    {
+        public LessThanOrEqualExpression(Expression leftExpression, Expression rightExpression) : base(leftExpression, rightExpression, BinaryExpressionOperator.LessThanOrEqual)
+        {
+        }
+
+        protected override ExpressionResult Combine(ExpressionResult left, ExpressionResult right)
+        {
+            if (left is not NumberResult aNumber || right is not NumberResult bNumber)
+                throw new IncompatibleExpressionOperandsException(left, right, "compare (less than or equal)");
+
+            return new BoolResult(aNumber.Value <= bNumber.Value);
+        }
+    }
+
+    private class EqualsExpression : BinaryExpression
+    {
+        public EqualsExpression(Expression leftExpression, Expression rightExpression) : base(leftExpression, rightExpression, BinaryExpressionOperator.Equal)
+        {
+        }
+
+        protected override ExpressionResult Combine(ExpressionResult left, ExpressionResult right)
+        {
+            if (left is VoidResult || right is VoidResult)
+                throw new IncompatibleExpressionOperandsException(left, right, "compare (equals)");
+
+            if (left is NullResult && right is NullResult)
                 return new BoolResult(true);
 
-            if (a is NullResult || b is NullResult)
+            if (left is NullResult || right is NullResult)
                 return new BoolResult(false);
 
-            return new BoolResult(a switch
+            return new BoolResult(left switch
             {
-                StringResult aString when b is StringResult bString => string.Equals(aString.Value, bString.Value, StringComparison.Ordinal),
-                NumberResult aNumber when b is NumberResult bNumber => Math.Abs(aNumber.Value - bNumber.Value) < double.Epsilon,
-                BoolResult aBool when b is BoolResult bBool => aBool.Value == bBool.Value,
+                StringResult aString when right is StringResult bString => string.Equals(aString.Value, bString.Value, StringComparison.Ordinal),
+                NumberResult aNumber when right is NumberResult bNumber => Math.Abs(aNumber.Value - bNumber.Value) < double.Epsilon,
+                BoolResult aBool when right is BoolResult bBool => aBool.Value == bBool.Value,
                 _ => false,
             });
-        });
+        }
     }
 
-    public static BinaryExpression NotEquals(Expression left, Expression right)
+    private class NotEqualsExpression : BinaryExpression
     {
-        return new BinaryExpression("!=", left, right, (a, b) =>
+        public NotEqualsExpression(Expression leftExpression, Expression rightExpression) : base(leftExpression, rightExpression, BinaryExpressionOperator.NotEqual)
         {
-            if (a is VoidResult || b is VoidResult)
-                throw new IncompatibleExpressionOperandsException(a, b, "compare (not equals)");
+        }
 
-            if (a is NullResult && b is NullResult)
+        protected override ExpressionResult Combine(ExpressionResult left, ExpressionResult right)
+        {
+            if (left is VoidResult || right is VoidResult)
+                throw new IncompatibleExpressionOperandsException(left, right, "compare (not equals)");
+
+            if (left is NullResult && right is NullResult)
                 return new BoolResult(false);
 
-            if (a is NullResult || b is NullResult)
+            if (left is NullResult || right is NullResult)
                 return new BoolResult(true);
 
-            return new BoolResult(a switch
+            return new BoolResult(left switch
             {
-                StringResult aString when b is StringResult bString => !string.Equals(aString.Value, bString.Value, StringComparison.Ordinal),
-                NumberResult aNumber when b is NumberResult bNumber => Math.Abs(aNumber.Value - bNumber.Value) >= double.Epsilon,
-                BoolResult aBool when b is BoolResult bBool => aBool.Value != bBool.Value,
+                StringResult aString when right is StringResult bString => !string.Equals(aString.Value, bString.Value, StringComparison.Ordinal),
+                NumberResult aNumber when right is NumberResult bNumber => Math.Abs(aNumber.Value - bNumber.Value) >= double.Epsilon,
+                BoolResult aBool when right is BoolResult bBool => aBool.Value != bBool.Value,
                 _ => true,
             });
-        });
+        }
     }
 
-    public static BinaryExpression LogicalOr(Expression left, Expression right)
+    private class LogicalAndExpression : BinaryExpression
     {
-        return new BinaryExpression("||", left, right, (a, b) =>
+        public LogicalAndExpression(Expression leftExpression, Expression rightExpression) : base(leftExpression, rightExpression, BinaryExpressionOperator.LogicalAnd)
         {
-            if (a is not BoolResult aBool || b is not BoolResult bBool)
-                throw new IncompatibleExpressionOperandsException(a, b, "logical or");
+        }
 
-            return new BoolResult(aBool.Value || bBool.Value);
-        });
-    }
-
-    public static BinaryExpression LogicalAnd(Expression left, Expression right)
-    {
-        return new BinaryExpression("&&", left, right, (a, b) =>
+        protected override ExpressionResult Combine(ExpressionResult left, ExpressionResult right)
         {
-            if (a is not BoolResult aBool || b is not BoolResult bBool)
-                throw new IncompatibleExpressionOperandsException(a, b, "logical and");
+            if (left is not BoolResult aBool || right is not BoolResult bBool)
+                throw new IncompatibleExpressionOperandsException(left, right, "logical and");
 
             return new BoolResult(aBool.Value && bBool.Value);
-        });
+        }
     }
 
-    public static BinaryExpression Coalesce(Expression left, Expression right)
+    private class LogicalOrExpression : BinaryExpression
     {
-        return new BinaryExpression("??", left, right, (a, b) => a is NullResult ? b : a);
-    }
-
-    public static BinaryExpression Index(Expression left, Expression right)
-    {
-        return new BinaryExpression("[]", left, right, (a, b) =>
+        public LogicalOrExpression(Expression leftExpression, Expression rightExpression) : base(leftExpression, rightExpression, BinaryExpressionOperator.LogicalOr)
         {
-            switch (a.ResultType)
+        }
+
+        protected override ExpressionResult Combine(ExpressionResult left, ExpressionResult right)
+        {
+            if (left is not BoolResult aBool || right is not BoolResult bBool)
+                throw new IncompatibleExpressionOperandsException(left, right, "logical or");
+
+            return new BoolResult(aBool.Value || bBool.Value);
+        }
+    }
+
+    private class CoalesceExpression : BinaryExpression
+    {
+        public CoalesceExpression(Expression leftExpression, Expression rightExpression) : base(leftExpression, rightExpression, BinaryExpressionOperator.Coalesce)
+        {
+        }
+
+        protected override ExpressionResult Combine(ExpressionResult left, ExpressionResult right)
+        {
+            return left is NullResult ? right : left;
+        }
+    }
+
+    private class IndexExpression : BinaryExpression
+    {
+        public IndexExpression(Expression leftExpression, Expression rightExpression) : base(leftExpression, rightExpression, BinaryExpressionOperator.Index)
+        {
+        }
+
+        protected override ExpressionResult Combine(ExpressionResult left, ExpressionResult right)
+        {
+            switch (left.ResultType)
             {
                 case ResultType.List:
-                    {
-                        var values = a.ExpectList().Value;
-                        var index = b.ExpectInteger().RoundedIntValue;
+                {
+                    var values = left.ExpectList().Value;
+                    var index = right.ExpectInteger().RoundedIntValue;
 
-                        if (index < 0 || index >= values.Count)
-                            throw new IndexOutOfBoundsException(index, values.Count);
+                    if (index < 0 || index >= values.Count)
+                        throw new IndexOutOfBoundsException(index, values.Count);
 
-                        return values[index];
-                    }
+                    return values[index];
+                }
                 case ResultType.Map:
-                    {
-                        var pairs = a.ExpectMap().Value;
-                        var key = b.ExpectString().Value;
+                {
+                    var pairs = left.ExpectMap().Value;
+                    var key = right.ExpectString().Value;
 
-                        return pairs[key];
-                    }
+                    return pairs[key];
+                }
                 case ResultType.Str:
-                    {
-                        var value = a.ExpectString().Value;
-                        var index = b.ExpectInteger().RoundedIntValue;
-                        var grapheme = value.GraphemeAt(index);
-                        if (grapheme == null)
-                            throw new IndexOutOfBoundsException(index, value.GraphemeLength());
+                {
+                    var value = left.ExpectString().Value;
+                    var index = right.ExpectInteger().RoundedIntValue;
+                    var grapheme = value.GraphemeAt(index);
+                    if (grapheme == null)
+                        throw new IndexOutOfBoundsException(index, value.GraphemeLength());
 
-                        return new StringResult(grapheme);
-                    }
+                    return new StringResult(grapheme);
+                }
                 default:
-                    var indexRepresentation = b switch
+                    var indexRepresentation = right switch
                     {
                         StringResult stringResult => stringResult.Value,
                         NumberResult numberResult => numberResult.Value.ToString(CultureInfo.InvariantCulture),
-                        _ => b.ToString(),
+                        _ => right.ToString(),
                     };
 
-                    throw new InvalidIndexOperatorException(null, indexRepresentation, a.ResultType, "access");
+                    throw new InvalidIndexOperatorException(null, indexRepresentation, left.ResultType, "access");
             }
-        });
+        }
     }
-
-    private readonly string debugName;
-    private readonly Expression left;
-    private readonly Expression right;
-    private readonly Func<ExpressionResult, ExpressionResult, ExpressionResult> combine;
-
-    public BinaryExpression(string debugName, Expression left, Expression right, Func<ExpressionResult, ExpressionResult, ExpressionResult> combine)
-    {
-        this.debugName = debugName;
-        this.left = left;
-        this.right = right;
-        this.combine = combine;
-    }
-
-    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, CancellationToken cancellationToken = default)
-    {
-        var leftValue = await left.EvaluateAsync(interpreter, cancellationToken);
-        var rightValue = await right.EvaluateAsync(interpreter, cancellationToken);
-
-        return combine.Invoke(leftValue, rightValue);
-    }
-
-    protected override string DebugDisplay() => $"({left}) {debugName} ({right})";
 }
