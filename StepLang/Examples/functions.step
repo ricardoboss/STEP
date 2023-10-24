@@ -7,7 +7,7 @@ function calculateCircleArea = (number radius) {
 		println("Error: The radius must be greater than zero")
 		return 0.0
 	} else {
-		return pi * radius ^ 2
+		return pi * radius ** 2
 	}
 }
 
