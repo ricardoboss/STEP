@@ -1,6 +1,7 @@
 # v2.x.0
 
 * Changed "power" operator from `^` to `**` by @ricardoboss in https://github.com/ricardoboss/STEP/pull/107
+* Added support for nullable type declarations by @ricardoboss in https://github.com/ricardoboss/STEP/pull/102
 
 # v2.0.0
 
