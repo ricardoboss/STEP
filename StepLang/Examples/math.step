@@ -19,7 +19,7 @@ println("random() = ", random())
 
 println("interpolate(0, 10, 0.5) = ", interpolate(0, 10, 0.5))
 
-println("sqrt(e ^ 4) = ", sqrt(e ^ 4))
+println("sqrt(e ** 4) = ", sqrt(e ** 4))
 println("sqrt(-1) = ", sqrt(-1))
 
 println("sin(1.75 * pi) = ", sin(1.75 * pi))
