@@ -34,7 +34,7 @@ public class DoRemoveFunctionTest
             Add(ListResult.Empty, LiteralExpression.Str("test"), ListResult.Empty);
             Add(ListResult.Empty, LiteralExpression.Number(1), ListResult.Empty);
             Add(ListResult.Empty, LiteralExpression.True, ListResult.Empty);
-            Add(ListResult.Empty, BinaryExpression.Add(LiteralExpression.Number(1), LiteralExpression.Number(2)), ListResult.Empty);
+            Add(ListResult.Empty, new AddExpression(LiteralExpression.Number(1), LiteralExpression.Number(2)), ListResult.Empty);
             Add(ListResult.From(BoolResult.True), LiteralExpression.False, ListResult.From(BoolResult.True));
             Add(ListResult.From(BoolResult.False), LiteralExpression.False, ListResult.Empty);
         }

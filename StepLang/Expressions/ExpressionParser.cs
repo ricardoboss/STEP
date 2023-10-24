@@ -163,10 +163,34 @@ public class ExpressionParser
             // dequeue operator tokens after right value
             _ = tokenQueue.Dequeue(opPostLength);
 
-            left = BinaryExpression.FromOperator(op, left, right);
+            left = BinaryExpressionFromOperator(op, left, right);
         }
 
         return left;
+    }
+
+    private static BinaryExpression BinaryExpressionFromOperator(BinaryExpressionOperator op, Expression left, Expression right)
+    {
+        return op switch
+        {
+            BinaryExpressionOperator.Add => new AddExpression(left, right),
+            BinaryExpressionOperator.Subtract => new SubtractExpression(left, right),
+            BinaryExpressionOperator.Multiply => new MultiplyExpression(left, right),
+            BinaryExpressionOperator.Divide => new DivideExpression(left, right),
+            BinaryExpressionOperator.Power => new PowerExpression(left, right),
+            BinaryExpressionOperator.Modulo => new ModuloExpression(left, right),
+            BinaryExpressionOperator.GreaterThan => new GreaterThanExpression(left, right),
+            BinaryExpressionOperator.GreaterThanOrEqual => new GreaterThanOrEqualExpression(left, right),
+            BinaryExpressionOperator.LessThan => new LessThanExpression(left, right),
+            BinaryExpressionOperator.LessThanOrEqual => new LessThanOrEqualExpression(left, right),
+            BinaryExpressionOperator.Equal => new EqualsExpression(left, right),
+            BinaryExpressionOperator.NotEqual => new NotEqualsExpression(left, right),
+            BinaryExpressionOperator.LogicalAnd => new LogicalAndExpression(left, right),
+            BinaryExpressionOperator.LogicalOr => new LogicalOrExpression(left, right),
+            BinaryExpressionOperator.Coalesce => new CoalesceExpression(left, right),
+            BinaryExpressionOperator.Index => new IndexExpression(left, right),
+            _ => throw new NotImplementedException($"The operator {op} is not implemented yet"),
+        };
     }
 
     private async Task<Expression> ParseUnaryExpression(CancellationToken cancellationToken = default)
