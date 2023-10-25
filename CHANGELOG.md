@@ -9,6 +9,7 @@
   * `break` and `continue` no longer allow expressions to break/continue for multiple loops
   * Exceptions that were previously printed with the affected code can now also show the causing token
   * Native functions now support union types to accept more than one value type of parameter
+* Added `httpServer` function by @ricardoboss in https://github.com/ricardoboss/STEP/pull/106
 
 For more info, see https://github.com/ricardoboss/STEP/milestone/4?closed=1
 
