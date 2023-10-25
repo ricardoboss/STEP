@@ -12,7 +12,7 @@ public class HttpServerFunction : NativeFunction
     public const string Identifier = "httpServer";
 
     /// <inheritdoc />
-    public override IEnumerable<(ResultType [] types, string identifier)> Parameters => new [] { (new [] { ResultType.Map, ResultType.Number }, "portOrOptions"), (new [] { ResultType.Function }, "handler") };
+    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.Map, ResultType.Number }, "portOrOptions"), (new[] { ResultType.Function }, "handler") };
 
     /// <inheritdoc />
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)

@@ -9,7 +9,7 @@ public class FileResponseFunction : NativeFunction
     public const string Identifier = "fileResponse";
 
     /// <inheritdoc />
-    public override IEnumerable<(ResultType [] types, string identifier)> Parameters => new[] { (new[] { ResultType.Str }, "file"), (new[] { ResultType.Number }, "status") };
+    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.Str }, "file"), (new[] { ResultType.Number }, "status") };
 
     /// <inheritdoc />
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
