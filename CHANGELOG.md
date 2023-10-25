@@ -10,6 +10,7 @@
   * Exceptions that were previously printed with the affected code can now also show the causing token
   * Native functions now support union types to accept more than one value type of parameter
 * Added `httpServer` and `fileResponse` functions by @ricardoboss in https://github.com/ricardoboss/STEP/pull/106
+  * Also classify `fetch` as a web function together with `httpServer` and `fileResponse`
 
 For more info, see https://github.com/ricardoboss/STEP/milestone/4?closed=1
 
