@@ -3,6 +3,7 @@
 * Changed "power" operator from `^` to `**` by @ricardoboss in https://github.com/ricardoboss/STEP/pull/107
 * Added support for nullable type declarations by @ricardoboss in https://github.com/ricardoboss/STEP/pull/102
 * Added `httpServer` and `fileResponse` functions by @ricardoboss in https://github.com/ricardoboss/STEP/pull/106
+  * Also classify `fetch` as a web function together with `httpServer` and `fileResponse`
 
 # v2.0.0
 
