@@ -14,6 +14,8 @@ httpServer(8080, (Map request) {
 })
 ```
 
+The call to `httpServer` is blocking, meaning any code after it is not executed.
+
 You can also pass an existing function:
 
 ```step
