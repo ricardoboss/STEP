@@ -75,7 +75,6 @@ public class Scope
         CreateVariable(ToBoolFunction.Identifier, new ToBoolFunction().ToResult());
 
         // other functions
-        CreateVariable(FetchFunction.Identifier, new FetchFunction().ToResult());
         CreateVariable(FileExistsFunction.Identifier, new FileExistsFunction().ToResult());
         CreateVariable(FileReadFunction.Identifier, new FileReadFunction().ToResult());
         CreateVariable(FileWriteFunction.Identifier, new FileWriteFunction().ToResult());
