@@ -33,12 +33,12 @@ directory. It will also serve `index.html` when the user requests `/`:
 
 ```step
 httpServer(8080, (Map request) {
-    if (request["path"] == "/") {
-        request["path"] = "/index.html"
-    }
-
     if (!startsWith(request["path"], "/")) {
         request["path"] = "/" + request["path"]
+    }
+
+    if (request["path"] == "/") {
+        request["path"] = "/index.html"
     }
 
     if (fileExists("." + request["path"])) {
