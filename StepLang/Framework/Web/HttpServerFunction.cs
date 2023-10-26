@@ -115,10 +115,26 @@ public class HttpServerFunction : NativeFunction
 
                     interpreter.StdOut?.WriteLineAsync($"({workerId}) {request.RemoteEndPoint} -> {request.HttpMethod} {request.Url?.AbsolutePath}");
 
-                    var responseResult = await handler.EvaluateAsync(interpreter, new Expression[]
+                    ExpressionResult responseResult;
+                    try
                     {
-                        requestMap.ToLiteralExpression(),
-                    }, c);
+                        responseResult = await handler.EvaluateAsync(interpreter, new Expression []
+                        {
+                            requestMap.ToLiteralExpression(),
+                        }, c);
+                    }
+                    catch (Exception e)
+                    {
+                        responseResult = new MapResult(new Dictionary<string, ExpressionResult>
+                        {
+                            {
+                                "status", new NumberResult(500)
+                            },
+                            {
+                                "body", new StringResult(RenderExceptionPage(e))
+                            },
+                        });
+                    }
 
                     IDictionary<string, ExpressionResult> responseMap;
                     if (responseResult is MapResult map)
@@ -167,5 +183,64 @@ public class HttpServerFunction : NativeFunction
         {
             server.Stop();
         }
+    }
+
+    private static string RenderExceptionPage(Exception e)
+    {
+        string? location = null;
+        if (e is StepLangException { Location: { } l })
+        {
+            location = $"<small>thrown at: <code>{l}</code></small>";
+        }
+
+        return $$"""
+                 <!DOCTYPE html>
+                 <html lang="en">
+                 <head>
+                 	<title>Unhandled Exception: {{e.Message}}</title>
+                 	<style rel="stylesheet">
+                 		html, body {
+                 			margin: 0;
+                 			text-align: center;
+                 			font-family: sans-serif;
+                 		}
+
+                 		body {
+                 			padding: 1rem;
+                 			border: 5px dashed red;
+                 			border-radius: 1rem;
+                 		}
+
+                 		@media (prefers-color-scheme: dark) {
+                 			body {
+                 				background: #202124;
+                 				color: #fff;
+                 			}
+                 		}
+
+                 		hr {
+                 			border: 0;
+                 			border-bottom: 1px solid #ccc;
+                 		}
+
+                 		pre {
+                 			overflow: auto;
+                 			text-align: left;
+                 			padding: 1rem;
+                 		}
+                 	</style>
+                 </head>
+                 <body>
+                 	<h1>Unhandled Exception</h1>
+                 	<p>
+                 		<code>{{e.GetType().Name}}</code><br>
+                 		<strong>{{e.Message}}</strong><br>
+                 		{{location}}
+                 	</p>
+                 	<hr>
+                 	<pre>{{e.StackTrace}}</pre>
+                 </body>
+                 </html>
+                 """;
     }
 }
