@@ -32,16 +32,16 @@ public static class ValueTypeExtensions
 
     public static ResultType FromTypeName(string typeName)
     {
-        return typeName switch
+        return typeName.ToUpperInvariant() switch
         {
-            "void" => ResultType.Void,
-            "string" => ResultType.Str,
-            "number" => ResultType.Number,
-            "bool" => ResultType.Bool,
-            "list" => ResultType.List,
-            "map" => ResultType.Map,
-            "function" => ResultType.Function,
-            "null" => ResultType.Null,
+            "VOID" => ResultType.Void,
+            "STRING" => ResultType.Str,
+            "NUMBER" => ResultType.Number,
+            "BOOL" => ResultType.Bool,
+            "LIST" => ResultType.List,
+            "MAP" => ResultType.Map,
+            "FUNCTION" => ResultType.Function,
+            "NULL" => ResultType.Null,
             _ => throw new ArgumentOutOfRangeException(nameof(typeName), typeName, null),
         };
     }
