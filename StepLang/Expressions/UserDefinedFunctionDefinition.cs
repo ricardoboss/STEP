@@ -15,8 +15,19 @@ public class UserDefinedFunctionDefinition : FunctionDefinition
         this.body = body;
     }
 
-    // FIXME: this doesn't allow nullable types
-    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => parameters.Select(t => (new[] { ValueTypeExtensions.FromTypeName(t.TypeToken.Value) }, t.IdentifierToken.Value));
+    public override IEnumerable<(ResultType[] types, string identifier)> Parameters =>
+        parameters.Select(t =>
+        {
+            var allowedTypes = new List<ResultType>(2)
+            {
+                ValueTypeExtensions.FromTypeName(t.TypeToken.Value),
+            };
+
+            if (t.NullabilityIndicatorToken is not null)
+                allowedTypes.Add(ResultType.Null);
+
+            return (allowedTypes.ToArray(), t.IdentifierToken.Value);
+        });
 
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
     {
