@@ -3,6 +3,9 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Parsing;
 
+/// <summary>
+/// A queue data structure specifically for iterating over <see cref="Token"/>s.
+/// </summary>
 [SuppressMessage("Naming", "CA1711:Identifiers should not have incorrect suffix")]
 public class TokenQueue
 {
@@ -16,6 +19,11 @@ public class TokenQueue
 
     public Token? LastToken { get; private set; }
 
+    /// <summary>
+    /// Tries to remove a <see cref="Token"/> from the beginning of the queue.
+    /// </summary>
+    /// <param name="token">The <see cref="Token"/> that was removed.</param>
+    /// <returns>True if a <see cref="Token"/> was removed, false otherwise.</returns>
     public bool TryDequeue([NotNullWhen(true)] out Token? token)
     {
         token = null;
@@ -40,6 +48,11 @@ public class TokenQueue
         return true;
     }
 
+    /// <summary>
+    /// Removes a <see cref="Token"/> from the beginning of the queue or throws an exception if the queue is empty.
+    /// </summary>
+    /// <returns>The <see cref="Token"/> that was removed.</returns>
+    /// <exception cref="UnexpectedEndOfTokensException">Thrown if the queue is empty.</exception>
     public Token Dequeue()
     {
         if (!TryDequeue(out var token))
@@ -48,6 +61,11 @@ public class TokenQueue
         return token;
     }
 
+    /// <summary>
+    /// Removes a collection of <see cref="Token"/>s from the beginning of the queue or throws an exception if the queue is empty before <paramref name="count"/> <see cref="Token"/>s have been removed.
+    /// </summary>
+    /// <param name="count">The number of <see cref="Token"/>s to remove.</param>
+    /// <returns>The collection of <see cref="Token"/>s that were removed in the order they were removed.</returns>
     public Token[] Dequeue(int count)
     {
         var tokens = new Token[count];
@@ -67,6 +85,12 @@ public class TokenQueue
         return source.Skip(offset).First();
     }
 
+    /// <summary>
+    /// Gets the <see cref="TokenType"/> of a <see cref="Token"/> at the <paramref name="offset"/> from the beginning of the queue without removing it.
+    /// </summary>
+    /// <param name="offset">The offset from the beginning of the queue to get the <see cref="Token"/> from.</param>
+    /// <returns>The <see cref="TokenType"/> of the <see cref="Token"/> at the <paramref name="offset"/> from the beginning of the queue.</returns>
+    /// <exception cref="UnexpectedEndOfTokensException">Thrown if the queue is empty before the <paramref name="offset"/> is reached.</exception>
     public TokenType PeekType(int offset = 0)
     {
         var token = Peek(offset);
