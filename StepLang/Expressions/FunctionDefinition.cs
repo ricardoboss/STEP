@@ -6,8 +6,14 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Expressions;
 
+/// <summary>
+/// A generic function definition.
+/// </summary>
 public abstract class FunctionDefinition
 {
+    /// <summary>
+    /// A string representation of the parameters of this function.
+    /// </summary>
     [ExcludeFromCodeCoverage]
     private string DebugParamsString => string.Join(", ", Parameters.Select(p =>
     {
@@ -20,6 +26,9 @@ public abstract class FunctionDefinition
     [ExcludeFromCodeCoverage]
     private string DebugReturnTypeString => string.Join("|", ReturnTypes.Select(r => r.ToString()));
 
+    /// <summary>
+    /// A string representation of the body of this function.
+    /// </summary>
     [ExcludeFromCodeCoverage]
     protected abstract string DebugBodyString { get; }
 
@@ -34,10 +43,24 @@ public abstract class FunctionDefinition
         return $"<Function: ({paramStr}): {returnStr} => {{ {bodyStr} }}>";
     }
 
+    /// <summary>
+    /// Converts this function definition to a <see cref="FunctionResult"/>.
+    /// </summary>
+    /// <returns>The <see cref="FunctionResult"/> representation of this function definition.</returns>
     public FunctionResult ToResult() => new(this);
 
+    /// <summary>
+    /// Evaluates the function with the given arguments.
+    /// </summary>
+    /// <param name="callLocation">The location of the call.</param>
+    /// <param name="interpreter">The interpreter to use.</param>
+    /// <param name="arguments">The arguments to evaluate the function with.</param>
+    /// <returns>The result of the function.</returns>
     public abstract ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments);
 
+    /// <summary>
+    /// The parameters accepted by this function.
+    /// </summary>
     public abstract IReadOnlyCollection<IVariableDeclarationNode> Parameters { get; }
 
     protected virtual IEnumerable<ResultType> ReturnTypes { get; } = new[] { ResultType.Void };
