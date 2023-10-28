@@ -98,6 +98,13 @@ public class TokenQueue
         return token.Type;
     }
 
+    /// <summary>
+    /// Removes a <see cref="Token"/> from the beginning of the queue or throws an exception if the queue is empty.
+    /// </summary>
+    /// <param name="allowed">The <see cref="TokenType"/>s that are allowed to be removed.</param>
+    /// <returns>The <see cref="Token"/> that was removed.</returns>
+    /// <exception cref="UnexpectedEndOfTokensException">Thrown if the queue is empty.</exception>
+    /// <exception cref="UnexpectedTokenException">Thrown if the <see cref="Token"/> at the beginning of the queue is not one of the <paramref name="allowed"/> <see cref="TokenType"/>s.</exception>
     public Token Dequeue(params TokenType[] allowed)
     {
         Token? token;
