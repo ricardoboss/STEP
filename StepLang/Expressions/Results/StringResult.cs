@@ -4,13 +4,20 @@ namespace StepLang.Expressions.Results;
 
 public class StringResult : ComparableValueExpressionResult<string>
 {
+    /// <summary>
+    /// A new <see cref="StringResult"/> with an empty <see cref="string"/>.
+    /// </summary>
     public static StringResult Empty => new(string.Empty);
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Creates a new <see cref="StringResult"/> with the given value.
+    /// </summary>
+    /// <param name="value">The value of the result.</param>
     public StringResult(string value) : base(ResultType.Str, value)
     {
     }
 
+    /// <inheritdoc />
     protected override int CompareToInternal(ComparableValueExpressionResult<string> other)
     {
         var normalizedA = Value.Normalize(NormalizationForm.FormD);
@@ -19,12 +26,16 @@ public class StringResult : ComparableValueExpressionResult<string>
         return string.Compare(normalizedA, normalizedB, StringComparison.Ordinal);
     }
 
+    /// <inheritdoc />
     public override bool Equals(object? obj) => obj is ExpressionResult result && EqualsInternal(result);
 
+    /// <inheritdoc />
     protected override bool EqualsInternal(ExpressionResult other) => other is StringResult stringResult && string.Equals(Value, stringResult.Value, StringComparison.Ordinal);
 
+    /// <inheritdoc />
     public override int GetHashCode() => base.GetHashCode();
 
+    /// <inheritdoc />
     public override StringResult DeepClone()
     {
         return new(Value);

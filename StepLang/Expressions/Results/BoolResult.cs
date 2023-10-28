@@ -1,9 +1,18 @@
 namespace StepLang.Expressions.Results;
 
+/// <summary>
+/// Represents a boolean (<c>true</c> or <c>false</c>).
+/// </summary>
 public class BoolResult : ValueExpressionResult<bool>
 {
+    /// <summary>
+    /// A <see cref="BoolResult"/> with a value of <c>true</c>.
+    /// </summary>
     public static readonly BoolResult True = new(true);
 
+    /// <summary>
+    /// A <see cref="BoolResult"/> with a value of <c>false</c>.
+    /// </summary>
     public static readonly BoolResult False = new(false);
 
     /// <inheritdoc />
@@ -17,6 +26,7 @@ public class BoolResult : ValueExpressionResult<bool>
 
     protected override bool EqualsInternal(ExpressionResult other) => other is BoolResult boolResult && Value == boolResult.Value;
 
+    /// <inheritdoc />
     public override BoolResult DeepClone() => Value ? True : False;
 
     public static implicit operator BoolResult(bool value) => value ? True : False;

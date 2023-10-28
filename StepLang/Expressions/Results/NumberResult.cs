@@ -2,6 +2,9 @@ using System.Globalization;
 
 namespace StepLang.Expressions.Results;
 
+/// <summary>
+/// Represents a number result and stores the value as a <see cref="double"/>.
+/// </summary>
 public class NumberResult : ComparableValueExpressionResult<double>
 {
     /// <summary>
@@ -10,21 +13,32 @@ public class NumberResult : ComparableValueExpressionResult<double>
     /// </summary>
     private const double Epsilon = 1e-32;
 
+    /// <summary>
+    /// A <see cref="NumberResult"/> with a value of 0.
+    /// </summary>
     public static NumberResult Zero => new(0);
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Creates a new <see cref="NumberResult"/> with the given value.
+    /// </summary>
+    /// <param name="value">The value of the result.</param>
     public NumberResult(double value) : base(ResultType.Number, value)
     {
     }
 
+    /// <inheritdoc />
     protected override int CompareToInternal(ComparableValueExpressionResult<double> other) => Value.CompareTo(other.Value);
 
+    /// <inheritdoc />
     public override bool Equals(object? obj) => obj is ExpressionResult result && EqualsInternal(result);
 
+    /// <inheritdoc />
     protected override bool EqualsInternal(ExpressionResult other) => other is NumberResult numberResult && this == numberResult;
 
+    /// <inheritdoc />
     public override int GetHashCode() => base.GetHashCode();
 
+    /// <inheritdoc />
     public override NumberResult DeepClone() => new(Value);
 
     /// <inheritdoc />

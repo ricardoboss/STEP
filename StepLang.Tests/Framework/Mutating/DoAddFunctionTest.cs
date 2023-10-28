@@ -37,7 +37,7 @@ public class DoAddFunctionTest
             Add(ListResult.Empty, LiteralExpressionNode.FromInt32(1));
             Add(ListResult.Empty, LiteralExpressionNode.FromBoolean(true));
             Add(ListResult.Empty, new AddExpressionNode(new(), LiteralExpressionNode.FromInt32(1), LiteralExpressionNode.FromInt32(2)));
-            Add(ListResult.From(BoolResult.True), LiteralExpressionNode.FromBoolean(false));
+            Add(TestHelper.ListFrom(BoolResult.True), LiteralExpressionNode.FromBoolean(false));
         }
     }
 }
