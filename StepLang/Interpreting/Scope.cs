@@ -10,8 +10,19 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Interpreting;
 
+/// <summary>
+/// Represents a scope in which variables can be declared and accessed.
+/// Also, a scope can have a result.
+/// </summary>
 public class Scope
 {
+    /// <summary>
+    /// The global scope containing all built-in functions and variables.
+    /// This is used as the default scope.
+    /// </summary>
+    /// <remarks>
+    /// This is the only scope with no parent.
+    /// </remarks>
     public static readonly Scope GlobalScope = new();
 
     private readonly Dictionary<string, Variable> identifiers = new();
@@ -23,6 +34,10 @@ public class Scope
     private bool shouldContinue;
     private bool shouldBreak;
 
+    /// <summary>
+    /// Creates a new <see cref="Scope"/> with the given parent scope.
+    /// </summary>
+    /// <param name="parent"></param>
     public Scope(Scope parent) => parentScope = parent;
 
     private Scope()
@@ -102,9 +117,24 @@ public class Scope
         CreateVariable("e", new NumberResult(Math.E));
     }
 
+    /// <summary>
+    /// Creates a new variable with the given identifier and initial value.
+    /// </summary>
+    /// <param name="identifier">The identifier of the variable.</param>
+    /// <param name="initialValue">The initial value of the variable.</param>
+    /// <param name="nullable">Whether the variable can be set to <see cref="NullResult"/>.</param>
     public void CreateVariable(string identifier, ExpressionResult initialValue, bool nullable = false) =>
         CreateVariable(new(), new(TokenType.Identifier, identifier), new[] { initialValue.ResultType }, initialValue, nullable);
 
+    /// <summary>
+    /// Creates a new variable with the given identifier token, type and initial value.
+    /// </summary>
+    /// <param name="assignmentLocation">The location of the assignment.</param>
+    /// <param name="identifierToken">The identifier token of the variable.</param>
+    /// <param name="types">The types of the variable.</param>
+    /// <param name="initialValue">The initial value of the variable.</param>
+    /// <param name="nullable">Whether the variable can be set to <see cref="NullResult"/>.</param>
+    /// <exception cref="VariableAlreadyDeclaredException">Thrown if a variable with the same identifier already exists in this scope.</exception>
     public Variable CreateVariable(TokenLocation assignmentLocation, Token identifierToken, IReadOnlyList<ResultType> types, ExpressionResult initialValue, bool nullable = false)
     {
         if (Exists(identifierToken.Value, false))
@@ -119,6 +149,12 @@ public class Scope
         return variable;
     }
 
+    /// <summary>
+    /// Checks whether a variable with the given identifier exists in this scope and optionally in parent scopes.
+    /// </summary>
+    /// <param name="identifier">The identifier to look for.</param>
+    /// <param name="includeParent">Whether to also look for the variable in parent scopes.</param>
+    /// <returns><see langword="true"/> if a variable with the given identifier exists, <see langword="false"/> otherwise.</returns>
     public bool Exists(string identifier, bool includeParent)
     {
         if (includeParent)
@@ -139,6 +175,12 @@ public class Scope
         return false;
     }
 
+    /// <summary>
+    /// Gets the variable with the given identifier.
+    /// </summary>
+    /// <param name="identifierToken">The identifier token of the variable.</param>
+    /// <returns>The variable with the given identifier.</returns>
+    /// <exception cref="UndefinedIdentifierException">Thrown if no variable with the given identifier exists in this or in parent scopes.</exception>
     public Variable GetVariable(Token identifierToken)
     {
         if (TryGetVariable(identifierToken.Value, out var variable))
@@ -147,6 +189,10 @@ public class Scope
         throw new UndefinedIdentifierException(identifierToken);
     }
 
+    /// <summary>
+    /// Sets the result of this scope.
+    /// </summary>
+    /// <param name="result">The result to set.</param>
     public void SetResult(TokenLocation location, ExpressionResult result)
     {
         scopeResultLocation = location;
@@ -155,6 +201,11 @@ public class Scope
 
     public bool ShouldReturn() => scopeResult is not null;
 
+    /// <summary>
+    /// Tries to get the result of this scope.
+    /// </summary>
+    /// <param name="result">The result of this scope.</param>
+    /// <returns><see langword="true"/> if this scope has a result, <see langword="false"/> otherwise.</returns>
     public bool TryGetResult([NotNullWhen(true)] out ExpressionResult? result, [NotNullWhen(true)] out TokenLocation? location)
     {
         location = scopeResultLocation;
@@ -171,6 +222,7 @@ public class Scope
 
     public bool ShouldBreak() => shouldBreak;
 
+    /// <inheritdoc />
     public override string ToString()
     {
         return $"Scope: {{{string.Join(", ", identifiers.Select(kvp => kvp.Value.ToString()))}}}";
