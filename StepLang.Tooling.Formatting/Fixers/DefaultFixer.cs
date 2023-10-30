@@ -3,8 +3,12 @@ using StepLang.Tooling.Formatting.Analyzers.Results;
 
 namespace StepLang.Tooling.Formatting.Fixers;
 
+/// <summary>
+/// The default fixer. This fixer applies fixes to actual files.
+/// </summary>
 public class DefaultFixer : BaseFixer
 {
+    /// <inheritdoc />
     protected override async Task<FixerResult> ApplyResult(AnalysisResult result, FileInfo file,
         CancellationToken cancellationToken)
     {

@@ -2,6 +2,9 @@ using StepLang.Tooling.Formatting.Analyzers.Results;
 
 namespace StepLang.Tooling.Formatting.Analyzers;
 
+/// <summary>
+/// An analyzer that can be used to analyze files.
+/// </summary>
 public interface IFileAnalyzer : IAnalyzer
 {
     /// <summary>
