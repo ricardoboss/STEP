@@ -13,9 +13,9 @@ env:
 
 jobs:
   coverage:
-    runs-on: ubuntu-latest
-
     name: Get Test Coverage
+
+    runs-on: ubuntu-latest
 
     outputs:
       badge: ${{ steps.coverage.outputs.badge }}
@@ -61,15 +61,10 @@ jobs:
           thresholds: '0 85'
           badge: true
 
-  report:
-    name: Report
-
-    needs: [ coverage ]
+  style:
+    name: Check Style
 
     runs-on: ubuntu-latest
-
-    permissions:
-      pull-requests: write
 
     steps:
       - uses: actions/checkout@v4
@@ -80,13 +75,39 @@ jobs:
         id: style
         run: dotnet tool update dotnet-format -g && dotnet format --verify-no-changes
 
+  docblocks:
+    name: Check Docblocks
+
+    runs-on: ubuntu-latest
+
+    outputs:
+      total: ${{ steps.docblocks.outputs.total }}
+      undocumented: ${{ steps.docblocks.outputs.undocumented }}
+      documented: ${{ steps.docblocks.outputs.documented }}
+      percent: ${{ steps.docblocks.outputs.percent }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Check Docblock Coverage
         id: docblocks
-        if: always()
         run: dotnet tool update cranky -g && cranky --project ./StepLang/StepLang.csproj --github --set-exit-code --percentages 0,50
 
+  report:
+    name: Report
+
+    if: always()
+    needs: [ coverage, style, docs ]
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      pull-requests: write
+
+    steps:
       - name: Add PR comment
-        if: always()
         uses: thollander/actions-comment-pull-request@v2
         with:
           comment_tag: report
@@ -97,5 +118,5 @@ jobs:
 
             Static Analysis:
 
-            - Code Style: `${{ steps.style.outcome }}`
-            - Docblocks: `${{ steps.docblocks.outputs.documented }} / ${{ steps.docblocks.outputs.total }}` (`${{ steps.docblocks.outputs.percent }}%`)
+            - Code Style: `${{ needs.style.result == 'success' ? '✅' : '❌' }}`
+            - Docblocks: `${{ needs.docblocks.outputs.documented }} / ${{ needs.docblocks.outputs.total }}` (`${{ needs.docblocks.outputs.percent }}%`)
