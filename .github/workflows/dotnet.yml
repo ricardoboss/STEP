@@ -140,6 +140,7 @@ jobs:
         run: dotnet tool update cranky -g && cranky --project ./StepLang/StepLang.csproj --github --set-exit-code --percentages 0,50
 
       - name: Add PR comment
+        if: always()
         uses: thollander/actions-comment-pull-request@v2
         with:
           comment_tag: report
