@@ -5,6 +5,9 @@ using System.Text.RegularExpressions;
 
 namespace StepLang.Tokenizing;
 
+/// <summary>
+/// The tokenizer is responsible for converting a stream of characters into a stream of tokens.
+/// </summary>
 public class Tokenizer
 {
     private readonly StringBuilder tokenBuilder = new();
@@ -16,6 +19,11 @@ public class Tokenizer
     private bool escaped;
     private int? stringSourceLength;
 
+    /// <summary>
+    /// Creates a new tokenizer.
+    /// </summary>
+    /// <param name="source">The source for the characters to consume.</param>
+    /// <param name="strict">If true, the tokenizer will throw an exception if it encounters an invalid identifier or unterminated string.</param>
     public Tokenizer(CharacterSource source, bool strict = true)
     {
         this.source = source;
@@ -37,6 +45,12 @@ public class Tokenizer
         return new(source.File, source.Line, column, length);
     }
 
+    /// <summary>
+    /// Tokenizes the characters that have been added to the tokenizer.
+    /// </summary>
+    /// <param name="cancellationToken">A cancellation token that can be used to cancel the tokenization.</param>
+    /// <returns>A stream of tokens.</returns>
+    /// <exception cref="UnterminatedStringException">Thrown if the tokenizer encounters an unterminated string.</exception>
     public IEnumerable<Token> Tokenize(CancellationToken cancellationToken = default)
     {
         while (source.TryConsume(out var character))
