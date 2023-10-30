@@ -108,7 +108,6 @@ jobs:
       - name: Provide Code Coverage Summary
         id: coverage
         uses: ricardoboss/CodeCoverageSummary@dev
-        if: matrix.os == 'ubuntu-latest' && matrix.version == '7.x'
         with:
           filename: coverage/**/coverage.cobertura.xml
           output: github
