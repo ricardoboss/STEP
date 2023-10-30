@@ -99,7 +99,7 @@ jobs:
     name: Report
 
     if: always()
-    needs: [ coverage, style, docs ]
+    needs: [ coverage, style, docblocks ]
 
     runs-on: ubuntu-latest
 
