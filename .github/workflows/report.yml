@@ -118,5 +118,5 @@ jobs:
 
             Static Analysis:
 
-            - Code Style: `${{ needs.style.result == 'success' ? '✅' : '❌' }}`
+            - Code Style: `${{ needs.style.result == 'success' && '✅' || '❌' }}`
             - Docblocks: `${{ needs.docblocks.outputs.documented }} / ${{ needs.docblocks.outputs.total }}` (`${{ needs.docblocks.outputs.percent }}%`)
