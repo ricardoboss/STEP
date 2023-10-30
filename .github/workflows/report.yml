@@ -12,10 +12,10 @@ env:
   DOTNET_CLI_TELEMETRY_OPTOUT: true
 
 jobs:
-  test:
+  coverage:
     runs-on: ubuntu-latest
 
-    name: Test on .NET 7.x (ubuntu-latest)
+    name: Get Test Coverage
 
     outputs:
       badge: ${{ steps.coverage.outputs.badge }}
@@ -64,7 +64,7 @@ jobs:
   report:
     name: Report
 
-    needs: [ test ]
+    needs: [ coverage ]
 
     runs-on: ubuntu-latest
 
@@ -93,7 +93,7 @@ jobs:
           message: |
             ## Report
 
-            ![Code Coverage](${{ needs.test.outputs.badge }})
+            ![Code Coverage](${{ needs.coverage.outputs.badge }})
 
             Static Analysis:
 
