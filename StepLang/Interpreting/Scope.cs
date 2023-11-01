@@ -64,6 +64,7 @@ public class Scope
         CreateVariable(CloneFunction.Identifier, new CloneFunction().ToResult());
         CreateVariable(LengthFunction.Identifier, new LengthFunction().ToResult());
         CreateVariable(CompareToFunction.Identifier, new CompareToFunction().ToResult());
+        CreateVariable(SplitFunction.Identifier, new SplitFunction().ToResult());
 
         // conversion functions
         CreateVariable(ToJsonFunction.Identifier, new ToJsonFunction().ToResult());

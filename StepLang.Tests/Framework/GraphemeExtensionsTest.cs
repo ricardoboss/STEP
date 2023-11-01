@@ -52,4 +52,13 @@ public class GraphemeExtensionsTest
 
         Assert.Equal(expected, actual);
     }
+
+    [Theory]
+    [InlineData("abc", "", new[] { "a", "b", "c" })]
+    public void TestGraphemeSplit(string str, string separator, IEnumerable<string> expected)
+    {
+        var actual = str.GraphemeSplit(separator);
+
+        Assert.Equal(expected, actual);
+    }
 }

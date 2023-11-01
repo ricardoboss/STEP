@@ -53,6 +53,38 @@ internal static class GraphemeExtensions
         return str.Substring(startIndex, endIndex - startIndex);
     }
 
+    public static IEnumerable<string> GraphemeSplit(this string str, string separator)
+    {
+        var enumerator = StringInfo.GetTextElementEnumerator(str);
+        var separatorLength = separator.GraphemeLength();
+
+        // yield all text elements one by one if the separator length is 0
+        // otherwise check if the text element is the separator and yield all text elements up to the separator
+        // then repeat until the end of the string
+
+        var buffer = new StringBuilder();
+        while (enumerator.MoveNext())
+        {
+            var current = enumerator.GetTextElement();
+            if (separatorLength == 0)
+            {
+                yield return current;
+            }
+            else if (current == separator)
+            {
+                yield return buffer.ToString();
+                buffer.Clear();
+            }
+            else
+            {
+                buffer.Append(current);
+            }
+        }
+
+        if (buffer.Length > 0)
+            yield return buffer.ToString();
+    }
+
     public static string? GraphemeAt(this string str, int index)
     {
         if (index < 0)
