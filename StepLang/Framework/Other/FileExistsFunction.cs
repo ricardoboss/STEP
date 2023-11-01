@@ -4,7 +4,7 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Other;
 
-public class FileExistsFunction : GenericFunction<StringResult>
+public class FileExistsFunction : FileFunction
 {
     public const string Identifier = "fileExists";
 
@@ -18,7 +18,8 @@ public class FileExistsFunction : GenericFunction<StringResult>
     protected override BoolResult Invoke(TokenLocation callLocation, Interpreter interpreter, StringResult argument1)
     {
         var path = argument1.Value;
+        var info = GetFileInfoFromPath(path);
 
-        return File.Exists(path);
+        return info.Exists;
     }
 }
