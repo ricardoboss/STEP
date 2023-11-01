@@ -1,0 +1,68 @@
+string? sourceCode = "println(\"number: \", 123)"
+//string? sourceCode = null
+if (sourceCode == null) {
+	println("Could not read source code")
+	return 0
+}
+
+string character
+number index = 0
+while (index < length(sourceCode)) {
+	character = sourceCode[index]
+
+	// ignore whitespace
+	if (character == " ") {
+		index++
+		continue
+	}
+
+	if (contains(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], character)) {
+		// parse number
+		number n = 0
+		number digit
+		while (contains(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], character)) {
+			digit = toNumber(character)
+			n = n * 10 + digit
+			index++
+			character = sourceCode[index]
+		}
+		println("parsed number: ", n)
+		continue
+	}
+
+	if (character == "\"") {
+		// parse string
+		string s = ""
+		index++
+		character = sourceCode[index]
+		while (character != "\"") {
+			s = s + character
+			index++
+			character = sourceCode[index]
+		}
+		println("parsed string: \"", s, "\"")
+		index++
+		continue
+	}
+
+	if (character == "(") {
+		println("parsed left parenthesis")
+		index++
+		continue
+	}
+
+	if (character == ")") {
+		println("parsed right parenthesis")
+		index++
+		continue
+	}
+
+	if (character == ",") {
+		println("parsed comma")
+		index++
+		continue
+	}
+
+	println("Unknown character: ", character)
+	index++
+}
