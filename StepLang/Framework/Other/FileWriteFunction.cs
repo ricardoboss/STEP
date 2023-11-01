@@ -6,7 +6,7 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Other;
 
-public class FileWriteFunction : GenericFunction<StringResult, StringResult, BoolResult>
+public class FileWriteFunction : FileFunction
 {
     public const string Identifier = "fileWrite";
 
@@ -23,17 +23,19 @@ public class FileWriteFunction : GenericFunction<StringResult, StringResult, Boo
         var content = argument2.Value;
         var append = argument3.Value;
 
+        var info = GetFileInfoFromPath(path);
+
         try
         {
             if (append)
-                File.AppendAllText(path, content, Encoding.ASCII);
+                File.AppendAllText(info.FullName, content, Encoding.ASCII);
             else
             {
-                var directory = Path.GetDirectoryName(path);
+                var directory = info.DirectoryName;
                 if (!string.IsNullOrEmpty(directory))
                     Directory.CreateDirectory(directory);
 
-                File.WriteAllText(path, content, Encoding.ASCII);
+                File.WriteAllText(info.FullName, content, Encoding.ASCII);
             }
         }
         catch (Exception e) when (e is IOException or SystemException)

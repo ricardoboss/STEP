@@ -4,7 +4,7 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Other;
 
-public class FileDeleteFunction : GenericFunction<StringResult>
+public class FileDeleteFunction : FileFunction
 {
     public const string Identifier = "fileDelete";
 
@@ -18,10 +18,11 @@ public class FileDeleteFunction : GenericFunction<StringResult>
     protected override BoolResult Invoke(TokenLocation callLocation, Interpreter interpreter, StringResult argument1)
     {
         var path = argument1.Value;
+        var info = GetFileInfoFromPath(path);
 
         try
         {
-            File.Delete(path);
+            File.Delete(info.FullName);
         }
         catch (IOException)
         {
