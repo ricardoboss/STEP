@@ -8,7 +8,7 @@ public class NonNullableVariableAssignmentException : InvalidOperationException
     public ExpressionResult NewValue { get; }
     public string HelpText { get; }
 
-    public NonNullableVariableAssignmentException(Variable variable, ExpressionResult newValue) : base($"Cannot assign a value of a type {newValue.ResultType.ToTypeName()} to a variable declared as {variable.Value.ResultType.ToTypeName()}")
+    public NonNullableVariableAssignmentException(Variable variable, ExpressionResult newValue) : base($"Cannot assign a value of type {newValue.ResultType.ToTypeName()} to a variable declared as {variable.Value.ResultType.ToTypeName()}")
     {
         Variable = variable;
         NewValue = newValue;

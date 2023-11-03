@@ -2,7 +2,7 @@ using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using StepLang.Interpreting;
-using StepLang.Statements;
+using StepLang.Parsing;
 using StepLang.Tokenizing;
 
 namespace StepLang.Tests.Integration;
@@ -30,7 +30,6 @@ public class FailuresIntegrationTest
 
         var tokenizer = new Tokenizer();
         tokenizer.UpdateFile(exampleFile);
-        var parser = new StatementParser();
         var interpreter = new Interpreter(stdOut, stdErr, stdIn);
 
         // act
@@ -38,12 +37,12 @@ public class FailuresIntegrationTest
         tokenizer.Add(chars);
 
         // assert
-        var exception = await Assert.ThrowsAnyAsync<StepLangException>(async () =>
+        var exception = Assert.ThrowsAny<StepLangException>(() =>
         {
             var tokens = tokenizer.Tokenize();
-            await parser.AddAsync(tokens.ToAsyncEnumerable());
-            var statements = parser.ParseAsync();
-            await interpreter.InterpretAsync(statements);
+            var parser = new Parser(tokens);
+            var root = parser.Parse();
+            interpreter.Run(root);
         });
 
         Assert.Equal(details.Message, exception.Message);

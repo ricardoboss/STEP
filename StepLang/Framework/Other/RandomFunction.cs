@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
 
@@ -10,7 +9,7 @@ public class RandomFunction : NativeFunction
 {
     public const string Identifier = "random";
 
-    public override Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
+    public override Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
     {
         CheckArgumentCount(arguments);
 

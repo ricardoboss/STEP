@@ -1,21 +1,18 @@
-using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
 
 namespace StepLang.Framework.Pure;
 
-public class TanFunction : NativeFunction
+public class TanFunction : GenericFunction<NumberResult>
 {
     public const string Identifier = "tan";
 
-    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.Number }, "x") };
+    protected override IEnumerable<(ResultType[] types, string identifier)> NativeParameters => new[] { (new[] { ResultType.Number }, "x") };
 
-    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
+    public override IEnumerable<ResultType> ReturnTypes => new[] { ResultType.Number };
+
+    protected override ExpressionResult Invoke(Interpreter interpreter, NumberResult argument)
     {
-        CheckArgumentCount(arguments);
-
-        var number = await arguments.Single().EvaluateAsync(interpreter, r => r.ExpectNumber().Value, cancellationToken);
-
-        return new NumberResult(Math.Tan(number));
+        return new NumberResult(Math.Tan(argument.Value));
     }
 }

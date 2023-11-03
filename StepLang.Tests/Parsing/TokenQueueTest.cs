@@ -8,7 +8,7 @@ public class TokenQueueTest
     [Fact]
     public void TestDequeueThrowsIfEmpty()
     {
-        var queue = new TokenQueue();
+        var queue = new TokenQueue(ignoreWhitespace: false);
 
         Assert.Throws<UnexpectedEndOfTokensException>(() => queue.Dequeue());
         Assert.Throws<UnexpectedEndOfTokensException>(() => queue.Dequeue(1));

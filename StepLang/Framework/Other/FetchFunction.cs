@@ -1,6 +1,5 @@
 using System.Text;
 using System.Text.Json;
-using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Framework.Conversion;
 using StepLang.Interpreting;
@@ -15,7 +14,7 @@ public class FetchFunction : NativeFunction
         { (new [] { ResultType.Str }, "url"), (new [] { ResultType.Map }, "options") };
 
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter,
-        IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
+        IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
     {
         CheckArgumentCount(arguments, 1, 2);
 

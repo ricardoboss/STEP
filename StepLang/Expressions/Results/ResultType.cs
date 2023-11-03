@@ -12,7 +12,7 @@ public enum ResultType
     Null,
 }
 
-public static class ValueTypeExtensions
+public static class ResultTypes
 {
     public static string ToTypeName(this ResultType resultType)
     {

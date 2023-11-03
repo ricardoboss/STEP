@@ -1,7 +1,7 @@
-using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Framework.Conversion;
 using StepLang.Interpreting;
+using StepLang.Parsing;
 
 namespace StepLang.Framework.Pure;
 
@@ -9,31 +9,26 @@ public class PrintFunction : NativeFunction
 {
     public const string Identifier = "print";
 
-    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (Enum.GetValues<ResultType>(), "...values") };
+    protected override IEnumerable<(ResultType[] types, string identifier)> NativeParameters => new[] { (Enum.GetValues<ResultType>(), "...values") };
+
+    public override IEnumerable<ResultType> ReturnTypes => new[] { ResultType.Void };
 
     /// <inheritdoc />
-    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
+    public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
     {
         if (interpreter.StdOut is not { } stdOut)
             return VoidResult.Instance;
 
-        FunctionDefinition toStringFunction;
-        if (interpreter.CurrentScope.TryGetVariable(ToStringFunction.Identifier, out var toStringVar))
-            toStringFunction = toStringVar.Value.ExpectFunction().Value;
-        else
-            toStringFunction = new ToStringFunction();
+        var stringArgs = arguments
+            .EvaluateUsing(interpreter)
+            .Select(ToStringFunction.Render)
+            .ToList();
 
-        var stringArgs = await arguments
-            .EvaluateAsync(interpreter, cancellationToken)
-            .SelectAwait(async exp => await toStringFunction.EvaluateAsync(interpreter, new[] { LiteralExpression.From(exp) }, cancellationToken))
-            .Select(r => r.ExpectString().Value)
-            .ToListAsync(cancellationToken);
-
-        await Print(stdOut, string.Join("", stringArgs), cancellationToken);
+        Print(stdOut, string.Join("", stringArgs));
 
         return VoidResult.Instance;
     }
 
-    protected virtual async Task Print(TextWriter output, string value, CancellationToken cancellationToken = default)
-        => await output.WriteAsync(value.AsMemory(), cancellationToken);
+    protected virtual void Print(TextWriter output, string value)
+        => output.Write(value.AsMemory());
 }

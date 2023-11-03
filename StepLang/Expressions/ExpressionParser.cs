@@ -9,7 +9,7 @@ namespace StepLang.Expressions;
 
 public class ExpressionParser
 {
-    private readonly TokenQueue tokenQueue = new();
+    private readonly TokenQueue tokenQueue = new(ignoreWhitespace: true);
 
     public static async Task<Expression> ParseAsync(IEnumerable<Token> tokens, CancellationToken cancellationToken = default)
     {
@@ -77,7 +77,7 @@ public class ExpressionParser
         if (tokens.Count == 0)
             yield break;
 
-        var currentGroup = new TokenQueue();
+        var currentGroup = new TokenQueue(ignoreWhitespace: true);
         var expressionDepth = 0;
         var codeBlockDepth = 0;
         var listDepth = 0;

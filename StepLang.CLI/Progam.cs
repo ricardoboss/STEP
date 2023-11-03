@@ -55,6 +55,11 @@ internal static class Program
                 .WithExample("highlight my-script.step -t mono")
                 .WithExample("highlight --list-themes")
                 ;
+
+            config.AddCommand<ParseCommand>("parse")
+                .WithDescription("Parse a .step-file and print the AST to the console.")
+                .WithExample("parse my-script.step")
+                ;
         });
 
         return await app.RunAsync(args);

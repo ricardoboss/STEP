@@ -2,6 +2,7 @@ using System.Runtime.CompilerServices;
 using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
+using StepLang.Parsing;
 
 namespace StepLang.Framework.Pure;
 
@@ -9,7 +10,7 @@ public class SortedFunction : ListManipulationFunction
 {
     public const string Identifier = "sorted";
 
-    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
+    protected override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
     {
         CheckArgumentCount(arguments, 1, 2);
 

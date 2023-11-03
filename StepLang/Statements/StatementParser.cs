@@ -8,7 +8,7 @@ namespace StepLang.Statements;
 
 public class StatementParser
 {
-    private readonly TokenQueue tokenQueue = new();
+    private readonly TokenQueue tokenQueue = new(ignoreWhitespace: true);
 
     private bool importsProhibited;
 

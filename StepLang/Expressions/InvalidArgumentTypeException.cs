@@ -24,10 +24,6 @@ internal sealed class InvalidArgumentTypeException : IncompatibleTypesException
         return sb.ToString();
     }
 
-    public InvalidArgumentTypeException(Token parameterTypeToken, ExpressionResult argument) : this(parameterTypeToken.Location, new[] { ValueTypeExtensions.FromTypeName(parameterTypeToken.Value) }, argument)
-    {
-    }
-
     public InvalidArgumentTypeException(TokenLocation? location, IReadOnlyList<ResultType> acceptedParameterTypes, ExpressionResult argument) : this(location, BuildMessage(acceptedParameterTypes, argument.ResultType))
     {
     }
