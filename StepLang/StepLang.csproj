@@ -37,6 +37,89 @@
         <None Update="Examples\*.step">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Remove="Statements\**" />
+        <None Remove="Framework\Mutating\**" />
+        <None Remove="Framework\Other\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Expressions\DivideExpression.cs" />
+      <Compile Remove="Expressions\BinaryExpression.cs" />
+      <Compile Remove="Expressions\LogicalOrExpression.cs" />
+      <Compile Remove="Expressions\FunctionDefinitionExpression.cs" />
+      <Compile Remove="Expressions\EqualsExpression.cs" />
+      <Compile Remove="Expressions\LessThanOrEqualExpression.cs" />
+      <Compile Remove="Expressions\NegateExpression.cs" />
+      <Compile Remove="Expressions\LogicalAndExpression.cs" />
+      <Compile Remove="Expressions\MultiplyExpression.cs" />
+      <Compile Remove="Expressions\VariableDeclarationExpression.cs" />
+      <Compile Remove="Expressions\LessThanExpression.cs" />
+      <Compile Remove="Expressions\UnaryExpression.cs" />
+      <Compile Remove="Expressions\SubtractExpression.cs" />
+      <Compile Remove="Expressions\InvalidExpressionException.cs" />
+      <Compile Remove="Expressions\LiteralExpression.cs" />
+      <Compile Remove="Expressions\ExpressionParser.cs" />
+      <Compile Remove="Expressions\VariableExpression.cs" />
+      <Compile Remove="Expressions\ListExpression.cs" />
+      <Compile Remove="Expressions\GreaterThanExpression.cs" />
+      <Compile Remove="Expressions\IndexExpression.cs" />
+      <Compile Remove="Expressions\ModuloExpression.cs" />
+      <Compile Remove="Expressions\GreaterThanOrEqualExpression.cs" />
+      <Compile Remove="Expressions\PowerExpression.cs" />
+      <Compile Remove="Expressions\InvalidFunctionCallException.cs" />
+      <Compile Remove="Expressions\ExpressionEvaluationExtensions.cs" />
+      <Compile Remove="Expressions\IdentifierFunctionCallExpression.cs" />
+      <Compile Remove="Expressions\MapExpression.cs" />
+      <Compile Remove="Expressions\CoalesceExpression.cs" />
+      <Compile Remove="Expressions\NotEqualsExpression.cs" />
+      <Compile Remove="Expressions\AddExpression.cs" />
+      <Compile Remove="Expressions\BaseFunctionCallExpression.cs" />
+      <Compile Remove="Expressions\NotExpression.cs" />
+      <Compile Remove="Expressions\DirectFunctionDefinitionCallExpression.cs" />
+      <Compile Remove="Expressions\Expression.cs" />
+      <Compile Remove="Statements\**" />
+      <Compile Remove="Framework\Pure\AbsFunction.cs" />
+      <Compile Remove="Framework\Pure\CeilFunction.cs" />
+      <Compile Remove="Framework\Pure\ClampFunction.cs" />
+      <Compile Remove="Framework\Pure\CloneFunction.cs" />
+      <Compile Remove="Framework\Pure\CompareToFunction.cs" />
+      <Compile Remove="Framework\Pure\ContainsFunction.cs" />
+      <Compile Remove="Framework\Pure\ConvertedFunction.cs" />
+      <Compile Remove="Framework\Pure\CosFunction.cs" />
+      <Compile Remove="Framework\Pure\EndsWithFunction.cs" />
+      <Compile Remove="Framework\Pure\FilteredFunction.cs" />
+      <Compile Remove="Framework\Pure\FloorFunction.cs" />
+      <Compile Remove="Framework\Pure\IndexOfFunction.cs" />
+      <Compile Remove="Framework\Pure\InterpolateFunction.cs" />
+      <Compile Remove="Framework\Pure\LengthFunction.cs" />
+      <Compile Remove="Framework\Pure\ListManipulationFunction.cs" />
+      <Compile Remove="Framework\Pure\MaxFunction.cs" />
+      <Compile Remove="Framework\Pure\MinFunction.cs" />
+      <Compile Remove="Framework\Pure\ReadFunction.cs" />
+      <Compile Remove="Framework\Pure\ReadlineFunction.cs" />
+      <Compile Remove="Framework\Pure\ReversedFunction.cs" />
+      <Compile Remove="Framework\Pure\RoundFunction.cs" />
+      <Compile Remove="Framework\Pure\SinFunction.cs" />
+      <Compile Remove="Framework\Pure\SortedFunction.cs" />
+      <Compile Remove="Framework\Pure\SqrtFunction.cs" />
+      <Compile Remove="Framework\Pure\StartsWithFunction.cs" />
+      <Compile Remove="Framework\Pure\SubstringFunction.cs" />
+      <Compile Remove="Framework\Mutating\**" />
+      <Compile Remove="Framework\Other\**" />
+      <Compile Remove="Framework\Conversion\FromJsonFunction.cs" />
+      <Compile Remove="Framework\Conversion\ToBoolFunction.cs" />
+      <Compile Remove="Framework\Conversion\ToJsonFunction.cs" />
+      <Compile Remove="Framework\Conversion\ToKeysFunction.cs" />
+      <Compile Remove="Framework\Conversion\ToNumberFunction.cs" />
+      <Compile Remove="Framework\Conversion\ToRadixFunction.cs" />
+      <Compile Remove="Framework\Conversion\ToTypeNameFunction.cs" />
+      <Compile Remove="Framework\Conversion\ToValuesFunction.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Statements\**" />
+      <EmbeddedResource Remove="Framework\Mutating\**" />
+      <EmbeddedResource Remove="Framework\Other\**" />
     </ItemGroup>
 
     <Target Name="Copy DLLs to Homepage" AfterTargets="Build">

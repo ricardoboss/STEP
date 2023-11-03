@@ -35,6 +35,20 @@
       <None Update="Failures\*.step*">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+
+      <None Remove="Framework\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Framework\**" />
+      <Compile Remove="Interpreting\InterpretationTest.cs" />
+      <Compile Remove="Parsing\ParserTest.cs" />
+      <Compile Remove="Parsing\ExpressionParserTest.cs" />
+      <Compile Remove="TestHelper.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Framework\**" />
     </ItemGroup>
 
 </Project>
