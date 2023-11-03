@@ -58,7 +58,8 @@ internal static class GraphemeExtensions
         if (index < 0)
             return null;
 
-        var enumerator = StringInfo.GetTextElementEnumerator(str);
+        var normalized = str.Normalize(NormalizationForm.FormD);
+        var enumerator = StringInfo.GetTextElementEnumerator(normalized);
         var count = 0;
         while (enumerator.MoveNext())
         {
@@ -71,15 +72,44 @@ internal static class GraphemeExtensions
         return null;
     }
 
+    public static string GraphemeReplace(this string str, string search, string replacement)
+    {
+        var strNormalized = str.Normalize(NormalizationForm.FormD);
+        var strNormalizedLength = strNormalized.GraphemeLength();
+        var searchNormalized = search.Normalize(NormalizationForm.FormD);
+        var searchNormalizedLength = searchNormalized.GraphemeLength();
+        var replacementNormalized = replacement.Normalize(NormalizationForm.FormD);
+
+        var sb = new StringBuilder();
+        var i = 0;
+        while (i < strNormalizedLength)
+        {
+            var current = strNormalized.GraphemeSubstring(i, searchNormalizedLength);
+            if (current == searchNormalized)
+            {
+                sb.Append(replacementNormalized);
+                i += searchNormalizedLength;
+            }
+            else
+            {
+                sb.Append(strNormalized.GraphemeAt(i));
+                i++;
+            }
+        }
+
+        return sb.ToString();
+    }
+
     public static int GraphemeIndexOf(this string str, string value, int startIndex = 0)
     {
-        var strNormalizedLength = str.GraphemeLength();
+        var strNormalized = str.Normalize(NormalizationForm.FormD);
+        var strNormalizedLength = strNormalized.GraphemeLength();
         var valueNormalized = value.Normalize(NormalizationForm.FormD);
         var valueNormalizedLength = valueNormalized.GraphemeLength();
 
         for (var i = startIndex; i < strNormalizedLength; i++)
         {
-            var current = str.GraphemeSubstring(i, valueNormalizedLength);
+            var current = strNormalized.GraphemeSubstring(i, valueNormalizedLength);
             if (current == valueNormalized)
                 return i;
         }

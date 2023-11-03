@@ -6,9 +6,22 @@ namespace StepLang.Parsing;
 [SuppressMessage("Naming", "CA1711:Identifiers should not have incorrect suffix")]
 public class TokenQueue
 {
-    private readonly LinkedList<Token> tokenList = new();
+    private readonly LinkedList<Token> tokenList;
 
     private Token? lastToken;
+    private readonly bool ignoreWhitespace;
+
+    public TokenQueue(bool ignoreWhitespace)
+    {
+        tokenList = new();
+        this.ignoreWhitespace = ignoreWhitespace;
+    }
+
+    public TokenQueue(IEnumerable<Token> tokens, bool ignoreWhitespace)
+    {
+        tokenList = new(tokens);
+        this.ignoreWhitespace = ignoreWhitespace;
+    }
 
     public void Enqueue(Token token) => tokenList.AddLast(token);
 
@@ -22,13 +35,24 @@ public class TokenQueue
 
     public bool TryDequeue([NotNullWhen(true)] out Token? token)
     {
-        token = tokenList.First?.Value;
+        token = null;
+        if (tokenList.Count == 0)
+            return false;
+
+        var skip = 0;
+        do
+        {
+            token = tokenList.Skip(skip).FirstOrDefault();
+            skip++;
+        } while (ignoreWhitespace && !(token?.Type.HasMeaning() ?? true));
+
         if (token is null)
             return false;
 
         lastToken = token;
 
-        tokenList.RemoveFirst();
+        for (; skip > 0; skip--)
+            tokenList.RemoveFirst();
 
         return true;
     }
@@ -55,7 +79,11 @@ public class TokenQueue
 
     public bool TryPeek(int offset, [NotNullWhen(true)] out Token? token)
     {
-        token = tokenList.Skip(offset).FirstOrDefault();
+        var source = tokenList.AsEnumerable();
+        if (ignoreWhitespace)
+            source = source.Where(t => t.Type.HasMeaning());
+
+        token = source.Skip(offset).FirstOrDefault();
 
         return token is not null;
     }
@@ -90,7 +118,7 @@ public class TokenQueue
                 throw new UnexpectedEndOfTokensException(lastToken?.Location);
 
             offset++;
-        } while (type is TokenType.Whitespace or TokenType.LineComment);
+        } while (!type.Value.HasMeaning());
 
         return type.Value;
     }
@@ -111,7 +139,7 @@ public class TokenQueue
             };
 
             throw new UnexpectedEndOfTokensException(lastToken?.Location, $"Expected {typeInfo}");
-        } while (token.Type is TokenType.Whitespace or TokenType.LineComment);
+        } while (!token.Type.HasMeaning());
 
         if (!allowed.Contains(token.Type))
             throw new UnexpectedTokenException(token, allowed);
@@ -132,8 +160,8 @@ public class TokenQueue
                 break;
 
             var token = Dequeue();
-            if (nextType is not TokenType.Whitespace and not TokenType.LineComment)
-                tokens.Add(token);
+
+            tokens.Add(token);
 
             UpdateDepth(nextType);
         }
@@ -169,4 +197,6 @@ public class TokenQueue
     public bool IsEmpty => tokenList.Count == 0;
 
     public bool IsNotEmpty => tokenList.Count > 0;
+
+    public Token? LastToken => lastToken;
 }

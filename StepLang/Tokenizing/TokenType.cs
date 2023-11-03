@@ -260,12 +260,78 @@ public static class TokenTypes
         return false;
     }
 
+    public static readonly TokenType[] ShorthandMathematicalOperations = {
+        TokenType.PlusSymbol,
+        TokenType.MinusSymbol,
+        TokenType.AsteriskSymbol,
+    };
+
+    public static bool IsShorthandMathematicalOperation(this TokenType type)
+    {
+        return type switch
+        {
+            TokenType.PlusSymbol or TokenType.MinusSymbol or TokenType.AsteriskSymbol => true,
+            _ => false,
+        };
+    }
+
+    public static readonly TokenType[] MathematicalOperations = {
+        TokenType.PlusSymbol,
+        TokenType.MinusSymbol,
+        TokenType.AsteriskSymbol,
+        TokenType.SlashSymbol,
+        TokenType.PercentSymbol,
+    };
+
     public static bool IsMathematicalOperation(this TokenType type)
     {
         return type switch
         {
             TokenType.PlusSymbol or TokenType.MinusSymbol or TokenType.AsteriskSymbol or TokenType.SlashSymbol or TokenType.PercentSymbol => true,
             _ => false,
+        };
+    }
+
+    public static bool IsLiteral(this TokenType type)
+    {
+        return type switch
+        {
+            TokenType.LiteralString or TokenType.LiteralNumber or TokenType.LiteralBoolean => true,
+            _ => false,
+        };
+    }
+
+    public static readonly TokenType[] Operators = {
+        TokenType.PlusSymbol,
+        TokenType.MinusSymbol,
+        TokenType.AsteriskSymbol,
+        TokenType.SlashSymbol,
+        TokenType.PercentSymbol,
+        TokenType.PipeSymbol,
+        TokenType.AmpersandSymbol,
+        TokenType.ExclamationMarkSymbol,
+        TokenType.HatSymbol,
+        TokenType.QuestionMarkSymbol,
+        TokenType.EqualsSymbol,
+        TokenType.GreaterThanSymbol,
+        TokenType.LessThanSymbol,
+    };
+
+    public static bool IsOperator(this TokenType type)
+    {
+        return type switch
+        {
+            TokenType.PlusSymbol or TokenType.MinusSymbol or TokenType.AsteriskSymbol or TokenType.SlashSymbol or TokenType.PercentSymbol or TokenType.PipeSymbol or TokenType.AmpersandSymbol or TokenType.ExclamationMarkSymbol or TokenType.HatSymbol or TokenType.QuestionMarkSymbol or TokenType.EqualsSymbol or TokenType.GreaterThanSymbol or TokenType.LessThanSymbol => true,
+            _ => false,
+        };
+    }
+
+    public static bool HasMeaning(this TokenType type)
+    {
+        return type switch
+        {
+            TokenType.Whitespace or TokenType.LineComment => false,
+            _ => true,
         };
     }
 }

@@ -1,4 +1,3 @@
-using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
 
@@ -10,7 +9,7 @@ public class DoRemoveFunction : NativeFunction
 
     public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.List }, "subject"), (Enum.GetValues<ResultType>(), "element") };
 
-    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
+    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
     {
         CheckArgumentCount(arguments);
 

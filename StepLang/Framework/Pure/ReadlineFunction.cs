@@ -1,6 +1,6 @@
-using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
+using StepLang.Parsing;
 
 namespace StepLang.Framework.Pure;
 
@@ -9,7 +9,7 @@ public class ReadlineFunction : NativeFunction
     public const string Identifier = "readline";
 
     /// <inheritdoc />
-    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
+    protected override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
     {
         CheckArgumentCount(arguments);
 

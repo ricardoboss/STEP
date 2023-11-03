@@ -1,5 +1,4 @@
 using System.Globalization;
-using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
 
@@ -9,7 +8,7 @@ public class ToNumberFunction : NativeFunction
 {
     public const string Identifier = "toNumber";
 
-    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
+    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
     {
         CheckArgumentCount(arguments, 1, 2);
 

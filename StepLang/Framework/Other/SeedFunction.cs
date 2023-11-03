@@ -1,4 +1,3 @@
-using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
 
@@ -11,7 +10,7 @@ public class SeedFunction : NativeFunction
     /// <inheritdoc />
     public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new (ResultType[] types, string identifier)[] { (new[] { ResultType.Number }, "seed") };
 
-    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
+    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
     {
         CheckArgumentCount(arguments, 0, 1);
 

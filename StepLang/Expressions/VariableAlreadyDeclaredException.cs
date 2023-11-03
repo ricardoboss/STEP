@@ -1,7 +1,7 @@
 using StepLang.Interpreting;
 using StepLang.Tokenizing;
 
-namespace StepLang.Statements;
+namespace StepLang.Expressions;
 
 public class VariableAlreadyDeclaredException : IncompatibleTypesException
 {

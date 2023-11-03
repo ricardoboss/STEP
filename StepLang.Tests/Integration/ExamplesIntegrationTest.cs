@@ -2,7 +2,7 @@ using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using StepLang.Interpreting;
-using StepLang.Statements;
+using StepLang.Parsing;
 using StepLang.Tokenizing;
 
 namespace StepLang.Tests.Integration;
@@ -35,16 +35,15 @@ public class ExamplesIntegrationTest
 
         var tokenizer = new Tokenizer();
         tokenizer.UpdateFile(exampleFile);
-        var parser = new StatementParser();
         var interpreter = new Interpreter(stdOut, stdErr, stdIn);
 
         // act
         var chars = await File.ReadAllTextAsync(exampleFile.FullName);
         tokenizer.Add(chars);
         var tokens = tokenizer.Tokenize();
-        await parser.AddAsync(tokens.ToAsyncEnumerable());
-        var statements = parser.ParseAsync();
-        await interpreter.InterpretAsync(statements);
+        var parser = new Parser(tokens);
+        var root = parser.Parse();
+        interpreter.Run(root);
 
         // assert
         Assert.Equal(expectedExitCode, interpreter.ExitCode);

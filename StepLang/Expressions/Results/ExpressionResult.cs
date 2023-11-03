@@ -61,6 +61,7 @@ public abstract class ExpressionResult : IEquatable<ExpressionResult>
     /// <inheritdoc />
     public override string ToString() => ResultType.ToTypeName();
 
+    [Obsolete("Use pattern matching instead.")]
     public NumberResult ExpectNumber()
     {
         if (this is not NumberResult numberResult)
@@ -69,6 +70,7 @@ public abstract class ExpressionResult : IEquatable<ExpressionResult>
         return numberResult;
     }
 
+    [Obsolete("Use pattern matching instead.")]
     public NumberResult ExpectInteger()
     {
         var numberResult = ExpectNumber();
@@ -79,6 +81,7 @@ public abstract class ExpressionResult : IEquatable<ExpressionResult>
         return numberResult;
     }
 
+    [Obsolete("Use pattern matching instead.")]
     public StringResult ExpectString()
     {
         if (this is not StringResult stringResult)
@@ -87,6 +90,7 @@ public abstract class ExpressionResult : IEquatable<ExpressionResult>
         return stringResult;
     }
 
+    [Obsolete("Use pattern matching instead.")]
     public BoolResult ExpectBool()
     {
         if (this is not BoolResult boolResult)
@@ -95,6 +99,7 @@ public abstract class ExpressionResult : IEquatable<ExpressionResult>
         return boolResult;
     }
 
+    [Obsolete("Use pattern matching instead.")]
     public ListResult ExpectList()
     {
         if (this is not ListResult listResult)
@@ -103,6 +108,7 @@ public abstract class ExpressionResult : IEquatable<ExpressionResult>
         return listResult;
     }
 
+    [Obsolete("Use pattern matching instead.")]
     public MapResult ExpectMap()
     {
         if (this is not MapResult mapResult)
@@ -111,6 +117,7 @@ public abstract class ExpressionResult : IEquatable<ExpressionResult>
         return mapResult;
     }
 
+    [Obsolete("Use pattern matching instead.")]
     public FunctionResult ExpectFunction()
     {
         if (this is not FunctionResult functionResult)
@@ -121,5 +128,5 @@ public abstract class ExpressionResult : IEquatable<ExpressionResult>
 
     public abstract ExpressionResult DeepClone();
 
-    public LiteralExpression ToLiteralExpression() => LiteralExpression.From(this);
+    // public LiteralExpression ToLiteralExpression() => LiteralExpression.From(this);
 }

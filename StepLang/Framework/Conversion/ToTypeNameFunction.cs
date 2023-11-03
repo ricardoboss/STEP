@@ -1,4 +1,3 @@
-using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
 
@@ -11,7 +10,7 @@ public class ToTypeNameFunction : NativeFunction
     public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (Enum.GetValues<ResultType>(), "value") };
 
     /// <inheritdoc />
-    public override Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
+    public override Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
     {
         if (arguments.Count is not 1)
             throw new InvalidArgumentCountException(1, arguments.Count);

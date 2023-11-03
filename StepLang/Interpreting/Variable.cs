@@ -5,14 +5,14 @@ namespace StepLang.Interpreting;
 public class Variable
 {
     public string Identifier { get; }
-    public ResultType Type { get; }
+    public IReadOnlyList<ResultType> Types { get; }
     public bool Nullable { get; }
     public ExpressionResult Value { get; private set; }
 
-    public Variable(string identifier, ResultType type, bool nullable, ExpressionResult value)
+    public Variable(string identifier, IReadOnlyList<ResultType> types, bool nullable, ExpressionResult value)
     {
         Identifier = identifier;
-        Type = type;
+        Types = types;
         Nullable = nullable;
         Value = value;
     }
@@ -21,7 +21,7 @@ public class Variable
     {
         if (!Accepts(newValue))
         {
-            if (Nullable || newValue.ResultType is ResultType.Null)
+            if (Nullable || newValue is NullResult)
                 throw new IncompatibleVariableTypeException(this, newValue);
 
             throw new NonNullableVariableAssignmentException(this, newValue);
@@ -32,18 +32,17 @@ public class Variable
 
     public bool Accepts(ExpressionResult value)
     {
-        if (value is VoidResult)
-            return false; // can never assign void to a variable
-
-        if (value.ResultType is ResultType.Null && Nullable)
-            return true;
-
-        return value.ResultType == Type;
+        return value switch
+        {
+            VoidResult => false, // can never assign void to a variable
+            NullResult when Nullable => true,
+            _ => Types.Contains(value.ResultType),
+        };
     }
 
     /// <inheritdoc />
     public override string ToString()
     {
-        return $"{Type}{(Nullable ? "?" : "")} {Identifier} = {Value}";
+        return $"{string.Join("|", Types.Select(t => t.ToTypeName()))}{(Nullable ? "?" : "")} {Identifier} = {Value}";
     }
 }

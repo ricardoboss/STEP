@@ -1,8 +1,9 @@
-using StepLang.Statements;
+using StepLang.Expressions.Results;
+using StepLang.Parsing;
 
 namespace StepLang.Interpreting;
 
-public class Interpreter
+public partial class Interpreter : IRootNodeVisitor, IStatementVisitor, IExpressionEvaluator
 {
     public TextWriter? StdOut { get; }
     public TextWriter? StdErr { get; }
@@ -53,33 +54,63 @@ public class Interpreter
         return scopes.Pop();
     }
 
-    public async Task InterpretAsync(IAsyncEnumerable<Statement> statements,
-        CancellationToken cancellationToken = default)
+    public void Execute(IEnumerable<StatementNode> statements)
     {
-        await foreach (var statement in statements.WithCancellation(cancellationToken))
+        foreach (var statement in statements)
         {
             if (ContinueDepth > 0)
             {
                 ContinueDepth--;
 
-                if (DebugOut is not null)
-                    await DebugOut.WriteLineAsync("Continuing");
+                DebugOut?.WriteLine("Continuing");
 
                 break;
             }
 
-            if (DebugOut is not null)
-                await DebugOut.WriteLineAsync("Executing: " + statement);
-
-            await statement.ExecuteAsync(this, cancellationToken);
+            Execute(statement);
 
             if (!CurrentScope.TryGetResult(out _))
                 continue;
 
-            if (DebugOut is not null)
-                await DebugOut.WriteLineAsync("Result found, breaking");
+            DebugOut?.WriteLineAsync("Result found, breaking");
 
             break;
         }
+    }
+
+    public void Execute(StatementNode statement)
+    {
+        DebugOut?.WriteLine("Executing: " + statement);
+
+        statement.Accept(this);
+    }
+
+    public void Run(RootNode node)
+    {
+        foreach (var importNode in node.Imports)
+            importNode.Accept(this);
+
+        Execute(node.Body);
+    }
+
+    public void Execute(CodeBlockStatementNode statementNode)
+    {
+        PushScope();
+
+        Execute(statementNode.Body);
+
+        PopScope();
+    }
+
+    public ExpressionResult Evaluate(IdentifierExpressionNode expressionNode)
+    {
+        var variable = CurrentScope.GetVariable(expressionNode.Identifier);
+
+        return variable.Value;
+    }
+
+    public ExpressionResult Evaluate(PrimaryExpressionNode expressionNode)
+    {
+        return expressionNode.Expression.EvaluateUsing(this);
     }
 }
