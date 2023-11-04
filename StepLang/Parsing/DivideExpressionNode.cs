@@ -4,7 +4,7 @@ namespace StepLang.Parsing;
 
 public record DivideExpressionNode(ExpressionNode Left, ExpressionNode Right) : ExpressionNode, IBinaryExpressionNode
 {
-    public BinaryExpressionOperator Operator => BinaryExpressionOperator.Divide;
+    public BinaryExpressionOperator Op => BinaryExpressionOperator.Divide;
 
     public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)
     {
