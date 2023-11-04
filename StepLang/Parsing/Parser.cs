@@ -443,23 +443,29 @@ public class Parser
 
     private ExpressionNode ParseExpression(int parentPrecedence = 0)
     {
-        var left = new PrimaryExpressionNode(ParsePrimaryExpression());
-        if (!tokens.TryPeek(out var next) || !next.Type.IsOperator())
-            return left;
+        var left = ParsePrimaryExpression();
+        while (tokens.TryPeek(out var next) && next.Type.IsOperator()) {
+            var operatorTokens = PeekContinuousOperators();
+            var binaryOperator = ParseExpressionOperator(operatorTokens);
 
-        var op = ParseOperatorExpression();
-        var precedence = op.Operator.Precedence();
-        if (precedence < parentPrecedence)
-            return left;
+            var precedence = binaryOperator.Precedence();
+            if (precedence < parentPrecedence)
+                break;
 
-        var right = ParseExpression(precedence + 1);
+            // actually consume the operator
+            _ = tokens.Dequeue(operatorTokens.Count);
 
-        return Combine(left, op, right);
+            var right = ParseExpression(precedence + 1);
+
+            left = Combine(left, binaryOperator, right);
+        }
+
+        return left;
     }
 
-    private static ExpressionNode Combine(ExpressionNode left, BinaryOperatorNode @operator, ExpressionNode right)
+    private static ExpressionNode Combine(ExpressionNode left, BinaryExpressionOperator binaryOperator, ExpressionNode right)
     {
-        return @operator.Operator switch
+        return binaryOperator switch
         {
             BinaryExpressionOperator.Add => new AddExpressionNode(left, right),
             BinaryExpressionOperator.Coalesce => new CoalesceExpressionNode(left, right),
@@ -483,143 +489,149 @@ public class Parser
             BinaryExpressionOperator.BitwiseShiftRight => new BitwiseShiftRightExpressionNode(left, right),
             BinaryExpressionOperator.BitwiseRotateLeft => new BitwiseRotateLeftExpressionNode(left, right),
             BinaryExpressionOperator.BitwiseRotateRight => new BitwiseRotateRightExpressionNode(left, right),
-            _ => throw new NotImplementedException("Expression for operator " + @operator.Operator + " not implemented"),
+            _ => throw new NotImplementedException("Expression for operator " + binaryOperator.ToSymbol() + " not implemented"),
         };
     }
 
-    private BinaryOperatorNode ParseOperatorExpression()
+    private List<Token> PeekContinuousOperators()
     {
         // whitespaces have meaning in operators
         tokens.IgnoreWhitespace = false;
 
+        var offset = 0;
         var operators = new List<Token>();
-        while (tokens.TryPeek(out var next))
+        while (tokens.TryPeek(offset, out var next))
         {
             if (next.Type.IsOperator())
-                operators.Add(tokens.Dequeue());
-            else if (operators.Count == 0 && next.Type is not TokenType.Whitespace)
-                throw new UnexpectedTokenException(next, TokenTypes.Operators);
-            else if (next.Type is TokenType.Whitespace)
-                _ = tokens.Dequeue(TokenType.Whitespace);
+                operators.Add(tokens.Peek(offset++));
+            else if (operators.Count == 0)
+            {
+                if (next.Type is not TokenType.Whitespace)
+                    throw new UnexpectedTokenException(next, TokenTypes.Operators);
+
+                offset++; // skip leading whitespace
+            }
             else
                 break;
         }
 
         tokens.IgnoreWhitespace = true;
 
-        BinaryExpressionOperator @operator;
-        switch (operators.Count)
+        return operators;
+    }
+
+    private BinaryExpressionOperator ParseExpressionOperator(IReadOnlyList<Token> operatorTokens)
+    {
+        if (operatorTokens.Count == 3)
         {
-            case 3:
+            var (first, second, third) = (operatorTokens[0], operatorTokens[1], operatorTokens[2]);
+
+            return first.Type switch
             {
-                var (first, second, third) = (operators[0], operators[1], operators[2]);
-
-                @operator = first.Type switch
+                TokenType.GreaterThanSymbol => second.Type switch
                 {
-                    TokenType.GreaterThanSymbol => second.Type switch
+                    TokenType.GreaterThanSymbol => third.Type switch
                     {
-                        TokenType.GreaterThanSymbol => third.Type switch
-                        {
-                            TokenType.GreaterThanSymbol => BinaryExpressionOperator.BitwiseRotateRight,
-                            _ => throw new UnexpectedTokenException(third, TokenType.GreaterThanSymbol),
-                        },
-                        _ => throw new UnexpectedTokenException(second, TokenType.GreaterThanSymbol),
+                        TokenType.GreaterThanSymbol => BinaryExpressionOperator.BitwiseRotateRight,
+                        _ => throw new UnexpectedTokenException(third, TokenType.GreaterThanSymbol),
                     },
-                    TokenType.LessThanSymbol => second.Type switch
-                    {
-                        TokenType.LessThanSymbol => third.Type switch
-                        {
-                            TokenType.LessThanSymbol => BinaryExpressionOperator.BitwiseRotateLeft,
-                            _ => throw new UnexpectedTokenException(third, TokenType.LessThanSymbol),
-                        },
-                        _ => throw new UnexpectedTokenException(second, TokenType.LessThanSymbol),
-                    },
-                    _ => throw new UnexpectedTokenException(first, TokenType.GreaterThanSymbol, TokenType.LessThanSymbol),
-                };
-
-                break;
-            }
-            case 2:
-            {
-                var (first, second) = (operators[0], operators[1]);
-
-                @operator = first.Type switch
+                    _ => throw new UnexpectedTokenException(second, TokenType.GreaterThanSymbol),
+                },
+                TokenType.LessThanSymbol => second.Type switch
                 {
-                    TokenType.AsteriskSymbol => second.Type switch
+                    TokenType.LessThanSymbol => third.Type switch
                     {
-                        TokenType.AsteriskSymbol => BinaryExpressionOperator.Power,
-                        _ => throw new UnexpectedTokenException(second, TokenType.AsteriskSymbol),
+                        TokenType.LessThanSymbol => BinaryExpressionOperator.BitwiseRotateLeft,
+                        _ => throw new UnexpectedTokenException(third, TokenType.LessThanSymbol),
                     },
-                    TokenType.EqualsSymbol => second.Type switch
-                    {
-                        TokenType.EqualsSymbol => BinaryExpressionOperator.Equal,
-                        _ => throw new UnexpectedTokenException(second, TokenType.EqualsSymbol),
-                    },
-                    TokenType.ExclamationMarkSymbol => second.Type switch
-                    {
-                        TokenType.EqualsSymbol => BinaryExpressionOperator.NotEqual,
-                        _ => throw new UnexpectedTokenException(second, TokenType.EqualsSymbol),
-                    },
-                    TokenType.AmpersandSymbol => second.Type switch
-                    {
-                        TokenType.AmpersandSymbol => BinaryExpressionOperator.LogicalAnd,
-                        _ => throw new UnexpectedTokenException(second, TokenType.AmpersandSymbol),
-                    },
-                    TokenType.PipeSymbol => second.Type switch
-                    {
-                        TokenType.PipeSymbol => BinaryExpressionOperator.LogicalOr,
-                        _ => throw new UnexpectedTokenException(second, TokenType.PipeSymbol),
-                    },
-                    TokenType.LessThanSymbol => second.Type switch
-                    {
-                        TokenType.EqualsSymbol => BinaryExpressionOperator.LessThanOrEqual,
-                        TokenType.LessThanSymbol => BinaryExpressionOperator.BitwiseShiftLeft,
-                        _ => throw new UnexpectedTokenException(second, TokenType.EqualsSymbol, TokenType.LessThanSymbol),
-                    },
-                    TokenType.GreaterThanSymbol => second.Type switch
-                    {
-                        TokenType.EqualsSymbol => BinaryExpressionOperator.GreaterThanOrEqual,
-                        TokenType.GreaterThanSymbol => BinaryExpressionOperator.BitwiseShiftRight,
-                        _ => throw new UnexpectedTokenException(second, TokenType.EqualsSymbol, TokenType.GreaterThanSymbol),
-                    },
-                    TokenType.QuestionMarkSymbol => second.Type switch
-                    {
-                        TokenType.QuestionMarkSymbol => BinaryExpressionOperator.Coalesce,
-                        _ => throw new UnexpectedTokenException(second, TokenType.QuestionMarkSymbol),
-                    },
-                    _ => throw new UnexpectedTokenException(first, TokenType.AsteriskSymbol, TokenType.EqualsSymbol, TokenType.ExclamationMarkSymbol, TokenType.AmpersandSymbol, TokenType.PipeSymbol, TokenType.LessThanSymbol, TokenType.GreaterThanSymbol, TokenType.QuestionMarkSymbol),
-                };
-
-                break;
-            }
-            case 1:
-            {
-                var first = operators[0];
-
-                @operator = first.Type switch
-                {
-                    TokenType.PlusSymbol => BinaryExpressionOperator.Add,
-                    TokenType.MinusSymbol => BinaryExpressionOperator.Subtract,
-                    TokenType.AsteriskSymbol => BinaryExpressionOperator.Multiply,
-                    TokenType.SlashSymbol => BinaryExpressionOperator.Divide,
-                    TokenType.PercentSymbol => BinaryExpressionOperator.Modulo,
-                    TokenType.GreaterThanSymbol => BinaryExpressionOperator.GreaterThan,
-                    TokenType.LessThanSymbol => BinaryExpressionOperator.LessThan,
-                    TokenType.PipeSymbol => BinaryExpressionOperator.BitwiseOr,
-                    TokenType.AmpersandSymbol => BinaryExpressionOperator.BitwiseAnd,
-                    TokenType.HatSymbol => BinaryExpressionOperator.BitwiseXor,
-                    _ => throw new UnexpectedTokenException(first, TokenType.PlusSymbol, TokenType.MinusSymbol, TokenType.AsteriskSymbol, TokenType.SlashSymbol, TokenType.PercentSymbol, TokenType.GreaterThanSymbol, TokenType.LessThanSymbol, TokenType.PipeSymbol, TokenType.AmpersandSymbol, TokenType.HatSymbol),
-                };
-
-                break;
-            }
-            case 0:
-                throw new UnexpectedEndOfTokensException(tokens.LastToken?.Location, "Expected an operator");
-            default:
-                throw new UnexpectedTokenException(operators[0], "Operators can only be chained up to 3 times");
+                    _ => throw new UnexpectedTokenException(second, TokenType.LessThanSymbol),
+                },
+                _ => throw new UnexpectedTokenException(first, TokenType.GreaterThanSymbol, TokenType.LessThanSymbol),
+            };
         }
 
-        return new(operators, @operator);
+        if (operatorTokens.Count == 2)
+        {
+            var (first, second) = (operatorTokens[0], operatorTokens[1]);
+
+            return first.Type switch
+            {
+                TokenType.AsteriskSymbol => second.Type switch
+                {
+                    TokenType.AsteriskSymbol => BinaryExpressionOperator.Power,
+                    _ => throw new UnexpectedTokenException(second, TokenType.AsteriskSymbol),
+                },
+                TokenType.EqualsSymbol => second.Type switch
+                {
+                    TokenType.EqualsSymbol => BinaryExpressionOperator.Equal,
+                    _ => throw new UnexpectedTokenException(second, TokenType.EqualsSymbol),
+                },
+                TokenType.ExclamationMarkSymbol => second.Type switch
+                {
+                    TokenType.EqualsSymbol => BinaryExpressionOperator.NotEqual,
+                    _ => throw new UnexpectedTokenException(second, TokenType.EqualsSymbol),
+                },
+                TokenType.AmpersandSymbol => second.Type switch
+                {
+                    TokenType.AmpersandSymbol => BinaryExpressionOperator.LogicalAnd,
+                    _ => throw new UnexpectedTokenException(second, TokenType.AmpersandSymbol),
+                },
+                TokenType.PipeSymbol => second.Type switch
+                {
+                    TokenType.PipeSymbol => BinaryExpressionOperator.LogicalOr,
+                    _ => throw new UnexpectedTokenException(second, TokenType.PipeSymbol),
+                },
+                TokenType.LessThanSymbol => second.Type switch
+                {
+                    TokenType.EqualsSymbol => BinaryExpressionOperator.LessThanOrEqual,
+                    TokenType.LessThanSymbol => BinaryExpressionOperator.BitwiseShiftLeft,
+                    _ => throw new UnexpectedTokenException(second, TokenType.EqualsSymbol, TokenType.LessThanSymbol),
+                },
+                TokenType.GreaterThanSymbol => second.Type switch
+                {
+                    TokenType.EqualsSymbol => BinaryExpressionOperator.GreaterThanOrEqual,
+                    TokenType.GreaterThanSymbol => BinaryExpressionOperator.BitwiseShiftRight,
+                    _ => throw new UnexpectedTokenException(second, TokenType.EqualsSymbol,
+                        TokenType.GreaterThanSymbol),
+                },
+                TokenType.QuestionMarkSymbol => second.Type switch
+                {
+                    TokenType.QuestionMarkSymbol => BinaryExpressionOperator.Coalesce,
+                    _ => throw new UnexpectedTokenException(second, TokenType.QuestionMarkSymbol),
+                },
+                _ => throw new UnexpectedTokenException(first, TokenType.AsteriskSymbol, TokenType.EqualsSymbol,
+                    TokenType.ExclamationMarkSymbol, TokenType.AmpersandSymbol, TokenType.PipeSymbol,
+                    TokenType.LessThanSymbol, TokenType.GreaterThanSymbol, TokenType.QuestionMarkSymbol),
+            };
+        }
+
+        if (operatorTokens.Count == 1)
+        {
+            var first = operatorTokens[0];
+
+            return first.Type switch
+            {
+                TokenType.PlusSymbol => BinaryExpressionOperator.Add,
+                TokenType.MinusSymbol => BinaryExpressionOperator.Subtract,
+                TokenType.AsteriskSymbol => BinaryExpressionOperator.Multiply,
+                TokenType.SlashSymbol => BinaryExpressionOperator.Divide,
+                TokenType.PercentSymbol => BinaryExpressionOperator.Modulo,
+                TokenType.GreaterThanSymbol => BinaryExpressionOperator.GreaterThan,
+                TokenType.LessThanSymbol => BinaryExpressionOperator.LessThan,
+                TokenType.PipeSymbol => BinaryExpressionOperator.BitwiseOr,
+                TokenType.AmpersandSymbol => BinaryExpressionOperator.BitwiseAnd,
+                TokenType.HatSymbol => BinaryExpressionOperator.BitwiseXor,
+                _ => throw new UnexpectedTokenException(first, TokenType.PlusSymbol, TokenType.MinusSymbol,
+                    TokenType.AsteriskSymbol, TokenType.SlashSymbol, TokenType.PercentSymbol,
+                    TokenType.GreaterThanSymbol, TokenType.LessThanSymbol, TokenType.PipeSymbol,
+                    TokenType.AmpersandSymbol, TokenType.HatSymbol),
+            };
+        }
+
+        if (operatorTokens.Count == 0)
+            throw new UnexpectedEndOfTokensException(this.tokens.LastToken?.Location, "Expected an operator");
+
+        throw new UnexpectedTokenException(operatorTokens[0], "Operators can only be chained up to 3 times");
     }
 
     private ExpressionNode ParsePrimaryExpression()

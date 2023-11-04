@@ -141,17 +141,6 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
                 break;
             }
-            case AddExpressionNode aen:
-            {
-                var treeNode = parent.AddNode("AddExpression:");
-                treeNode.AddNode("Operator: " + BinaryExpressionOperator.Add.ToSymbol());
-                var leftNode = treeNode.AddNode("Left:");
-                RenderNode(leftNode, aen.Left);
-                var rightNode = treeNode.AddNode("Right:");
-                RenderNode(rightNode, aen.Right);
-
-                break;
-            }
             case IdentifierExpressionNode ien:
             {
                 parent.AddNode("IdentifierExpression: " + ien.Identifier.ToString().EscapeMarkup());
@@ -270,13 +259,6 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
                 break;
             }
-            case BinaryOperatorNode bon:
-            {
-                var treeNode = parent.AddNode("BinaryOperator:");
-                treeNode.AddNode("Operator: " + bon.Operator.ToString().EscapeMarkup());
-                treeNode.AddNode("Tokens: " + string.Join("", bon.Tokens).EscapeMarkup());
-                break;
-            }
             case ListExpressionNode len:
             {
                 var treeNode = parent.AddNode("ListExpression:");
@@ -326,11 +308,37 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
                 RenderNode(expressionNode, iian.ValueExpression);
                 break;
             }
+            case IBinaryExpressionNode iben:
+            {
+                RenderBinaryNodes(parent, iben);
+                break;
+            }
+            case IUnaryExpressionNode iuen:
+            {
+                RenderUnaryNodes(parent, iuen);
+                break;
+            }
             default:
             {
                 _ = parent.AddNode("[red]! " + parserNode.GetType().Name + "[/]");
                 break;
             }
         }
+    }
+
+    private static void RenderBinaryNodes(IHasTreeNodes parent, IBinaryExpressionNode node)
+    {
+        var treeNode = parent.AddNode(node.GetType().Name + ":");
+        treeNode.AddNode("Operator: " + node.Operator.ToSymbol());
+        var leftNode = treeNode.AddNode("Left:");
+        RenderNode(leftNode, node.Left);
+        var rightNode = treeNode.AddNode("Right:");
+        RenderNode(rightNode, node.Right);
+    }
+
+    private static void RenderUnaryNodes(IHasTreeNodes parent, IUnaryExpressionNode node)
+    {
+        var treeNode = parent.AddNode(node.GetType().Name + ":");
+        RenderNode(treeNode, node.Expression);
     }
 }
