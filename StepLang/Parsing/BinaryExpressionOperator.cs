@@ -24,14 +24,12 @@ public enum BinaryExpressionOperator
     BitwiseRotateLeft,
     BitwiseRotateRight,
     Coalesce,
-    Index,
 }
 
 public static class BinaryExpressionOperatorExtensions
 {
     public static int Precedence(this BinaryExpressionOperator op)
     {
-        const int index = 13;
         const int power = 12;
         const int multiplicative = 11;
         const int additive = 10;
@@ -47,7 +45,6 @@ public static class BinaryExpressionOperatorExtensions
 
         return op switch
         {
-            BinaryExpressionOperator.Index => index,
             BinaryExpressionOperator.Power => power,
             BinaryExpressionOperator.Multiply or BinaryExpressionOperator.Divide or BinaryExpressionOperator.Modulo => multiplicative,
             BinaryExpressionOperator.Add or BinaryExpressionOperator.Subtract => additive,
@@ -90,7 +87,6 @@ public static class BinaryExpressionOperatorExtensions
             BinaryExpressionOperator.BitwiseRotateLeft => "<<<",
             BinaryExpressionOperator.BitwiseRotateRight => ">>>",
             BinaryExpressionOperator.Coalesce => "??",
-            BinaryExpressionOperator.Index => "[]",
             _ => throw new NotImplementedException($"Undefined operator symbol for operator: {op}"),
         };
     }

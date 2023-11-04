@@ -9,19 +9,18 @@ public class TokenQueue
     private readonly LinkedList<Token> tokenList;
 
     private Token? lastToken;
-    private readonly bool ignoreWhitespace;
 
-    public TokenQueue(bool ignoreWhitespace)
+    public TokenQueue()
     {
         tokenList = new();
-        this.ignoreWhitespace = ignoreWhitespace;
     }
 
-    public TokenQueue(IEnumerable<Token> tokens, bool ignoreWhitespace)
+    public TokenQueue(IEnumerable<Token> tokens)
     {
         tokenList = new(tokens);
-        this.ignoreWhitespace = ignoreWhitespace;
     }
+
+    public bool IgnoreWhitespace { get; set; }
 
     public void Enqueue(Token token) => tokenList.AddLast(token);
 
@@ -44,7 +43,7 @@ public class TokenQueue
         {
             token = tokenList.Skip(skip).FirstOrDefault();
             skip++;
-        } while (ignoreWhitespace && !(token?.Type.HasMeaning() ?? true));
+        } while (IgnoreWhitespace && !(token?.Type.HasMeaning() ?? true));
 
         if (token is null)
             return false;
@@ -80,7 +79,7 @@ public class TokenQueue
     public bool TryPeek(int offset, [NotNullWhen(true)] out Token? token)
     {
         var source = tokenList.AsEnumerable();
-        if (ignoreWhitespace)
+        if (IgnoreWhitespace)
             source = source.Where(t => t.Type.HasMeaning());
 
         token = source.Skip(offset).FirstOrDefault();
@@ -118,7 +117,7 @@ public class TokenQueue
                 throw new UnexpectedEndOfTokensException(lastToken?.Location);
 
             offset++;
-        } while (!type.Value.HasMeaning());
+        } while (!type.Value.HasMeaning() && IgnoreWhitespace);
 
         return type.Value;
     }
@@ -139,7 +138,7 @@ public class TokenQueue
             };
 
             throw new UnexpectedEndOfTokensException(lastToken?.Location, $"Expected {typeInfo}");
-        } while (!token.Type.HasMeaning());
+        } while (!token.Type.HasMeaning() && IgnoreWhitespace);
 
         if (!allowed.Contains(token.Type))
             throw new UnexpectedTokenException(token, allowed);

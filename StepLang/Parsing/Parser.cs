@@ -8,7 +8,10 @@ public class Parser
 
     public Parser(IEnumerable<Token> tokens)
     {
-        this.tokens = new(tokens, ignoreWhitespace: true);
+        this.tokens = new(tokens)
+        {
+            IgnoreWhitespace = true,
+        };
     }
 
     public RootNode Parse()
@@ -73,27 +76,40 @@ public class Parser
         if (token.Type == TokenType.Identifier)
         {
             var next = tokens.Peek(1);
+
+            _ = tokens.TryPeek(2, out var nextNext);
+
             if (next.Type == TokenType.EqualsSymbol)
                 return ParseVariableAssignment();
 
             if (next.Type == TokenType.OpeningParentheses)
                 return ParseFunctionCall();
 
-            if (next.Type.IsMathematicalOperation())
-            {
-                if (next.Type.IsShorthandMathematicalOperation() && tokens.Peek(2).Type == next.Type)
-                    return ParseShorthandMathOperation();
-
-                if (tokens.Peek(2).Type == TokenType.EqualsSymbol)
-                    return ParseShorthandMathOperationExpression();
-
-                throw new UnexpectedTokenException(tokens.Peek(2), next.Type, TokenType.EqualsSymbol);
-            }
-
             if (next.Type == TokenType.OpeningSquareBracket)
                 return ParseIndexAssignment();
 
-            throw new UnexpectedTokenException(token, TokenType.EqualsSymbol, TokenType.OpeningParentheses);
+            if (nextNext is { Type: var nextNextType })
+            {
+                if (next.Type.IsShorthandMathematicalOperation() && nextNextType == next.Type)
+                    return ParseShorthandMathOperation();
+
+                if (next.Type.IsShorthandMathematicalOperationWithAssignment() &&
+                    nextNextType == TokenType.EqualsSymbol)
+                    return ParseShorthandMathOperationExpression();
+
+                throw new UnexpectedTokenException(nextNext, next.Type, TokenType.EqualsSymbol);
+            }
+
+            throw new UnexpectedTokenException(next,
+                new[]
+                    {
+                        TokenType.EqualsSymbol,
+                        TokenType.OpeningParentheses,
+                        TokenType.OpeningSquareBracket,
+                    }.Concat(TokenTypes.ShorthandMathematicalOperations)
+                    .Concat(TokenTypes.ShorthandMathematicalOperationsWithAssignment)
+                    .Distinct()
+                    .ToArray());
         }
 
         if (token.Type is TokenType.NewLine or TokenType.LineComment)
@@ -142,23 +158,41 @@ public class Parser
         return new(identifier, index, expression);
     }
 
-    private ShorthandMathOperationStatementNode ParseShorthandMathOperation()
+    private StatementNode ParseShorthandMathOperation()
     {
         var identifier = tokens.Dequeue(TokenType.Identifier);
         var operation = tokens.Dequeue(TokenTypes.ShorthandMathematicalOperations);
         _ = tokens.Dequeue(operation.Type);
 
-        return new(identifier, operation);
+        return operation.Type switch
+        {
+            TokenType.PlusSymbol => new IncrementStatementNode(identifier),
+            TokenType.MinusSymbol => new DecrementStatementNode(identifier),
+            _ => throw new UnexpectedTokenException(operation, TokenType.PlusSymbol, TokenType.MinusSymbol),
+        };
     }
 
-    private ShorthandMathOperationExpressionStatementNode ParseShorthandMathOperationExpression()
+    private VariableAssignmentNode ParseShorthandMathOperationExpression()
     {
         var identifier = tokens.Dequeue(TokenType.Identifier);
-        var operation = tokens.Dequeue(TokenTypes.MathematicalOperations);
+        var identifierExpression = new IdentifierExpressionNode(identifier);
+        var operation = tokens.Dequeue(TokenTypes.ShorthandMathematicalOperationsWithAssignment);
         _ = tokens.Dequeue(TokenType.EqualsSymbol);
         var expression = ParseExpression();
 
-        return new(identifier, operation, expression);
+        return operation.Type switch
+        {
+            TokenType.PlusSymbol => new(identifier, new AddExpressionNode(identifierExpression, expression)),
+            TokenType.MinusSymbol => new(identifier, new SubtractExpressionNode(identifierExpression, expression)),
+            TokenType.AsteriskSymbol => new(identifier, new MultiplyExpressionNode(identifierExpression, expression)),
+            TokenType.SlashSymbol => new(identifier, new DivideExpressionNode(identifierExpression, expression)),
+            TokenType.PercentSymbol => new(identifier, new ModuloExpressionNode(identifierExpression, expression)),
+            TokenType.PipeSymbol => new(identifier, new BitwiseOrExpressionNode(identifierExpression, expression)),
+            TokenType.AmpersandSymbol => new(identifier, new BitwiseAndExpressionNode(identifierExpression, expression)),
+            TokenType.HatSymbol => new(identifier, new BitwiseXorExpressionNode(identifierExpression, expression)),
+            TokenType.QuestionMarkSymbol => new(identifier, new CoalesceExpressionNode(identifierExpression, expression)),
+            _ => throw new UnexpectedTokenException(operation, TokenType.PlusSymbol, TokenType.MinusSymbol, TokenType.AsteriskSymbol, TokenType.SlashSymbol, TokenType.PercentSymbol, TokenType.PipeSymbol, TokenType.AmpersandSymbol, TokenType.HatSymbol, TokenType.QuestionMarkSymbol),
+        };
     }
 
     private StatementNode ParseForeachStatement()
@@ -407,42 +441,71 @@ public class Parser
         return new(identifier, expression);
     }
 
-    private ExpressionNode ParseExpression()
+    private ExpressionNode ParseExpression(int parentPrecedence = 0)
     {
         var left = new PrimaryExpressionNode(ParsePrimaryExpression());
         if (!tokens.TryPeek(out var next) || !next.Type.IsOperator())
             return left;
 
         var op = ParseOperatorExpression();
-        var right = ParseExpression();
+        var precedence = op.Operator.Precedence();
+        if (precedence < parentPrecedence)
+            return left;
 
-        switch (op.Operator)
+        var right = ParseExpression(precedence + 1);
+
+        return Combine(left, op, right);
+    }
+
+    private static ExpressionNode Combine(ExpressionNode left, BinaryOperatorNode @operator, ExpressionNode right)
+    {
+        return @operator.Operator switch
         {
-            case BinaryExpressionOperator.Add:
-                return new AddExpressionNode(left, right);
-            case BinaryExpressionOperator.Coalesce:
-                return new CoalesceExpressionNode(left, right);
-            case BinaryExpressionOperator.NotEqual:
-                return new NotEqualsExpressionNode(left, right);
-            case BinaryExpressionOperator.Equal:
-                return new EqualsExpressionNode(left, right);
-            default:
-                throw new NotImplementedException("Expression for operator " + op.Operator + " not implemented");
-        }
+            BinaryExpressionOperator.Add => new AddExpressionNode(left, right),
+            BinaryExpressionOperator.Coalesce => new CoalesceExpressionNode(left, right),
+            BinaryExpressionOperator.NotEqual => new NotEqualsExpressionNode(left, right),
+            BinaryExpressionOperator.Equal => new EqualsExpressionNode(left, right),
+            BinaryExpressionOperator.Subtract => new SubtractExpressionNode(left, right),
+            BinaryExpressionOperator.Multiply => new MultiplyExpressionNode(left, right),
+            BinaryExpressionOperator.Divide => new DivideExpressionNode(left, right),
+            BinaryExpressionOperator.Modulo => new ModuloExpressionNode(left, right),
+            BinaryExpressionOperator.Power => new PowerExpressionNode(left, right),
+            BinaryExpressionOperator.GreaterThan => new GreaterThanExpressionNode(left, right),
+            BinaryExpressionOperator.LessThan => new LessThanExpressionNode(left, right),
+            BinaryExpressionOperator.GreaterThanOrEqual => new GreaterThanOrEqualExpressionNode(left, right),
+            BinaryExpressionOperator.LessThanOrEqual => new LessThanOrEqualExpressionNode(left, right),
+            BinaryExpressionOperator.LogicalAnd => new LogicalAndExpressionNode(left, right),
+            BinaryExpressionOperator.LogicalOr => new LogicalOrExpressionNode(left, right),
+            BinaryExpressionOperator.BitwiseAnd => new BitwiseAndExpressionNode(left, right),
+            BinaryExpressionOperator.BitwiseOr => new BitwiseOrExpressionNode(left, right),
+            BinaryExpressionOperator.BitwiseXor => new BitwiseXorExpressionNode(left, right),
+            BinaryExpressionOperator.BitwiseShiftLeft => new BitwiseShiftLeftExpressionNode(left, right),
+            BinaryExpressionOperator.BitwiseShiftRight => new BitwiseShiftRightExpressionNode(left, right),
+            BinaryExpressionOperator.BitwiseRotateLeft => new BitwiseRotateLeftExpressionNode(left, right),
+            BinaryExpressionOperator.BitwiseRotateRight => new BitwiseRotateRightExpressionNode(left, right),
+            _ => throw new NotImplementedException("Expression for operator " + @operator.Operator + " not implemented"),
+        };
     }
 
     private BinaryOperatorNode ParseOperatorExpression()
     {
+        // whitespaces have meaning in operators
+        tokens.IgnoreWhitespace = false;
+
         var operators = new List<Token>();
         while (tokens.TryPeek(out var next))
         {
             if (next.Type.IsOperator())
                 operators.Add(tokens.Dequeue());
-            else if (operators.Count == 0)
+            else if (operators.Count == 0 && next.Type is not TokenType.Whitespace)
                 throw new UnexpectedTokenException(next, TokenTypes.Operators);
+            else if (next.Type is TokenType.Whitespace)
+                _ = tokens.Dequeue(TokenType.Whitespace);
             else
                 break;
         }
+
+        tokens.IgnoreWhitespace = true;
 
         BinaryExpressionOperator @operator;
         switch (operators.Count)
@@ -659,6 +722,11 @@ public class Parser
             {
                 var expression = ParseExpression();
                 return new NegateExpressionNode(expression);
+            }
+            case TokenType.ExclamationMarkSymbol:
+            {
+                var expression = ParseExpression();
+                return new NotExpressionNode(expression);
             }
             default:
                 throw new NotImplementedException("Primary expression with token type " + token.Type + " not implemented");
