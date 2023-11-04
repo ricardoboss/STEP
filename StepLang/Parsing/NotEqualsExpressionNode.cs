@@ -5,6 +5,8 @@ namespace StepLang.Parsing;
 
 public record NotEqualsExpressionNode(TokenLocation OperatorLocation, ExpressionNode Left, ExpressionNode Right) : BinaryExpressionNode(OperatorLocation, Left, Right, BinaryExpressionOperator.NotEqual)
 {
+    public BinaryExpressionOperator Operator => BinaryExpressionOperator.NotEqual;
+
     public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)
     {
         return evaluator.Evaluate(this);
