@@ -1,7 +1,7 @@
 using StepLang.Parsing;
 using StepLang.Tokenizing;
 
-namespace StepLang.Statements;
+namespace StepLang.Interpreting;
 
 internal sealed class ImportedFileIsSelfException : ParserException
 {
