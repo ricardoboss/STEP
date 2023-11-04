@@ -25,4 +25,6 @@ public interface IStatementVisitor
     void Execute(WhileStatementNode statementNode);
     void Execute(VariableInitializationNode statementNode);
     void Execute(VariableDeclarationNode statementNode);
+    void Visit(IncrementStatementNode incrementStatementNode);
+    void Visit(DecrementStatementNode incrementStatementNode);
 }

@@ -263,14 +263,34 @@ public static class TokenTypes
     public static readonly TokenType[] ShorthandMathematicalOperations = {
         TokenType.PlusSymbol,
         TokenType.MinusSymbol,
-        TokenType.AsteriskSymbol,
     };
 
     public static bool IsShorthandMathematicalOperation(this TokenType type)
     {
         return type switch
         {
-            TokenType.PlusSymbol or TokenType.MinusSymbol or TokenType.AsteriskSymbol => true,
+            TokenType.PlusSymbol or TokenType.MinusSymbol => true,
+            _ => false,
+        };
+    }
+
+    public static readonly TokenType[] ShorthandMathematicalOperationsWithAssignment = {
+        TokenType.PlusSymbol,
+        TokenType.MinusSymbol,
+        TokenType.AsteriskSymbol,
+        TokenType.SlashSymbol,
+        TokenType.PercentSymbol,
+        TokenType.PipeSymbol,
+        TokenType.AmpersandSymbol,
+        TokenType.HatSymbol,
+        TokenType.QuestionMarkSymbol,
+    };
+
+    public static bool IsShorthandMathematicalOperationWithAssignment(this TokenType type)
+    {
+        return type switch
+        {
+            TokenType.PlusSymbol or TokenType.MinusSymbol or TokenType.AsteriskSymbol or TokenType.SlashSymbol or TokenType.PercentSymbol or TokenType.PipeSymbol or TokenType.AmpersandSymbol or TokenType.HatSymbol or TokenType.QuestionMarkSymbol => true,
             _ => false,
         };
     }
