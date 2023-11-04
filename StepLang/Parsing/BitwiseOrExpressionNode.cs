@@ -4,7 +4,7 @@ namespace StepLang.Parsing;
 
 public record BitwiseOrExpressionNode(ExpressionNode Left, ExpressionNode Right) : ExpressionNode, IBinaryExpressionNode
 {
-    public BinaryExpressionOperator Operator => BinaryExpressionOperator.BitwiseOr;
+    public BinaryExpressionOperator Op => BinaryExpressionOperator.BitwiseOr;
 
     public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)
     {

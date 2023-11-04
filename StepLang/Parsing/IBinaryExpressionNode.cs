@@ -4,5 +4,5 @@ public interface IBinaryExpressionNode
 {
     ExpressionNode Left { get; }
     ExpressionNode Right { get; }
-    BinaryExpressionOperator Operator { get; }
+    BinaryExpressionOperator Op { get; }
 }

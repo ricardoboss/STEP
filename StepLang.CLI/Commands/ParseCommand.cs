@@ -329,7 +329,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
     private static void RenderBinaryNodes(IHasTreeNodes parent, IBinaryExpressionNode node)
     {
         var treeNode = parent.AddNode(node.GetType().Name + ":");
-        treeNode.AddNode("Operator: " + node.Operator.ToSymbol());
+        treeNode.AddNode("Operator: " + node.Op.ToSymbol());
         var leftNode = treeNode.AddNode("Left:");
         RenderNode(leftNode, node.Left);
         var rightNode = treeNode.AddNode("Right:");

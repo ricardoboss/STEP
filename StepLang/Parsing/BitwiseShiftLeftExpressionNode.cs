@@ -4,7 +4,7 @@ namespace StepLang.Parsing;
 
 public record BitwiseShiftLeftExpressionNode(ExpressionNode Left, ExpressionNode Right) : ExpressionNode, IBinaryExpressionNode
 {
-    public BinaryExpressionOperator Operator => BinaryExpressionOperator.BitwiseShiftLeft;
+    public BinaryExpressionOperator Op => BinaryExpressionOperator.BitwiseShiftLeft;
 
     public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)
     {
