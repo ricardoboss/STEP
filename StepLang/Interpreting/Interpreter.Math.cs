@@ -303,4 +303,109 @@ public partial class Interpreter
             _ => throw new IncompatibleExpressionOperandsException(expressionNode.Location, result, "not"),
         };
     }
+
+    public ExpressionResult Evaluate(SubtractExpressionNode expressionNode)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ExpressionResult Evaluate(MultiplyExpressionNode expressionNode)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ExpressionResult Evaluate(DivideExpressionNode expressionNode)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ExpressionResult Evaluate(ModuloExpressionNode expressionNode)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ExpressionResult Evaluate(PowerExpressionNode expressionNode)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ExpressionResult Evaluate(GreaterThanExpressionNode expressionNode)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ExpressionResult Evaluate(LessThanExpressionNode expressionNode)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ExpressionResult Evaluate(GreaterThanOrEqualExpressionNode expressionNode)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ExpressionResult Evaluate(LessThanOrEqualExpressionNode expressionNode)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ExpressionResult Evaluate(LogicalAndExpressionNode expressionNode)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ExpressionResult Evaluate(LogicalOrExpressionNode expressionNode)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ExpressionResult Evaluate(BitwiseXorExpressionNode expressionNode)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ExpressionResult Evaluate(BitwiseAndExpressionNode expressionNode)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ExpressionResult Evaluate(BitwiseOrExpressionNode expressionNode)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ExpressionResult Evaluate(BitwiseShiftLeftExpressionNode expressionNode)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ExpressionResult Evaluate(BitwiseShiftRightExpressionNode expressionNode)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ExpressionResult Evaluate(BitwiseRotateLeftExpressionNode expressionNode)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ExpressionResult Evaluate(BitwiseRotateRightExpressionNode expressionNode)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ExpressionResult Evaluate(NotExpressionNode expressionNode)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Visit(IncrementStatementNode incrementStatementNode)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Visit(DecrementStatementNode incrementStatementNode)
+    {
+        throw new NotImplementedException();
+    }
 }
