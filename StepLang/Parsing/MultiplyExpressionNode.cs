@@ -5,6 +5,8 @@ namespace StepLang.Parsing;
 
 public record MultiplyExpressionNode(TokenLocation OperatorLocation, ExpressionNode Left, ExpressionNode Right) : BinaryExpressionNode(OperatorLocation, Left, Right, BinaryExpressionOperator.Multiply)
 {
+    public BinaryExpressionOperator Operator => BinaryExpressionOperator.Multiply;
+
     public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)
     {
         return evaluator.Evaluate(this);
