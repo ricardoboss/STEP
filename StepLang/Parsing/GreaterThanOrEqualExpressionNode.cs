@@ -5,7 +5,7 @@ namespace StepLang.Parsing;
 
 public record GreaterThanOrEqualExpressionNode(TokenLocation OperatorLocation, ExpressionNode Left, ExpressionNode Right) : BinaryExpressionNode(OperatorLocation, Left, Right, BinaryExpressionOperator.GreaterThanOrEqual)
 {
-    public BinaryExpressionOperator Operator => BinaryExpressionOperator.GreaterThanOrEqual;
+    public BinaryExpressionOperator Op => BinaryExpressionOperator.GreaterThanOrEqual;
 
     public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)
     {
