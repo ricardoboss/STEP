@@ -10,27 +10,11 @@ public class TokenQueue
 
     private Token? lastToken;
 
-    public TokenQueue()
-    {
-        tokenList = new();
-    }
+    public TokenQueue() => tokenList = new();
 
-    public TokenQueue(IEnumerable<Token> tokens)
-    {
-        tokenList = new(tokens);
-    }
+    public TokenQueue(IEnumerable<Token> tokens) => tokenList = new(tokens);
 
     public bool IgnoreWhitespace { get; set; }
-
-    public void Enqueue(Token token) => tokenList.AddLast(token);
-
-    public void Enqueue(IEnumerable<Token> tokens)
-    {
-        foreach (var token in tokens)
-            tokenList.AddLast(token);
-    }
-
-    public void Prepend(Token token) => tokenList.AddFirst(token);
 
     public bool TryDequeue([NotNullWhen(true)] out Token? token)
     {
@@ -108,20 +92,6 @@ public class TokenQueue
         return token;
     }
 
-    public TokenType PeekType(int offset = 0)
-    {
-        TokenType? type;
-        do
-        {
-            if (!TryPeekType(offset, out type))
-                throw new UnexpectedEndOfTokensException(lastToken?.Location);
-
-            offset++;
-        } while (!type.Value.HasMeaning() && IgnoreWhitespace);
-
-        return type.Value;
-    }
-
     public Token Dequeue(params TokenType[] allowed)
     {
         Token? token;
@@ -145,55 +115,6 @@ public class TokenQueue
 
         return token;
     }
-
-    public IReadOnlyList<Token> DequeueUntil(params TokenType[] exitTypes)
-    {
-        var tokens = new List<Token>();
-        var expressionDepth = 0;
-        var codeBlockDepth = 0;
-        var listDepth = 0;
-
-        while (TryPeekType(out var nextType))
-        {
-            if (expressionDepth == 0 && codeBlockDepth == 0 && listDepth == 0 && exitTypes.Contains(nextType.Value))
-                break;
-
-            var token = Dequeue();
-
-            tokens.Add(token);
-
-            UpdateDepth(nextType);
-        }
-
-        return tokens;
-
-        void UpdateDepth(TokenType? type)
-        {
-            switch (type)
-            {
-                case TokenType.OpeningParentheses:
-                    expressionDepth++;
-                    return;
-                case TokenType.ClosingParentheses:
-                    expressionDepth--;
-                    return;
-                case TokenType.OpeningCurlyBracket:
-                    codeBlockDepth++;
-                    return;
-                case TokenType.ClosingCurlyBracket:
-                    codeBlockDepth--;
-                    return;
-                case TokenType.OpeningSquareBracket:
-                    listDepth++;
-                    return;
-                case TokenType.ClosingSquareBracket:
-                    listDepth--;
-                    return;
-            }
-        }
-    }
-
-    public bool IsEmpty => tokenList.Count == 0;
 
     public bool IsNotEmpty => tokenList.Count > 0;
 
