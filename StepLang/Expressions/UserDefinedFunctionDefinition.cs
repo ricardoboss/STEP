@@ -45,18 +45,18 @@ public class UserDefinedFunctionDefinition : FunctionDefinition
     // TODO: implement return type declarations on user defined functions
     public override IEnumerable<ResultType> ReturnTypes => Enum.GetValues<ResultType>();
 
-    private void EvaluateParameters(Interpreter interpreter, IReadOnlyList<ExpressionResult> arguments)
+    private void EvaluateParameters(IVariableDeclarationEvaluator evaluator, IReadOnlyList<ExpressionResult> arguments)
     {
         for (var i = 0; i < parameters.Count; i++)
         {
             var parameter = parameters[i];
-            var argument = arguments[i];
+            var argumentValue = arguments[i];
 
             // this will create the variable in the current scope
-            parameter.Accept(interpreter);
+            var argument = parameter.EvaluateUsing(evaluator);
 
             // and set the value
-            interpreter.CurrentScope.UpdateValue(parameter.Identifier, argument);
+            argument.Assign(argumentValue);
         }
     }
 

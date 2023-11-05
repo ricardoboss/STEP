@@ -1,8 +1,6 @@
-using StepLang.Tokenizing;
-
 namespace StepLang.Parsing;
 
-public record DecrementStatementNode(Token Identifier) : StatementNode
+public record VariableDeclarationStatement(IVariableDeclarationNode Declaration) : StatementNode
 {
     public override void Accept(IStatementVisitor visitor)
     {

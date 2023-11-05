@@ -72,7 +72,7 @@ public partial class Interpreter : IRootNodeVisitor, IStatementVisitor, IExpress
             if (!CurrentScope.TryGetResult(out _))
                 continue;
 
-            DebugOut?.WriteLineAsync("Result found, breaking");
+            DebugOut?.WriteLine("Result found, continuing");
 
             break;
         }

@@ -1,6 +1,6 @@
 namespace StepLang.Parsing;
 
-public sealed record CodeBlockStatementNode(IReadOnlyCollection<StatementNode> Body) : StatementNode
+public sealed record CodeBlockStatementNode(IReadOnlyList<StatementNode> Body) : StatementNode
 {
     public override void Accept(IStatementVisitor visitor)
     {

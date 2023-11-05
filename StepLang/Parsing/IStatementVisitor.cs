@@ -16,15 +16,12 @@ public interface IStatementVisitor
     void Execute(IfElseIfStatementNode statementNode);
     void Execute(IfElseStatementNode statementNode);
     void Execute(IfStatementNode statementNode);
-    void Execute(NullableVariableDeclarationNode statementNode);
-    void Execute(NullableVariableInitializationNode statementNode);
     void Execute(ReturnStatementNode statementNode);
     void Execute(ShorthandMathOperationExpressionStatementNode statementNode);
     void Execute(ShorthandMathOperationStatementNode statementNode);
     void Execute(VariableAssignmentNode statementNode);
     void Execute(WhileStatementNode statementNode);
-    void Execute(VariableInitializationNode statementNode);
-    void Execute(VariableDeclarationNode statementNode);
-    void Visit(IncrementStatementNode incrementStatementNode);
-    void Visit(DecrementStatementNode incrementStatementNode);
+    void Execute(IncrementStatementNode incrementStatementNode);
+    void Execute(DecrementStatementNode incrementStatementNode);
+    void Execute(VariableDeclarationStatement statementNode);
 }

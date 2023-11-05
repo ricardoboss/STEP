@@ -28,7 +28,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
         tokenizer.Add(chars);
         var tokens = tokenizer.Tokenize();
         var parser = new Parser(tokens);
-        var root = parser.Parse();
+        var root = parser.ParseRoot();
 
         var tree = new Tree("Root");
         RenderNode(tree, root);
@@ -234,11 +234,11 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             case FunctionDefinitionExpressionNode fden:
             {
                 var treeNode = parent.AddNode("FunctionDefinitionExpression:");
-                var argumentsNode = treeNode.AddNode("Arguments:");
+                var argumentsNode = treeNode.AddNode("Parameters:");
 
-                if (fden.Arguments.Count > 0)
+                if (fden.Parameters.Count > 0)
                 {
-                    foreach (var argument in fden.Arguments)
+                    foreach (var argument in fden.Parameters)
                         RenderNode(argumentsNode, argument);
                 }
                 else

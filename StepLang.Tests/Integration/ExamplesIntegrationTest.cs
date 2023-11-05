@@ -42,7 +42,7 @@ public class ExamplesIntegrationTest
         tokenizer.Add(chars);
         var tokens = tokenizer.Tokenize();
         var parser = new Parser(tokens);
-        var root = parser.Parse();
+        var root = parser.ParseRoot();
         interpreter.Run(root);
 
         // assert

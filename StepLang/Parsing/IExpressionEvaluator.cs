@@ -36,4 +36,5 @@ public interface IExpressionEvaluator
     ExpressionResult Evaluate(BitwiseRotateLeftExpressionNode expressionNode);
     ExpressionResult Evaluate(BitwiseRotateRightExpressionNode expressionNode);
     ExpressionResult Evaluate(NotExpressionNode expressionNode);
+    ExpressionResult Evaluate(FunctionDefinitionCallExpressionNode expressionNode);
 }

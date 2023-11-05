@@ -27,6 +27,9 @@ public abstract class ExpressionResult : IEquatable<ExpressionResult>
     public ResultType ResultType { get; }
 
     /// <inheritdoc />
+    public override bool Equals(object? obj) => Equals(obj as ExpressionResult);
+
+    /// <inheritdoc />
     public bool Equals(ExpressionResult? other)
     {
         if (ReferenceEquals(null, other))
@@ -44,22 +47,19 @@ public abstract class ExpressionResult : IEquatable<ExpressionResult>
     protected abstract bool EqualsInternal(ExpressionResult other);
 
     /// <inheritdoc />
-    public override bool Equals(object? obj)
-    {
-        if (ReferenceEquals(null, obj))
-            return false;
-
-        if (ReferenceEquals(this, obj))
-            return true;
-
-        return obj.GetType() == GetType() && Equals((ExpressionResult)obj);
-    }
-
-    /// <inheritdoc />
     public override int GetHashCode() => (int)ResultType;
 
     /// <inheritdoc />
     public override string ToString() => ResultType.ToTypeName();
 
     public abstract ExpressionResult DeepClone();
+
+    public bool IsTruthy()
+    {
+        return this switch
+        {
+            BoolResult { Value: true } => true,
+            _ => false,
+        };
+    }
 }

@@ -2,7 +2,7 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Parsing;
 
-public sealed record ForeachKeyDeclareValueStatementNode(Token KeyIdentifier, Token ValueType, Token ValueIdentifier, ExpressionNode List, IReadOnlyCollection<StatementNode> Body) : StatementNode
+public sealed record ForeachKeyDeclareValueStatementNode(Token KeyIdentifier, IVariableDeclarationNode ValueDeclaration, ExpressionNode Collection, IReadOnlyCollection<StatementNode> Body) : StatementNode
 {
     public override void Accept(IStatementVisitor visitor)
     {
