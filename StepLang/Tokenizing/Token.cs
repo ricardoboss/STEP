@@ -8,19 +8,13 @@ public class Token
 
     public string Value { get; }
 
-    public TokenLocation? Location { get; }
-
-    public FileSystemInfo? File => Location?.File;
-
-    public int? Line => Location?.Line;
-
-    public int? Column => Location?.Column;
+    public TokenLocation Location { get; }
 
     public Token(TokenType type, string value, TokenLocation? location = null)
     {
         Type = type;
         Value = value;
-        Location = location;
+        Location = location ?? new();
     }
 
     public string StringValue => Type switch
