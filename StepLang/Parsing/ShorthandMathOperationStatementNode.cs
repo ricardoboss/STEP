@@ -8,4 +8,6 @@ public sealed record ShorthandMathOperationStatementNode(Token Identifier, Token
     {
         visitor.Execute(this);
     }
+
+    public override TokenLocation Location => Identifier.Location;
 }
