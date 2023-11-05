@@ -1,11 +1,10 @@
 using StepLang.Expressions.Results;
+using StepLang.Tokenizing;
 
 namespace StepLang.Parsing;
 
-public record ModuloExpressionNode(ExpressionNode Left, ExpressionNode Right) : ExpressionNode, IBinaryExpressionNode
+public record ModuloExpressionNode(TokenLocation OperatorLocation, ExpressionNode Left, ExpressionNode Right) : BinaryExpressionNode(OperatorLocation, Left, Right, BinaryExpressionOperator.Modulo)
 {
-    public BinaryExpressionOperator Op => BinaryExpressionOperator.Modulo;
-
     public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)
     {
         return evaluator.Evaluate(this);

@@ -1,4 +1,5 @@
 using StepLang.Expressions.Results;
+using StepLang.Tokenizing;
 
 namespace StepLang.Interpreting;
 
@@ -6,25 +7,26 @@ public class Variable
 {
     public string Identifier { get; }
     public IReadOnlyList<ResultType> Types { get; }
+    public string TypeString => string.Join("|", Types.Select(t => t.ToTypeName()));
     public bool Nullable { get; }
     public ExpressionResult Value { get; private set; }
 
-    public Variable(string identifier, IReadOnlyList<ResultType> types, bool nullable, ExpressionResult value)
+    public Variable(string identifier, IReadOnlyList<ResultType> types, bool nullable)
     {
         Identifier = identifier;
         Types = types;
         Nullable = nullable;
-        Value = value;
+        Value = VoidResult.Instance;
     }
 
-    public void Assign(ExpressionResult newValue)
+    public void Assign(TokenLocation location, ExpressionResult newValue)
     {
         if (!Accepts(newValue))
         {
             if (Nullable || newValue is NullResult)
-                throw new IncompatibleVariableTypeException(this, newValue);
+                throw new IncompatibleVariableTypeException(location, this, newValue);
 
-            throw new NonNullableVariableAssignmentException(this, newValue);
+            throw new NonNullableVariableAssignmentException(location, this, newValue);
         }
 
         Value = newValue;

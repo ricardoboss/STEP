@@ -8,4 +8,6 @@ public sealed record IdentifierIndexAssignmentNode(Token Identifier, ExpressionN
     {
         visitor.Execute(this);
     }
+
+    public override TokenLocation Location => Identifier.Location;
 }

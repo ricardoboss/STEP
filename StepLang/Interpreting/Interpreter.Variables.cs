@@ -38,6 +38,6 @@ public partial class Interpreter : IVariableDeclarationEvaluator
 
         var result = statementNode.Expression.EvaluateUsing(this);
 
-        variable.Assign(result);
+        variable.Assign(statementNode.Location, result);
     }
 }

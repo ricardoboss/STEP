@@ -9,4 +9,6 @@ public sealed record CallExpressionNode(Token Identifier, IReadOnlyList<Expressi
     {
         return evaluator.Evaluate(this);
     }
+
+    public override TokenLocation Location => Identifier.Location;
 }

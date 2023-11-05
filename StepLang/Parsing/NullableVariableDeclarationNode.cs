@@ -9,4 +9,6 @@ public sealed record NullableVariableDeclarationNode(IReadOnlyCollection<Token> 
     {
         return evaluator.Execute(this);
     }
+
+    public TokenLocation Location => Types.First().Location;
 }

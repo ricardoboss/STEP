@@ -12,7 +12,7 @@ public partial class Interpreter
         if (value is not NumberResult number)
             throw new IncompatibleExpressionOperandsException(value, "increment");
 
-        variable.Assign(number + 1);
+        variable.Assign(incrementStatementNode.Identifier.Location, number + 1);
     }
 
     public void Execute(DecrementStatementNode incrementStatementNode)
@@ -22,7 +22,7 @@ public partial class Interpreter
         if (value is not NumberResult number)
             throw new IncompatibleExpressionOperandsException(value, "decrement");
 
-        variable.Assign(number - 1);
+        variable.Assign(incrementStatementNode.Identifier.Location, number - 1);
     }
 
     public void Execute(ShorthandMathOperationExpressionStatementNode statementNode)

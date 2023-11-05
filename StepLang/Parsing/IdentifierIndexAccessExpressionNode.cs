@@ -9,4 +9,6 @@ public sealed record IdentifierIndexAccessExpressionNode(Token Identifier, Expre
     {
         return evaluator.Evaluate(this);
     }
+
+    public override TokenLocation Location => Identifier.Location;
 }

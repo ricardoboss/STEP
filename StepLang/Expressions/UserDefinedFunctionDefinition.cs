@@ -1,6 +1,7 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
 using StepLang.Parsing;
+using StepLang.Tokenizing;
 
 namespace StepLang.Expressions;
 
@@ -21,19 +22,12 @@ public class UserDefinedFunctionDefinition : FunctionDefinition
             throw new InvalidArgumentCountException(parameters.Count, arguments.Count);
 
         // evaluate args before pushing scope
-        var evaldArgs = arguments.Select(a => a.EvaluateUsing(interpreter)).ToList();
+        var evaldArgs = arguments.Select(a => (a.Location, a.EvaluateUsing(interpreter))).ToList();
 
         interpreter.PushScope();
 
-        try
-        {
-            // create the parameter variables in the new scope
-            EvaluateParameters(interpreter, evaldArgs);
-        }
-        catch (NonNullableVariableAssignmentException e)
-        {
-            throw new InvalidArgumentTypeException(null, e.Variable.Types, e.NewValue);
-        }
+        // create the parameter variables in the new scope
+        EvaluateParameters(interpreter, evaldArgs);
 
         interpreter.Execute(body.ToList());
 
@@ -45,18 +39,18 @@ public class UserDefinedFunctionDefinition : FunctionDefinition
     // TODO: implement return type declarations on user defined functions
     public override IEnumerable<ResultType> ReturnTypes => Enum.GetValues<ResultType>();
 
-    private void EvaluateParameters(IVariableDeclarationEvaluator evaluator, IReadOnlyList<ExpressionResult> arguments)
+    private void EvaluateParameters(IVariableDeclarationEvaluator evaluator, IReadOnlyList<(TokenLocation, ExpressionResult)> arguments)
     {
         for (var i = 0; i < parameters.Count; i++)
         {
             var parameter = parameters[i];
-            var argumentValue = arguments[i];
+            var (argumentLocation, argumentValue) = arguments[i];
 
             // this will create the variable in the current scope
             var argument = parameter.EvaluateUsing(evaluator);
 
             // and set the value
-            argument.Assign(argumentValue);
+            argument.Assign(argumentLocation, argumentValue);
         }
     }
 
