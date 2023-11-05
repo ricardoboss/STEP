@@ -1,3 +1,4 @@
+using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Parsing;
 
@@ -29,6 +30,15 @@ public partial class Interpreter
 
     public ExpressionResult Evaluate(FunctionDefinitionExpressionNode expressionNode)
     {
-        throw new NotImplementedException();
+        var definition = new UserDefinedFunctionDefinition(expressionNode.Parameters, expressionNode.Body);
+
+        return new FunctionResult(definition);
+    }
+
+    public ExpressionResult Evaluate(FunctionDefinitionCallExpressionNode expressionNode)
+    {
+        var definition = new UserDefinedFunctionDefinition(expressionNode.Parameters, expressionNode.Body);
+
+        return definition.Invoke(this, expressionNode.CallArguments);
     }
 }

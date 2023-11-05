@@ -6,6 +6,8 @@ public partial class Interpreter
 {
     public void Execute(ReturnStatementNode statementNode)
     {
-        throw new NotImplementedException();
+        var result = statementNode.Expression.EvaluateUsing(this);
+
+        CurrentScope.SetResult(result);
     }
 }

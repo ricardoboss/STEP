@@ -5,7 +5,7 @@ namespace StepLang.Interpreting;
 
 public partial class Interpreter
 {
-    public void Visit(IncrementStatementNode incrementStatementNode)
+    public void Execute(IncrementStatementNode incrementStatementNode)
     {
         var variable = CurrentScope.GetVariable(incrementStatementNode.Identifier);
         var value = variable.Value;
@@ -15,7 +15,7 @@ public partial class Interpreter
         variable.Assign(number + 1);
     }
 
-    public void Visit(DecrementStatementNode incrementStatementNode)
+    public void Execute(DecrementStatementNode incrementStatementNode)
     {
         var variable = CurrentScope.GetVariable(incrementStatementNode.Identifier);
         var value = variable.Value;

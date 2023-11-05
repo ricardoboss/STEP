@@ -14,21 +14,21 @@ public class Parser
         };
     }
 
-    public RootNode Parse()
+    public RootNode ParseRoot()
+    {
+        var imports = ParseImports();
+        var statements = ParseStatements(TokenType.EndOfFile);
+
+        return new(imports, statements);
+    }
+
+    private List<ImportNode> ParseImports()
     {
         var imports = new List<ImportNode>();
         while (tokens.TryPeekType(out var nextType) && nextType is TokenType.ImportKeyword)
             imports.Add(ParseImport());
 
-        var statements = new List<StatementNode>();
-        while (tokens.IsNotEmpty)
-        {
-            var node = ParseStatement();
-            if (node is not null)
-                statements.Add(node);
-        }
-
-        return new(imports, statements);
+        return imports;
     }
 
     private ImportNode ParseImport()
@@ -42,35 +42,32 @@ public class Parser
         return new(path);
     }
 
-    private StatementNode? ParseStatement()
+    private List<StatementNode> ParseStatements(TokenType stopTokenType)
+    {
+        var statements = new List<StatementNode>();
+        while (tokens.TryPeekType(out var nextType) && nextType != stopTokenType)
+        {
+            if (nextType is TokenType.NewLine)
+            {
+                _ = tokens.Dequeue(TokenType.NewLine);
+
+                continue;
+            }
+
+            statements.Add(ParseStatement());
+        }
+
+        return statements;
+    }
+
+    private StatementNode ParseStatement()
     {
         var token = tokens.Peek();
         if (token.Type == TokenType.TypeName)
         {
-            var next = tokens.Peek(1);
-            if (next.Type == TokenType.Identifier)
-            {
-                if (tokens.Peek(2).Type == TokenType.EqualsSymbol)
-                    return ParseVariableInitialization();
+            var declaration = ParseVariableDeclaration();
 
-                return ParseVariableDeclaration();
-            }
-
-            if (next.Type == TokenType.QuestionMarkSymbol)
-            {
-                var nextNext = tokens.Peek(2);
-                if (nextNext.Type == TokenType.Identifier)
-                {
-                    if (tokens.Peek(3).Type == TokenType.EqualsSymbol)
-                        return ParseNullableVariableInitialization();
-
-                    return ParseNullableVariableDeclaration();
-                }
-
-                throw new UnexpectedTokenException(nextNext, TokenType.Identifier);
-            }
-
-            throw new UnexpectedTokenException(next, TokenType.Identifier, TokenType.QuestionMarkSymbol);
+            return new VariableDeclarationStatement(declaration);
         }
 
         if (token.Type == TokenType.Identifier)
@@ -110,12 +107,6 @@ public class Parser
                     .Concat(TokenTypes.ShorthandMathematicalOperationsWithAssignment)
                     .Distinct()
                     .ToArray());
-        }
-
-        if (token.Type is TokenType.NewLine or TokenType.LineComment)
-        {
-            _ = tokens.Dequeue(TokenType.NewLine, TokenType.LineComment);
-            return null;
         }
 
         if (token.Type == TokenType.IfKeyword)
@@ -200,50 +191,35 @@ public class Parser
         _ = tokens.Dequeue(TokenType.ForEachKeyword);
         _ = tokens.Dequeue(TokenType.OpeningParentheses);
 
-        Token? keyType = null;
+        IVariableDeclarationNode? keyDeclaration = null;
         Token? keyIdentifier = null;
-        Token? valueType = null;
-        Token valueIdentifier;
+        IVariableDeclarationNode? valueDeclaration = null;
+        Token? valueIdentifier = null;
 
         var next = tokens.Peek();
         if (next.Type == TokenType.TypeName)
         {
-            var firstType = tokens.Dequeue(TokenType.TypeName);
-            var firstIdentifier = tokens.Dequeue(TokenType.Identifier);
+            var firstDeclaration = ParseVariableDeclaration();
 
             next = tokens.Peek();
             if (next.Type == TokenType.ColonSymbol)
             {
-                keyType = firstType;
-                keyIdentifier = firstIdentifier;
+                keyDeclaration = firstDeclaration;
 
                 _ = tokens.Dequeue(TokenType.ColonSymbol);
 
                 next = tokens.Peek();
                 if (next.Type == TokenType.TypeName)
-                {
-                    valueType = tokens.Dequeue(TokenType.TypeName);
-                    valueIdentifier = tokens.Dequeue(TokenType.Identifier);
-                }
+                    valueDeclaration = ParseVariableDeclaration();
                 else if (next.Type == TokenType.Identifier)
-                {
-                    valueType = null;
                     valueIdentifier = tokens.Dequeue(TokenType.Identifier);
-                }
                 else
-                {
                     throw new UnexpectedTokenException(next, TokenType.TypeName, TokenType.Identifier);
-                }
             }
             else if (next.Type == TokenType.InKeyword)
-            {
-                valueType = firstType;
-                valueIdentifier = firstIdentifier;
-            }
+                valueDeclaration = firstDeclaration;
             else
-            {
                 throw new UnexpectedTokenException(next, TokenType.ColonSymbol, TokenType.InKeyword);
-            }
         }
         else if (next.Type == TokenType.Identifier)
         {
@@ -252,40 +228,28 @@ public class Parser
             next = tokens.Peek();
             if (next.Type == TokenType.ColonSymbol)
             {
-                keyType = null;
                 keyIdentifier = firstIdentifier;
 
                 _ = tokens.Dequeue(TokenType.ColonSymbol);
 
                 next = tokens.Peek();
                 if (next.Type == TokenType.TypeName)
-                {
-                    valueType = tokens.Dequeue(TokenType.TypeName);
-                    valueIdentifier = tokens.Dequeue(TokenType.Identifier);
-                }
+                    valueDeclaration = ParseVariableDeclaration();
                 else if (next.Type == TokenType.Identifier)
-                {
-                    valueType = null;
                     valueIdentifier = tokens.Dequeue(TokenType.Identifier);
-                }
                 else
-                {
                     throw new UnexpectedTokenException(next, TokenType.TypeName, TokenType.Identifier);
-                }
             }
             else if (next.Type == TokenType.InKeyword)
-            {
                 valueIdentifier = firstIdentifier;
-            }
             else
-            {
                 throw new UnexpectedTokenException(next, TokenType.ColonSymbol, TokenType.InKeyword);
-            }
         }
         else
-        {
             throw new UnexpectedTokenException(next, TokenType.TypeName, TokenType.Identifier);
-        }
+
+        if (valueDeclaration is null && valueIdentifier is null)
+            throw new UnexpectedTokenException(tokens.Peek(), "Foreach without value declaration or identifier");
 
         _ = tokens.Dequeue(TokenType.InKeyword);
 
@@ -295,36 +259,33 @@ public class Parser
 
         var body = ParseCodeBlock().Body;
 
-        if (keyType is not null && keyIdentifier is not null && valueType is not null)
-            return new ForeachDeclareKeyDeclareValueStatementNode(keyType, keyIdentifier, valueType, valueIdentifier, list, body);
+        if (keyDeclaration is not null)
+        {
+            if (valueDeclaration is not null)
+                return new ForeachDeclareKeyDeclareValueStatementNode(keyDeclaration, valueDeclaration, list, body);
 
-        if (keyType is not null && keyIdentifier is not null && valueType is null)
-            return new ForeachDeclareKeyValueStatementNode(keyType, keyIdentifier, valueIdentifier, list, body);
+            return new ForeachDeclareKeyValueStatementNode(keyDeclaration, valueIdentifier!, list, body);
+        }
 
-        if (keyType is null && keyIdentifier is not null && valueType is not null)
-            return new ForeachKeyDeclareValueStatementNode(keyIdentifier, valueType, valueIdentifier, list, body);
+        if (keyIdentifier is not null)
+        {
+            if (valueDeclaration is not null)
+                return new ForeachKeyDeclareValueStatementNode(keyIdentifier, valueDeclaration, list, body);
 
-        if (keyType is null && keyIdentifier is not null && valueType is null)
-            return new ForeachKeyValueStatementNode(keyIdentifier, valueIdentifier, list, body);
+            return new ForeachKeyValueStatementNode(keyIdentifier, valueIdentifier!, list, body);
+        }
 
-        if (keyType is null && keyIdentifier is null && valueType is not null)
-            return new ForeachDeclareValueStatementNode(valueType, valueIdentifier, list, body);
+        if (valueDeclaration is not null)
+            return new ForeachDeclareValueStatementNode(valueDeclaration, list, body);
 
-        // keyType is null && keyIdentifier is null && valueType is null
-        return new ForeachValueStatementNode(valueIdentifier, list, body);
+        return new ForeachValueStatementNode(valueIdentifier!, list, body);
     }
 
     private CodeBlockStatementNode ParseCodeBlock()
     {
         _ = tokens.Dequeue(TokenType.OpeningCurlyBracket);
 
-        var statements = new List<StatementNode>();
-        while (tokens.TryPeek(out var next) && next.Type != TokenType.ClosingCurlyBracket)
-        {
-            var statement = ParseStatement();
-            if (statement is not null)
-                statements.Add(statement);
-        }
+        var statements = ParseStatements(TokenType.ClosingCurlyBracket);
 
         _ = tokens.Dequeue(TokenType.ClosingCurlyBracket);
 
@@ -399,38 +360,32 @@ public class Parser
         return new(identifier, arguments);
     }
 
-    private VariableDeclarationNode ParseVariableDeclaration()
+    private IVariableDeclarationNode ParseVariableDeclaration()
     {
         var type = tokens.Dequeue(TokenType.TypeName);
-        var identifier = tokens.Dequeue(TokenType.Identifier);
-        return new(new[] { type }, identifier);
-    }
 
-    private NullableVariableDeclarationNode ParseNullableVariableDeclaration()
-    {
-        var type = tokens.Dequeue(TokenType.TypeName);
-        var nullabilityIndicator = tokens.Dequeue(TokenType.QuestionMarkSymbol);
-        var identifier = tokens.Dequeue(TokenType.Identifier);
-        return new(new[] { type }, nullabilityIndicator, identifier);
-    }
+        Token? nullabilityIndicator = null;
+        if (tokens.Peek() is { Type: TokenType.QuestionMarkSymbol })
+            nullabilityIndicator = tokens.Dequeue(TokenType.QuestionMarkSymbol);
 
-    private VariableInitializationNode ParseVariableInitialization()
-    {
-        var type = tokens.Dequeue(TokenType.TypeName);
         var identifier = tokens.Dequeue(TokenType.Identifier);
+
+        if (!tokens.TryPeekType(out var nextType) || nextType is not TokenType.EqualsSymbol)
+        {
+            if (nullabilityIndicator is not null)
+                return new NullableVariableDeclarationNode(new[] { type }, nullabilityIndicator, identifier);
+
+            return new VariableDeclarationNode(new[] { type }, identifier);
+        }
+
         _ = tokens.Dequeue(TokenType.EqualsSymbol);
-        var expression = ParseExpression();
-        return new(new[] { type }, identifier, expression);
-    }
 
-    private NullableVariableInitializationNode ParseNullableVariableInitialization()
-    {
-        var type = tokens.Dequeue(TokenType.TypeName);
-        var nullabilityIndicator = tokens.Dequeue(TokenType.QuestionMarkSymbol);
-        var identifier = tokens.Dequeue(TokenType.Identifier);
-        _ = tokens.Dequeue(TokenType.EqualsSymbol);
         var expression = ParseExpression();
-        return new(new[] { type }, nullabilityIndicator, identifier, expression);
+
+        if (nullabilityIndicator is not null)
+            return new NullableVariableInitializationNode(new[] { type }, nullabilityIndicator, identifier, expression);
+
+        return new VariableInitializationNode(new[] { type }, identifier, expression);
     }
 
     private VariableAssignmentNode ParseVariableAssignment()
@@ -650,16 +605,9 @@ public class Parser
                     var arguments = new List<IVariableDeclarationNode>();
                     while (tokens.TryPeek(out var next) && next.Type != TokenType.ClosingParentheses)
                     {
-                        var type = tokens.Dequeue(TokenType.TypeName);
-                        Token? nullableIndicator = null;
-                        if (tokens.TryPeek(out next) && next.Type is TokenType.QuestionMarkSymbol)
-                            nullableIndicator = tokens.Dequeue(TokenType.QuestionMarkSymbol);
+                        var declaration = ParseVariableDeclaration();
 
-                        var identifier = tokens.Dequeue(TokenType.Identifier);
-
-                        arguments.Add(nullableIndicator is not null ?
-                            new NullableVariableDeclarationNode(new[] { type }, nullableIndicator, identifier) :
-                            new VariableDeclarationNode(new[] { type }, identifier));
+                        arguments.Add(declaration);
 
                         if (tokens.TryPeek(out next) && next.Type == TokenType.CommaSymbol)
                             _ = tokens.Dequeue(TokenType.CommaSymbol);
@@ -669,7 +617,17 @@ public class Parser
 
                     var body = ParseCodeBlock().Body;
 
-                    return new FunctionDefinitionExpressionNode(arguments, body);
+                    if (!tokens.TryPeekType(out nextType) || nextType != TokenType.OpeningParentheses)
+                        return new FunctionDefinitionExpressionNode(arguments, body);
+
+                    // direct definition call
+                    _ = tokens.Dequeue(TokenType.OpeningParentheses);
+
+                    var callArguments = ParseArguments();
+
+                    _ = tokens.Dequeue(TokenType.ClosingParentheses);
+
+                    return new FunctionDefinitionCallExpressionNode(arguments, body, callArguments);
                 }
 
                 var expression = ParseExpression();

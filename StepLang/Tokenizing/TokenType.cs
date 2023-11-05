@@ -43,6 +43,7 @@ public enum TokenType
     ImportKeyword,
     ForEachKeyword,
     InKeyword,
+    EndOfFile,
 }
 
 public static class TokenTypes
@@ -91,6 +92,7 @@ public static class TokenTypes
             TokenType.ImportKeyword => "'import'",
             TokenType.ForEachKeyword => "'foreach'",
             TokenType.InKeyword => "'in'",
+            TokenType.EndOfFile => "end of file",
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, "Unknown token type"),
         };
     }

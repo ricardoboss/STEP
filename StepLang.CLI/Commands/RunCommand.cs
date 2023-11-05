@@ -30,7 +30,7 @@ internal sealed class RunCommand : AsyncCommand<RunCommand.Settings>
         var tokens = tokenizer.Tokenize();
 
         var parser = new Parser(tokens);
-        var root = parser.Parse();
+        var root = parser.ParseRoot();
 
         var interpreter = new Interpreter(Console.Out, Console.Error, Console.In);
         interpreter.Run(root);

@@ -2,7 +2,7 @@ using StepLang.Expressions.Results;
 
 namespace StepLang.Parsing;
 
-public sealed record FunctionDefinitionExpressionNode(IReadOnlyList<IVariableDeclarationNode> Parameters, IReadOnlyList<StatementNode> Body) : ExpressionNode
+public record FunctionDefinitionCallExpressionNode(IReadOnlyList<IVariableDeclarationNode> Parameters, IReadOnlyList<StatementNode> Body, IReadOnlyList<ExpressionNode> CallArguments) : ExpressionNode
 {
     public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)
     {

@@ -1,16 +1,12 @@
+using StepLang.Interpreting;
 using StepLang.Tokenizing;
 
 namespace StepLang.Parsing;
 
-public sealed record VariableInitializationNode(IReadOnlyCollection<Token> Types, Token Identifier, ExpressionNode Expression) : StatementNode, IVariableDeclarationNode
+public sealed record VariableInitializationNode(IReadOnlyCollection<Token> Types, Token Identifier, ExpressionNode Expression) : IVariableDeclarationNode
 {
-    public override void Accept(IStatementVisitor visitor)
+    public Variable EvaluateUsing(IVariableDeclarationEvaluator evaluator)
     {
-        visitor.Execute(this);
-    }
-
-    public void Accept(IVariableDeclarationVisitor visitor)
-    {
-        visitor.Execute(this);
+        return evaluator.Execute(this);
     }
 }

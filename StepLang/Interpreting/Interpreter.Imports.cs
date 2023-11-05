@@ -38,7 +38,7 @@ public partial class Interpreter : IImportNodeVisitor
         var tokens = tokenizer.Tokenize();
 
         var parser = new Parser(tokens);
-        var root = parser.Parse();
+        var root = parser.ParseRoot();
 
         Run(root);
     }

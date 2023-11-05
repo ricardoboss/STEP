@@ -94,12 +94,16 @@ public class Scope
     public void CreateVariable(string identifier, ExpressionResult initialValue, bool nullable = false) =>
         CreateVariable(new(TokenType.Identifier, identifier), new[] { initialValue.ResultType }, initialValue, nullable);
 
-    public void CreateVariable(Token identifierToken, IReadOnlyList<ResultType> types, ExpressionResult initialValue, bool nullable = false)
+    public Variable CreateVariable(Token identifierToken, IReadOnlyList<ResultType> types, ExpressionResult initialValue, bool nullable = false)
     {
         if (Exists(identifierToken.Value, false))
             throw new VariableAlreadyDeclaredException(identifierToken);
 
-        identifiers[identifierToken.Value] = new(identifierToken.Value, types, nullable, initialValue);
+        var variable = new Variable(identifierToken.Value, types, nullable, initialValue);
+
+        identifiers[identifierToken.Value] = variable;
+
+        return variable;
     }
 
     public void UpdateValue(Token identifierToken, ExpressionResult value, bool onlyCurrentScope = true)

@@ -77,10 +77,16 @@ public class Tokenizer
             throw new UnterminatedStringException(stringStartLocation, stringQuote!.Value);
 
         if (tokenBuilder.Length == 0)
+        {
+            yield return new(TokenType.EndOfFile, "", characterQueue.CurrentLocation);
+
             yield break;
+        }
 
         var leftOverToken = TryFinalizeTokenFromBuilder(true);
         if (leftOverToken is not null) yield return leftOverToken;
+
+        yield return new(TokenType.EndOfFile, "", characterQueue.CurrentLocation);
     }
 
     private IEnumerable<Token> HandleLineComment(char character)
