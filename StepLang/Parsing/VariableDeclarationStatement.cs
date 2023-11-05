@@ -1,3 +1,5 @@
+using StepLang.Tokenizing;
+
 namespace StepLang.Parsing;
 
 public record VariableDeclarationStatement(IVariableDeclarationNode Declaration) : StatementNode
@@ -6,4 +8,6 @@ public record VariableDeclarationStatement(IVariableDeclarationNode Declaration)
     {
         visitor.Execute(this);
     }
+
+    public override TokenLocation Location => Declaration.Location;
 }
