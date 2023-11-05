@@ -1,11 +1,10 @@
 using StepLang.Expressions.Results;
+using StepLang.Tokenizing;
 
 namespace StepLang.Parsing;
 
-public record GreaterThanExpressionNode(ExpressionNode Left, ExpressionNode Right) : ExpressionNode, IBinaryExpressionNode
+public record GreaterThanExpressionNode(TokenLocation OperatorLocation, ExpressionNode Left, ExpressionNode Right) : BinaryExpressionNode(OperatorLocation, Left, Right, BinaryExpressionOperator.GreaterThan)
 {
-    public BinaryExpressionOperator Op => BinaryExpressionOperator.GreaterThan;
-
     public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)
     {
         return evaluator.Evaluate(this);

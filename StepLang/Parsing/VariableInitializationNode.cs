@@ -9,4 +9,6 @@ public sealed record VariableInitializationNode(IReadOnlyCollection<Token> Types
     {
         return evaluator.Execute(this);
     }
+
+    public TokenLocation Location => Types.First().Location;
 }

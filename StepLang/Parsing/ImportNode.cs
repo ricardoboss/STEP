@@ -8,4 +8,6 @@ public sealed record ImportNode(Token PathToken) : IVisitableNode<IImportNodeVis
     {
         visitor.Visit(this);
     }
+
+    public TokenLocation Location => PathToken.Location;
 }

@@ -8,4 +8,6 @@ public sealed record VariableAssignmentNode(Token Identifier, ExpressionNode Exp
     {
         visitor.Execute(this);
     }
+
+    public override TokenLocation Location => Identifier.Location;
 }

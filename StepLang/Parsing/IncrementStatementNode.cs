@@ -8,4 +8,6 @@ public record IncrementStatementNode(Token Identifier) : StatementNode
     {
         visitor.Execute(this);
     }
+
+    public override TokenLocation Location => Identifier.Location;
 }

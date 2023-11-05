@@ -1,3 +1,5 @@
+using StepLang.Tokenizing;
+
 namespace StepLang.Parsing;
 
 public sealed record RootNode(IReadOnlyCollection<ImportNode> Imports, IReadOnlyCollection<StatementNode> Body) : IVisitableNode<IRootNodeVisitor>
@@ -6,4 +8,6 @@ public sealed record RootNode(IReadOnlyCollection<ImportNode> Imports, IReadOnly
     {
         visitor.Run(this);
     }
+
+    public TokenLocation Location => Imports.FirstOrDefault()?.Location ?? Body.FirstOrDefault()?.Location ?? new();
 }

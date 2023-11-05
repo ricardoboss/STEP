@@ -108,9 +108,4 @@ public partial class Interpreter : IRootNodeVisitor, IStatementVisitor, IExpress
 
         return variable.Value;
     }
-
-    public ExpressionResult Evaluate(PrimaryExpressionNode expressionNode)
-    {
-        return expressionNode.Expression.EvaluateUsing(this);
-    }
 }

@@ -99,28 +99,30 @@ public class Scope
         if (Exists(identifierToken.Value, false))
             throw new VariableAlreadyDeclaredException(identifierToken);
 
-        var variable = new Variable(identifierToken.Value, types, nullable, initialValue);
+        var variable = new Variable(identifierToken.Value, types, nullable);
+
+        variable.Assign(identifierToken.Location, initialValue);
 
         identifiers[identifierToken.Value] = variable;
 
         return variable;
     }
 
-    public void UpdateValue(Token identifierToken, ExpressionResult value, bool onlyCurrentScope = true)
-    {
-        Variable? variable;
-        if (onlyCurrentScope)
-        {
-            // only look for variable in the current scope for assigning
-            // this enables use to shadow variables from parent scopes
-            if (!identifiers.TryGetValue(identifierToken.Value, out variable))
-                throw new UndefinedIdentifierException(identifierToken);
-        }
-        else
-            variable = GetVariable(identifierToken);
-
-        variable.Assign(value);
-    }
+    // public void UpdateValue(Token identifierToken, ExpressionResult value, bool onlyCurrentScope = true)
+    // {
+    //     Variable? variable;
+    //     if (onlyCurrentScope)
+    //     {
+    //         // only look for variable in the current scope for assigning
+    //         // this enables use to shadow variables from parent scopes
+    //         if (!identifiers.TryGetValue(identifierToken.Value, out variable))
+    //             throw new UndefinedIdentifierException(identifierToken);
+    //     }
+    //     else
+    //         variable = GetVariable(identifierToken);
+    //
+    //     variable.Assign(value);
+    // }
 
     public bool Exists(string identifier, bool includeParent)
     {

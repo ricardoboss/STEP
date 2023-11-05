@@ -8,4 +8,6 @@ public sealed record ContinueStatementNode(Token Token) : StatementNode
     {
         visitor.Execute(this);
     }
+
+    public override TokenLocation Location => Token.Location;
 }

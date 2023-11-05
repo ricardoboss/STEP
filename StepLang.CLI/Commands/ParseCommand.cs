@@ -84,11 +84,6 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
                 RenderNode(expressionNode, nvin.Expression);
                 break;
             }
-            case PrimaryExpressionNode pen:
-            {
-                RenderNode(parent, pen.Expression);
-                break;
-            }
             case LiteralExpressionNode len:
             {
                 parent.AddNode("LiteralExpression: " + len.Literal.ToString().EscapeMarkup());

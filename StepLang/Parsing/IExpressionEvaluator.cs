@@ -11,7 +11,6 @@ public interface IExpressionEvaluator
     ExpressionResult Evaluate(ListExpressionNode expressionNode);
     ExpressionResult Evaluate(LiteralExpressionNode expressionNode);
     ExpressionResult Evaluate(MapExpressionNode expressionNode);
-    ExpressionResult Evaluate(PrimaryExpressionNode expressionNode);
     ExpressionResult Evaluate(AddExpressionNode expressionNode);
     ExpressionResult Evaluate(CoalesceExpressionNode expressionNode);
     ExpressionResult Evaluate(NotEqualsExpressionNode expressionNode);
