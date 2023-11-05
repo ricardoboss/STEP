@@ -31,4 +31,16 @@ public class StringResult : ComparableValueExpressionResult<string>
 
     /// <inheritdoc />
     public override string ToString() => $"\"{Value}\"";
+
+    public static implicit operator StringResult(string value) => new(value);
+
+    public static StringResult operator +(StringResult left, StringResult right) => new(left.Value + right.Value);
+
+    public static StringResult operator +(StringResult left, NumberResult right) => new(left.Value + right.Value);
+
+    public static StringResult operator +(NumberResult left, StringResult right) => new(left.Value + right.Value);
+
+    public static BoolResult operator ==(StringResult left, StringResult right) => new(string.Equals(left.Value, right.Value, StringComparison.Ordinal));
+
+    public static BoolResult operator !=(StringResult left, StringResult right) => new(!string.Equals(left.Value, right.Value, StringComparison.Ordinal));
 }

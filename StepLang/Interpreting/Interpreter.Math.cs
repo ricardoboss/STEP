@@ -5,7 +5,7 @@ namespace StepLang.Interpreting;
 
 public partial class Interpreter
 {
-    private (ExpressionResult left, ExpressionResult right) VisitBinaryExpression(IBinaryExpressionNode expressionNode)
+    private (ExpressionResult left, ExpressionResult right) EvaluateBinary(IBinaryExpressionNode expressionNode)
     {
         var leftResult = expressionNode.Left.EvaluateUsing(this);
         var rightResult = expressionNode.Right.EvaluateUsing(this);
@@ -15,14 +15,14 @@ public partial class Interpreter
 
     public ExpressionResult Evaluate(AddExpressionNode expressionNode)
     {
-        var (left, right) = VisitBinaryExpression(expressionNode);
+        var (left, right) = EvaluateBinary(expressionNode);
 
         return left switch
         {
-            NumberResult aNumber when right is NumberResult bNumber => new NumberResult(aNumber.Value + bNumber.Value),
-            NumberResult aNumber when right is StringResult bString => new StringResult(aNumber.Value + bString.Value),
-            StringResult aString when right is NumberResult bNumber => new StringResult(aString.Value + bNumber.Value),
-            StringResult aString when right is StringResult bString => new StringResult(aString.Value + bString.Value),
+            NumberResult aNumber when right is NumberResult bNumber => aNumber + bNumber,
+            NumberResult aNumber when right is StringResult bString => aNumber + bString,
+            StringResult aString when right is NumberResult bNumber => aString + bNumber,
+            StringResult aString when right is StringResult bString => aString + bString,
             _ => throw new IncompatibleExpressionOperandsException(left, right, "add"),
         };
     }
@@ -38,46 +38,46 @@ public partial class Interpreter
 
     public ExpressionResult Evaluate(NotEqualsExpressionNode expressionNode)
     {
-        var (left, right) = VisitBinaryExpression(expressionNode);
+        var (left, right) = EvaluateBinary(expressionNode);
 
         if (left is VoidResult || right is VoidResult)
             throw new IncompatibleExpressionOperandsException(left, right, "compare (not equals)");
 
         if (left is NullResult && right is NullResult)
-            return new BoolResult(false);
+            return BoolResult.False;
 
         if (left is NullResult || right is NullResult)
-            return new BoolResult(true);
+            return BoolResult.True;
 
-        return new BoolResult(left switch
+        return left switch
         {
-            StringResult aString when right is StringResult bString => !string.Equals(aString.Value, bString.Value, StringComparison.Ordinal),
-            NumberResult aNumber when right is NumberResult bNumber => Math.Abs(aNumber.Value - bNumber.Value) >= double.Epsilon,
-            BoolResult aBool when right is BoolResult bBool => aBool.Value != bBool.Value,
-            _ => true,
-        });
+            StringResult aString when right is StringResult bString => aString != bString,
+            NumberResult aNumber when right is NumberResult bNumber => aNumber != bNumber,
+            BoolResult aBool when right is BoolResult bBool => aBool != bBool,
+            _ => BoolResult.True,
+        };
     }
 
     public ExpressionResult Evaluate(EqualsExpressionNode expressionNode)
     {
-        var (left, right) = VisitBinaryExpression(expressionNode);
+        var (left, right) = EvaluateBinary(expressionNode);
 
         if (left is VoidResult || right is VoidResult)
             throw new IncompatibleExpressionOperandsException(left, right, "compare (equals)");
 
         if (left is NullResult && right is NullResult)
-            return new BoolResult(true);
+            return BoolResult.True;
 
         if (left is NullResult || right is NullResult)
-            return new BoolResult(false);
+            return BoolResult.False;
 
-        return new BoolResult(left switch
+        return left switch
         {
-            StringResult aString when right is StringResult bString => string.Equals(aString.Value, bString.Value, StringComparison.Ordinal),
-            NumberResult aNumber when right is NumberResult bNumber => Math.Abs(aNumber.Value - bNumber.Value) < double.Epsilon,
-            BoolResult aBool when right is BoolResult bBool => aBool.Value == bBool.Value,
-            _ => false,
-        });
+            StringResult aString when right is StringResult bString => aString == bString,
+            NumberResult aNumber when right is NumberResult bNumber => aNumber == bNumber,
+            BoolResult aBool when right is BoolResult bBool => aBool == bBool,
+            _ => BoolResult.False,
+        };
     }
 
     public ExpressionResult Evaluate(NegateExpressionNode expressionNode)
@@ -86,64 +86,131 @@ public partial class Interpreter
 
         return result switch
         {
-            NumberResult number => new NumberResult(-number.Value),
+            NumberResult number => -number,
             _ => throw new IncompatibleExpressionOperandsException(result, "negate"),
         };
     }
 
     public ExpressionResult Evaluate(SubtractExpressionNode expressionNode)
     {
-        throw new NotImplementedException();
+        var (left, right) = EvaluateBinary(expressionNode);
+
+        return left switch
+        {
+            NumberResult aNumber when right is NumberResult bNumber => aNumber - bNumber,
+            _ => throw new IncompatibleExpressionOperandsException(left, right, "subtract"),
+        };
     }
 
     public ExpressionResult Evaluate(MultiplyExpressionNode expressionNode)
     {
-        throw new NotImplementedException();
+        var (left, right) = EvaluateBinary(expressionNode);
+
+        return left switch
+        {
+            NumberResult aNumber when right is NumberResult bNumber => aNumber * bNumber,
+            _ => throw new IncompatibleExpressionOperandsException(left, right, "multiply"),
+        };
     }
 
     public ExpressionResult Evaluate(DivideExpressionNode expressionNode)
     {
-        throw new NotImplementedException();
+        var (left, right) = EvaluateBinary(expressionNode);
+
+        // TODO: throw a StepLangException when dividing by zero to provide more useful info
+
+        return left switch
+        {
+            NumberResult aNumber when right is NumberResult bNumber => aNumber / bNumber,
+            _ => throw new IncompatibleExpressionOperandsException(left, right, "divide"),
+        };
     }
 
     public ExpressionResult Evaluate(ModuloExpressionNode expressionNode)
     {
-        throw new NotImplementedException();
+        var (left, right) = EvaluateBinary(expressionNode);
+
+        return left switch
+        {
+            NumberResult aNumber when right is NumberResult bNumber => aNumber % bNumber,
+            _ => throw new IncompatibleExpressionOperandsException(left, right, "modulo"),
+        };
     }
 
     public ExpressionResult Evaluate(PowerExpressionNode expressionNode)
     {
-        throw new NotImplementedException();
+        var (left, right) = EvaluateBinary(expressionNode);
+
+        if (left is not NumberResult baseNumber || right is not NumberResult exponentNumber)
+            throw new IncompatibleExpressionOperandsException(left, right, "power");
+
+        return (NumberResult)Math.Pow(baseNumber, exponentNumber);
     }
 
     public ExpressionResult Evaluate(GreaterThanExpressionNode expressionNode)
     {
-        throw new NotImplementedException();
+        var (left, right) = EvaluateBinary(expressionNode);
+
+        return left switch
+        {
+            NumberResult aNumber when right is NumberResult bNumber => aNumber > bNumber,
+            _ => throw new IncompatibleExpressionOperandsException(left, right, "compare (greater than)"),
+        };
     }
 
     public ExpressionResult Evaluate(LessThanExpressionNode expressionNode)
     {
-        throw new NotImplementedException();
+        var (left, right) = EvaluateBinary(expressionNode);
+
+        return left switch
+        {
+            NumberResult aNumber when right is NumberResult bNumber => aNumber < bNumber,
+            _ => throw new IncompatibleExpressionOperandsException(left, right, "compare (less than)"),
+        };
     }
 
     public ExpressionResult Evaluate(GreaterThanOrEqualExpressionNode expressionNode)
     {
-        throw new NotImplementedException();
+        var (left, right) = EvaluateBinary(expressionNode);
+
+        return left switch
+        {
+            NumberResult aNumber when right is NumberResult bNumber => aNumber >= bNumber,
+            _ => throw new IncompatibleExpressionOperandsException(left, right, "compare (greater than or equal to)"),
+        };
     }
 
     public ExpressionResult Evaluate(LessThanOrEqualExpressionNode expressionNode)
     {
-        throw new NotImplementedException();
+        var (left, right) = EvaluateBinary(expressionNode);
+
+        return left switch
+        {
+            NumberResult aNumber when right is NumberResult bNumber => aNumber <= bNumber,
+            _ => throw new IncompatibleExpressionOperandsException(left, right, "compare (less than or equal to)"),
+        };
     }
 
     public ExpressionResult Evaluate(LogicalAndExpressionNode expressionNode)
     {
-        throw new NotImplementedException();
+        var (left, right) = EvaluateBinary(expressionNode);
+
+        return left switch
+        {
+            BoolResult aBool when right is BoolResult bBool => (BoolResult)(aBool && bBool),
+            _ => throw new IncompatibleExpressionOperandsException(left, right, "logical and"),
+        };
     }
 
     public ExpressionResult Evaluate(LogicalOrExpressionNode expressionNode)
     {
-        throw new NotImplementedException();
+        var (left, right) = EvaluateBinary(expressionNode);
+
+        return left switch
+        {
+            BoolResult aBool when right is BoolResult bBool => (BoolResult)(aBool || bBool),
+            _ => throw new IncompatibleExpressionOperandsException(left, right, "logical or"),
+        };
     }
 
     public ExpressionResult Evaluate(BitwiseXorExpressionNode expressionNode)
@@ -183,16 +250,12 @@ public partial class Interpreter
 
     public ExpressionResult Evaluate(NotExpressionNode expressionNode)
     {
-        throw new NotImplementedException();
-    }
+        var result = expressionNode.Expression.EvaluateUsing(this);
 
-    public void Visit(IncrementStatementNode incrementStatementNode)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Visit(DecrementStatementNode incrementStatementNode)
-    {
-        throw new NotImplementedException();
+        return result switch
+        {
+            BoolResult boolResult => !boolResult,
+            _ => throw new IncompatibleExpressionOperandsException(result, "not"),
+        };
     }
 }

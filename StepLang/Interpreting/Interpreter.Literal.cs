@@ -1,4 +1,3 @@
-using System.Globalization;
 using StepLang.Expressions.Results;
 using StepLang.Parsing;
 using StepLang.Tokenizing;
@@ -13,9 +12,9 @@ public partial class Interpreter
 
         return literal.Type switch
         {
-            TokenType.LiteralBoolean => new BoolResult(bool.Parse(literal.Value)),
-            TokenType.LiteralNumber => new NumberResult(double.Parse(literal.Value, NumberStyles.Any, CultureInfo.InvariantCulture)),
-            TokenType.LiteralString => new StringResult(literal.StringValue),
+            TokenType.LiteralBoolean => (BoolResult)literal.Value,
+            TokenType.LiteralNumber => (NumberResult)literal.Value,
+            TokenType.LiteralString => (StringResult)literal.StringValue,
             _ => throw new NotImplementedException("Unimplemented literal type " + literal),
         };
     }

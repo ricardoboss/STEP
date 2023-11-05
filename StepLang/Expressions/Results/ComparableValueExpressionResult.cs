@@ -27,43 +27,20 @@ public abstract class ComparableValueExpressionResult<T> : ValueExpressionResult
         return obj is ComparableValueExpressionResult<T> other ? CompareTo(other) : throw new ArgumentException($"Object must be of type {nameof(ComparableValueExpressionResult<T>)}");
     }
 
-    public override bool Equals(object? obj)
-    {
-        if (ReferenceEquals(this, obj))
-            return true;
+    public override bool Equals(object? obj) => base.Equals(obj);
 
-        if (ReferenceEquals(obj, null))
-            return false;
+    public override int GetHashCode() => HashCode.Combine(ResultType, Value);
 
-        if (obj is not ComparableValueExpressionResult<T> other)
-            return false;
+    public static bool operator ==(ComparableValueExpressionResult<T> left, ComparableValueExpressionResult<T> right) => left.Equals(right);
 
-        return CompareTo(other) == 0;
-    }
-
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(ResultType, Value);
-    }
-
-    public static bool operator ==(ComparableValueExpressionResult<T> left, ComparableValueExpressionResult<T> right)
-    {
-        if (ReferenceEquals(left, null))
-        {
-            return ReferenceEquals(right, null);
-        }
-
-        return left.Equals(right);
-    }
-
-    public static bool operator !=(ComparableValueExpressionResult<T> left, ComparableValueExpressionResult<T> right)
-    {
-        return !(left == right);
-    }
+    public static bool operator !=(ComparableValueExpressionResult<T> left, ComparableValueExpressionResult<T> right) => !(left == right);
 
     public static bool operator <(ComparableValueExpressionResult<T> left, ComparableValueExpressionResult<T> right)
     {
-        return ReferenceEquals(left, null) ? !ReferenceEquals(right, null) : left.CompareTo(right) < 0;
+        if (ReferenceEquals(left, null))
+            return !ReferenceEquals(right, null);
+
+        return left.CompareTo(right) < 0;
     }
 
     public static bool operator <=(ComparableValueExpressionResult<T> left, ComparableValueExpressionResult<T> right)
@@ -78,6 +55,9 @@ public abstract class ComparableValueExpressionResult<T> : ValueExpressionResult
 
     public static bool operator >=(ComparableValueExpressionResult<T> left, ComparableValueExpressionResult<T> right)
     {
-        return ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.CompareTo(right) >= 0;
+        if (ReferenceEquals(left, null))
+            return ReferenceEquals(right, null);
+
+        return left.CompareTo(right) >= 0;
     }
 }

@@ -16,7 +16,7 @@ public partial class Interpreter
 
         switch (variable.Value)
         {
-            case ListResult { Value: var list } when indexResult is NumberResult { RoundedIntValue: var index }:
+            case ListResult { Value: var list } when indexResult is NumberResult index:
                 list[index] = valueResult;
                 break;
             case MapResult { Value: var map } when indexResult is StringResult { Value: var key }:
@@ -41,7 +41,7 @@ public partial class Interpreter
 
         switch (variable.Value)
         {
-            case ListResult { Value: var values } when indexResult is NumberResult { RoundedIntValue: var index }:
+            case ListResult { Value: var values } when indexResult is NumberResult index:
             {
                 if (index < 0 || index >= values.Count)
                     throw new IndexOutOfBoundsException(index, values.Count);
@@ -50,7 +50,7 @@ public partial class Interpreter
             }
             case MapResult { Value: var pairs } when indexResult is StringResult { Value: var key }:
                 return pairs[key];
-            case StringResult { Value: var str } when indexResult is NumberResult { RoundedIntValue: var index }:
+            case StringResult { Value: var str } when indexResult is NumberResult index:
             {
                 var grapheme = str.GraphemeAt(index);
                 if (grapheme == null)
