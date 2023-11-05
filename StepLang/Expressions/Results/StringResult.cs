@@ -19,10 +19,11 @@ public class StringResult : ComparableValueExpressionResult<string>
         return string.Compare(normalizedA, normalizedB, StringComparison.Ordinal);
     }
 
-    protected override bool EqualsInternal(ExpressionResult other)
-    {
-        return other is StringResult stringResult && string.Equals(Value, stringResult.Value, StringComparison.Ordinal);
-    }
+    public override bool Equals(object? obj) => obj is ExpressionResult result && EqualsInternal(result);
+
+    protected override bool EqualsInternal(ExpressionResult other) => other is StringResult stringResult && string.Equals(Value, stringResult.Value, StringComparison.Ordinal);
+
+    public override int GetHashCode() => base.GetHashCode();
 
     public override StringResult DeepClone()
     {
@@ -43,4 +44,12 @@ public class StringResult : ComparableValueExpressionResult<string>
     public static BoolResult operator ==(StringResult left, StringResult right) => new(string.Equals(left.Value, right.Value, StringComparison.Ordinal));
 
     public static BoolResult operator !=(StringResult left, StringResult right) => new(!string.Equals(left.Value, right.Value, StringComparison.Ordinal));
+
+    public static StringResult FromString(string value) => value;
+
+    public static StringResult Add(StringResult left, StringResult right) => left + right;
+
+    public static StringResult Add(StringResult left, NumberResult right) => left + right;
+
+    public static StringResult Add(NumberResult left, StringResult right) => left + right;
 }
