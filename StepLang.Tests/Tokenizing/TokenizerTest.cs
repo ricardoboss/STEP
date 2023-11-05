@@ -13,10 +13,11 @@ public class TokenizerTest
         tokenizer.Add(source);
         var tokens = tokenizer.Tokenize().ToArray();
 
-        Assert.Single(tokens);
+        Assert.Equal(2, tokens.Length);
         Assert.Equal(TokenType.LiteralString, tokens[0].Type);
         Assert.Equal(source, tokens[0].Value);
         Assert.Equal("abc", tokens[0].StringValue);
+        Assert.Equal(TokenType.EndOfFile, tokens[1].Type);
     }
 
     [Fact]
@@ -28,9 +29,10 @@ public class TokenizerTest
         tokenizer.Add(source);
         var tokens = tokenizer.Tokenize().ToArray();
 
-        Assert.Single(tokens);
+        Assert.Equal(2, tokens.Length);
         Assert.Equal(TokenType.LiteralString, tokens[0].Type);
         Assert.Equal("\n", tokens[0].StringValue);
+        Assert.Equal(TokenType.EndOfFile, tokens[1].Type);
     }
 
     [Fact]
@@ -42,9 +44,10 @@ public class TokenizerTest
         tokenizer.Add(source);
         var tokens = tokenizer.Tokenize().ToArray();
 
-        Assert.Single(tokens);
+        Assert.Equal(2, tokens.Length);
         Assert.Equal(TokenType.LiteralNumber, tokens[0].Type);
         Assert.Equal("123", tokens[0].Value);
+        Assert.Equal(TokenType.EndOfFile, tokens[1].Type);
     }
 
     [Fact]
@@ -56,11 +59,12 @@ public class TokenizerTest
         tokenizer.Add(source);
         var tokens = tokenizer.Tokenize().ToArray();
 
-        Assert.Equal(2, tokens.Length);
+        Assert.Equal(3, tokens.Length);
         Assert.Equal(TokenType.MinusSymbol, tokens[0].Type);
         Assert.Equal("-", tokens[0].Value);
         Assert.Equal(TokenType.LiteralNumber, tokens[1].Type);
         Assert.Equal("123", tokens[1].Value);
+        Assert.Equal(TokenType.EndOfFile, tokens[2].Type);
     }
 
     [Fact]
@@ -72,11 +76,12 @@ public class TokenizerTest
         tokenizer.Add(source);
         var tokens = tokenizer.Tokenize().ToArray();
 
-        Assert.Equal(2, tokens.Length);
+        Assert.Equal(3, tokens.Length);
         Assert.Equal(TokenType.MinusSymbol, tokens[0].Type);
         Assert.Equal("-", tokens[0].Value);
         Assert.Equal(TokenType.LiteralNumber, tokens[1].Type);
         Assert.Equal("1.23", tokens[1].Value);
+        Assert.Equal(TokenType.EndOfFile, tokens[2].Type);
     }
 
     [Fact]
@@ -88,10 +93,11 @@ public class TokenizerTest
         tokenizer.Add(source);
         var tokens = tokenizer.Tokenize().ToArray();
 
-        Assert.Single(tokens);
+        Assert.Equal(2, tokens.Length);
         Assert.Equal(TokenType.LiteralString, tokens[0].Type);
         Assert.Equal(source, tokens[0].Value);
         Assert.Equal("abc def", tokens[0].StringValue);
+        Assert.Equal(TokenType.EndOfFile, tokens[1].Type);
     }
 
     [Theory]
@@ -102,9 +108,10 @@ public class TokenizerTest
         tokenizer.Add(source);
         var tokens = tokenizer.Tokenize().ToArray();
 
-        Assert.Single(tokens);
+        Assert.Equal(2, tokens.Length);
         Assert.Equal(TokenType.LiteralString, tokens[0].Type);
         Assert.Equal(expected, tokens[0].StringValue);
+        Assert.Equal(TokenType.EndOfFile, tokens[1].Type);
     }
 
     [Theory]
@@ -118,9 +125,10 @@ public class TokenizerTest
         tokenizer.Add(source);
         var tokens = tokenizer.Tokenize().ToList();
 
-        Assert.Single(tokens);
+        Assert.Equal(2, tokens.Count);
         Assert.Equal(TokenType.TypeName, tokens[0].Type);
         Assert.Equal(source, tokens[0].Value);
+        Assert.Equal(TokenType.EndOfFile, tokens[1].Type);
     }
 
     [Theory]
@@ -135,9 +143,10 @@ public class TokenizerTest
         tokenizer.Add(source);
         var tokens = tokenizer.Tokenize().ToArray();
 
-        Assert.Single(tokens);
+        Assert.Equal(2, tokens.Length);
         Assert.Equal(type, tokens[0].Type);
         Assert.Equal(source, tokens[0].Value);
+        Assert.Equal(TokenType.EndOfFile, tokens[1].Type);
     }
 
     [Fact]
@@ -149,7 +158,7 @@ public class TokenizerTest
         tokenizer.Add(source);
         var tokens = tokenizer.Tokenize().ToList();
 
-        Assert.Equal(7, tokens.Count);
+        Assert.Equal(8, tokens.Count);
         Assert.Equal(TokenType.TypeName, tokens[0].Type);
         Assert.Equal("number", tokens[0].Value);
         Assert.Equal(TokenType.Whitespace, tokens[1].Type);
@@ -164,6 +173,7 @@ public class TokenizerTest
         Assert.Equal(" ", tokens[5].Value);
         Assert.Equal(TokenType.LiteralNumber, tokens[6].Type);
         Assert.Equal("1", tokens[6].Value);
+        Assert.Equal(TokenType.EndOfFile, tokens[7].Type);
     }
 
     [Fact]
@@ -175,7 +185,7 @@ public class TokenizerTest
         tokenizer.Add(source);
         var tokens = tokenizer.Tokenize().ToList();
 
-        Assert.Equal(5, tokens.Count);
+        Assert.Equal(6, tokens.Count);
         Assert.Equal(TokenType.IfKeyword, tokens[0].Type);
         Assert.Equal("if", tokens[0].Value);
         Assert.Equal(TokenType.Whitespace, tokens[1].Type);
@@ -186,6 +196,7 @@ public class TokenizerTest
         Assert.Equal("true", tokens[3].Value);
         Assert.Equal(TokenType.ClosingParentheses, tokens[4].Type);
         Assert.Equal(")", tokens[4].Value);
+        Assert.Equal(TokenType.EndOfFile, tokens[5].Type);
     }
 
     [Fact]
@@ -197,7 +208,7 @@ public class TokenizerTest
         tokenizer.Add(source);
         var tokens = tokenizer.Tokenize().ToList();
 
-        Assert.Equal(4, tokens.Count);
+        Assert.Equal(5, tokens.Count);
         Assert.Equal(TokenType.Identifier, tokens[0].Type);
         Assert.Equal("print", tokens[0].Value);
         Assert.Equal(TokenType.OpeningParentheses, tokens[1].Type);
@@ -206,6 +217,7 @@ public class TokenizerTest
         Assert.Equal("\"hello\"", tokens[2].Value);
         Assert.Equal(TokenType.ClosingParentheses, tokens[3].Type);
         Assert.Equal(")", tokens[3].Value);
+        Assert.Equal(TokenType.EndOfFile, tokens[4].Type);
     }
 
     [Fact]
@@ -217,7 +229,7 @@ public class TokenizerTest
         tokenizer.Add(source);
         var tokens = tokenizer.Tokenize().ToList();
 
-        Assert.Equal(13, tokens.Count);
+        Assert.Equal(14, tokens.Count);
         Assert.Equal(TokenType.Identifier, tokens[0].Type);
         Assert.Equal("f", tokens[0].Value);
         Assert.Equal(TokenType.OpeningParentheses, tokens[1].Type);
@@ -244,6 +256,7 @@ public class TokenizerTest
         Assert.Equal(" ", tokens[11].Value);
         Assert.Equal(TokenType.LineComment, tokens[12].Type);
         Assert.Equal("// more comments", tokens[12].Value);
+        Assert.Equal(TokenType.EndOfFile, tokens[13].Type);
     }
 
     [Fact]
@@ -255,11 +268,12 @@ public class TokenizerTest
         tokenizer.Add(source);
         var tokens = tokenizer.Tokenize().ToList();
 
-        Assert.Equal(2, tokens.Count);
+        Assert.Equal(3, tokens.Count);
         Assert.Equal(TokenType.Identifier, tokens[0].Type);
         Assert.Equal("identifier", tokens[0].Value);
         Assert.Equal(TokenType.LiteralString, tokens[1].Type);
         Assert.Equal("\"\"", tokens[1].Value);
+        Assert.Equal(TokenType.EndOfFile, tokens[2].Type);
     }
 
     [Fact]
@@ -297,7 +311,7 @@ public class TokenizerTest
         tokenizer.Add(source);
         var tokens = tokenizer.Tokenize().ToList();
 
-        Assert.Equal(10, tokens.Count);
+        Assert.Equal(11, tokens.Count);
         Assert.Equal(TokenType.Identifier, tokens[0].Type);
         Assert.Equal("println", tokens[0].Value);
         Assert.Equal(TokenType.OpeningParentheses, tokens[1].Type);
@@ -312,5 +326,6 @@ public class TokenizerTest
         Assert.Equal("\"b\"", tokens[7].Value);
         Assert.Equal(TokenType.ClosingParentheses, tokens[8].Type);
         Assert.Equal(TokenType.ClosingParentheses, tokens[9].Type);
+        Assert.Equal(TokenType.EndOfFile, tokens[10].Type);
     }
 }
