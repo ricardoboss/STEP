@@ -10,7 +10,7 @@ public partial class Interpreter : IImportNodeVisitor
         var pathToken = importNode.PathToken;
 
         FileInfo importedFile;
-        if (pathToken.Location is null || Path.IsPathRooted(pathToken.StringValue))
+        if (pathToken.Location.File is null || Path.IsPathRooted(pathToken.StringValue))
             importedFile = new(pathToken.StringValue);
         else
         {
@@ -27,7 +27,7 @@ public partial class Interpreter : IImportNodeVisitor
         if (!importedFile.Exists)
             throw new ImportedFileDoesNotExistException(pathToken.Location, importedFile);
 
-        if (importedFile.FullName == pathToken.Location?.File.FullName)
+        if (importedFile.FullName == pathToken.Location.File?.FullName)
             throw new ImportedFileIsSelfException(pathToken.Location, importedFile);
 
         var fileContents = File.ReadAllText(importedFile.FullName);

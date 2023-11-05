@@ -58,38 +58,20 @@ public class TokenQueue
         return tokens;
     }
 
-    public bool TryPeek([NotNullWhen(true)] out Token? token) => TryPeek(0, out token);
-
-    public bool TryPeek(int offset, [NotNullWhen(true)] out Token? token)
+    public Token Peek(int offset = 0)
     {
         var source = tokenList.AsEnumerable();
         if (IgnoreWhitespace)
             source = source.Where(t => t.Type.HasMeaning());
 
-        token = source.Skip(offset).FirstOrDefault();
-
-        return token is not null;
+        return source.Skip(offset).First();
     }
 
-    public bool TryPeekType([NotNullWhen(true)] out TokenType? type) => TryPeekType(0, out type);
-
-    public bool TryPeekType(int offset, [NotNullWhen(true)] out TokenType? type)
+    public TokenType PeekType(int offset = 0)
     {
-        type = null;
-        if (!TryPeek(offset, out var token))
-            return false;
+        var token = Peek(offset);
 
-        type = token.Type;
-
-        return true;
-    }
-
-    public Token Peek(int offset = 0)
-    {
-        if (!TryPeek(offset, out var token))
-            throw new UnexpectedEndOfTokensException(lastToken?.Location);
-
-        return token;
+        return token.Type;
     }
 
     public Token Dequeue(params TokenType[] allowed)

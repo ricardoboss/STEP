@@ -33,7 +33,7 @@ internal static class ErrorHandler
         {
             var details = new DefinitionList();
 
-            if (location.File.Exists)
+            if (location.File?.Exists ?? false)
             {
                 details.Items.Add(new(
                     new Markup("[bold]File[/]"),
@@ -48,7 +48,7 @@ internal static class ErrorHandler
 
             AnsiConsole.Write(details);
 
-            if (location.File.Exists)
+            if (location.File?.Exists ?? false)
             {
                 const int contextLineCount = 5;
 

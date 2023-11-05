@@ -25,7 +25,7 @@ public class Parser
     private List<ImportNode> ParseImports()
     {
         var imports = new List<ImportNode>();
-        while (tokens.TryPeekType(out var nextType) && nextType is TokenType.ImportKeyword)
+        while (tokens.PeekType() is TokenType.ImportKeyword)
             imports.Add(ParseImport());
 
         return imports;
@@ -36,7 +36,7 @@ public class Parser
         _ = tokens.Dequeue(TokenType.ImportKeyword);
         var path = tokens.Dequeue(TokenType.LiteralString);
 
-        if (tokens.TryPeekType(out var next) && next is TokenType.NewLine)
+        if (tokens.PeekType() is TokenType.NewLine)
             _ = tokens.Dequeue(TokenType.NewLine);
 
         return new(path);
@@ -45,7 +45,8 @@ public class Parser
     private List<StatementNode> ParseStatements(TokenType stopTokenType)
     {
         var statements = new List<StatementNode>();
-        while (tokens.TryPeekType(out var nextType) && nextType != stopTokenType)
+        TokenType nextType;
+        while ((nextType = tokens.PeekType()) != stopTokenType)
         {
             if (nextType is TokenType.NewLine)
             {
@@ -74,8 +75,6 @@ public class Parser
         {
             var next = tokens.Peek(1);
 
-            _ = tokens.TryPeek(2, out var nextNext);
-
             if (next.Type == TokenType.EqualsSymbol)
                 return ParseVariableAssignment();
 
@@ -85,6 +84,7 @@ public class Parser
             if (next.Type == TokenType.OpeningSquareBracket)
                 return ParseIndexAssignment();
 
+            var nextNext = tokens.Peek(2);
             if (nextNext is { Type: var nextNextType })
             {
                 if (next.Type.IsShorthandMathematicalOperation() && nextNextType == next.Type)
@@ -331,10 +331,10 @@ public class Parser
         _ = tokens.Dequeue(TokenType.ClosingParentheses);
         var codeBlock = ParseCodeBlock();
 
-        if (tokens.TryPeek(out var next) && next.Type == TokenType.ElseKeyword)
+        if (tokens.PeekType() is TokenType.ElseKeyword)
         {
             _ = tokens.Dequeue(TokenType.ElseKeyword);
-            if (tokens.TryPeek(out next) && next.Type == TokenType.IfKeyword)
+            if (tokens.PeekType() is TokenType.IfKeyword)
             {
                 _ = tokens.Dequeue(TokenType.IfKeyword);
                 _ = tokens.Dequeue(TokenType.OpeningParentheses);
@@ -355,7 +355,7 @@ public class Parser
     {
         var identifier = tokens.Dequeue(TokenType.Identifier);
         _ = tokens.Dequeue(TokenType.OpeningParentheses);
-        var arguments = ParseArguments();
+        var arguments = ParseCallArguments();
         _ = tokens.Dequeue(TokenType.ClosingParentheses);
         return new(identifier, arguments);
     }
@@ -370,7 +370,7 @@ public class Parser
 
         var identifier = tokens.Dequeue(TokenType.Identifier);
 
-        if (!tokens.TryPeekType(out var nextType) || nextType is not TokenType.EqualsSymbol)
+        if (tokens.PeekType() is not TokenType.EqualsSymbol)
         {
             if (nullabilityIndicator is not null)
                 return new NullableVariableDeclarationNode(new[] { type }, nullabilityIndicator, identifier);
@@ -399,7 +399,8 @@ public class Parser
     private ExpressionNode ParseExpression(int parentPrecedence = 0)
     {
         var left = ParsePrimaryExpression();
-        while (tokens.TryPeek(out var next) && next.Type.IsOperator()) {
+
+        while (tokens.PeekType().IsOperator()) {
             var operatorTokens = PeekContinuousOperators();
             var binaryOperator = ParseExpressionOperator(operatorTokens);
 
@@ -455,7 +456,8 @@ public class Parser
 
         var offset = 0;
         var operators = new List<Token>();
-        while (tokens.TryPeek(offset, out var next))
+        Token next;
+        while ((next = tokens.Peek(offset)).Type is not TokenType.EndOfFile)
         {
             if (next.Type.IsOperator())
                 operators.Add(tokens.Peek(offset++));
@@ -591,125 +593,200 @@ public class Parser
 
     private ExpressionNode ParsePrimaryExpression()
     {
-        var token = tokens.Dequeue();
-        if (token.Type.IsLiteral())
-            return new LiteralExpressionNode(token);
+        var tokenType = tokens.PeekType();
+        if (tokenType.IsLiteral())
+            return new LiteralExpressionNode(tokens.Dequeue(tokenType));
 
-        switch (token.Type)
+        switch (tokenType)
         {
             case TokenType.OpeningParentheses:
             {
-                if (tokens.TryPeekType(out var nextType) && nextType == TokenType.TypeName)
+                var nextType = tokens.PeekType(1);
+                return nextType switch
                 {
-                    // function declaration
-                    var arguments = new List<IVariableDeclarationNode>();
-                    while (tokens.TryPeek(out var next) && next.Type != TokenType.ClosingParentheses)
-                    {
-                        var declaration = ParseVariableDeclaration();
-
-                        arguments.Add(declaration);
-
-                        if (tokens.TryPeek(out next) && next.Type == TokenType.CommaSymbol)
-                            _ = tokens.Dequeue(TokenType.CommaSymbol);
-                    }
-
-                    _ = tokens.Dequeue(TokenType.ClosingParentheses);
-
-                    var body = ParseCodeBlock().Body;
-
-                    if (!tokens.TryPeekType(out nextType) || nextType != TokenType.OpeningParentheses)
-                        return new FunctionDefinitionExpressionNode(arguments, body);
-
-                    // direct definition call
-                    _ = tokens.Dequeue(TokenType.OpeningParentheses);
-
-                    var callArguments = ParseArguments();
-
-                    _ = tokens.Dequeue(TokenType.ClosingParentheses);
-
-                    return new FunctionDefinitionCallExpressionNode(arguments, body, callArguments);
-                }
-
-                var expression = ParseExpression();
-
-                _ = tokens.Dequeue(TokenType.ClosingParentheses);
-
-                return expression;
+                    TokenType.TypeName => ParseFunctionDefinitionExpression(),
+                    _ => ParseNestedExpression(),
+                };
             }
             case TokenType.Identifier:
             {
-                var next = tokens.Peek();
-                if (next.Type == TokenType.OpeningParentheses)
+                var nextType = tokens.PeekType(1);
+                return nextType switch
                 {
-                    _ = tokens.Dequeue(TokenType.OpeningParentheses);
-                    var arguments = ParseArguments();
-                    _ = tokens.Dequeue(TokenType.ClosingParentheses);
-                    return new CallExpressionNode(token, arguments);
-                }
-
-                if (next.Type == TokenType.OpeningSquareBracket)
-                {
-                    _ = tokens.Dequeue(TokenType.OpeningSquareBracket);
-                    var index = ParseExpression();
-                    _ = tokens.Dequeue(TokenType.ClosingSquareBracket);
-                    return new IdentifierIndexAccessExpressionNode(token, index);
-                }
-
-                return new IdentifierExpressionNode(token);
+                    TokenType.OpeningParentheses => ParseIdentifierCallExpression(),
+                    TokenType.OpeningSquareBracket => ParseIndexAccessExpression(),
+                    _ => ParseIdentifierExpression(),
+                };
             }
             case TokenType.OpeningSquareBracket:
-            {
-                var list = new List<ExpressionNode>();
-                while (tokens.TryPeek(out var next) && next.Type != TokenType.ClosingSquareBracket)
-                {
-                    list.Add(ParseExpression());
-                    if (tokens.TryPeek(out next) && next.Type == TokenType.CommaSymbol)
-                        _ = tokens.Dequeue(TokenType.CommaSymbol);
-                }
-
-                _ = tokens.Dequeue(TokenType.ClosingSquareBracket);
-
-                return new ListExpressionNode(list);
-            }
+                return ParseListExpression();
             case TokenType.OpeningCurlyBracket:
-            {
-                var map = new Dictionary<Token, ExpressionNode>();
-                while (tokens.TryPeek(out var next) && next.Type != TokenType.ClosingCurlyBracket)
-                {
-                    var key = tokens.Dequeue(TokenType.LiteralString);
-                    _ = tokens.Dequeue(TokenType.ColonSymbol);
-                    var value = ParseExpression();
-                    map.Add(key, value);
-                    if (tokens.TryPeek(out next) && next.Type == TokenType.CommaSymbol)
-                        _ = tokens.Dequeue(TokenType.CommaSymbol);
-                }
-
-                _ = tokens.Dequeue(TokenType.ClosingCurlyBracket);
-
-                return new MapExpressionNode(map);
-            }
+                return ParseMapExpression();
             case TokenType.MinusSymbol:
-            {
-                var expression = ParseExpression();
-                return new NegateExpressionNode(expression);
-            }
+                return ParseNegateExpression();
             case TokenType.ExclamationMarkSymbol:
-            {
-                var expression = ParseExpression();
-                return new NotExpressionNode(expression);
-            }
+                return ParseNotExpression();
             default:
-                throw new NotImplementedException("Primary expression with token type " + token.Type + " not implemented");
+                throw new MissingExpressionException(tokens.LastToken ?? tokens.Peek());
+                // throw new UnexpectedTokenException(tokens.Peek(),
+                //     TokenTypes.Literals.Concat(new[]
+                //     {
+                //         TokenType.OpeningParentheses, TokenType.Identifier, TokenType.OpeningSquareBracket,
+                //         TokenType.OpeningCurlyBracket, TokenType.MinusSymbol, TokenType.ExclamationMarkSymbol,
+                //     }).ToArray());
         }
     }
 
-    private List<ExpressionNode> ParseArguments()
+    private ExpressionNode ParseNotExpression()
+    {
+        _ = tokens.Dequeue(TokenType.ExclamationMarkSymbol);
+
+        var expression = ParseExpression();
+
+        return new NotExpressionNode(expression);
+    }
+
+    private ExpressionNode ParseNegateExpression()
+    {
+        _ = tokens.Dequeue(TokenType.MinusSymbol);
+
+        var expression = ParseExpression();
+
+        return new NegateExpressionNode(expression);
+    }
+
+    private ExpressionNode ParseMapExpression()
+    {
+        _ = tokens.Dequeue(TokenType.OpeningCurlyBracket);
+
+        var map = new Dictionary<Token, ExpressionNode>();
+
+        while (tokens.PeekType() is not TokenType.ClosingCurlyBracket)
+        {
+            var key = tokens.Dequeue(TokenType.LiteralString);
+
+            _ = tokens.Dequeue(TokenType.ColonSymbol);
+
+            var value = ParseExpression();
+
+            map.Add(key, value);
+
+            if (tokens.PeekType() is TokenType.CommaSymbol)
+                _ = tokens.Dequeue(TokenType.CommaSymbol);
+        }
+
+        _ = tokens.Dequeue(TokenType.ClosingCurlyBracket);
+
+        return new MapExpressionNode(map);
+    }
+
+    private ExpressionNode ParseListExpression()
+    {
+        _ = tokens.Dequeue(TokenType.OpeningSquareBracket);
+
+        var list = new List<ExpressionNode>();
+
+        while (tokens.PeekType() is not TokenType.ClosingSquareBracket)
+        {
+            list.Add(ParseExpression());
+
+            if (tokens.PeekType() is TokenType.CommaSymbol)
+                _ = tokens.Dequeue(TokenType.CommaSymbol);
+        }
+
+        _ = tokens.Dequeue(TokenType.ClosingSquareBracket);
+
+        return new ListExpressionNode(list);
+    }
+
+    private ExpressionNode ParseIdentifierExpression()
+    {
+        var identifier = tokens.Dequeue(TokenType.Identifier);
+
+        return new IdentifierExpressionNode(identifier);
+    }
+
+    private ExpressionNode ParseIndexAccessExpression()
+    {
+        var identifier = tokens.Dequeue(TokenType.Identifier);
+
+        _ = tokens.Dequeue(TokenType.OpeningSquareBracket);
+
+        var index = ParseExpression();
+
+        _ = tokens.Dequeue(TokenType.ClosingSquareBracket);
+
+        return new IdentifierIndexAccessExpressionNode(identifier, index);
+    }
+
+    private ExpressionNode ParseIdentifierCallExpression()
+    {
+        var identifier = tokens.Dequeue(TokenType.Identifier);
+
+        _ = tokens.Dequeue(TokenType.OpeningParentheses);
+
+        var arguments = ParseCallArguments();
+
+        _ = tokens.Dequeue(TokenType.ClosingParentheses);
+
+        return new CallExpressionNode(identifier, arguments);
+    }
+
+    private ExpressionNode ParseNestedExpression()
+    {
+        _ = tokens.Dequeue(TokenType.OpeningParentheses);
+
+        var expression = ParseExpression();
+
+        _ = tokens.Dequeue(TokenType.ClosingParentheses);
+
+        return expression;
+    }
+
+    private ExpressionNode ParseFunctionDefinitionExpression()
+    {
+        var parameters = new List<IVariableDeclarationNode>();
+
+        _ = tokens.Dequeue(TokenType.OpeningParentheses);
+
+        while (tokens.PeekType() is not TokenType.ClosingParentheses)
+        {
+            var declaration = ParseVariableDeclaration();
+
+            parameters.Add(declaration);
+
+            if (tokens.PeekType() is TokenType.CommaSymbol)
+                _ = tokens.Dequeue(TokenType.CommaSymbol);
+        }
+
+        _ = tokens.Dequeue(TokenType.ClosingParentheses);
+
+        var body = ParseCodeBlock().Body;
+
+        if (tokens.PeekType() is not TokenType.OpeningParentheses)
+            return new FunctionDefinitionExpressionNode(parameters, body);
+
+        // direct definition call
+        _ = tokens.Dequeue(TokenType.OpeningParentheses);
+
+        var callArguments = ParseCallArguments();
+
+        _ = tokens.Dequeue(TokenType.ClosingParentheses);
+
+        return new FunctionDefinitionCallExpressionNode(parameters, body, callArguments);
+    }
+
+    private List<ExpressionNode> ParseCallArguments()
     {
         var arguments = new List<ExpressionNode>();
-        while (tokens.TryPeek(out var next) && next.Type != TokenType.ClosingParentheses)
+
+        while (tokens.PeekType() is not TokenType.ClosingParentheses)
         {
-            arguments.Add(ParseExpression());
-            if (tokens.TryPeek(out next) && next.Type == TokenType.CommaSymbol)
+            var argumentExpression = ParseExpression();
+
+            arguments.Add(argumentExpression);
+
+            if (tokens.PeekType() is TokenType.CommaSymbol)
                 _ = tokens.Dequeue();
         }
 

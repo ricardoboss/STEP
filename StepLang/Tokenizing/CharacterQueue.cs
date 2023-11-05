@@ -23,7 +23,7 @@ public class CharacterQueue
         }
     }
 
-    public TokenLocation? CurrentLocation => File is null ? null : new(File, Line, Column);
+    public TokenLocation CurrentLocation => new(File, Line, Column);
 
     public void Enqueue(IEnumerable<char> chars)
     {

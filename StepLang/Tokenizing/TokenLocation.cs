@@ -1,10 +1,13 @@
 namespace StepLang.Tokenizing;
 
-public record TokenLocation(FileSystemInfo File, int Line, int Column)
+public record TokenLocation(FileSystemInfo? File = null, int Line = 1, int Column = 1)
 {
     /// <inheritdoc />
     public override string ToString()
     {
-        return $"{File.FullName}:{Line}:{Column}";
+        if (File is not null)
+            return $"{File.FullName}:{Line}:{Column}";
+
+        return $"{Line}:{Column}";
     }
 }
