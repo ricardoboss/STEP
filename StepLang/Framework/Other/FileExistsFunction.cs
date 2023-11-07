@@ -7,10 +7,10 @@ public class FileExistsFunction : NativeFunction
 {
     public const string Identifier = "fileExists";
 
-    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.Str }, "path") };
+    protected override IEnumerable<NativeParameter> NativeParameters => new NativeParameter[] { (new[] { ResultType.Str }, "path") };
 
     /// <inheritdoc />
-    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
+    public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
     {
         CheckArgumentCount(arguments);
 

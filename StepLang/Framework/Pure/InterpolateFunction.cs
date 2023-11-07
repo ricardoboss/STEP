@@ -1,25 +1,25 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
-using StepLang.Parsing;
 
 namespace StepLang.Framework.Pure;
 
-public class InterpolateFunction : NativeFunction
+public class InterpolateFunction : GenericFunction<NumberResult, NumberResult, NumberResult>
 {
     public const string Identifier = "interpolate";
 
-    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.Number }, "a"), (new[] { ResultType.Number }, "b"), (new[] { ResultType.Number }, "t") };
-
-    protected override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
-        CheckArgumentCount(arguments);
+        new(OnlyNumber, "a"),
+        new(OnlyNumber, "b"),
+        new(OnlyNumber, "t"),
+    };
 
-        var a = await arguments[0].EvaluateAsync(interpreter, r => r.ExpectNumber().Value, cancellationToken);
-        var b = await arguments[1].EvaluateAsync(interpreter, r => r.ExpectNumber().Value, cancellationToken);
-        var t = await arguments[2].EvaluateAsync(interpreter, r => r.ExpectNumber().Value, cancellationToken);
+    protected override ExpressionResult Invoke(Interpreter interpreter, NumberResult argument1, NumberResult argument2, NumberResult argument3)
+    {
+        var a = argument1;
+        var b = argument2;
+        var t = argument3;
 
-        var value = a + (b - a) * t;
-
-        return new NumberResult(value);
+        return a + (b - a) * t;
     }
 }

@@ -3,17 +3,20 @@ using StepLang.Interpreting;
 
 namespace StepLang.Framework.Mutating;
 
-public class DoShiftFunction : NativeFunction
+public class DoShiftFunction : GenericFunction<ListResult>
 {
     public const string Identifier = "doShift";
 
-    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.List }, "subject") };
-
-    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
+    protected override IEnumerable<NativeParameter> NativeParameters => new NativeParameter[]
     {
-        CheckArgumentCount(arguments);
+        new(OnlyList, "subject"),
+    };
 
-        var list = await arguments.Single().EvaluateAsync(interpreter, r => r.ExpectList().Value, cancellationToken);
+    protected override IEnumerable<ResultType> ReturnTypes => AnyValueType;
+
+    protected override ExpressionResult Invoke(Interpreter interpreter, ListResult argument1)
+    {
+        var list = argument1.Value;
         if (list.Count == 0)
             return NullResult.Instance;
 

@@ -3,37 +3,16 @@ using StepLang.Interpreting;
 
 namespace StepLang.Framework.Conversion;
 
-public class ToBoolFunction : NativeFunction
+public class ToBoolFunction : GenericFunction<ExpressionResult>
 {
     public const string Identifier = "toBool";
 
-    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (Enum.GetValues<ResultType>(), Identifier) };
-
-    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
-        CheckArgumentCount(arguments);
+        new(AnyValueType, "value"),
+    };
 
-        var value = await arguments.Single().EvaluateAsync(interpreter, cancellationToken);
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyBool;
 
-        var result = value switch
-        {
-            StringResult stringResult when string.IsNullOrWhiteSpace(stringResult.Value) => false,
-            StringResult stringResult => stringResult.Value.ToUpperInvariant() switch
-            {
-                "TRUE" => true,
-                "1" => true,
-                _ => false,
-            },
-            NumberResult numberResult => numberResult.Value > 0,
-            BoolResult boolResult => boolResult.Value,
-            ListResult listResult => listResult.Value.Count > 0,
-            MapResult mapResult => mapResult.Value.Count > 0,
-            FunctionResult => true,
-            NullResult => false,
-            VoidResult => false,
-            _ => throw new NotImplementedException(),
-        };
-
-        return new BoolResult(result);
-    }
+    protected override BoolResult Invoke(Interpreter interpreter, ExpressionResult argument1) => argument1.IsTruthy();
 }

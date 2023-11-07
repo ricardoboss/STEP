@@ -16,8 +16,16 @@ public class UserDefinedFunctionDefinition : FunctionDefinition
         this.body = body;
     }
 
+    protected override string DebugBodyString => $"[{body.Count} statements]";
+
+    public override IReadOnlyCollection<IVariableDeclarationNode> Parameters => parameters;
+
+    // TODO: implement return type declarations on user defined functions
+    protected override IEnumerable<ResultType> ReturnTypes => Enum.GetValues<ResultType>();
+
     public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
     {
+        // TODO: this needs to be adjusted for default parameter values
         if (arguments.Count != parameters.Count)
             throw new InvalidArgumentCountException(parameters.Count, arguments.Count);
 
@@ -29,15 +37,10 @@ public class UserDefinedFunctionDefinition : FunctionDefinition
         // create the parameter variables in the new scope
         EvaluateParameters(interpreter, evaldArgs);
 
-        interpreter.Execute(body.ToList());
+        interpreter.Execute(body);
 
         return interpreter.PopScope().TryGetResult(out var result) ? result : VoidResult.Instance;
     }
-
-    public override IReadOnlyCollection<IVariableDeclarationNode> Parameters => parameters;
-
-    // TODO: implement return type declarations on user defined functions
-    public override IEnumerable<ResultType> ReturnTypes => Enum.GetValues<ResultType>();
 
     private void EvaluateParameters(IVariableDeclarationEvaluator evaluator, IReadOnlyList<(TokenLocation, ExpressionResult)> arguments)
     {
@@ -53,6 +56,4 @@ public class UserDefinedFunctionDefinition : FunctionDefinition
             argument.Assign(argumentLocation, argumentValue);
         }
     }
-
-    protected override string DebugBodyString => $"[{body.Count} statements]";
 }

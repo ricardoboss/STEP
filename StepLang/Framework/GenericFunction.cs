@@ -5,65 +5,178 @@ using StepLang.Parsing;
 
 namespace StepLang.Framework;
 
-public abstract class GenericFunction<T> : NativeFunction where T : ExpressionResult
+public abstract class GenericFunction<T1> : GenericOneParameterFunction where T1 : ExpressionResult
 {
-    protected abstract ExpressionResult Invoke(Interpreter interpreter, T argument);
+    protected abstract ExpressionResult Invoke(Interpreter interpreter, T1 argument1);
 
     public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
     {
-        if (arguments.Count != 1)
-            throw new InvalidArgumentCountException(1, arguments.Count);
+        var requiredCount = GetRequiredCount();
 
-        var argument = arguments.Single().EvaluateUsing(interpreter);
-        if (argument is not T t)
-            // TODO: improve error message and try to get location
-            throw new InvalidArgumentTypeException(null, "Unexpected argument type");
+        if (arguments.Count < requiredCount)
+            throw new InvalidArgumentCountException(requiredCount, arguments.Count);
 
-        return Invoke(interpreter, t);
+        var argument1 = GetArgument<T1>(0, interpreter, arguments);
+
+        return Invoke(interpreter, argument1);
     }
 }
 
-public abstract class GenericFunction<T1, T2> : NativeFunction where T1 : ExpressionResult where T2 : ExpressionResult
+public abstract class GenericFunction<T1, T2> : GenericTwoParameterFunction
+    where T1 : ExpressionResult
+    where T2 : ExpressionResult
 {
     protected abstract ExpressionResult Invoke(Interpreter interpreter, T1 argument1, T2 argument2);
 
     public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
     {
-        if (arguments.Count != 2)
-            throw new InvalidArgumentCountException(2, arguments.Count);
+        var requiredCount = GetRequiredCount();
 
-        var evalArgs = arguments.EvaluateUsing(interpreter).ToList();
+        if (arguments.Count < requiredCount)
+            throw new InvalidArgumentCountException(requiredCount, arguments.Count);
 
-        if (evalArgs[0] is not T1 t1)
-            throw new InvalidArgumentTypeException(null, "Unexpected argument type");
+        var argument1 = GetArgument<T1>(0, interpreter, arguments);
+        var argument2 = GetArgument<T2>(1, interpreter, arguments);
 
-        if (evalArgs[1] is not T2 t2)
-            throw new InvalidArgumentTypeException(null, "Unexpected argument type");
-
-        return Invoke(interpreter, t1, t2);
+        return Invoke(interpreter, argument1, argument2);
     }
 }
 
-public abstract class GenericFunction<T1, T2, T3> : NativeFunction where T1 : ExpressionResult where T2 : ExpressionResult where T3 : ExpressionResult
+public abstract class GenericFunction<T1, T2, T3> : GenericThreeParameterFunction
+    where T1 : ExpressionResult
+    where T2 : ExpressionResult
+    where T3 : ExpressionResult
 {
     protected abstract ExpressionResult Invoke(Interpreter interpreter, T1 argument1, T2 argument2, T3 argument3);
 
     public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
     {
-        if (arguments.Count != 3)
-            throw new InvalidArgumentCountException(3, arguments.Count);
+        var requiredCount = GetRequiredCount();
 
-        var evalArgs = arguments.EvaluateUsing(interpreter).ToList();
+        if (arguments.Count < requiredCount)
+            throw new InvalidArgumentCountException(requiredCount, arguments.Count);
 
-        if (evalArgs[0] is not T1 t1)
-            throw new InvalidArgumentTypeException(null, "Unexpected argument type");
+        var argument1 = GetArgument<T1>(0, interpreter, arguments);
+        var argument2 = GetArgument<T2>(1, interpreter, arguments);
+        var argument3 = GetArgument<T3>(2, interpreter, arguments);
 
-        if (evalArgs[1] is not T2 t2)
-            throw new InvalidArgumentTypeException(null, "Unexpected argument type");
+        return Invoke(interpreter, argument1, argument2, argument3);
+    }
+}
 
-        if (evalArgs[2] is not T3 t3)
-            throw new InvalidArgumentTypeException(null, "Unexpected argument type");
+public abstract class GenericOneParameterFunction : NativeFunction
+{
+    protected IReadOnlyList<ResultType> Argument1Types => NativeParameters.Single().Types;
+    protected LiteralExpressionNode? Argument1Default => NativeParameters.Single().DefaultValue;
 
-        return Invoke(interpreter, t1, t2, t3);
+    protected virtual int GetRequiredCount() => Argument1Default is null ? 1 : 0;
+
+    protected virtual LiteralExpressionNode GetDefaultExpression(int index) => Argument1Default ?? throw new InvalidOperationException();
+
+    protected virtual IReadOnlyList<ResultType> GetArgumentTypes(int index) => Argument1Types;
+
+    private TArgument GetDefaultArgumentValue<TArgument>(int index, IExpressionEvaluator interpreter)
+    {
+        var defaultExpression = GetDefaultExpression(index);
+        var defaultResult = defaultExpression.EvaluateUsing(interpreter);
+        if (defaultResult is not TArgument defaultArgumentResult)
+            throw new InvalidArgumentTypeException(defaultExpression.Location, GetArgumentTypes(index), defaultResult);
+
+        return defaultArgumentResult;
+    }
+
+    protected TArgument GetArgument<TArgument>(int index, IExpressionEvaluator interpreter, IReadOnlyList<ExpressionNode> arguments) where TArgument : ExpressionResult
+    {
+        if (arguments.Count < index + 1)
+            return GetDefaultArgumentValue<TArgument>(index, interpreter);
+
+        var argumentResult = arguments[index].EvaluateUsing(interpreter);
+        if (argumentResult is not TArgument typedResult)
+            throw new InvalidArgumentTypeException(arguments[index].Location, GetArgumentTypes(index), argumentResult);
+
+        return typedResult;
+    }
+}
+
+public abstract class GenericTwoParameterFunction : GenericOneParameterFunction
+{
+    protected IReadOnlyList<ResultType> Argument2Types => NativeParameters.ElementAt(1).Types;
+    protected LiteralExpressionNode? Argument2Default => NativeParameters.ElementAt(1).DefaultValue;
+
+    protected override int GetRequiredCount()
+    {
+        var required = 0;
+
+        if (Argument1Default is null)
+            required++;
+
+        if (Argument2Default is null)
+            required++;
+
+        return required;
+    }
+
+    protected override LiteralExpressionNode GetDefaultExpression(int index)
+    {
+        return index switch
+        {
+            0 => Argument1Default ?? throw new InvalidOperationException(),
+            1 => Argument2Default ?? throw new InvalidOperationException(),
+            _ => throw new ArgumentOutOfRangeException(nameof(index)),
+        };
+    }
+
+    protected override IReadOnlyList<ResultType> GetArgumentTypes(int index)
+    {
+        return index switch
+        {
+            0 => Argument1Types,
+            1 => Argument2Types,
+            _ => throw new ArgumentOutOfRangeException(nameof(index)),
+        };
+    }
+}
+
+public abstract class GenericThreeParameterFunction : GenericTwoParameterFunction
+{
+    protected IReadOnlyList<ResultType> Argument3Types => NativeParameters.ElementAt(2).Types;
+    protected LiteralExpressionNode? Argument3Default => NativeParameters.ElementAt(2).DefaultValue;
+
+    protected override int GetRequiredCount()
+    {
+        var required = 0;
+
+        if (Argument1Default is null)
+            required++;
+
+        if (Argument2Default is null)
+            required++;
+
+        if (Argument3Default is null)
+            required++;
+
+        return required;
+    }
+
+    protected override LiteralExpressionNode GetDefaultExpression(int index)
+    {
+        return index switch
+        {
+            0 => Argument1Default ?? throw new InvalidOperationException(),
+            1 => Argument2Default ?? throw new InvalidOperationException(),
+            2 => Argument3Default ?? throw new InvalidOperationException(),
+            _ => throw new ArgumentOutOfRangeException(nameof(index)),
+        };
+    }
+
+    protected override IReadOnlyList<ResultType> GetArgumentTypes(int index)
+    {
+        return index switch
+        {
+            0 => Argument1Types,
+            1 => Argument2Types,
+            2 => Argument3Types,
+            _ => throw new ArgumentOutOfRangeException(nameof(index)),
+        };
     }
 }

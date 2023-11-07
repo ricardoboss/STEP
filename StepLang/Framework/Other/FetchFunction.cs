@@ -10,7 +10,7 @@ public class FetchFunction : NativeFunction
 {
     public const string Identifier = "fetch";
 
-    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[]
+    protected override IEnumerable<NativeParameter> NativeParameters => new NativeParameter[]
         { (new [] { ResultType.Str }, "url"), (new [] { ResultType.Map }, "options") };
 
     public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter,

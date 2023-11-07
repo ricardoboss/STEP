@@ -8,7 +8,7 @@ public class ClampFunction : NativeFunction
 {
     public const string Identifier = "clamp";
 
-    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.Number }, "min"), (new[] { ResultType.Number }, "max"), (new[] { ResultType.Number }, "x") };
+    protected override IEnumerable<NativeParameter> NativeParameters => new NativeParameter[] { (new[] { ResultType.Number }, "min"), (new[] { ResultType.Number }, "max"), (new[] { ResultType.Number }, "x") };
 
     protected override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
     {

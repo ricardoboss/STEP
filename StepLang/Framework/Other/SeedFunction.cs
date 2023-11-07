@@ -10,7 +10,7 @@ public class SeedFunction : NativeFunction
     /// <inheritdoc />
     public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new (ResultType[] types, string identifier)[] { (new[] { ResultType.Number }, "seed") };
 
-    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
+    public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
     {
         CheckArgumentCount(arguments, 0, 1);
 

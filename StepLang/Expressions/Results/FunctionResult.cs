@@ -27,6 +27,6 @@ public class FunctionResult : ValueExpressionResult<FunctionDefinition>
 
         public override IReadOnlyCollection<IVariableDeclarationNode> Parameters => Array.Empty<IVariableDeclarationNode>();
 
-        public override IEnumerable<ResultType> ReturnTypes => new[] { ResultType.Void };
+        protected override IEnumerable<ResultType> ReturnTypes => new[] { ResultType.Void };
     }
 }

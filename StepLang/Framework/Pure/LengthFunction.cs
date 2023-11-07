@@ -9,20 +9,25 @@ public class LengthFunction : NativeFunction
 {
     public const string Identifier = "length";
 
-    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.Str, ResultType.List, ResultType.Map }, "subject") };
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new[]
+    {
+        new NativeParameter(new[] { ResultType.Str, ResultType.List, ResultType.Map }, "subject"),
+    };
 
-    protected override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = new[] { ResultType.Number };
+
+    public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
     {
         CheckArgumentCount(arguments);
 
-        var subjectResult = await arguments.Single().EvaluateAsync(interpreter, cancellationToken);
+        var subjectResult = arguments.Single().EvaluateUsing(interpreter);
 
         return subjectResult switch
         {
             StringResult { Value: var str } => new NumberResult(str.GraphemeLength()),
             ListResult { Value: var list } => new NumberResult(list.Count),
             MapResult { Value: var map } => new NumberResult(map.Count),
-            _ => throw new InvalidArgumentTypeException(null, Parameters.Single().types, subjectResult),
+            _ => throw new InvalidArgumentTypeException(arguments.Single().Location, NativeParameters.Single().Types, subjectResult),
         };
     }
 }
