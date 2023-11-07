@@ -3,16 +3,16 @@ using StepLang.Interpreting;
 
 namespace StepLang.Framework.Pure;
 
-public class TanFunction : GenericFunction<NumberResult>
+public class TanFunction : GenericOneParameterFunction
 {
     public const string Identifier = "tan";
 
-    protected override IEnumerable<(ResultType[] types, string identifier)> NativeParameters => new[] { (new[] { ResultType.Number }, "x") };
+    protected override IEnumerable<NativeParameter> NativeParameters => new NativeParameter[] { new(new[] { ResultType.Number }, "x") };
 
-    public override IEnumerable<ResultType> ReturnTypes => new[] { ResultType.Number };
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = new[] { ResultType.Number };
 
     protected override ExpressionResult Invoke(Interpreter interpreter, NumberResult argument)
     {
-        return new NumberResult(Math.Tan(argument.Value));
+        return (NumberResult)Math.Tan(argument);
     }
 }

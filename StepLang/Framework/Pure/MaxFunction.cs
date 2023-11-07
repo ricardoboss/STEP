@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
 using StepLang.Parsing;
@@ -9,18 +8,22 @@ public class MaxFunction : NativeFunction
 {
     public const string Identifier = "max";
 
-    protected override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new[]
+    {
+        new NativeParameter(new[] { ResultType.Number }, "...values"),
+    };
+
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = new[] { ResultType.Number };
+
+    public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
     {
         CheckArgumentCount(arguments, 1, int.MaxValue);
 
-        var max = await arguments
-            .ToAsyncEnumerable()
-            .MaxAwaitAsync(async e => await Eval(e), cancellationToken);
+        var min = arguments
+            .Select(argument => argument.EvaluateUsing(interpreter))
+            .OfType<NumberResult>()
+            .Max(argument => argument.Value);
 
-        return new NumberResult(max);
-
-        Task<double> Eval(Expression e) => e.EvaluateAsync(interpreter, r => r.ExpectNumber().Value, cancellationToken);
+        return new NumberResult(min);
     }
-
-    protected override string DebugParamsString => "number ...x";
 }

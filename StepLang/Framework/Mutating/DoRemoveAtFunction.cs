@@ -3,20 +3,22 @@ using StepLang.Interpreting;
 
 namespace StepLang.Framework.Mutating;
 
-public class DoRemoveAtFunction : NativeFunction
+public class DoRemoveAtFunction : GenericFunction<ListResult, NumberResult>
 {
     public const string Identifier = "doRemoveAt";
 
-    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.List }, "subject"), (Enum.GetValues<ResultType>(), "index") };
-
-    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
-        CheckArgumentCount(arguments);
+        new(OnlyList, "subject"),
+        new(OnlyNumber, "index"),
+    };
 
-        var (listExpression, elementExpression) = (arguments[0], arguments[1]);
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = AnyValueType;
 
-        var list = await listExpression.EvaluateAsync(interpreter, r => r.ExpectList().Value, cancellationToken);
-        var index = await elementExpression.EvaluateAsync(interpreter, r => r.ExpectInteger().RoundedIntValue, cancellationToken);
+    protected override ExpressionResult Invoke(Interpreter interpreter, ListResult argument1, NumberResult argument2)
+    {
+        var list = argument1.Value;
+        var index = argument2;
 
         if (list.Count == 0 || index < 0 || index >= list.Count)
             throw new IndexOutOfBoundsException(index, list.Count);

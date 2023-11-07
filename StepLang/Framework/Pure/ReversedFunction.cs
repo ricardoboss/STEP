@@ -8,7 +8,7 @@ public class ReversedFunction : NativeFunction
 {
     public const string Identifier = "reversed";
 
-    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.List, ResultType.Str }, "subject") };
+    protected override IEnumerable<NativeParameter> NativeParameters => new NativeParameter[] { (new[] { ResultType.List, ResultType.Str }, "subject") };
 
     protected override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
     {

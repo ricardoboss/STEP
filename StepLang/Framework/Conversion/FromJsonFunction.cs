@@ -4,21 +4,22 @@ using StepLang.Interpreting;
 
 namespace StepLang.Framework.Conversion;
 
-public class FromJsonFunction : NativeFunction
+public class FromJsonFunction : GenericFunction<StringResult>
 {
     public const string Identifier = "fromJson";
 
-    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.Str }, "source") };
-
-    /// <inheritdoc />
-    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
-        var source = arguments.Single();
-        var result = await source.EvaluateAsync(interpreter, cancellationToken);
-        var json = result.ExpectString().Value;
+        new(OnlyString, "source"),
+    };
+
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = AnyValueType;
+
+    protected override ExpressionResult Invoke(Interpreter interpreter, StringResult argument1)
+    {
         try
         {
-            return JsonSerializer.Deserialize(json, JsonConversionContext.Default.ExpressionResult) ??
+            return JsonSerializer.Deserialize(argument1.Value, JsonConversionContext.Default.ExpressionResult) ??
                    NullResult.Instance;
         }
         catch (JsonException)

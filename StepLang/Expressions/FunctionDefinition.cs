@@ -7,7 +7,7 @@ namespace StepLang.Expressions;
 
 public abstract class FunctionDefinition
 {
-    protected virtual string DebugParamsString => string.Join(", ", Parameters.Select(p =>
+    private string DebugParamsString => string.Join(", ", Parameters.Select(p =>
     {
         if (p is NullableVariableDeclarationNode nullable)
             return $"{string.Join("|", nullable.Types.Select(t => t.Value))}{nullable.NullabilityIndicator.Value} {nullable.Identifier.Value}";
@@ -15,7 +15,7 @@ public abstract class FunctionDefinition
         return $"{string.Join("|", p.Types.Select(t => t.Value))} {p.Identifier.Value}";
     }));
 
-    protected virtual string DebugReturnTypeString => string.Join("|", ReturnTypes.Select(r => r.ToString()));
+    private string DebugReturnTypeString => string.Join("|", ReturnTypes.Select(r => r.ToString()));
 
     protected abstract string DebugBodyString { get; }
 
@@ -32,10 +32,9 @@ public abstract class FunctionDefinition
 
     public FunctionResult ToResult() => new(this);
 
-    // TODO: add async interface
     public abstract ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments);
 
     public abstract IReadOnlyCollection<IVariableDeclarationNode> Parameters { get; }
 
-    public abstract IEnumerable<ResultType> ReturnTypes { get; }
+    protected virtual IEnumerable<ResultType> ReturnTypes { get; } = new[] { ResultType.Void };
 }

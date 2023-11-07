@@ -8,16 +8,17 @@ public class ReadlineFunction : NativeFunction
 {
     public const string Identifier = "readline";
 
-    /// <inheritdoc />
-    protected override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
+    public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
     {
         CheckArgumentCount(arguments);
 
         if (interpreter.StdIn is not { } stdIn)
             return NullResult.Instance;
 
-        var line = await stdIn.ReadLineAsync(cancellationToken) ?? string.Empty;
+        var line = stdIn.ReadLine();
 
-        return new StringResult(line);
+        return line is null ? NullResult.Instance : new StringResult(line);
     }
+
+    protected override IEnumerable<ResultType> ReturnTypes => new[] { ResultType.Str, ResultType.Null };
 }

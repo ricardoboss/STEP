@@ -8,7 +8,7 @@ public class CompareToFunction : NativeFunction
 {
     public const string Identifier = "compareTo";
 
-    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (Enum.GetValues<ResultType>(), "a"), (Enum.GetValues<ResultType>(), "b") };
+    protected override IEnumerable<NativeParameter> NativeParameters => new NativeParameter[] { (Enum.GetValues<ResultType>(), "a"), (Enum.GetValues<ResultType>(), "b") };
 
     protected override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
     {

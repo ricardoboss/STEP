@@ -3,21 +3,22 @@ using StepLang.Interpreting;
 
 namespace StepLang.Framework.Mutating;
 
-public class DoInsertAtFunction : NativeFunction
+public class DoInsertAtFunction : GenericFunction<ListResult, NumberResult, ExpressionResult>
 {
     public const string Identifier = "doInsertAt";
 
-    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.List }, "subject"), (new[] { ResultType.Number }, "index"), (Enum.GetValues<ResultType>(), "value") };
-
-    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
-        CheckArgumentCount(arguments);
+        new(OnlyList, "list"),
+        new(OnlyNumber, "index"),
+        new(AnyValueType, "value"),
+    };
 
-        var (listExpression, indexExpression, valueExpression) = (arguments[0], arguments[1], arguments[2]);
-
-        var list = await listExpression.EvaluateAsync(interpreter, r => r.ExpectList().Value, cancellationToken);
-        var index = await indexExpression.EvaluateAsync(interpreter, r => r.ExpectInteger().RoundedIntValue, cancellationToken);
-        var value = await valueExpression.EvaluateAsync(interpreter, cancellationToken);
+    protected override ExpressionResult Invoke(Interpreter interpreter, ListResult argument1, NumberResult argument2, ExpressionResult argument3)
+    {
+        var list = argument1.Value;
+        var index = argument2;
+        var value = argument3;
 
         if (index < 0 || index > list.Count)
             throw new IndexOutOfBoundsException(index, list.Count);

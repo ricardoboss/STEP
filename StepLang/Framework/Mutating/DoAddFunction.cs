@@ -3,22 +3,22 @@ using StepLang.Interpreting;
 
 namespace StepLang.Framework.Mutating;
 
-public class DoAddFunction : NativeFunction
+public class DoAddFunction : GenericFunction<ListResult, ExpressionResult>
 {
     public const string Identifier = "doAdd";
 
-    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.List }, "subject"), (Enum.GetValues<ResultType>(), "element") };
-
-    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
-        CheckArgumentCount(arguments);
+        new(OnlyList, "list"),
+        new(AnyValueType, "value"),
+    };
 
-        var (listExpression, elementExpression) = (arguments[0], arguments[1]);
+    protected override ExpressionResult Invoke(Interpreter interpreter, ListResult argument1, ExpressionResult argument2)
+    {
+        var list = argument1;
+        var value = argument2;
 
-        var list = await listExpression.EvaluateAsync(interpreter, r => r.ExpectList().Value, cancellationToken);
-        var element = await elementExpression.EvaluateAsync(interpreter, cancellationToken);
-
-        list.Add(element);
+        list.Value.Add(value);
 
         return VoidResult.Instance;
     }

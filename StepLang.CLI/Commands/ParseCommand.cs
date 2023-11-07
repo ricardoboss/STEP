@@ -144,11 +144,11 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             case CallStatementNode csn:
             {
                 var treeNode = parent.AddNode("CallStatement:");
-                treeNode.AddNode("Identifier: " + csn.Identifier.ToString().EscapeMarkup());
-                if (csn.Arguments.Count > 0)
+                treeNode.AddNode("Identifier: " + csn.CallExpression.Identifier.ToString().EscapeMarkup());
+                if (csn.CallExpression.Arguments.Count > 0)
                 {
                     var argumentsNode = treeNode.AddNode("Arguments:");
-                    foreach (var argument in csn.Arguments)
+                    foreach (var argument in csn.CallExpression.Arguments)
                         RenderNode(argumentsNode, argument);
                 }
                 else

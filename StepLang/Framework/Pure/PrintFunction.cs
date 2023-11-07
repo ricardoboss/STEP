@@ -9,9 +9,9 @@ public class PrintFunction : NativeFunction
 {
     public const string Identifier = "print";
 
-    protected override IEnumerable<(ResultType[] types, string identifier)> NativeParameters => new[] { (Enum.GetValues<ResultType>(), "...values") };
+    protected override IEnumerable<NativeParameter> NativeParameters => new NativeParameter[] { new(Enum.GetValues<ResultType>(), "...values") };
 
-    public override IEnumerable<ResultType> ReturnTypes => new[] { ResultType.Void };
+    protected override IEnumerable<ResultType> ReturnTypes => new[] { ResultType.Void };
 
     /// <inheritdoc />
     public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)

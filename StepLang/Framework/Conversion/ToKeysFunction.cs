@@ -3,20 +3,24 @@ using StepLang.Interpreting;
 
 namespace StepLang.Framework.Conversion;
 
-public class ToKeysFunction : NativeFunction
+public class ToKeysFunction : GenericFunction<MapResult>
 {
     public const string Identifier = "toKeys";
 
-    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.Map }, "source") };
-
-    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
-        CheckArgumentCount(arguments);
+        new(OnlyMap, "source"),
+    };
 
-        var map = await arguments.Single().EvaluateAsync(interpreter, r => r.ExpectMap().Value, cancellationToken);
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyList;
 
-        var keys = map.Keys.Select(k => new StringResult(k));
+    protected override ListResult Invoke(Interpreter interpreter, MapResult argument1)
+    {
+        var keys = argument1.Value.Keys
+            .Select(k => new StringResult(k))
+            .Cast<ExpressionResult>()
+            .ToList();
 
-        return new ListResult(keys.Cast<ExpressionResult>().ToList());
+        return new(keys);
     }
 }

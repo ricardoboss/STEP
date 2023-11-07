@@ -1,25 +1,23 @@
 using System.Globalization;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
-using StepLang.Parsing;
 
 namespace StepLang.Framework.Conversion;
 
-public class ToStringFunction : NativeFunction
+public class ToStringFunction : GenericFunction<ExpressionResult>
 {
     public const string Identifier = "toString";
 
-    protected override IEnumerable<(ResultType[] types, string identifier)> NativeParameters => new[] { (Enum.GetValues<ResultType>(), "value") };
-
-    public override IEnumerable<ResultType> ReturnTypes => new[] { ResultType.Str };
-
-    public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
-        CheckArgumentCount(arguments);
+        new(AnyValueType, "value"),
+    };
 
-        var value = arguments.Single().EvaluateUsing(interpreter);
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyString;
 
-        return new StringResult(Render(value));
+    protected override ExpressionResult Invoke(Interpreter interpreter, ExpressionResult argument1)
+    {
+        return new StringResult(Render(argument1));
     }
 
     internal static string Render(ExpressionResult result)

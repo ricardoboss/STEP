@@ -1,5 +1,7 @@
+using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
+using StepLang.Parsing;
 
 namespace StepLang.Framework.Mutating;
 
@@ -7,31 +9,36 @@ public class DoSwapFunction : NativeFunction
 {
     public const string Identifier = "doSwap";
 
-    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.List, ResultType.Map }, "subject"), (new[] { ResultType.Number, ResultType.Str }, "a"), (new[] { ResultType.Number, ResultType.Str }, "b") };
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
+    {
+        new(new[] { ResultType.List, ResultType.Map }, "subject"),
+        new(new[] { ResultType.Number, ResultType.Str }, "a"),
+        new(new[] { ResultType.Number, ResultType.Str }, "b"),
+    };
 
-    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyBool;
+
+    public override BoolResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
     {
         CheckArgumentCount(arguments);
 
         var (subjectExpression, aExpression, bExpression) = (arguments[0], arguments[1], arguments[2]);
 
-        var subject = await subjectExpression.EvaluateAsync(interpreter, cancellationToken);
-        var a = await aExpression.EvaluateAsync(interpreter, cancellationToken);
-        var b = await bExpression.EvaluateAsync(interpreter, cancellationToken);
+        var subject = subjectExpression.EvaluateUsing(interpreter);
+        var a = aExpression.EvaluateUsing(interpreter);
+        var b = bExpression.EvaluateUsing(interpreter);
 
         return subject switch
         {
-            MapResult mapResult => SwapMap(mapResult, a, b),
-            ListResult listResult => SwapList(listResult, a, b),
-            _ => throw new InvalidArgumentTypeException(null, new[] { ResultType.List, ResultType.Map }, subject),
+            MapResult mapResult when a is StringResult aKey && b is StringResult bKey => SwapMap(mapResult, aKey, bKey),
+            ListResult listResult when a is NumberResult aIndex && b is NumberResult bIndex => SwapList(listResult, aIndex, bIndex),
+            // TODO improve error message if one of the parameters has the wrong type
+            _ => throw new InvalidArgumentTypeException(subjectExpression.Location, NativeParameters.First().Types, subject),
         };
     }
 
-    private static ExpressionResult SwapMap(MapResult map, ExpressionResult a, ExpressionResult b)
+    private static BoolResult SwapMap(MapResult map, StringResult aKey, StringResult bKey)
     {
-        var aKey = a.ExpectString().Value;
-        var bKey = b.ExpectString().Value;
-
         var aExists = map.Value.TryGetValue(aKey, out var aValue);
         var bExists = map.Value.TryGetValue(bKey, out var bValue);
 
@@ -44,11 +51,8 @@ public class DoSwapFunction : NativeFunction
         return BoolResult.True;
     }
 
-    private static ExpressionResult SwapList(ListResult list, ExpressionResult a, ExpressionResult b)
+    private static BoolResult SwapList(ListResult list, NumberResult aIndex, NumberResult bIndex)
     {
-        var aIndex = a.ExpectInteger().RoundedIntValue;
-        var bIndex = b.ExpectInteger().RoundedIntValue;
-
         if (aIndex < 0 || aIndex >= list.Value.Count || bIndex < 0 || bIndex >= list.Value.Count)
             return BoolResult.False;
 
