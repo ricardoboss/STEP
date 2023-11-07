@@ -4,18 +4,12 @@ using StepLang.Parsing;
 
 namespace StepLang.Framework.Pure;
 
-public class AbsFunction : NativeFunction
+public class AbsFunction : GenericFunction<NumberResult>
 {
     public const string Identifier = "abs";
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] { new(OnlyNumber, "x") };
 
-    protected override IEnumerable<NativeParameter> NativeParameters => new NativeParameter[] { (new[] { ResultType.Number }, "x") };
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyNumber;
 
-    protected override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
-    {
-        CheckArgumentCount(arguments);
-
-        var x = await arguments.Single().EvaluateAsync(interpreter, r => r.ExpectNumber().Value, cancellationToken);
-
-        return new NumberResult(Math.Abs(x));
-    }
+    protected override NumberResult Invoke(Interpreter interpreter, NumberResult argument1) => Math.Abs(argument1);
 }

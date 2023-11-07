@@ -8,7 +8,7 @@ public class FileWriteFunction : NativeFunction
 {
     public const string Identifier = "fileWrite";
 
-    protected override IEnumerable<NativeParameter> NativeParameters => new NativeParameter[] { (new[] { ResultType.Str }, "path"), (new[] { ResultType.Str }, "content"), (new[] { ResultType.Bool }, "append") };
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] { (new[] { ResultType.Str }, "path"), (new[] { ResultType.Str }, "content"), (new[] { ResultType.Bool }, "append") };
 
     /// <inheritdoc />
     public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)

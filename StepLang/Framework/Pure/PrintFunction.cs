@@ -9,7 +9,7 @@ public class PrintFunction : NativeFunction
 {
     public const string Identifier = "print";
 
-    protected override IEnumerable<NativeParameter> NativeParameters => new NativeParameter[] { new(Enum.GetValues<ResultType>(), "...values") };
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] { new(Enum.GetValues<ResultType>(), "...values") };
 
     protected override IEnumerable<ResultType> ReturnTypes => new[] { ResultType.Void };
 

@@ -4,18 +4,13 @@ using StepLang.Parsing;
 
 namespace StepLang.Framework.Pure;
 
-public class SinFunction : NativeFunction
+public class SinFunction : GenericFunction<NumberResult>
 {
     public const string Identifier = "sin";
 
-    protected override IEnumerable<NativeParameter> NativeParameters => new NativeParameter[] { (new[] { ResultType.Number }, "x") };
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] { new(OnlyNumber, "x") };
 
-    protected override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
-    {
-        CheckArgumentCount(arguments);
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyNumber;
 
-        var number = await arguments.Single().EvaluateAsync(interpreter, r => r.ExpectNumber().Value, cancellationToken);
-
-        return new NumberResult(Math.Sin(number));
-    }
+    protected override NumberResult Invoke(Interpreter interpreter, NumberResult argument1) => Math.Sin(argument1);
 }

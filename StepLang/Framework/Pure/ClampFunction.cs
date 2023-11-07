@@ -1,22 +1,26 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
-using StepLang.Parsing;
 
 namespace StepLang.Framework.Pure;
 
-public class ClampFunction : NativeFunction
+public class ClampFunction : GenericFunction<NumberResult, NumberResult, NumberResult>
 {
     public const string Identifier = "clamp";
 
-    protected override IEnumerable<NativeParameter> NativeParameters => new NativeParameter[] { (new[] { ResultType.Number }, "min"), (new[] { ResultType.Number }, "max"), (new[] { ResultType.Number }, "x") };
-
-    protected override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
-        CheckArgumentCount(arguments);
+        new(OnlyNumber, "min"),
+        new(OnlyNumber, "max"),
+        new(OnlyNumber, "x"),
+    };
 
-        var min = await arguments[0].EvaluateAsync(interpreter, r => r.ExpectNumber().Value, cancellationToken);
-        var max = await arguments[1].EvaluateAsync(interpreter, r => r.ExpectNumber().Value, cancellationToken);
-        var x = await arguments[2].EvaluateAsync(interpreter, r => r.ExpectNumber().Value, cancellationToken);
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyNumber;
+
+    protected override ExpressionResult Invoke(Interpreter interpreter, NumberResult argument1, NumberResult argument2, NumberResult argument3)
+    {
+        var min = argument1;
+        var max = argument2;
+        var x = argument3;
 
         return new NumberResult(Math.Max(min, Math.Min(max, x)));
     }

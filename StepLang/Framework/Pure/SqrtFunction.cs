@@ -4,18 +4,13 @@ using StepLang.Parsing;
 
 namespace StepLang.Framework.Pure;
 
-public class SqrtFunction : NativeFunction
+public class SqrtFunction : GenericFunction<NumberResult>
 {
     public const string Identifier = "sqrt";
 
-    protected override IEnumerable<NativeParameter> NativeParameters => new NativeParameter[] { (new[] { ResultType.Number }, "x") };
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] { new(OnlyNumber, "x") };
 
-    protected override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
-    {
-        CheckArgumentCount(arguments);
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyNumber;
 
-        var x = await arguments.Single().EvaluateAsync(interpreter, r => r.ExpectNumber().Value, cancellationToken);
-
-        return new NumberResult(Math.Sqrt(x));
-    }
+    protected override NumberResult Invoke(Interpreter interpreter, NumberResult argument1) => Math.Sqrt(argument1);
 }
