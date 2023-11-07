@@ -15,7 +15,7 @@ public partial class Interpreter
         var valueLocation = statementNode.ValueDeclaration.Identifier.Location;
         var collection = statementNode.Collection.EvaluateUsing(this);
 
-        RunForeachLoop(keyLocation,keyVariable, valueLocation, valueVariable, collection, statementNode.Body);
+        RunForeachLoop(keyLocation, keyVariable, valueLocation, valueVariable, collection, statementNode.Body);
     }
 
     public void Execute(ForeachDeclareKeyValueStatementNode statementNode)
@@ -74,24 +74,24 @@ public partial class Interpreter
         switch (collection)
         {
             case ListResult { Value: var items }:
-            {
-                var index = 0;
-                foreach (var item in items)
                 {
-                    yield return (new NumberResult(index), item);
+                    var index = 0;
+                    foreach (var item in items)
+                    {
+                        yield return (new NumberResult(index), item);
 
-                    index++;
+                        index++;
+                    }
+
+                    yield break;
                 }
-
-                yield break;
-            }
             case MapResult { Value: var pairs }:
-            {
-                foreach (var (key, value) in pairs)
-                    yield return (new StringResult(key), value);
+                {
+                    foreach (var (key, value) in pairs)
+                        yield return (new StringResult(key), value);
 
-                yield break;
-            }
+                    yield break;
+                }
             default:
                 throw new InvalidResultTypeException(collection, ResultType.List, ResultType.Map);
         }

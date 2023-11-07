@@ -405,7 +405,8 @@ public class Parser
     {
         var left = ParsePrimaryExpression();
 
-        while (tokens.PeekType().IsOperator()) {
+        while (tokens.PeekType().IsOperator())
+        {
             var operatorTokens = PeekContinuousOperators();
             var binaryOperator = ParseExpressionOperator(operatorTokens);
 
@@ -605,24 +606,24 @@ public class Parser
         switch (tokenType)
         {
             case TokenType.OpeningParentheses:
-            {
-                var nextType = tokens.PeekType(1);
-                return nextType switch
                 {
-                    TokenType.TypeName => ParseFunctionDefinitionExpression(),
-                    _ => ParseNestedExpression(),
-                };
-            }
+                    var nextType = tokens.PeekType(1);
+                    return nextType switch
+                    {
+                        TokenType.TypeName => ParseFunctionDefinitionExpression(),
+                        _ => ParseNestedExpression(),
+                    };
+                }
             case TokenType.Identifier:
-            {
-                var nextType = tokens.PeekType(1);
-                return nextType switch
                 {
-                    TokenType.OpeningParentheses => ParseFunctionCallExpression(),
-                    TokenType.OpeningSquareBracket => ParseIndexAccessExpression(),
-                    _ => ParseIdentifierExpression(),
-                };
-            }
+                    var nextType = tokens.PeekType(1);
+                    return nextType switch
+                    {
+                        TokenType.OpeningParentheses => ParseFunctionCallExpression(),
+                        TokenType.OpeningSquareBracket => ParseIndexAccessExpression(),
+                        _ => ParseIdentifierExpression(),
+                    };
+                }
             case TokenType.OpeningSquareBracket:
                 return ParseListExpression();
             case TokenType.OpeningCurlyBracket:

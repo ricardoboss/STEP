@@ -14,7 +14,7 @@ public abstract class NativeFunction : FunctionDefinition
     protected override string DebugBodyString => "[native code]";
 
     protected static IReadOnlyList<ResultType> AnyType => Enum.GetValues<ResultType>();
-    protected static IReadOnlyList<ResultType> AnyValueType => Enum.GetValues<ResultType>().Except(new [] { ResultType.Void }).ToList();
+    protected static IReadOnlyList<ResultType> AnyValueType => Enum.GetValues<ResultType>().Except(new[] { ResultType.Void }).ToList();
     protected static IReadOnlyList<ResultType> OnlyNumber => new[] { ResultType.Number };
     protected static IReadOnlyList<ResultType> OnlyString => new[] { ResultType.Str };
     protected static IReadOnlyList<ResultType> OnlyList => new[] { ResultType.List };
