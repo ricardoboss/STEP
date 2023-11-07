@@ -7,7 +7,7 @@ public class FileDeleteFunction : NativeFunction
 {
     public const string Identifier = "fileDelete";
 
-    protected override IEnumerable<NativeParameter> NativeParameters => new NativeParameter[] { (new[] { ResultType.Str }, "path") };
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] { (new[] { ResultType.Str }, "path") };
 
     /// <inheritdoc />
     public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)

@@ -7,7 +7,7 @@ namespace StepLang.Framework.Pure;
 
 public abstract class ListManipulationFunction : NativeFunction
 {
-    protected override IEnumerable<NativeParameter> NativeParameters => new NativeParameter[] { (new[] { ResultType.List }, "subject"), (new[] { ResultType.Function }, "callback") };
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] { (new[] { ResultType.List }, "subject"), (new[] { ResultType.Function }, "callback") };
 
     protected override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
     {

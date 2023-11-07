@@ -8,7 +8,7 @@ public class CloneFunction : NativeFunction
 {
     public const string Identifier = "clone";
 
-    protected override IEnumerable<NativeParameter> NativeParameters => new NativeParameter[] { (Enum.GetValues<ResultType>(), "subject") };
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] { (Enum.GetValues<ResultType>(), "subject") };
 
     protected override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
     {

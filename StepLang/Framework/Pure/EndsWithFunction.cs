@@ -8,7 +8,7 @@ public class EndsWithFunction : NativeFunction
 {
     public const string Identifier = "endsWith";
 
-    protected override IEnumerable<NativeParameter> NativeParameters => new NativeParameter[] { (new[] { ResultType.Str }, "subject"), (new[] { ResultType.Str }, "suffix") };
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] { (new[] { ResultType.Str }, "subject"), (new[] { ResultType.Str }, "suffix") };
 
     protected override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
     {

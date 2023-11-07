@@ -7,7 +7,7 @@ public class DoShiftFunction : GenericFunction<ListResult>
 {
     public const string Identifier = "doShift";
 
-    protected override IEnumerable<NativeParameter> NativeParameters => new NativeParameter[]
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
         new(OnlyList, "subject"),
     };

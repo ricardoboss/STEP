@@ -4,18 +4,13 @@ using StepLang.Parsing;
 
 namespace StepLang.Framework.Pure;
 
-public class CosFunction : NativeFunction
+public class CosFunction : GenericFunction<NumberResult>
 {
     public const string Identifier = "cos";
 
-    protected override IEnumerable<NativeParameter> NativeParameters => new NativeParameter[] { (new[] { ResultType.Number }, "x") };
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] { new(OnlyNumber, "x") };
 
-    protected override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
-    {
-        CheckArgumentCount(arguments);
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyNumber;
 
-        var number = await arguments.Single().EvaluateAsync(interpreter, r => r.ExpectNumber().Value, cancellationToken);
-
-        return new NumberResult(Math.Cos(number));
-    }
+    protected override NumberResult Invoke(Interpreter interpreter, NumberResult argument1) => Math.Cos(argument1);
 }
