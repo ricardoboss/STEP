@@ -42,33 +42,33 @@ public partial class Interpreter
         switch (variable.Value)
         {
             case ListResult { Value: var values } when indexResult is NumberResult index:
-            {
-                if (index < 0 || index >= values.Count)
-                    throw new IndexOutOfBoundsException(index, values.Count);
+                {
+                    if (index < 0 || index >= values.Count)
+                        throw new IndexOutOfBoundsException(index, values.Count);
 
-                return values[index];
-            }
+                    return values[index];
+                }
             case MapResult { Value: var pairs } when indexResult is StringResult { Value: var key }:
                 return pairs[key];
             case StringResult { Value: var str } when indexResult is NumberResult index:
-            {
-                var grapheme = str.GraphemeAt(index);
-                if (grapheme == null)
-                    throw new IndexOutOfBoundsException(index, str.GraphemeLength());
-
-                return new StringResult(grapheme);
-            }
-            default:
-            {
-                var indexRepresentation = indexResult switch
                 {
-                    StringResult stringResult => stringResult.Value,
-                    NumberResult numberResult => numberResult.Value.ToString(CultureInfo.InvariantCulture),
-                    _ => indexResult.ToString(),
-                };
+                    var grapheme = str.GraphemeAt(index);
+                    if (grapheme == null)
+                        throw new IndexOutOfBoundsException(index, str.GraphemeLength());
 
-                throw new InvalidIndexOperatorException(expressionNode.Identifier.Location, indexRepresentation, variable.Value.ResultType, "access");
-            }
+                    return new StringResult(grapheme);
+                }
+            default:
+                {
+                    var indexRepresentation = indexResult switch
+                    {
+                        StringResult stringResult => stringResult.Value,
+                        NumberResult numberResult => numberResult.Value.ToString(CultureInfo.InvariantCulture),
+                        _ => indexResult.ToString(),
+                    };
+
+                    throw new InvalidIndexOperatorException(expressionNode.Identifier.Location, indexRepresentation, variable.Value.ResultType, "access");
+                }
         }
     }
 }
