@@ -8,6 +8,10 @@ public interface IVariableDeclarationNode : IEvaluatableNode<IVariableDeclaratio
 {
     IEnumerable<Token> Types { get; }
 
+    IEnumerable<ResultType> ResultTypes => Types
+        .Where(t => t.Type == TokenType.TypeName)
+        .Select(t => Expressions.Results.ResultTypes.FromTypeName(t.Value));
+
     Token Identifier { get; }
 
     bool HasValue { get; }
