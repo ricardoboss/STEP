@@ -34,12 +34,12 @@ public partial class Interpreter
         }
     }
 
-    public ExpressionResult Evaluate(IdentifierIndexAccessExpressionNode expressionNode)
+    public ExpressionResult Evaluate(IndexAccessExpressionNode expressionNode)
     {
-        var variable = CurrentScope.GetVariable(expressionNode.Identifier);
+        var valueResult = expressionNode.Left.EvaluateUsing(this);
         var indexResult = expressionNode.Index.EvaluateUsing(this);
 
-        switch (variable.Value)
+        switch (valueResult)
         {
             case ListResult { Value: var values } when indexResult is NumberResult index:
                 {
@@ -67,7 +67,7 @@ public partial class Interpreter
                         _ => indexResult.ToString(),
                     };
 
-                    throw new InvalidIndexOperatorException(expressionNode.Identifier.Location, indexRepresentation, variable.Value.ResultType, "access");
+                    throw new InvalidIndexOperatorException(expressionNode.Location, indexRepresentation, valueResult.ResultType, "access");
                 }
         }
     }

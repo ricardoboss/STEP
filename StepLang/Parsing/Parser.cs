@@ -405,6 +405,17 @@ public class Parser
     {
         var left = ParsePrimaryExpression();
 
+        while (tokens.PeekType() is TokenType.OpeningSquareBracket)
+        {
+            _ = tokens.Dequeue(TokenType.OpeningSquareBracket);
+
+            var index = ParseExpression();
+
+            _ = tokens.Dequeue(TokenType.ClosingSquareBracket);
+
+            left = new IndexAccessExpressionNode(left, index);
+        }
+
         while (tokens.PeekType().IsOperator())
         {
             var operatorTokens = PeekContinuousOperators();
@@ -620,7 +631,6 @@ public class Parser
                     return nextType switch
                     {
                         TokenType.OpeningParentheses => ParseFunctionCallExpression(),
-                        TokenType.OpeningSquareBracket => ParseIndexAccessExpression(),
                         _ => ParseIdentifierExpression(),
                     };
                 }
@@ -710,19 +720,6 @@ public class Parser
         return new IdentifierExpressionNode(identifier);
     }
 
-    private ExpressionNode ParseIndexAccessExpression()
-    {
-        var identifier = tokens.Dequeue(TokenType.Identifier);
-
-        _ = tokens.Dequeue(TokenType.OpeningSquareBracket);
-
-        var index = ParseExpression();
-
-        _ = tokens.Dequeue(TokenType.ClosingSquareBracket);
-
-        return new IdentifierIndexAccessExpressionNode(identifier, index);
-    }
-
     private CallExpressionNode ParseFunctionCallExpression()
     {
         var identifier = tokens.Dequeue(TokenType.Identifier);
@@ -791,6 +788,8 @@ public class Parser
 
             if (tokens.PeekType() is TokenType.CommaSymbol)
                 _ = tokens.Dequeue();
+            else
+                break;
         }
 
         return arguments;

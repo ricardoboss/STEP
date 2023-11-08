@@ -17,6 +17,6 @@ public class StartsWithFunction : GenericFunction<StringResult, StringResult>
 
     protected override BoolResult Invoke(Interpreter interpreter, StringResult argument1, StringResult argument2)
     {
-        return argument1.Value.GraphemeStartsWith(argument2);
+        return argument1.Value.GraphemeStartsWith(argument2.Value);
     }
 }

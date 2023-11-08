@@ -34,7 +34,6 @@ public class StringResult : ComparableValueExpressionResult<string>
     public override string ToString() => $"\"{Value}\"";
 
     public static implicit operator StringResult(string value) => new(value);
-    public static implicit operator string(StringResult result) => result.Value;
 
     public static StringResult operator +(StringResult left, StringResult right) => new(left.Value + right.Value);
 
