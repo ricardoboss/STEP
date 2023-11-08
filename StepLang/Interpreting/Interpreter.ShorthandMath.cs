@@ -24,14 +24,4 @@ public partial class Interpreter
 
         variable.Assign(statementNode.Identifier.Location, number - 1);
     }
-
-    public void Execute(ShorthandMathOperationExpressionStatementNode statementNode)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Execute(ShorthandMathOperationStatementNode statementNode)
-    {
-        throw new NotImplementedException();
-    }
 }

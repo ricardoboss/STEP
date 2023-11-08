@@ -218,16 +218,6 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             statementNode.Expression.EvaluateUsing(expressionTreeBuilder);
         }
 
-        public void Execute(ShorthandMathOperationExpressionStatementNode statementNode)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Execute(ShorthandMathOperationStatementNode statementNode)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Execute(VariableAssignmentNode statementNode)
         {
             var node = root.AddNode("VariableAssignment:");
@@ -262,7 +252,10 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
         public void Execute(DecrementStatementNode statementNode)
         {
-            throw new NotImplementedException();
+            var node = root.AddNode("DecrementStatement:");
+
+            _ = node.AddNode("Operator: --");
+            _ = node.AddNode("Identifier: " + statementNode.Identifier.ToString().EscapeMarkup());
         }
 
         public void Execute(VariableDeclarationStatement statementNode)
