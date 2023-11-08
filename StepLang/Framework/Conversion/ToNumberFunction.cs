@@ -12,7 +12,7 @@ public class ToNumberFunction : GenericFunction<StringResult, NumberResult>
 
     protected override NativeParameter[] NativeParameters { get; } = {
         new(OnlyString, "value"),
-        new(OnlyNumber, "radix", DefaultValue: 10),
+        new(OnlyNumber, "radix", DefaultValue: LiteralExpressionNode.FromInt32(10)),
     };
 
     protected override IEnumerable<ResultType> ReturnTypes => new[] { ResultType.Number, ResultType.Null };

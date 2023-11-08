@@ -17,15 +17,15 @@ public class BoolResult : ValueExpressionResult<bool>
 
     protected override bool EqualsInternal(ExpressionResult other) => other is BoolResult boolResult && Value == boolResult.Value;
 
-    public override BoolResult DeepClone() => new(Value);
+    public override BoolResult DeepClone() => Value ? True : False;
 
-    public static implicit operator BoolResult(bool value) => new(value);
+    public static implicit operator BoolResult(bool value) => value ? True : False;
 
     public static implicit operator BoolResult(string value) => bool.Parse(value);
 
     public static implicit operator bool(BoolResult result) => result.Value;
 
-    public static BoolResult operator !(BoolResult result) => new(!result.Value);
+    public static BoolResult operator !(BoolResult result) => !result.Value;
 
     public static BoolResult operator ==(BoolResult left, BoolResult right) => new(left.Value == right.Value);
 

@@ -1,21 +1,22 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
-using StepLang.Parsing;
 
 namespace StepLang.Framework.Other;
 
-public class FileDeleteFunction : NativeFunction
+public class FileDeleteFunction : GenericFunction<StringResult>
 {
     public const string Identifier = "fileDelete";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] { (new[] { ResultType.Str }, "path") };
-
-    /// <inheritdoc />
-    public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
-        CheckArgumentCount(arguments);
+        new(OnlyString, "path"),
+    };
 
-        var path = await arguments.Single().EvaluateAsync(interpreter, r => r.ExpectString().Value, cancellationToken);
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyBool;
+
+    protected override BoolResult Invoke(Interpreter interpreter, StringResult argument1)
+    {
+        var path = argument1.Value;
 
         try
         {
@@ -23,9 +24,9 @@ public class FileDeleteFunction : NativeFunction
         }
         catch (IOException)
         {
-            return BoolResult.False;
+            return false;
         }
 
-        return BoolResult.True;
+        return true;
     }
 }

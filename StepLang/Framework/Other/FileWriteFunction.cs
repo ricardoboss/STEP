@@ -5,42 +5,41 @@ using StepLang.Parsing;
 
 namespace StepLang.Framework.Other;
 
-public class FileWriteFunction : NativeFunction
+public class FileWriteFunction : GenericFunction<StringResult, StringResult, BoolResult>
 {
     public const string Identifier = "fileWrite";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] { (new[] { ResultType.Str }, "path"), (new[] { ResultType.Str }, "content"), (new[] { ResultType.Bool }, "append") };
-
-    /// <inheritdoc />
-    public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
-        CheckArgumentCount(arguments, 2, 3);
+        new(OnlyString, "path"),
+        new(OnlyString, "content"),
+        new(OnlyBool, "append", DefaultValue: LiteralExpressionNode.FromBoolean(false)),
+    };
 
-        var path = await arguments[0].EvaluateAsync(interpreter, r => r.ExpectString().Value, cancellationToken);
-        var content = await arguments[1].EvaluateAsync(interpreter, r => r.ExpectString().Value, cancellationToken);
-
-        var append = false;
-        if (arguments.Count >= 3)
-            append = await arguments[2].EvaluateAsync(interpreter, r => r.ExpectBool().Value, cancellationToken);
+    protected override BoolResult Invoke(Interpreter interpreter, StringResult argument1, StringResult argument2, BoolResult argument3)
+    {
+        var path = argument1.Value;
+        var content = argument2.Value;
+        var append = argument3.Value;
 
         try
         {
             if (append)
-                await File.AppendAllTextAsync(path, content, Encoding.ASCII, cancellationToken);
+                File.AppendAllText(path, content, Encoding.ASCII);
             else
             {
                 var directory = Path.GetDirectoryName(path);
                 if (!string.IsNullOrEmpty(directory))
                     Directory.CreateDirectory(directory);
 
-                await File.WriteAllTextAsync(path, content, Encoding.ASCII, cancellationToken);
+                File.WriteAllText(path, content, Encoding.ASCII);
             }
         }
         catch (Exception e) when (e is IOException or SystemException)
         {
-            return BoolResult.False;
+            return false;
         }
 
-        return BoolResult.True;
+        return true;
     }
 }

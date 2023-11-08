@@ -4,50 +4,55 @@ using StepLang.Expressions.Results;
 using StepLang.Framework.Conversion;
 using StepLang.Interpreting;
 using StepLang.Parsing;
+using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Other;
 
-public class FetchFunction : NativeFunction
+public class FetchFunction : GenericFunction<StringResult, MapResult>
 {
     public const string Identifier = "fetch";
 
     protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-        { (new [] { ResultType.Str }, "url"), (new [] { ResultType.Map }, "options") };
-
-    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter,
-        IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
     {
-        CheckArgumentCount(arguments, 1, 2);
+        new(OnlyString, "url"),
+        new(OnlyMap, "options", new MapExpressionNode(new(TokenType.OpeningCurlyBracket, "{"), new Dictionary<Token, ExpressionNode>())),
+    };
 
-        var evaluatedArgs =
-            await arguments.EvaluateAsync(interpreter, cancellationToken).ToListAsync(cancellationToken);
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = NullableString;
 
-        var url = evaluatedArgs[0].ExpectString().Value;
-        var options = (evaluatedArgs.Count > 1 ? evaluatedArgs[1].ExpectMap() : MapResult.Empty).Value;
+    protected override ExpressionResult Invoke(Interpreter interpreter, StringResult argument1, MapResult argument2)
+    {
+        var url = argument1.Value;
+        var options = argument2.Value;
 
-        using var response = await FetchAsync(url, options, cancellationToken);
+        using var response = Fetch(url, options);
         if (!response.IsSuccessStatusCode)
             return NullResult.Instance;
 
-        var body = await response.Content.ReadAsStringAsync(cancellationToken);
+        var body = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
         return new StringResult(body);
     }
 
-    private static async Task<HttpResponseMessage> FetchAsync(string url, IDictionary<string, ExpressionResult> options,
-        CancellationToken cancellationToken)
+    private static HttpResponseMessage Fetch(string url, IDictionary<string, ExpressionResult> options)
     {
         using var client = new HttpClient();
 
-        var method = options.TryGetValue("method", out var methodResult) ? methodResult.ExpectString().Value : "GET";
+        var method = "GET";
+        if (options.TryGetValue("method", out var methodResult) && methodResult is StringResult { Value: var methodValue })
+            method = methodValue;
 
         using var request = new HttpRequestMessage(new(method), url);
 
-        if (options.TryGetValue("headers", out var headersResult))
+        if (options.TryGetValue("headers", out var headersResult) && headersResult is MapResult { Value: var headers })
         {
-            var headers = headersResult.ExpectMap().Value;
             foreach (var (key, value) in headers)
-                request.Headers.Add(key, value.ExpectString().Value);
+            {
+                if (value is StringResult { Value: var headerValue })
+                    request.Headers.Add(key, headerValue);
+                else
+                    throw new InvalidResultTypeException(value, ResultType.Str);
+            }
         }
 
         if (options.TryGetValue("body", out var bodyResult))
@@ -57,12 +62,9 @@ public class FetchFunction : NativeFunction
             request.Content = new StringContent(json, Encoding.UTF8, "application/json");
         }
 
-        if (options.TryGetValue("timeout", out var timeoutResult))
-        {
-            var timeout = timeoutResult.ExpectNumber().Value;
+        if (options.TryGetValue("timeout", out var timeoutResult) && timeoutResult is NumberResult { Value: var timeout })
             client.Timeout = TimeSpan.FromMilliseconds(timeout);
-        }
 
-        return await client.SendAsync(request, cancellationToken);
+        return client.Send(request);
     }
 }

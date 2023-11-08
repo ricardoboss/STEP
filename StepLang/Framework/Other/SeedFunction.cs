@@ -1,23 +1,22 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
-using StepLang.Parsing;
 
 namespace StepLang.Framework.Other;
 
-public class SeedFunction : NativeFunction
+public class SeedFunction : GenericFunction<ExpressionResult>
 {
     public const string Identifier = "seed";
 
-    /// <inheritdoc />
-    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new (ResultType[] types, string identifier)[] { (new[] { ResultType.Number }, "seed") };
-
-    public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
-        CheckArgumentCount(arguments, 0, 1);
+        new(NullableNumber, "seed"),
+    };
 
+    protected override ExpressionResult Invoke(Interpreter interpreter, ExpressionResult argument1)
+    {
         int seed;
-        if (arguments.Count == 1)
-            seed = await arguments.Single().EvaluateAsync(interpreter, r => r.ExpectInteger().RoundedIntValue, cancellationToken);
+        if (argument1 is NumberResult numberResult)
+            seed = numberResult;
         else
             seed = (int)DateTime.Now.Ticks;
 

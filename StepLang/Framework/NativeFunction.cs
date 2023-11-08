@@ -16,7 +16,9 @@ public abstract class NativeFunction : FunctionDefinition
     protected static IReadOnlyList<ResultType> AnyType => Enum.GetValues<ResultType>();
     protected static IReadOnlyList<ResultType> AnyValueType => Enum.GetValues<ResultType>().Except(new[] { ResultType.Void }).ToList();
     protected static IReadOnlyList<ResultType> OnlyNumber => new[] { ResultType.Number };
+    protected static IReadOnlyList<ResultType> NullableNumber => new[] { ResultType.Null, ResultType.Number };
     protected static IReadOnlyList<ResultType> OnlyString => new[] { ResultType.Str };
+    protected static IReadOnlyList<ResultType> NullableString => new[] { ResultType.Null, ResultType.Str };
     protected static IReadOnlyList<ResultType> OnlyList => new[] { ResultType.List };
     protected static IReadOnlyList<ResultType> OnlyBool => new[] { ResultType.Bool };
     protected static IReadOnlyList<ResultType> OnlyMap => new[] { ResultType.Map };
@@ -60,5 +62,5 @@ public abstract class NativeFunction : FunctionDefinition
 
     protected abstract IEnumerable<NativeParameter> NativeParameters { get; }
 
-    protected record NativeParameter(IReadOnlyList<ResultType> Types, string Identifier, LiteralExpressionNode? DefaultValue = null);
+    protected record NativeParameter(IReadOnlyList<ResultType> Types, string Identifier, ExpressionNode? DefaultValue = null);
 }
