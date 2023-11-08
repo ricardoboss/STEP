@@ -10,3 +10,7 @@ Even numbers from 1 to 10:
 8 is even
 10 is even
 True
+with default parameter:
+1
+with default parameter but another value:
+3
