@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using StepLang.Tokenizing;
 
 namespace StepLang.Parsing;
@@ -90,8 +91,7 @@ public class Parser
                 if (next.Type.IsShorthandMathematicalOperation() && nextNextType == next.Type)
                     return ParseShorthandMathOperation();
 
-                if (next.Type.IsShorthandMathematicalOperationWithAssignment() &&
-                    nextNextType == TokenType.EqualsSymbol)
+                if (next.Type.IsShorthandMathematicalOperationWithAssignment())
                     return ParseShorthandMathOperationExpression();
 
                 throw new UnexpectedTokenException(nextNext, next.Type, TokenType.EqualsSymbol);
@@ -167,22 +167,37 @@ public class Parser
     {
         var identifier = tokens.Dequeue(TokenType.Identifier);
         var identifierExpression = new IdentifierExpressionNode(identifier);
-        var operation = tokens.Dequeue(TokenTypes.ShorthandMathematicalOperationsWithAssignment);
-        _ = tokens.Dequeue(TokenType.EqualsSymbol);
-        var expression = ParseExpression();
 
-        return operation.Type switch
+        var operatorTokens = PeekContinuousOperators(TokenTypes.ShorthandMathematicalOperationsWithAssignment);
+        Debug.Assert(operatorTokens.Count > 0);
+
+        _ = tokens.Dequeue(operatorTokens.Count);
+        _ = tokens.Dequeue(TokenType.EqualsSymbol);
+
+        var expression = ParseExpression();
+        var firstOperator = operatorTokens[0];
+
+        return firstOperator.Type switch
         {
-            TokenType.PlusSymbol => new(identifier, new AddExpressionNode(operation.Location, identifierExpression, expression)),
-            TokenType.MinusSymbol => new(identifier, new SubtractExpressionNode(operation.Location, identifierExpression, expression)),
-            TokenType.AsteriskSymbol => new(identifier, new MultiplyExpressionNode(operation.Location, identifierExpression, expression)),
-            TokenType.SlashSymbol => new(identifier, new DivideExpressionNode(operation.Location, identifierExpression, expression)),
-            TokenType.PercentSymbol => new(identifier, new ModuloExpressionNode(operation.Location, identifierExpression, expression)),
-            TokenType.PipeSymbol => new(identifier, new BitwiseOrExpressionNode(operation.Location, identifierExpression, expression)),
-            TokenType.AmpersandSymbol => new(identifier, new BitwiseAndExpressionNode(operation.Location, identifierExpression, expression)),
-            TokenType.HatSymbol => new(identifier, new BitwiseXorExpressionNode(operation.Location, identifierExpression, expression)),
-            TokenType.QuestionMarkSymbol => new(identifier, new CoalesceExpressionNode(operation.Location, identifierExpression, expression)),
-            _ => throw new UnexpectedTokenException(operation, TokenType.PlusSymbol, TokenType.MinusSymbol, TokenType.AsteriskSymbol, TokenType.SlashSymbol, TokenType.PercentSymbol, TokenType.PipeSymbol, TokenType.AmpersandSymbol, TokenType.HatSymbol, TokenType.QuestionMarkSymbol),
+            TokenType.PlusSymbol => new(identifier, new AddExpressionNode(firstOperator.Location, identifierExpression, expression)),
+            TokenType.MinusSymbol => new(identifier, new SubtractExpressionNode(firstOperator.Location, identifierExpression, expression)),
+            TokenType.AsteriskSymbol => operatorTokens.Count switch
+            {
+                1 => new(identifier, new MultiplyExpressionNode(firstOperator.Location, identifierExpression, expression)),
+                2 => operatorTokens[1].Type switch
+                {
+                    TokenType.AsteriskSymbol => new(identifier, new PowerExpressionNode(firstOperator.Location, identifierExpression, expression)),
+                    _ => throw new UnexpectedTokenException(operatorTokens[1], TokenType.AsteriskSymbol),
+                },
+                _ => throw new UnexpectedEndOfTokensException(firstOperator.Location, "Expected an operator"),
+            },
+            TokenType.SlashSymbol => new(identifier, new DivideExpressionNode(firstOperator.Location, identifierExpression, expression)),
+            TokenType.PercentSymbol => new(identifier, new ModuloExpressionNode(firstOperator.Location, identifierExpression, expression)),
+            TokenType.PipeSymbol => new(identifier, new BitwiseOrExpressionNode(firstOperator.Location, identifierExpression, expression)),
+            TokenType.AmpersandSymbol => new(identifier, new BitwiseAndExpressionNode(firstOperator.Location, identifierExpression, expression)),
+            TokenType.HatSymbol => new(identifier, new BitwiseXorExpressionNode(firstOperator.Location, identifierExpression, expression)),
+            TokenType.QuestionMarkSymbol => new(identifier, new CoalesceExpressionNode(firstOperator.Location, identifierExpression, expression)),
+            _ => throw new UnexpectedTokenException(firstOperator, TokenType.PlusSymbol, TokenType.MinusSymbol, TokenType.AsteriskSymbol, TokenType.SlashSymbol, TokenType.PercentSymbol, TokenType.PipeSymbol, TokenType.AmpersandSymbol, TokenType.HatSymbol, TokenType.QuestionMarkSymbol),
         };
     }
 
@@ -421,7 +436,7 @@ public class Parser
 
         while (tokens.PeekType().IsOperator())
         {
-            var operatorTokens = PeekContinuousOperators();
+            var operatorTokens = PeekContinuousOperators(TokenTypes.Operators);
             var binaryOperator = ParseExpressionOperator(operatorTokens);
 
             var precedence = binaryOperator.Precedence();
@@ -469,7 +484,7 @@ public class Parser
         };
     }
 
-    private List<Token> PeekContinuousOperators()
+    private List<Token> PeekContinuousOperators(TokenType[] allowedOperators)
     {
         // whitespaces have meaning in operators
         tokens.IgnoreWhitespace = false;
@@ -479,12 +494,12 @@ public class Parser
         Token next;
         while ((next = tokens.Peek(offset)).Type is not TokenType.EndOfFile)
         {
-            if (next.Type.IsOperator())
+            if (allowedOperators.Contains(next.Type))
                 operators.Add(tokens.Peek(offset++));
             else if (operators.Count == 0)
             {
                 if (next.Type is not TokenType.Whitespace)
-                    throw new UnexpectedTokenException(next, TokenTypes.Operators);
+                    throw new UnexpectedTokenException(next, allowedOperators);
 
                 offset++; // skip leading whitespace
             }

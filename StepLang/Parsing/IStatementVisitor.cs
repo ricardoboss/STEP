@@ -17,8 +17,6 @@ public interface IStatementVisitor
     void Execute(IfElseStatementNode statementNode);
     void Execute(IfStatementNode statementNode);
     void Execute(ReturnExpressionStatementNode statementNode);
-    void Execute(ShorthandMathOperationExpressionStatementNode statementNode);
-    void Execute(ShorthandMathOperationStatementNode statementNode);
     void Execute(VariableAssignmentNode statementNode);
     void Execute(WhileStatementNode statementNode);
     void Execute(IncrementStatementNode statementNode);
