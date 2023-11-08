@@ -21,6 +21,10 @@ function printEvenNumbers = (number limit) {
 	}
 }
 
+function add = (number a, number b = 0) {
+	return a + b
+}
+
 println("Inline function definition and call:")
 println((number a, number b) {
 	return a + b
@@ -37,3 +41,9 @@ println("Even numbers from 1 to 10:")
 printEvenNumbers(10)
 
 println(toString(isEven(12)))
+
+println("with default parameter:")
+println(add(1))
+
+println("with default parameter but another value:")
+println(add(1, 2))
