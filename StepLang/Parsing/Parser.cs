@@ -306,13 +306,16 @@ public class Parser
         return new(breakToken);
     }
 
-    private ReturnStatementNode ParseReturnStatement()
+    private StatementNode ParseReturnStatement()
     {
         var returnKeyword = tokens.Dequeue(TokenType.ReturnKeyword);
 
+        if (tokens.PeekType() is TokenType.NewLine)
+            return new ReturnStatementNode(returnKeyword);
+
         var expression = ParseExpression();
 
-        return new(returnKeyword, expression);
+        return new ReturnExpressionStatementNode(returnKeyword, expression);
     }
 
     private WhileStatementNode ParseWhileStatement()

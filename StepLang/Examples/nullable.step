@@ -1,0 +1,18 @@
+string? b = null
+number? c = null
+bool? d = null
+
+b = "hello"
+c = 123
+d = true
+
+function maybePrint = (string? maybeString) {
+	if (maybeString == null) {
+		return
+	}
+
+	println(maybeString)
+}
+
+maybePrint(null)
+maybePrint("hello")
