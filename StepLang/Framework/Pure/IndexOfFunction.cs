@@ -20,7 +20,7 @@ public class IndexOfFunction : GenericFunction<ExpressionResult, ExpressionResul
 
     protected override ExpressionResult Invoke(Interpreter interpreter, ExpressionResult argument1, ExpressionResult argument2)
     {
-        return GetResult( argument1, argument2);
+        return GetResult(argument1, argument2);
     }
 
     internal static ExpressionResult GetResult(ExpressionResult subject, ExpressionResult value)

@@ -64,7 +64,7 @@ public abstract class ExpressionResult : IEquatable<ExpressionResult>
             BoolResult { Value: true } => true,
             StringResult { Value: "1" } => true,
             StringResult { Value: var strValue } when bool.TryParse(strValue, out var value) => value,
-            NumberResult { Value: > 0} => true,
+            NumberResult { Value: > 0 } => true,
             _ => false,
         };
     }
