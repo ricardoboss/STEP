@@ -207,6 +207,9 @@ public class Tokenizer
         if (bool.TryParse(tokenValue, out _))
             return FinalizeToken(TokenType.LiteralBoolean);
 
+        if (tokenValue.ToUpperInvariant() == "NULL")
+            return FinalizeToken(TokenType.LiteralNull);
+
         if (!allowIdentifier)
             return null;
 

@@ -220,7 +220,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
                     parent.AddNode("ContinueStatement: " + csn.Token.ToString().EscapeMarkup());
                     break;
                 }
-            case ReturnStatementNode rsn:
+            case ReturnExpressionStatementNode rsn:
                 {
                     var treeNode = parent.AddNode("ReturnStatement:");
                     RenderNode(treeNode, rsn.Expression);

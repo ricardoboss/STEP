@@ -5,24 +5,24 @@ namespace StepLang.Interpreting;
 
 public partial class Interpreter
 {
-    public void Execute(IncrementStatementNode incrementStatementNode)
+    public void Execute(IncrementStatementNode statementNode)
     {
-        var variable = CurrentScope.GetVariable(incrementStatementNode.Identifier);
+        var variable = CurrentScope.GetVariable(statementNode.Identifier);
         var value = variable.Value;
         if (value is not NumberResult number)
             throw new IncompatibleExpressionOperandsException(value, "increment");
 
-        variable.Assign(incrementStatementNode.Identifier.Location, number + 1);
+        variable.Assign(statementNode.Identifier.Location, number + 1);
     }
 
-    public void Execute(DecrementStatementNode incrementStatementNode)
+    public void Execute(DecrementStatementNode statementNode)
     {
-        var variable = CurrentScope.GetVariable(incrementStatementNode.Identifier);
+        var variable = CurrentScope.GetVariable(statementNode.Identifier);
         var value = variable.Value;
         if (value is not NumberResult number)
             throw new IncompatibleExpressionOperandsException(value, "decrement");
 
-        variable.Assign(incrementStatementNode.Identifier.Location, number - 1);
+        variable.Assign(statementNode.Identifier.Location, number - 1);
     }
 
     public void Execute(ShorthandMathOperationExpressionStatementNode statementNode)
