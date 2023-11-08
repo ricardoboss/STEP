@@ -1,25 +1,26 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
-using StepLang.Parsing;
 
 namespace StepLang.Framework.Pure;
 
-public class ReversedFunction : NativeFunction
+public class ReversedFunction : GenericFunction<ExpressionResult>
 {
     public const string Identifier = "reversed";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] { (new[] { ResultType.List, ResultType.Str }, "subject") };
-
-    protected override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
-        CheckArgumentCount(arguments);
+        new(new[] { ResultType.List, ResultType.Str }, "subject"),
+    };
 
-        var subjectResult = await arguments.Single().EvaluateAsync(interpreter, cancellationToken);
-        return subjectResult.ResultType switch
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = new[] { ResultType.List, ResultType.Str };
+
+    protected override ExpressionResult Invoke(Interpreter interpreter, ExpressionResult argument1)
+    {
+        return argument1 switch
         {
-            ResultType.List => new ListResult(subjectResult.ExpectList().DeepClone().Value.Reverse().ToList()),
-            ResultType.Str => new StringResult(subjectResult.ExpectString().Value.ReverseGraphemes()),
-            _ => throw new InvalidResultTypeException(subjectResult.ResultType, ResultType.List, ResultType.Str),
+            ListResult list => new ListResult(list.DeepClone().Value.Reverse().ToList()),
+            StringResult str => new StringResult(str.Value.ReverseGraphemes()),
+            _ => throw new InvalidResultTypeException(argument1, ResultType.List, ResultType.Str),
         };
     }
 }

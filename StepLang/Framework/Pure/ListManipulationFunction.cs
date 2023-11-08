@@ -5,45 +5,42 @@ using StepLang.Parsing;
 
 namespace StepLang.Framework.Pure;
 
-public abstract class ListManipulationFunction : NativeFunction
+public abstract class ListManipulationFunction : GenericFunction<ListResult, FunctionResult>
 {
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] { (new[] { ResultType.List }, "subject"), (new[] { ResultType.Function }, "callback") };
-
-    protected override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
-        CheckArgumentCount(arguments);
+        new(OnlyList, "subject"),
+        new(OnlyFunction, "callback"),
+    };
 
-        var (subjectExpression, predicateExpression) = (arguments[0], arguments[1]);
+    protected override ExpressionResult Invoke(Interpreter interpreter, ListResult argument1, FunctionResult argument2)
+    {
+        var list = argument1.DeepClone().Value;
+        var callback = argument2.Value;
 
-        var subjectResult = await subjectExpression.EvaluateAsync(interpreter, r => r.ExpectList(), cancellationToken);
-        var callback = await predicateExpression.EvaluateAsync(interpreter, r => r.ExpectFunction().Value, cancellationToken);
-
-        var list = subjectResult.DeepClone().Value;
         var args = PrepareArgsForCallback(list, callback);
-
-        var result = await EvaluateListManipulationAsync(interpreter, args, callback, cancellationToken)
-            .ToListAsync(cancellationToken);
+        var result = EvaluateListManipulation(interpreter, args, callback).ToList();
 
         return new ListResult(result);
     }
 
-    protected virtual IAsyncEnumerable<LiteralExpression[]> PrepareArgsForCallback(IEnumerable<ExpressionResult> list, FunctionDefinition callback)
+    protected virtual IEnumerable<ExpressionNode[]> PrepareArgsForCallback(IEnumerable<ExpressionResult> list, FunctionDefinition callback)
     {
         var callbackParameters = callback.Parameters.ToList();
-        Func<ExpressionResult, int, LiteralExpression[]> argsConverter;
+        Func<ExpressionResult, int, ExpressionNode[]> argsConverter;
 
         switch (callbackParameters.Count)
         {
             case < 1 or > 2:
                 throw new InvalidArgumentTypeException(null, $"Callback function must have 1 or 2 parameters, but has {callbackParameters.Count}");
             case 2:
-                if (!callbackParameters[1].types.Contains(ResultType.Number))
-                    throw new InvalidArgumentTypeException(null, $"Second parameter of callback function must accept numbers, but is {string.Join("|", callbackParameters[1].types.Select(t => t.ToTypeName()))}");
+                if (!callbackParameters[1].ResultTypes.Contains(ResultType.Number))
+                    throw new InvalidArgumentTypeException(null, $"Second parameter of callback function must accept numbers, but is {string.Join("|", callbackParameters[1].ResultTypes.Select(t => t.ToTypeName()))}");
 
                 argsConverter = (element, index) =>
                 {
-                    var elementExpression = element.ToLiteralExpression();
-                    var indexExpression = LiteralExpression.Number(index);
+                    var elementExpression = element.ToExpressionNode();
+                    var indexExpression = (LiteralExpressionNode)index;
 
                     return new[] { elementExpression, indexExpression };
                 };
@@ -52,14 +49,14 @@ public abstract class ListManipulationFunction : NativeFunction
             default:
                 argsConverter = (element, _) =>
                 {
-                    return new[] { element.ToLiteralExpression() };
+                    return new[] { element.ToExpressionNode() };
                 };
 
                 break;
         }
 
-        return list.Select(argsConverter).ToAsyncEnumerable();
+        return list.Select(argsConverter);
     }
 
-    protected abstract IAsyncEnumerable<ExpressionResult> EvaluateListManipulationAsync(Interpreter interpreter, IAsyncEnumerable<LiteralExpression[]> arguments, FunctionDefinition callback, CancellationToken cancellationToken = default);
+    protected abstract IEnumerable<ExpressionResult> EvaluateListManipulation(Interpreter interpreter, IEnumerable<ExpressionNode[]> arguments, FunctionDefinition callback);
 }

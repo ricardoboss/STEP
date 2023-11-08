@@ -22,6 +22,7 @@ public abstract class NativeFunction : FunctionDefinition
     protected static IReadOnlyList<ResultType> OnlyList => new[] { ResultType.List };
     protected static IReadOnlyList<ResultType> OnlyBool => new[] { ResultType.Bool };
     protected static IReadOnlyList<ResultType> OnlyMap => new[] { ResultType.Map };
+    protected static IReadOnlyList<ResultType> OnlyFunction => new[] { ResultType.Function };
 
     protected void CheckArgumentCount(IReadOnlyList<ExpressionNode> arguments)
     {

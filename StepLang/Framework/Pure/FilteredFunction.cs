@@ -1,6 +1,7 @@
 using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
+using StepLang.Parsing;
 
 namespace StepLang.Framework.Pure;
 
@@ -8,15 +9,15 @@ public class FilteredFunction : ListManipulationFunction
 {
     public const string Identifier = "filtered";
 
-    protected override IAsyncEnumerable<ExpressionResult> EvaluateListManipulationAsync(Interpreter interpreter, IAsyncEnumerable<LiteralExpression[]> arguments, FunctionDefinition callback, CancellationToken cancellationToken = default)
+    protected override IEnumerable<ExpressionResult> EvaluateListManipulation(Interpreter interpreter, IEnumerable<ExpressionNode[]> arguments, FunctionDefinition callback)
     {
-        return arguments
-            .WhereAwait(async args =>
-            {
-                var result = await callback.EvaluateAsync(interpreter, args, cancellationToken);
+        return arguments.Where(args =>
+        {
+            var result = callback.Invoke(interpreter, args);
+            if (result is not BoolResult boolResult)
+                throw new InvalidResultTypeException(result, ResultType.Bool);
 
-                return result.ExpectBool().Value;
-            })
-            .Select(args => args[0].Result);
+            return boolResult;
+        }).Select(args => args[0].EvaluateUsing(interpreter));
     }
 }

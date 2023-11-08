@@ -1,28 +1,23 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
-using StepLang.Parsing;
 
 namespace StepLang.Framework.Pure;
 
-public class SubstringFunction : NativeFunction
+public class SubstringFunction : GenericFunction<StringResult, NumberResult, NumberResult>
 {
     public const string Identifier = "substring";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] { (new[] { ResultType.Str }, "subject"), (new[] { ResultType.Number }, "start"), (new[] { ResultType.Number }, "length") };
-
-    /// <inheritdoc />
-    protected override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
-        CheckArgumentCount(arguments);
+        new(OnlyString, "subject"),
+        new(OnlyNumber, "start"),
+        new(OnlyNumber, "length"),
+    };
 
-        var (subjectExp, startExp, lengthExp) = (arguments[0], arguments[1], arguments[2]);
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyString;
 
-        var subject = await subjectExp.EvaluateAsync(interpreter, r => r.ExpectString().Value, cancellationToken);
-        var start = await startExp.EvaluateAsync(interpreter, r => r.ExpectNumber().RoundedIntValue, cancellationToken);
-        var length = await lengthExp.EvaluateAsync(interpreter, r => r.ExpectNumber().RoundedIntValue, cancellationToken);
-
-        var substring = subject.GraphemeSubstring(start, length);
-
-        return new StringResult(substring);
+    protected override StringResult Invoke(Interpreter interpreter, StringResult argument1, NumberResult argument2, NumberResult argument3)
+    {
+        return argument1.Value.GraphemeSubstring(argument2, argument3);
     }
 }

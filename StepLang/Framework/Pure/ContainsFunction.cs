@@ -1,31 +1,28 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
-using StepLang.Parsing;
 
 namespace StepLang.Framework.Pure;
 
-public class ContainsFunction : NativeFunction
+public class ContainsFunction : GenericFunction<ExpressionResult, ExpressionResult>
 {
     public const string Identifier = "contains";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] { (new[] { ResultType.List, ResultType.Map, ResultType.Str }, "subject"), (Enum.GetValues<ResultType>(), "value") };
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] {
+        new(new[] { ResultType.List, ResultType.Map, ResultType.Str }, "subject"),
+        new(AnyValueType, "value"),
+    };
 
-    protected override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyBool;
+
+    protected override BoolResult Invoke(Interpreter interpreter, ExpressionResult argument1, ExpressionResult argument2)
     {
-        CheckArgumentCount(arguments);
-
-        var (subjectExpression, valueExpression) = (arguments[0], arguments[1]);
-
-        var subject = await subjectExpression.EvaluateAsync(interpreter, cancellationToken);
-        var value = await valueExpression.EvaluateAsync(interpreter, cancellationToken);
-
-        var result = IndexOfFunction.GetResult(subject, value);
+        var result = IndexOfFunction.GetResult(argument1, argument2);
 
         return result switch
         {
-            NumberResult { Value: >= 0 } => BoolResult.True,
-            StringResult => BoolResult.True,
-            _ => BoolResult.False,
+            NumberResult { Value: >= 0 } => true,
+            StringResult => true,
+            _ => false,
         };
     }
 }

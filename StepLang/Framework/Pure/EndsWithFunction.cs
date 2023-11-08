@@ -1,24 +1,22 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
-using StepLang.Parsing;
 
 namespace StepLang.Framework.Pure;
 
-public class EndsWithFunction : NativeFunction
+public class EndsWithFunction : GenericFunction<StringResult, StringResult>
 {
     public const string Identifier = "endsWith";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] { (new[] { ResultType.Str }, "subject"), (new[] { ResultType.Str }, "suffix") };
-
-    protected override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
-        CheckArgumentCount(arguments);
+        new(OnlyString, "subject"),
+        new(OnlyString, "suffix"),
+    };
 
-        var (subjectExpression, prefixExpression) = (arguments[0], arguments[1]);
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyBool;
 
-        var subject = await subjectExpression.EvaluateAsync(interpreter, r => r.ExpectString().Value, cancellationToken);
-        var suffix = await prefixExpression.EvaluateAsync(interpreter, r => r.ExpectString().Value, cancellationToken);
-
-        return new BoolResult(subject.GraphemeEndsWith(suffix));
+    protected override BoolResult Invoke(Interpreter interpreter, StringResult argument1, StringResult argument2)
+    {
+        return argument1.Value.GraphemeEndsWith(argument2);
     }
 }

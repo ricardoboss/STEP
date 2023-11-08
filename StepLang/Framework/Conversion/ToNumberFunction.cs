@@ -15,18 +15,7 @@ public class ToNumberFunction : GenericFunction<StringResult, NumberResult>
         new(OnlyNumber, "radix", DefaultValue: LiteralExpressionNode.FromInt32(10)),
     };
 
-    protected override IEnumerable<ResultType> ReturnTypes => new[] { ResultType.Number, ResultType.Null };
-
-    private TokenLocation? radixLocation;
-
-    public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
-    {
-        // this is a hack
-        // we should introduce a way to get a token location from the invocation for better error reporting
-        radixLocation = arguments[1].Location;
-
-        return base.Invoke(interpreter, arguments);
-    }
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = NullableNumber;
 
     protected override ExpressionResult Invoke(Interpreter interpreter, StringResult argument1, NumberResult argument2)
     {
@@ -39,7 +28,7 @@ public class ToNumberFunction : GenericFunction<StringResult, NumberResult>
             {
                 2 or 8 or 16 => NumberResult.FromInt32(Convert.ToInt32(value, radix)),
                 10 => NumberResult.FromString(value),
-                _ => throw new InvalidArgumentValueException(radixLocation, $"Radix {radix} is not supported."),
+                _ => NullResult.Instance,
             };
         }
         catch (Exception e) when (e is ArgumentException or FormatException)

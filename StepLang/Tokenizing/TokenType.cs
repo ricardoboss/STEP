@@ -10,6 +10,7 @@ public enum TokenType
     LiteralString,
     LiteralNumber,
     LiteralBoolean,
+    LiteralNull,
     Whitespace,
     NewLine,
     IfKeyword,
@@ -59,6 +60,7 @@ public static class TokenTypes
             TokenType.LiteralString => "literal string",
             TokenType.LiteralNumber => "literal number",
             TokenType.LiteralBoolean => "literal boolean",
+            TokenType.LiteralNull => "null",
             TokenType.Whitespace => "whitespace",
             TokenType.NewLine => "new line",
             TokenType.IfKeyword => "'if'",
@@ -132,6 +134,7 @@ public static class TokenTypes
             TokenType.ClosingSquareBracket => "]",
             TokenType.ForEachKeyword => "foreach",
             TokenType.InKeyword => "in",
+            TokenType.LiteralNull => "null",
             _ => throw new InvalidOperationException("Token type does not have a static code representation"),
         };
     }
@@ -318,7 +321,7 @@ public static class TokenTypes
     {
         return type switch
         {
-            TokenType.LiteralString or TokenType.LiteralNumber or TokenType.LiteralBoolean => true,
+            TokenType.LiteralString or TokenType.LiteralNumber or TokenType.LiteralBoolean or TokenType.LiteralNull => true,
             _ => false,
         };
     }
