@@ -2,6 +2,8 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using Spectre.Console;
 using Spectre.Console.Cli;
+using StepLang.Expressions.Results;
+using StepLang.Interpreting;
 using StepLang.Parsing;
 using StepLang.Tokenizing;
 
@@ -30,302 +32,678 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
         var parser = new Parser(tokens);
         var root = parser.ParseRoot();
 
-        var tree = new Tree("Root");
-        RenderNode(tree, root);
+        var tree = new Tree(scriptFile.Name);
+        var treeBuilder = new RootTreeBuilder(tree);
+        root.Accept(treeBuilder);
 
         AnsiConsole.Write(tree);
 
         return 0;
     }
 
-    private static void RenderNode(IHasTreeNodes parent, INode parserNode)
+    private sealed class RootTreeBuilder : IRootNodeVisitor
     {
-        // TODO: rewrite this using visitor pattern
-        switch (parserNode)
+        private readonly IHasTreeNodes root;
+
+        public RootTreeBuilder(IHasTreeNodes root)
         {
-            case RootNode root:
-                {
-                    foreach (var node in root.Body)
-                        RenderNode(parent, node);
+            this.root = root;
+        }
 
-                    break;
-                }
-            case NullableVariableDeclarationNode nvdn: // must come before VariableDeclarationNode
-                {
-                    var treeNode = parent.AddNode("NullableVariableDeclaration:");
-                    treeNode.AddNode("Types: " + string.Join("|", nvdn.Types).EscapeMarkup());
-                    treeNode.AddNode("Nullability: " + nvdn.NullabilityIndicator.ToString().EscapeMarkup());
-                    treeNode.AddNode("Identifier: " + nvdn.Identifier.ToString().EscapeMarkup());
-                    break;
-                }
-            case VariableDeclarationNode vdn:
-                {
-                    var treeNode = parent.AddNode("VariableDeclaration:");
-                    treeNode.AddNode("Types: " + string.Join("|", vdn.Types).EscapeMarkup());
-                    treeNode.AddNode("Identifier: " + vdn.Identifier.ToString().EscapeMarkup());
-                    break;
-                }
-            case VariableInitializationNode vin:
-                {
-                    var treeNode = parent.AddNode("VariableInitialization:");
-                    treeNode.AddNode("Types: " + string.Join("|", vin.Types).EscapeMarkup());
-                    treeNode.AddNode("Identifier: " + vin.Identifier.ToString().EscapeMarkup());
-                    var expressionNode = treeNode.AddNode("Expression:");
-                    RenderNode(expressionNode, vin.Expression);
-                    break;
-                }
-            case NullableVariableInitializationNode nvin:
-                {
-                    var treeNode = parent.AddNode("NullableVariableInitialization:");
-                    treeNode.AddNode("Types: " + string.Join("|", nvin.Types).EscapeMarkup());
-                    treeNode.AddNode("Nullability: " + nvin.NullabilityIndicator.ToString().EscapeMarkup());
-                    treeNode.AddNode("Identifier: " + nvin.Identifier.ToString().EscapeMarkup());
-                    var expressionNode = treeNode.AddNode("Expression:");
-                    RenderNode(expressionNode, nvin.Expression);
-                    break;
-                }
-            case LiteralExpressionNode len:
-                {
-                    parent.AddNode("LiteralExpression: " + len.Literal.ToString().EscapeMarkup());
-                    break;
-                }
-            case CallExpressionNode cen:
-                {
-                    var treeNode = parent.AddNode("CallExpression:");
-                    treeNode.AddNode("Identifier: " + cen.Identifier.ToString().EscapeMarkup());
-                    if (cen.Arguments.Count > 0)
-                    {
-                        var argumentsNode = treeNode.AddNode("Arguments:");
-                        foreach (var argument in cen.Arguments)
-                            RenderNode(argumentsNode, argument);
-                    }
-                    else
-                    {
-                        treeNode.AddNode("No arguments");
-                    }
+        public void Run(RootNode node)
+        {
+            IHasTreeNodes statementsRoot;
+            if (node.Imports.Count > 0)
+            {
+                var importsNode = root.AddNode("Imports:");
+                var importTreeBuilder = new ImportTreeBuilder(importsNode);
+                foreach (var import in node.Imports)
+                    import.Accept(importTreeBuilder);
 
-                    break;
-                }
-            case IfElseStatementNode iesn:
-                {
-                    var treeNode = parent.AddNode("IfElseStatement:");
-                    var conditionNode = treeNode.AddNode("Condition:");
-                    RenderNode(conditionNode, iesn.Condition);
+                statementsRoot = root.AddNode("Statements:");
+            }
+            else
+                statementsRoot = root;
 
-                    if (iesn.Body.Count > 0)
-                    {
-                        var ifBodyNode = treeNode.AddNode("IfBody:");
-                        foreach (var statement in iesn.Body)
-                            RenderNode(ifBodyNode, statement);
-                    }
-                    else
-                    {
-                        treeNode.AddNode("Empty if-body");
-                    }
-
-                    if (iesn.ElseBody.Count > 0)
-                    {
-                        var elseBodyNode = treeNode.AddNode("ElseBody:");
-                        foreach (var statement in iesn.ElseBody)
-                            RenderNode(elseBodyNode, statement);
-                    }
-                    else
-                    {
-                        treeNode.AddNode("Empty else-body");
-                    }
-
-                    break;
-                }
-            case IdentifierExpressionNode ien:
-                {
-                    parent.AddNode("IdentifierExpression: " + ien.Identifier.ToString().EscapeMarkup());
-                    break;
-                }
-            case CallStatementNode csn:
-                {
-                    var treeNode = parent.AddNode("CallStatement:");
-                    treeNode.AddNode("Identifier: " + csn.CallExpression.Identifier.ToString().EscapeMarkup());
-                    if (csn.CallExpression.Arguments.Count > 0)
-                    {
-                        var argumentsNode = treeNode.AddNode("Arguments:");
-                        foreach (var argument in csn.CallExpression.Arguments)
-                            RenderNode(argumentsNode, argument);
-                    }
-                    else
-                    {
-                        treeNode.AddNode("No arguments");
-                    }
-                    break;
-                }
-            case WhileStatementNode wsn:
-                {
-                    var treeNode = parent.AddNode("WhileStatement:");
-                    var conditionNode = treeNode.AddNode("Condition:");
-                    RenderNode(conditionNode, wsn.Condition);
-
-                    if (wsn.Body.Count > 0)
-                    {
-                        var bodyNode = treeNode.AddNode("Body:");
-                        foreach (var statement in wsn.Body)
-                            RenderNode(bodyNode, statement);
-                    }
-                    else
-                    {
-                        treeNode.AddNode("Empty body");
-                    }
-
-                    break;
-                }
-            case VariableAssignmentNode van:
-                {
-                    var treeNode = parent.AddNode("VariableAssignment:");
-                    treeNode.AddNode("Identifier: " + van.Identifier.ToString().EscapeMarkup());
-                    var expressionNode = treeNode.AddNode("Expression:");
-                    RenderNode(expressionNode, van.Expression);
-                    break;
-                }
-            case IfStatementNode isn:
-                {
-                    var treeNode = parent.AddNode("IfStatement:");
-                    var conditionNode = treeNode.AddNode("Condition:");
-                    RenderNode(conditionNode, isn.Condition);
-
-                    if (isn.Body.Count > 0)
-                    {
-                        var bodyNode = treeNode.AddNode("Body:");
-                        foreach (var statement in isn.Body)
-                            RenderNode(bodyNode, statement);
-                    }
-                    else
-                    {
-                        treeNode.AddNode("Empty body");
-                    }
-
-                    break;
-                }
-            case ShorthandMathOperationStatementNode smosn:
-                {
-                    var treeNode = parent.AddNode("ShorthandMathOperationStatement:");
-                    treeNode.AddNode("Identifier: " + smosn.Identifier.ToString().EscapeMarkup());
-                    treeNode.AddNode("Operator: " + smosn.Operation.ToString().EscapeMarkup());
-                    break;
-                }
-            case BreakStatementNode bsn:
-                {
-                    parent.AddNode("BreakStatement: " + bsn.Token.ToString().EscapeMarkup());
-                    break;
-                }
-            case ContinueStatementNode csn:
-                {
-                    parent.AddNode("ContinueStatement: " + csn.Token.ToString().EscapeMarkup());
-                    break;
-                }
-            case ReturnExpressionStatementNode rsn:
-                {
-                    var treeNode = parent.AddNode("ReturnStatement:");
-                    RenderNode(treeNode, rsn.Expression);
-                    break;
-                }
-            case FunctionDefinitionExpressionNode fden:
-                {
-                    var treeNode = parent.AddNode("FunctionDefinitionExpression:");
-                    var argumentsNode = treeNode.AddNode("Parameters:");
-
-                    if (fden.Parameters.Count > 0)
-                    {
-                        foreach (var argument in fden.Parameters)
-                            RenderNode(argumentsNode, argument);
-                    }
-                    else
-                    {
-                        argumentsNode.AddNode("No arguments");
-                    }
-
-                    var bodyNode = treeNode.AddNode("Body:");
-                    if (fden.Body.Count > 0)
-                    {
-                        foreach (var statement in fden.Body)
-                            RenderNode(bodyNode, statement);
-                    }
-                    else
-                    {
-                        bodyNode.AddNode("Empty body");
-                    }
-
-                    break;
-                }
-            case ListExpressionNode len:
-                {
-                    var treeNode = parent.AddNode("ListExpression:");
-                    if (len.Expressions.Count > 0)
-                    {
-                        foreach (var item in len.Expressions)
-                            RenderNode(treeNode, item);
-                    }
-                    else
-                    {
-                        treeNode.AddNode("Empty list");
-                    }
-                    break;
-                }
-            case MapExpressionNode men:
-                {
-                    var treeNode = parent.AddNode("MapExpression:");
-                    if (men.Expressions.Count > 0)
-                    {
-                        foreach (var kvp in men.Expressions)
-                        {
-                            var entryNode = treeNode.AddNode(kvp.Key.ToString().EscapeMarkup());
-                            RenderNode(entryNode, kvp.Value);
-                        }
-                    }
-                    else
-                    {
-                        treeNode.AddNode("Empty map");
-                    }
-                    break;
-                }
-            case IdentifierIndexAssignmentNode iian:
-                {
-                    var treeNode = parent.AddNode("IdentifierIndexAssignment:");
-                    treeNode.AddNode("Identifier: " + iian.Identifier.ToString().EscapeMarkup());
-                    var indexNode = treeNode.AddNode("Index:");
-                    RenderNode(indexNode, iian.IndexExpression);
-                    var expressionNode = treeNode.AddNode("Expression:");
-                    RenderNode(expressionNode, iian.ValueExpression);
-                    break;
-                }
-            case IBinaryExpressionNode iben:
-                {
-                    RenderBinaryNodes(parent, iben);
-                    break;
-                }
-            case IUnaryExpressionNode iuen:
-                {
-                    RenderUnaryNodes(parent, iuen);
-                    break;
-                }
-            default:
-                {
-                    _ = parent.AddNode("[red]! " + parserNode.GetType().Name + "[/]");
-                    break;
-                }
+            var statementTreeBuilder = new StatementTreeBuilder(statementsRoot);
+            foreach (var statement in node.Body)
+                statement.Accept(statementTreeBuilder);
         }
     }
 
-    private static void RenderBinaryNodes(IHasTreeNodes parent, IBinaryExpressionNode node)
+    private sealed class ImportTreeBuilder : IImportNodeVisitor
     {
-        var treeNode = parent.AddNode(node.GetType().Name + ":");
-        treeNode.AddNode("Operator: " + node.Op.ToSymbol());
-        var leftNode = treeNode.AddNode("Left:");
-        RenderNode(leftNode, node.Left);
-        var rightNode = treeNode.AddNode("Right:");
-        RenderNode(rightNode, node.Right);
+        private readonly IHasTreeNodes parent;
+
+        public ImportTreeBuilder(IHasTreeNodes parent)
+        {
+            this.parent = parent;
+        }
+
+        public void Visit(ImportNode importNode)
+        {
+            parent.AddNode("Import: " + importNode.PathToken.StringValue);
+        }
     }
 
-    private static void RenderUnaryNodes(IHasTreeNodes parent, IUnaryExpressionNode node)
+    private sealed class StatementTreeBuilder : IStatementVisitor
     {
-        var treeNode = parent.AddNode(node.GetType().Name + ":");
-        RenderNode(treeNode, node.Expression);
+        private readonly IHasTreeNodes root;
+
+        public StatementTreeBuilder(IHasTreeNodes root)
+        {
+            this.root = root;
+        }
+
+        public void Execute(CallStatementNode statementNode)
+        {
+            var node = root.AddNode("CallStatement:");
+            var evaluator = new ExpressionTreeBuilder(node);
+            var expression = statementNode.CallExpression;
+            _ = expression.EvaluateUsing(evaluator);
+        }
+
+        public void Execute(CodeBlockStatementNode statementNode)
+        {
+            var node = root.AddNode("CodeBlockStatement:");
+            var statementTreeBuilder = new StatementTreeBuilder(node);
+            foreach (var statement in statementNode.Body)
+                statement.Accept(statementTreeBuilder);
+        }
+
+        public void Execute(ContinueStatementNode statementNode)
+        {
+            root.AddNode("ContinueStatement");
+        }
+
+        public void Execute(ForeachDeclareKeyDeclareValueStatementNode statementNode)
+        {
+            var node = root.AddNode("ForeachStatement:");
+
+            var keyDeclarationNode = node.AddNode("KeyDeclaration:");
+            var keyExpressionBuilder = new VariableDeclarationTreeBuilder(keyDeclarationNode);
+            statementNode.KeyDeclaration.EvaluateUsing(keyExpressionBuilder);
+
+            var valueDeclarationNode = node.AddNode("ValueDeclaration:");
+            var valueExpressionBuilder = new VariableDeclarationTreeBuilder(valueDeclarationNode);
+            statementNode.ValueDeclaration.EvaluateUsing(valueExpressionBuilder);
+
+            var expressionNode = node.AddNode("Expression:");
+            var expressionBuilder = new ExpressionTreeBuilder(expressionNode);
+            statementNode.Collection.EvaluateUsing(expressionBuilder);
+
+            var bodyNode = node.AddNode("Body:");
+            var statementTreeBuilder = new StatementTreeBuilder(bodyNode);
+            foreach (var statement in statementNode.Body)
+                statement.Accept(statementTreeBuilder);
+        }
+
+        public void Execute(BreakStatementNode statementNode)
+        {
+            root.AddNode("BreakStatement");
+        }
+
+        public void Execute(ForeachDeclareKeyValueStatementNode statementNode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Execute(ForeachDeclareValueStatementNode statementNode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Execute(ForeachKeyValueStatementNode statementNode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Execute(ForeachKeyDeclareValueStatementNode statementNode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Execute(ForeachValueStatementNode statementNode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Execute(IdentifierIndexAssignmentNode statementNode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Execute(IfElseIfStatementNode statementNode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Execute(IfElseStatementNode statementNode)
+        {
+            var node = root.AddNode("IfElseStatement:");
+
+            var conditionNode = node.AddNode("Condition:");
+            var expressionTreeBuilder = new ExpressionTreeBuilder(conditionNode);
+            statementNode.Condition.EvaluateUsing(expressionTreeBuilder);
+
+            var body = node.AddNode("Body:");
+            var statementTreeBuilder = new StatementTreeBuilder(body);
+            foreach (var statement in statementNode.Body)
+                statement.Accept(statementTreeBuilder);
+
+            var elseBody = node.AddNode("ElseBody:");
+            var elseStatementTreeBuilder = new StatementTreeBuilder(elseBody);
+            foreach (var statement in statementNode.ElseBody)
+                statement.Accept(elseStatementTreeBuilder);
+        }
+
+        public void Execute(IfStatementNode statementNode)
+        {
+            var node = root.AddNode("IfStatement:");
+
+            var conditionNode = node.AddNode("Condition:");
+            var expressionTreeBuilder = new ExpressionTreeBuilder(conditionNode);
+            statementNode.Condition.EvaluateUsing(expressionTreeBuilder);
+
+            var body = node.AddNode("Body:");
+            var statementTreeBuilder = new StatementTreeBuilder(body);
+            foreach (var statement in statementNode.Body)
+                statement.Accept(statementTreeBuilder);
+        }
+
+        public void Execute(ReturnExpressionStatementNode statementNode)
+        {
+            var node = root.AddNode("ReturnExpressionStatement:");
+            var expressionTreeBuilder = new ExpressionTreeBuilder(node);
+            statementNode.Expression.EvaluateUsing(expressionTreeBuilder);
+        }
+
+        public void Execute(ShorthandMathOperationExpressionStatementNode statementNode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Execute(ShorthandMathOperationStatementNode statementNode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Execute(VariableAssignmentNode statementNode)
+        {
+            var node = root.AddNode("VariableAssignment:");
+            node.AddNode("Identifier: " + statementNode.Identifier.ToString().EscapeMarkup());
+
+            var expressionNode = node.AddNode("Expression:");
+            var expressionTreeBuilder = new ExpressionTreeBuilder(expressionNode);
+            statementNode.Expression.EvaluateUsing(expressionTreeBuilder);
+        }
+
+        public void Execute(WhileStatementNode statementNode)
+        {
+            var node = root.AddNode("WhileStatement:");
+
+            var conditionNode = node.AddNode("Condition:");
+            var expressionTreeBuilder = new ExpressionTreeBuilder(conditionNode);
+            statementNode.Condition.EvaluateUsing(expressionTreeBuilder);
+
+            var body = node.AddNode("Body:");
+            var statementTreeBuilder = new StatementTreeBuilder(body);
+            foreach (var statement in statementNode.Body)
+                statement.Accept(statementTreeBuilder);
+        }
+
+        public void Execute(IncrementStatementNode statementNode)
+        {
+            var node = root.AddNode("IncrementStatement:");
+
+            _ = node.AddNode("Operator: ++");
+            _ = node.AddNode("Identifier: " + statementNode.Identifier.ToString().EscapeMarkup());
+        }
+
+        public void Execute(DecrementStatementNode statementNode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Execute(VariableDeclarationStatement statementNode)
+        {
+            var variableDeclarationTreeBuilder = new VariableDeclarationTreeBuilder(root);
+            statementNode.Declaration.EvaluateUsing(variableDeclarationTreeBuilder);
+        }
+
+        public void Execute(ReturnStatementNode statementNode)
+        {
+            root.AddNode("ReturnStatement");
+        }
+    }
+
+    private sealed class VariableDeclarationTreeBuilder : IVariableDeclarationEvaluator
+    {
+        private readonly IHasTreeNodes root;
+
+        public VariableDeclarationTreeBuilder(IHasTreeNodes root)
+        {
+            this.root = root;
+        }
+
+        public Variable Execute(VariableDeclarationNode variableDeclarationNode)
+        {
+            var node = root.AddNode("VariableDeclaration:");
+            node.AddNode("Types: " + string.Join("|", variableDeclarationNode.Types).EscapeMarkup());
+            node.AddNode("Identifier: " + variableDeclarationNode.Identifier.ToString().EscapeMarkup());
+
+            return DummyVariable;
+        }
+
+        public Variable Execute(NullableVariableDeclarationNode variableDeclarationNode)
+        {
+            var node = root.AddNode("NullableVariableDeclaration:");
+            node.AddNode("Types: " + string.Join("|", variableDeclarationNode.Types).EscapeMarkup());
+            node.AddNode("Nullability: " + variableDeclarationNode.NullabilityIndicator.ToString().EscapeMarkup());
+            node.AddNode("Identifier: " + variableDeclarationNode.Identifier.ToString().EscapeMarkup());
+
+            return DummyVariable;
+        }
+
+        public Variable Execute(VariableInitializationNode variableDeclarationNode)
+        {
+            var node = root.AddNode("VariableInitialization:");
+            node.AddNode("Types: " + string.Join("|", variableDeclarationNode.Types).EscapeMarkup());
+            node.AddNode("Identifier: " + variableDeclarationNode.Identifier.ToString().EscapeMarkup());
+
+            var expressionNode = node.AddNode("Expression:");
+            var expressionTreeBuilder = new ExpressionTreeBuilder(expressionNode);
+            variableDeclarationNode.Expression.EvaluateUsing(expressionTreeBuilder);
+
+            return DummyVariable;
+        }
+
+        public Variable Execute(NullableVariableInitializationNode variableDeclarationNode)
+        {
+            var node = root.AddNode("NullableVariableInitialization:");
+            node.AddNode("Types: " + string.Join("|", variableDeclarationNode.Types).EscapeMarkup());
+            node.AddNode("Nullability: " + variableDeclarationNode.NullabilityIndicator.ToString().EscapeMarkup());
+            node.AddNode("Identifier: " + variableDeclarationNode.Identifier.ToString().EscapeMarkup());
+
+            var expressionNode = node.AddNode("Expression:");
+            var expressionTreeBuilder = new ExpressionTreeBuilder(expressionNode);
+            variableDeclarationNode.Expression.EvaluateUsing(expressionTreeBuilder);
+
+            return DummyVariable;
+        }
+
+        private static readonly Variable DummyVariable = new("dummy", Array.Empty<ResultType>(), false);
+    }
+
+    private sealed class ExpressionTreeBuilder : IExpressionEvaluator
+    {
+        private readonly IHasTreeNodes root;
+
+        public ExpressionTreeBuilder(IHasTreeNodes root)
+        {
+            this.root = root;
+        }
+
+        public ExpressionResult Evaluate(CallExpressionNode expressionNode)
+        {
+            var node = root.AddNode("CallExpression:");
+            node.AddNode("Identifier: " + expressionNode.Identifier.ToString().EscapeMarkup());
+            if (expressionNode.Arguments.Count > 0)
+            {
+                var argumentsNode = node.AddNode("Arguments:");
+                var evaluator = new ExpressionTreeBuilder(argumentsNode);
+                foreach (var argument in expressionNode.Arguments)
+                    argument.EvaluateUsing(evaluator);
+            }
+            else
+                node.AddNode("No arguments");
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(FunctionDefinitionExpressionNode expressionNode)
+        {
+            var node = root.AddNode("FunctionDefinitionExpression:");
+
+            var argumentsNode = node.AddNode("Parameters:");
+            var variableDeclarationTreeBuilder = new VariableDeclarationTreeBuilder(argumentsNode);
+            foreach (var argument in expressionNode.Parameters)
+                argument.EvaluateUsing(variableDeclarationTreeBuilder);
+
+            var bodyNode = node.AddNode("Body:");
+            var statementTreeBuilder = new StatementTreeBuilder(bodyNode);
+            foreach (var statement in expressionNode.Body)
+                statement.Accept(statementTreeBuilder);
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(IdentifierExpressionNode expressionNode)
+        {
+            root.AddNode("IdentifierExpression: " + expressionNode.Identifier.ToString().EscapeMarkup());
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(ListExpressionNode expressionNode)
+        {
+            var node = root.AddNode("ListExpression:");
+
+            var entriesNode = node.AddNode("Entries:");
+            var entryTreeBuilder = new ExpressionTreeBuilder(entriesNode);
+            foreach (var entry in expressionNode.Expressions)
+            {
+                entry.EvaluateUsing(entryTreeBuilder);
+            }
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(LiteralExpressionNode expressionNode)
+        {
+            root.AddNode("LiteralExpression: " + expressionNode.Literal.ToString().EscapeMarkup());
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(MapExpressionNode expressionNode)
+        {
+            var node = root.AddNode("MapExpression:");
+
+            var entriesNode = node.AddNode("Entries:");
+            foreach (var kvp in expressionNode.Expressions)
+            {
+                var entryNode = entriesNode.AddNode(kvp.Key.ToString().EscapeMarkup());
+                var entriesTreeBuilder = new ExpressionTreeBuilder(entryNode);
+                kvp.Value.EvaluateUsing(entriesTreeBuilder);
+            }
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(AddExpressionNode expressionNode)
+        {
+            var node = root.AddNode("AddExpression:");
+
+            EvaluateBinary(node, expressionNode);
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(CoalesceExpressionNode expressionNode)
+        {
+            var node = root.AddNode("CoalesceExpression:");
+
+            EvaluateBinary(node, expressionNode);
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(NotEqualsExpressionNode expressionNode)
+        {
+            var node = root.AddNode("NotEqualsExpression:");
+
+            EvaluateBinary(node, expressionNode);
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(EqualsExpressionNode expressionNode)
+        {
+            var node = root.AddNode("EqualsExpression:");
+
+            EvaluateBinary(node, expressionNode);
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(NegateExpressionNode expressionNode)
+        {
+            var node = root.AddNode("NegateExpression:");
+
+            _ = node.AddNode("Operator: -");
+
+            var expressionNodeTreeBuilder = new ExpressionTreeBuilder(node);
+            expressionNode.Expression.EvaluateUsing(expressionNodeTreeBuilder);
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(SubtractExpressionNode expressionNode)
+        {
+            var node = root.AddNode("SubtractExpression:");
+
+            EvaluateBinary(node, expressionNode);
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(MultiplyExpressionNode expressionNode)
+        {
+            var node = root.AddNode("MultiplyExpression:");
+
+            EvaluateBinary(node, expressionNode);
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(DivideExpressionNode expressionNode)
+        {
+            var node = root.AddNode("DivideExpression:");
+
+            EvaluateBinary(node, expressionNode);
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(ModuloExpressionNode expressionNode)
+        {
+            var node = root.AddNode("ModuloExpression:");
+
+            EvaluateBinary(node, expressionNode);
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(PowerExpressionNode expressionNode)
+        {
+            var node = root.AddNode("PowerExpression:");
+
+            EvaluateBinary(node, expressionNode);
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(GreaterThanExpressionNode expressionNode)
+        {
+            var node = root.AddNode("GreaterThanExpression:");
+
+            EvaluateBinary(node, expressionNode);
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(LessThanExpressionNode expressionNode)
+        {
+            var node = root.AddNode("LessThanExpression:");
+
+            EvaluateBinary(node, expressionNode);
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(GreaterThanOrEqualExpressionNode expressionNode)
+        {
+            var node = root.AddNode("GreaterThanOrEqualExpression:");
+
+            EvaluateBinary(node, expressionNode);
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(LessThanOrEqualExpressionNode expressionNode)
+        {
+            var node = root.AddNode("LessThanOrEqualExpression:");
+
+            EvaluateBinary(node, expressionNode);
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(LogicalAndExpressionNode expressionNode)
+        {
+            var node = root.AddNode("LogicalAndExpression:");
+
+            EvaluateBinary(node, expressionNode);
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(LogicalOrExpressionNode expressionNode)
+        {
+            var node = root.AddNode("LogicalOrExpression:");
+
+            EvaluateBinary(node, expressionNode);
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(BitwiseXorExpressionNode expressionNode)
+        {
+            var node = root.AddNode("BitwiseXorExpression:");
+
+            EvaluateBinary(node, expressionNode);
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(BitwiseAndExpressionNode expressionNode)
+        {
+            var node = root.AddNode("BitwiseAndExpression:");
+
+            EvaluateBinary(node, expressionNode);
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(BitwiseOrExpressionNode expressionNode)
+        {
+            var node = root.AddNode("BitwiseOrExpression:");
+
+            EvaluateBinary(node, expressionNode);
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(BitwiseShiftLeftExpressionNode expressionNode)
+        {
+            var node = root.AddNode("BitwiseShiftLeftExpression:");
+
+            EvaluateBinary(node, expressionNode);
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(BitwiseShiftRightExpressionNode expressionNode)
+        {
+            var node = root.AddNode("BitwiseShiftRightExpression:");
+
+            EvaluateBinary(node, expressionNode);
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(BitwiseRotateLeftExpressionNode expressionNode)
+        {
+            var node = root.AddNode("BitwiseRotateLeftExpression:");
+
+            EvaluateBinary(node, expressionNode);
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(BitwiseRotateRightExpressionNode expressionNode)
+        {
+            var node = root.AddNode("BitwiseRotateRightExpression:");
+
+            EvaluateBinary(node, expressionNode);
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(NotExpressionNode expressionNode)
+        {
+            var node = root.AddNode("NotExpression:");
+
+            _ = node.AddNode("Operator: !");
+
+            var expressionNodeTreeBuilder = new ExpressionTreeBuilder(node);
+            expressionNode.Expression.EvaluateUsing(expressionNodeTreeBuilder);
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(FunctionDefinitionCallExpressionNode expressionNode)
+        {
+            var node = root.AddNode("FunctionDefinitionCallExpression:");
+
+            var definitionNode = node.AddNode("Definition:");
+            var definitionParameters = definitionNode.AddNode("Parameters:");
+            var definitionParametersTreeBuilder = new VariableDeclarationTreeBuilder(definitionParameters);
+            foreach (var parameter in expressionNode.Parameters)
+                parameter.EvaluateUsing(definitionParametersTreeBuilder);
+
+            var definitionBody = definitionNode.AddNode("Body:");
+            var definitionBodyTreeBuilder = new StatementTreeBuilder(definitionBody);
+            foreach (var statement in expressionNode.Body)
+                statement.Accept(definitionBodyTreeBuilder);
+
+            var argumentsNode = node.AddNode("Arguments:");
+            var argumentsTreeBuilder = new ExpressionTreeBuilder(argumentsNode);
+            foreach (var argument in expressionNode.CallArguments)
+                argument.EvaluateUsing(argumentsTreeBuilder);
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(NativeFunctionDefinitionExpressionNode expressionNode)
+        {
+            var node = root.AddNode("NativeFunctionDefinitionExpression:");
+
+            var argumentsNode = node.AddNode("Parameters:");
+            var variableDeclarationTreeBuilder = new VariableDeclarationTreeBuilder(argumentsNode);
+            foreach (var argument in expressionNode.Definition.Parameters)
+                argument.EvaluateUsing(variableDeclarationTreeBuilder);
+
+            return VoidResult.Instance;
+        }
+
+        public ExpressionResult Evaluate(IndexAccessExpressionNode expressionNode)
+        {
+            var node = root.AddNode("IndexAccessExpression:");
+
+            var expression = node.AddNode("Expression:");
+            var expressionNodeTreeBuilder = new ExpressionTreeBuilder(expression);
+            expressionNode.Left.EvaluateUsing(expressionNodeTreeBuilder);
+
+            var index = node.AddNode("Index:");
+            var indexNodeTreeBuilder = new ExpressionTreeBuilder(index);
+            expressionNode.Index.EvaluateUsing(indexNodeTreeBuilder);
+
+            return VoidResult.Instance;
+        }
+
+        private static void EvaluateBinary(IHasTreeNodes parent, IBinaryExpressionNode node)
+        {
+            _ = parent.AddNode("Operator: " + node.Op.ToSymbol().EscapeMarkup());
+
+            var leftNode = parent.AddNode("Left:");
+            var leftExpressionTreeBuilder = new ExpressionTreeBuilder(leftNode);
+            node.Left.EvaluateUsing(leftExpressionTreeBuilder);
+
+            var rightNode = parent.AddNode("Right:");
+            var rightExpressionTreeBuilder = new ExpressionTreeBuilder(rightNode);
+            node.Right.EvaluateUsing(rightExpressionTreeBuilder);
+        }
     }
 }
