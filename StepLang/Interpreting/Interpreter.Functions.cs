@@ -41,4 +41,11 @@ public partial class Interpreter
 
         return definition.Invoke(this, expressionNode.CallArguments);
     }
+
+    public ExpressionResult Evaluate(NativeFunctionDefinitionExpressionNode expressionNode)
+    {
+        var definition = expressionNode.Definition;
+
+        return new FunctionResult(definition);
+    }
 }

@@ -15,6 +15,7 @@ public partial class Interpreter
             TokenType.LiteralBoolean => (BoolResult)literal.Value,
             TokenType.LiteralNumber => (NumberResult)literal.Value,
             TokenType.LiteralString => (StringResult)literal.StringValue,
+            TokenType.LiteralNull => NullResult.Instance,
             _ => throw new NotImplementedException("Unimplemented literal type " + literal),
         };
     }

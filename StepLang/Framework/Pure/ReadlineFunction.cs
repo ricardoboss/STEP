@@ -1,17 +1,16 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
-using StepLang.Parsing;
 
 namespace StepLang.Framework.Pure;
 
-public class ReadlineFunction : NativeFunction
+public class ReadlineFunction : GenericFunction
 {
     public const string Identifier = "readline";
 
-    public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
-    {
-        CheckArgumentCount(arguments);
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = NullableString;
 
+    protected override ExpressionResult Invoke(Interpreter interpreter)
+    {
         if (interpreter.StdIn is not { } stdIn)
             return NullResult.Instance;
 
@@ -19,6 +18,4 @@ public class ReadlineFunction : NativeFunction
 
         return line is null ? NullResult.Instance : new StringResult(line);
     }
-
-    protected override IEnumerable<ResultType> ReturnTypes => new[] { ResultType.Str, ResultType.Null };
 }

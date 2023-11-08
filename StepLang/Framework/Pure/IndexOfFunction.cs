@@ -1,37 +1,47 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
-using StepLang.Parsing;
 
 namespace StepLang.Framework.Pure;
 
-public class IndexOfFunction : NativeFunction
+public class IndexOfFunction : GenericFunction<ExpressionResult, ExpressionResult>
 {
     public const string Identifier = "indexOf";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] { (new[] { ResultType.List, ResultType.Map, ResultType.Str }, "subject"), (Enum.GetValues<ResultType>(), "value") };
-
-    protected override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter,
-        IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
-        CheckArgumentCount(arguments);
+        new(new[] { ResultType.List, ResultType.Map, ResultType.Str }, "subject"),
+        new(AnyValueType, "value"),
+    };
 
-        var (subjectExpression, valueExpression) = (arguments[0], arguments[1]);
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = new[]
+    {
+        ResultType.Null, ResultType.Number, ResultType.Str,
+    };
 
-        var subject = await subjectExpression.EvaluateAsync(interpreter, cancellationToken);
-        var value = await valueExpression.EvaluateAsync(interpreter, cancellationToken);
-
-        return GetResult(subject, value);
+    protected override ExpressionResult Invoke(Interpreter interpreter, ExpressionResult argument1, ExpressionResult argument2)
+    {
+        return GetResult( argument1, argument2);
     }
 
     internal static ExpressionResult GetResult(ExpressionResult subject, ExpressionResult value)
     {
         return subject switch
         {
-            ListResult list => new NumberResult(list.Value.IndexOf(value)),
+            ListResult list => GetListIndex(list, value),
             MapResult map => GetMapKey(map, value),
-            StringResult str => new NumberResult(str.Value.GraphemeIndexOf(value.ExpectString().Value)),
+            StringResult haystack when value is StringResult needle => GetStringIndex(haystack, needle),
             _ => NullResult.Instance,
         };
+    }
+
+    private static NumberResult GetListIndex(ListResult list, ExpressionResult value)
+    {
+        return list.Value.IndexOf(value);
+    }
+
+    private static NumberResult GetStringIndex(StringResult haystack, StringResult needle)
+    {
+        return haystack.Value.GraphemeIndexOf(needle.Value);
     }
 
     private static ExpressionResult GetMapKey(MapResult map, ExpressionResult value)

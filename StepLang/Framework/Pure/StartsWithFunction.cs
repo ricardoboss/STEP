@@ -1,24 +1,22 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
-using StepLang.Parsing;
 
 namespace StepLang.Framework.Pure;
 
-public class StartsWithFunction : NativeFunction
+public class StartsWithFunction : GenericFunction<StringResult, StringResult>
 {
     public const string Identifier = "startsWith";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] { (new[] { ResultType.Str }, "subject"), (new[] { ResultType.Str }, "prefix") };
-
-    protected override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
-        CheckArgumentCount(arguments);
+        new(OnlyString, "subject"),
+        new(OnlyString, "prefix"),
+    };
 
-        var (subjectExpression, prefixExpression) = (arguments[0], arguments[1]);
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyBool;
 
-        var subject = await subjectExpression.EvaluateAsync(interpreter, r => r.ExpectString().Value, cancellationToken);
-        var prefix = await prefixExpression.EvaluateAsync(interpreter, r => r.ExpectString().Value, cancellationToken);
-
-        return new BoolResult(subject.GraphemeStartsWith(prefix));
+    protected override BoolResult Invoke(Interpreter interpreter, StringResult argument1, StringResult argument2)
+    {
+        return argument1.Value.GraphemeStartsWith(argument2);
     }
 }

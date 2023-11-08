@@ -64,6 +64,8 @@ public class NumberResult : ComparableValueExpressionResult<double>
 
     public static implicit operator double(NumberResult result) => result.Value;
 
+    public static implicit operator string(NumberResult result) => result.ToString();
+
     public static NumberResult FromDouble(double value) => value;
 
     public static NumberResult FromInt32(int value) => value;

@@ -592,7 +592,7 @@ public class Parser
         }
 
         if (operatorTokens.Count == 0)
-            throw new UnexpectedEndOfTokensException(this.tokens.LastToken?.Location, "Expected an operator");
+            throw new UnexpectedEndOfTokensException(tokens.LastToken?.Location, "Expected an operator");
 
         throw new UnexpectedTokenException(operatorTokens[0], "Operators can only be chained up to 3 times");
     }
@@ -632,14 +632,12 @@ public class Parser
                 return ParseNegateExpression();
             case TokenType.ExclamationMarkSymbol:
                 return ParseNotExpression();
+            case TokenType.TypeName when tokens.Peek().Value.ToLowerInvariant() == "null":
+                var nullToken = tokens.Dequeue(TokenType.TypeName);
+
+                return new LiteralExpressionNode(new(TokenType.LiteralNull, nullToken.Value, nullToken.Location));
             default:
                 throw new MissingExpressionException(tokens.LastToken ?? tokens.Peek());
-                // throw new UnexpectedTokenException(tokens.Peek(),
-                //     TokenTypes.Literals.Concat(new[]
-                //     {
-                //         TokenType.OpeningParentheses, TokenType.Identifier, TokenType.OpeningSquareBracket,
-                //         TokenType.OpeningCurlyBracket, TokenType.MinusSymbol, TokenType.ExclamationMarkSymbol,
-                //     }).ToArray());
         }
     }
 

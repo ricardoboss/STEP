@@ -18,7 +18,9 @@ public class UserDefinedFunctionDefinition : FunctionDefinition
 
     protected override string DebugBodyString => $"[{body.Count} statements]";
 
-    public override IReadOnlyCollection<IVariableDeclarationNode> Parameters => parameters;
+    public override IReadOnlyList<IVariableDeclarationNode> Parameters => parameters;
+
+    public IReadOnlyList<StatementNode> Body => body;
 
     // TODO: implement return type declarations on user defined functions
     protected override IEnumerable<ResultType> ReturnTypes => Enum.GetValues<ResultType>();

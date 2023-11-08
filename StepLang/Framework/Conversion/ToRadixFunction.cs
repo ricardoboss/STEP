@@ -16,7 +16,7 @@ public class ToRadixFunction : GenericFunction<NumberResult, NumberResult>
         new(OnlyNumber, "radix"),
     };
 
-    protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyString;
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = NullableString;
 
     private TokenLocation? radixLocation;
 
@@ -36,13 +36,11 @@ public class ToRadixFunction : GenericFunction<NumberResult, NumberResult>
 
         try
         {
-            var convertedValue = radix.Value switch
+            return radix.Value switch
             {
-                2 or 8 or 10 or 16 => Convert.ToString((long)number, radix).ToUpperInvariant(),
-                _ => throw new InvalidArgumentValueException(radixLocation, $"Radix {radix} is not supported."),
+                2 or 8 or 10 or 16 => (StringResult)Convert.ToString((long)number, radix).ToUpperInvariant(),
+                _ => NullResult.Instance,
             };
-
-            return new StringResult(convertedValue);
         }
         catch (ArgumentException)
         {

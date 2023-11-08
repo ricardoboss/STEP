@@ -1,6 +1,7 @@
 using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
+using StepLang.Parsing;
 
 namespace StepLang.Framework.Pure;
 
@@ -8,9 +9,8 @@ public class ConvertedFunction : ListManipulationFunction
 {
     public const string Identifier = "converted";
 
-    protected override IAsyncEnumerable<ExpressionResult> EvaluateListManipulationAsync(Interpreter interpreter, IAsyncEnumerable<LiteralExpression[]> arguments,
-        FunctionDefinition callback, CancellationToken cancellationToken = default)
+    protected override IEnumerable<ExpressionResult> EvaluateListManipulation(Interpreter interpreter, IEnumerable<ExpressionNode[]> arguments, FunctionDefinition callback)
     {
-        return arguments.SelectAwait(async args => await callback.EvaluateAsync(interpreter, args, cancellationToken));
+        return arguments.Select(args => callback.Invoke(interpreter, args));
     }
 }

@@ -1,21 +1,21 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
-using StepLang.Parsing;
 
 namespace StepLang.Framework.Pure;
 
-public class CloneFunction : NativeFunction
+public class CloneFunction : GenericFunction<ExpressionResult>
 {
     public const string Identifier = "clone";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] { (Enum.GetValues<ResultType>(), "subject") };
-
-    protected override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
-        CheckArgumentCount(arguments);
+        new(AnyValueType, "subject"),
+    };
 
-        var subject = await arguments.Single().EvaluateAsync(interpreter, cancellationToken);
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = AnyValueType;
 
-        return subject.DeepClone();
+    protected override ExpressionResult Invoke(Interpreter interpreter, ExpressionResult argument1)
+    {
+        return argument1.DeepClone();
     }
 }

@@ -1,25 +1,28 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
-using StepLang.Parsing;
 
 namespace StepLang.Framework.Pure;
 
-public class CompareToFunction : NativeFunction
+public class CompareToFunction : GenericFunction<ExpressionResult, ExpressionResult>
 {
     public const string Identifier = "compareTo";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] { (Enum.GetValues<ResultType>(), "a"), (Enum.GetValues<ResultType>(), "b") };
-
-    protected override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
-        CheckArgumentCount(arguments);
+        new(AnyType, "a"),
+        new(AnyType, "b"),
+    };
 
-        var (aExpression, bExpression) = (arguments[0], arguments[1]);
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyNumber;
 
-        var a = await aExpression.EvaluateAsync(interpreter, cancellationToken);
-        var b = await bExpression.EvaluateAsync(interpreter, cancellationToken);
+    protected override NumberResult Invoke(Interpreter interpreter, ExpressionResult argument1, ExpressionResult argument2)
+    {
+        return GetResult(argument1, argument2);
+    }
 
-        var comparison = a switch
+    private static NumberResult GetResult(ExpressionResult a, ExpressionResult b)
+    {
+        return a switch
         {
             StringResult aStr when b is StringResult bStr => aStr.CompareTo(bStr),
             NumberResult aNum when b is NumberResult bNum => aNum.CompareTo(bNum),
@@ -32,7 +35,5 @@ public class CompareToFunction : NativeFunction
             { ResultType: var aType } when b.ResultType != aType => throw new InvalidResultTypeException(b, a.ResultType),
             _ => throw new NotImplementedException(),
         };
-
-        return new NumberResult(comparison);
     }
 }

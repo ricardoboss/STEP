@@ -110,8 +110,8 @@ public abstract class GenericParameterlessFunction : NativeFunction
 
 public abstract class GenericOneParameterFunction : GenericParameterlessFunction
 {
-    protected IReadOnlyList<ResultType> Argument1Types => NativeParameters.Single().Types;
-    protected ExpressionNode? Argument1Default => NativeParameters.Single().DefaultValue;
+    protected IReadOnlyList<ResultType> Argument1Types => NativeParameters.ElementAt(0).Types;
+    protected ExpressionNode? Argument1Default => NativeParameters.ElementAt(0).DefaultValue;
 
     protected override int GetRequiredCount() => Argument1Default is null ? 1 : 0;
 
