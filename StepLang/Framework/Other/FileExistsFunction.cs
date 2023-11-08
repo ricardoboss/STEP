@@ -1,22 +1,23 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
-using StepLang.Parsing;
 
 namespace StepLang.Framework.Other;
 
-public class FileExistsFunction : NativeFunction
+public class FileExistsFunction : GenericFunction<StringResult>
 {
     public const string Identifier = "fileExists";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] { (new[] { ResultType.Str }, "path") };
-
-    /// <inheritdoc />
-    public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
-        CheckArgumentCount(arguments);
+        new(OnlyString, "path"),
+    };
 
-        var path = await arguments.Single().EvaluateAsync(interpreter, r => r.ExpectString().Value, cancellationToken);
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyBool;
 
-        return new BoolResult(File.Exists(path));
+    protected override BoolResult Invoke(Interpreter interpreter, StringResult argument1)
+    {
+        var path = argument1.Value;
+
+        return File.Exists(path);
     }
 }

@@ -1,29 +1,30 @@
 using System.Text;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
-using StepLang.Parsing;
 
 namespace StepLang.Framework.Other;
 
-public class FileReadFunction : NativeFunction
+public class FileReadFunction : GenericFunction<StringResult>
 {
     public const string Identifier = "fileRead";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] { (new[] { ResultType.Str }, "path") };
-
-    /// <inheritdoc />
-    public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
-        CheckArgumentCount(arguments);
+        new(OnlyString, "path"),
+    };
 
-        var path = await arguments.Single().EvaluateAsync(interpreter, r => r.ExpectString().Value, cancellationToken);
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = NullableString;
+
+    protected override ExpressionResult Invoke(Interpreter interpreter, StringResult argument1)
+    {
+        var path = argument1.Value;
 
         if (!File.Exists(path))
             return NullResult.Instance;
 
         try
         {
-            var contents = await File.ReadAllTextAsync(path, Encoding.ASCII, cancellationToken);
+            var contents = File.ReadAllText(path, Encoding.ASCII);
 
             return new StringResult(contents);
         }

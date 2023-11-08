@@ -5,6 +5,21 @@ using StepLang.Parsing;
 
 namespace StepLang.Framework;
 
+public abstract class GenericFunction : GenericParameterlessFunction
+{
+    protected abstract ExpressionResult Invoke(Interpreter interpreter);
+
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = Enumerable.Empty<NativeParameter>();
+
+    public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
+    {
+        if (arguments.Count > 0)
+            throw new InvalidArgumentCountException(0, arguments.Count);
+
+        return Invoke(interpreter);
+    }
+}
+
 public abstract class GenericFunction<T1> : GenericOneParameterFunction where T1 : ExpressionResult
 {
     protected abstract ExpressionResult Invoke(Interpreter interpreter, T1 argument1);
@@ -64,16 +79,11 @@ public abstract class GenericFunction<T1, T2, T3> : GenericThreeParameterFunctio
     }
 }
 
-public abstract class GenericOneParameterFunction : NativeFunction
+public abstract class GenericParameterlessFunction : NativeFunction
 {
-    protected IReadOnlyList<ResultType> Argument1Types => NativeParameters.Single().Types;
-    protected LiteralExpressionNode? Argument1Default => NativeParameters.Single().DefaultValue;
-
-    protected virtual int GetRequiredCount() => Argument1Default is null ? 1 : 0;
-
-    protected virtual LiteralExpressionNode GetDefaultExpression(int index) => Argument1Default ?? throw new InvalidOperationException();
-
-    protected virtual IReadOnlyList<ResultType> GetArgumentTypes(int index) => Argument1Types;
+    protected virtual int GetRequiredCount() => 0;
+    protected virtual ExpressionNode GetDefaultExpression(int index) => throw new InvalidOperationException();
+    protected virtual IReadOnlyList<ResultType> GetArgumentTypes(int index) => throw new InvalidOperationException();
 
     private TArgument GetDefaultArgumentValue<TArgument>(int index, IExpressionEvaluator interpreter)
     {
@@ -98,10 +108,22 @@ public abstract class GenericOneParameterFunction : NativeFunction
     }
 }
 
+public abstract class GenericOneParameterFunction : GenericParameterlessFunction
+{
+    protected IReadOnlyList<ResultType> Argument1Types => NativeParameters.Single().Types;
+    protected ExpressionNode? Argument1Default => NativeParameters.Single().DefaultValue;
+
+    protected override int GetRequiredCount() => Argument1Default is null ? 1 : 0;
+
+    protected override ExpressionNode GetDefaultExpression(int index) => Argument1Default ?? throw new InvalidOperationException();
+
+    protected override IReadOnlyList<ResultType> GetArgumentTypes(int index) => Argument1Types;
+}
+
 public abstract class GenericTwoParameterFunction : GenericOneParameterFunction
 {
     protected IReadOnlyList<ResultType> Argument2Types => NativeParameters.ElementAt(1).Types;
-    protected LiteralExpressionNode? Argument2Default => NativeParameters.ElementAt(1).DefaultValue;
+    protected ExpressionNode? Argument2Default => NativeParameters.ElementAt(1).DefaultValue;
 
     protected override int GetRequiredCount()
     {
@@ -116,7 +138,7 @@ public abstract class GenericTwoParameterFunction : GenericOneParameterFunction
         return required;
     }
 
-    protected override LiteralExpressionNode GetDefaultExpression(int index)
+    protected override ExpressionNode GetDefaultExpression(int index)
     {
         return index switch
         {
@@ -140,7 +162,7 @@ public abstract class GenericTwoParameterFunction : GenericOneParameterFunction
 public abstract class GenericThreeParameterFunction : GenericTwoParameterFunction
 {
     protected IReadOnlyList<ResultType> Argument3Types => NativeParameters.ElementAt(2).Types;
-    protected LiteralExpressionNode? Argument3Default => NativeParameters.ElementAt(2).DefaultValue;
+    protected ExpressionNode? Argument3Default => NativeParameters.ElementAt(2).DefaultValue;
 
     protected override int GetRequiredCount()
     {
@@ -158,7 +180,7 @@ public abstract class GenericThreeParameterFunction : GenericTwoParameterFunctio
         return required;
     }
 
-    protected override LiteralExpressionNode GetDefaultExpression(int index)
+    protected override ExpressionNode GetDefaultExpression(int index)
     {
         return index switch
         {

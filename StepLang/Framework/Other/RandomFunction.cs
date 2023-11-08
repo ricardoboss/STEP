@@ -1,21 +1,15 @@
 using System.Diagnostics.CodeAnalysis;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
-using StepLang.Parsing;
 
 namespace StepLang.Framework.Other;
 
-[SuppressMessage("Security", "CA5394:Do not use insecure randomness")]
-public class RandomFunction : NativeFunction
+public class RandomFunction : GenericFunction
 {
     public const string Identifier = "random";
 
-    public override Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments, CancellationToken cancellationToken = default)
-    {
-        CheckArgumentCount(arguments);
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyNumber;
 
-        var value = interpreter.Random.NextDouble();
-
-        return Task.FromResult<ExpressionResult>(new NumberResult(value));
-    }
+    [SuppressMessage("Security", "CA5394:Do not use insecure randomness", Justification = "This is not for security purposes")]
+    protected override NumberResult Invoke(Interpreter interpreter) => interpreter.Random.NextDouble();
 }
