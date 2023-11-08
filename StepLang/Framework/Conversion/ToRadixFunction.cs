@@ -1,8 +1,5 @@
-using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
-using StepLang.Parsing;
-using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Conversion;
 
@@ -17,17 +14,6 @@ public class ToRadixFunction : GenericFunction<NumberResult, NumberResult>
     };
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = NullableString;
-
-    private TokenLocation? radixLocation;
-
-    public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
-    {
-        // this is a hack
-        // we should introduce a way to get a token location from the invocation for better error reporting
-        radixLocation = arguments[1].Location;
-
-        return base.Invoke(interpreter, arguments);
-    }
 
     protected override ExpressionResult Invoke(Interpreter interpreter, NumberResult argument1, NumberResult argument2)
     {
