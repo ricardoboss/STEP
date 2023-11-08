@@ -285,14 +285,6 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
                     }
                     break;
                 }
-            case IdentifierIndexAccessExpressionNode iiaen:
-                {
-                    var treeNode = parent.AddNode("IdentifierIndexAccessExpression:");
-                    treeNode.AddNode("Identifier: " + iiaen.Identifier.ToString().EscapeMarkup());
-                    var indexNode = treeNode.AddNode("Index:");
-                    RenderNode(indexNode, iiaen.Index);
-                    break;
-                }
             case IdentifierIndexAssignmentNode iian:
                 {
                     var treeNode = parent.AddNode("IdentifierIndexAssignment:");

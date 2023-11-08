@@ -62,6 +62,9 @@ public abstract class ExpressionResult : IEquatable<ExpressionResult>
         return this switch
         {
             BoolResult { Value: true } => true,
+            StringResult { Value: "1" } => true,
+            StringResult { Value: var strValue } when bool.TryParse(strValue, out var value) => value,
+            NumberResult { Value: > 0} => true,
             _ => false,
         };
     }
@@ -75,7 +78,7 @@ public abstract class ExpressionResult : IEquatable<ExpressionResult>
             NullResult => new LiteralExpressionNode(new(TokenType.LiteralNull, "null")),
             BoolResult boolResult => new LiteralExpressionNode(new(TokenType.LiteralBoolean, boolResult ? "true" : "false")),
             NumberResult numberResult => new LiteralExpressionNode(new(TokenType.LiteralNumber, numberResult)),
-            StringResult stringResult => new LiteralExpressionNode(new(TokenType.LiteralString, stringResult)),
+            StringResult stringResult => new LiteralExpressionNode(new(TokenType.LiteralString, stringResult.ToString())),
             ListResult listResult => new ListExpressionNode(new(TokenType.OpeningSquareBracket, "["), listResult.Value.Select(result => result.ToExpressionNode()).ToList()),
             MapResult mapResult => new MapExpressionNode(new(TokenType.OpeningCurlyBracket, "{"), mapResult.Value.ToDictionary(kvp => new Token(TokenType.LiteralString, kvp.Key), kvp => kvp.Value.ToExpressionNode())),
             FunctionResult { Value: UserDefinedFunctionDefinition userDefinedFunctionDefinition } => new FunctionDefinitionExpressionNode(new(TokenType.OpeningParentheses, "("), userDefinedFunctionDefinition.Parameters, userDefinedFunctionDefinition.Body),

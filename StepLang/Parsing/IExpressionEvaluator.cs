@@ -7,7 +7,6 @@ public interface IExpressionEvaluator
     ExpressionResult Evaluate(CallExpressionNode expressionNode);
     ExpressionResult Evaluate(FunctionDefinitionExpressionNode expressionNode);
     ExpressionResult Evaluate(IdentifierExpressionNode expressionNode);
-    ExpressionResult Evaluate(IdentifierIndexAccessExpressionNode expressionNode);
     ExpressionResult Evaluate(ListExpressionNode expressionNode);
     ExpressionResult Evaluate(LiteralExpressionNode expressionNode);
     ExpressionResult Evaluate(MapExpressionNode expressionNode);
@@ -37,4 +36,5 @@ public interface IExpressionEvaluator
     ExpressionResult Evaluate(NotExpressionNode expressionNode);
     ExpressionResult Evaluate(FunctionDefinitionCallExpressionNode expressionNode);
     ExpressionResult Evaluate(NativeFunctionDefinitionExpressionNode expressionNode);
+    ExpressionResult Evaluate(IndexAccessExpressionNode expressionNode);
 }

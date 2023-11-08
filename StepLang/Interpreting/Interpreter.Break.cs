@@ -6,6 +6,6 @@ public partial class Interpreter
 {
     public void Execute(BreakStatementNode statementNode)
     {
-        throw new NotImplementedException();
+        BreakDepth++;
     }
 }
