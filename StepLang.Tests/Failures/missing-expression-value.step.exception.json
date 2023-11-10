@@ -1,4 +1,5 @@
 ﻿{
+  "ErrorCode": "PAR003",
   "Message": "A value was expected, but none was found",
   "HelpText": "Make sure your expression comes directly after the '=' in an assignment or declaration.",
   "Line": 1,
