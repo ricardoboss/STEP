@@ -37,6 +37,10 @@
       </None>
 
       <None Remove="Framework\**" />
+
+      <None Update="Failures\invalid-identifier.step.exception.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
     <ItemGroup>
