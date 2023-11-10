@@ -30,14 +30,14 @@ public partial class Interpreter
 
     public ExpressionResult Evaluate(FunctionDefinitionExpressionNode expressionNode)
     {
-        var definition = new UserDefinedFunctionDefinition(expressionNode.Parameters, expressionNode.Body);
+        var definition = new UserDefinedFunctionDefinition(expressionNode.Location, expressionNode.Parameters, expressionNode.Body);
 
         return new FunctionResult(definition);
     }
 
     public ExpressionResult Evaluate(FunctionDefinitionCallExpressionNode expressionNode)
     {
-        var definition = new UserDefinedFunctionDefinition(expressionNode.Parameters, expressionNode.Body);
+        var definition = new UserDefinedFunctionDefinition(expressionNode.Location, expressionNode.Parameters, expressionNode.Body);
 
         return definition.Invoke(this, expressionNode.CallArguments);
     }

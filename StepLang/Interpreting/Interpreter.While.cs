@@ -13,12 +13,21 @@ public partial class Interpreter
         {
             Execute(statementNode.Body);
 
-            if (BreakDepth <= 0)
-                continue;
+            if (BreakDepth > 0)
+            {
+                BreakDepth--;
 
-            BreakDepth--;
+                break;
+            }
 
-            break;
+            if (CurrentScope.TryGetResult(out var resultValue, out var resultLocation))
+            {
+                PopScope();
+
+                CurrentScope.SetResult(resultLocation, resultValue);
+
+                return;
+            }
         }
 
         PopScope();

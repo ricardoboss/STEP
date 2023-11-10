@@ -9,11 +9,11 @@ public partial class Interpreter
     {
         var result = statementNode.Expression.EvaluateUsing(this);
 
-        CurrentScope.SetResult(result);
+        CurrentScope.SetResult(statementNode.Location, result);
     }
 
     public void Execute(ReturnStatementNode statementNode)
     {
-        CurrentScope.SetResult(VoidResult.Instance);
+        CurrentScope.SetResult(statementNode.Location, VoidResult.Instance);
     }
 }

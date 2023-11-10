@@ -19,6 +19,7 @@ public class Scope
     private readonly Dictionary<string, Variable> identifiers = new();
     private readonly Scope? parentScope;
 
+    private TokenLocation? scopeResultLocation;
     private ExpressionResult? scopeResult;
 
     public Scope(Scope parent) => parentScope = parent;
@@ -154,10 +155,15 @@ public class Scope
         throw new UndefinedIdentifierException(identifierToken);
     }
 
-    public void SetResult(ExpressionResult result) => scopeResult = result;
-
-    public bool TryGetResult([NotNullWhen(true)] out ExpressionResult? result)
+    public void SetResult(TokenLocation location, ExpressionResult result)
     {
+        scopeResultLocation = location;
+        scopeResult = result;
+    }
+
+    public bool TryGetResult([NotNullWhen(true)] out ExpressionResult? result, [NotNullWhen(true)] out TokenLocation? location)
+    {
+        location = scopeResultLocation;
         result = scopeResult;
 
         return result is not null;

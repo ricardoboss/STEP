@@ -121,9 +121,11 @@ public partial class Interpreter
                 break;
             }
 
-            if (CurrentScope.TryGetResult(out _))
+            if (CurrentScope.TryGetResult(out var resultValue, out var resultLocation))
             {
                 PopScope();
+
+                CurrentScope.SetResult(resultLocation, resultValue);
 
                 break;
             }
