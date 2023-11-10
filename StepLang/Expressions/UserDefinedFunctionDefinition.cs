@@ -8,19 +8,18 @@ namespace StepLang.Expressions;
 public class UserDefinedFunctionDefinition : FunctionDefinition
 {
     private readonly IReadOnlyList<IVariableDeclarationNode> parameters;
-    private readonly IReadOnlyList<StatementNode> body;
 
     public UserDefinedFunctionDefinition(IReadOnlyList<IVariableDeclarationNode> parameters, IReadOnlyList<StatementNode> body)
     {
         this.parameters = parameters;
-        this.body = body;
+        Body = body;
     }
 
-    protected override string DebugBodyString => $"[{body.Count} statements]";
+    protected override string DebugBodyString => $"[{Body.Count} statements]";
 
     public override IReadOnlyList<IVariableDeclarationNode> Parameters => parameters;
 
-    public IReadOnlyList<StatementNode> Body => body;
+    public IReadOnlyList<StatementNode> Body { get; }
 
     // TODO: implement return type declarations on user defined functions
     protected override IEnumerable<ResultType> ReturnTypes => Enum.GetValues<ResultType>();
@@ -39,7 +38,7 @@ public class UserDefinedFunctionDefinition : FunctionDefinition
         // create the parameter variables in the new scope
         EvaluateParameters(interpreter, evaldArgs);
 
-        interpreter.Execute(body);
+        interpreter.Execute(Body);
 
         return interpreter.PopScope().TryGetResult(out var result) ? result : VoidResult.Instance;
     }
