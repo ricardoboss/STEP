@@ -10,9 +10,9 @@ public abstract class FunctionDefinition
     private string DebugParamsString => string.Join(", ", Parameters.Select(p =>
     {
         if (p is NullableVariableDeclarationNode nullable)
-            return $"{string.Join("|", nullable.Types.Select(t => t.Value))}{nullable.NullabilityIndicator.Value} {nullable.Identifier.Value}";
+            return $"{nullable.ResultTypesToString()}{nullable.NullabilityIndicator.Value} {nullable.Identifier.Value}";
 
-        return $"{string.Join("|", p.Types.Select(t => t.Value))} {p.Identifier.Value}";
+        return $"{p.ResultTypesToString()} {p.Identifier.Value}";
     }));
 
     private string DebugReturnTypeString => string.Join("|", ReturnTypes.Select(r => r.ToString()));

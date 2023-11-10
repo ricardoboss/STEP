@@ -12,24 +12,30 @@ public partial class Interpreter : IVariableDeclarationEvaluator
 
     public Variable Execute(VariableDeclarationNode statementNode)
     {
-        var validResults = statementNode.Types.Select(t => ResultTypes.FromTypeName(t.Value)).ToList();
+        var validResults = statementNode.GetResultTypes().ToList();
 
         return CurrentScope.CreateVariable(statementNode.Identifier, validResults, ExpressionResult.DefaultFor(validResults.First()), nullable: false);
     }
 
     public Variable Execute(NullableVariableDeclarationNode statementNode)
     {
-        return CurrentScope.CreateVariable(statementNode.Identifier, statementNode.Types.Select(t => ResultTypes.FromTypeName(t.Value)).ToList(), NullResult.Instance, nullable: true);
+        var validResults = statementNode.GetResultTypes().ToList();
+
+        return CurrentScope.CreateVariable(statementNode.Identifier, validResults, NullResult.Instance, nullable: true);
     }
 
     public Variable Execute(VariableInitializationNode statementNode)
     {
-        return CurrentScope.CreateVariable(statementNode.Identifier, statementNode.Types.Select(t => ResultTypes.FromTypeName(t.Value)).ToList(), statementNode.Expression.EvaluateUsing(this), nullable: false);
+        var validResults = statementNode.GetResultTypes().ToList();
+
+        return CurrentScope.CreateVariable(statementNode.Identifier, validResults, statementNode.Expression.EvaluateUsing(this), nullable: false);
     }
 
     public Variable Execute(NullableVariableInitializationNode statementNode)
     {
-        return CurrentScope.CreateVariable(statementNode.Identifier, statementNode.Types.Select(t => ResultTypes.FromTypeName(t.Value)).ToList(), statementNode.Expression.EvaluateUsing(this), nullable: true);
+        var validResults = statementNode.GetResultTypes().ToList();
+
+        return CurrentScope.CreateVariable(statementNode.Identifier, validResults, statementNode.Expression.EvaluateUsing(this), nullable: true);
     }
 
     public void Execute(VariableAssignmentNode statementNode)
