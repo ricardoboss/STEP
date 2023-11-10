@@ -7,10 +7,12 @@ namespace StepLang.Expressions;
 
 public class UserDefinedFunctionDefinition : FunctionDefinition
 {
+    private readonly TokenLocation location;
     private readonly IReadOnlyList<IVariableDeclarationNode> parameters;
 
-    public UserDefinedFunctionDefinition(IReadOnlyList<IVariableDeclarationNode> parameters, IReadOnlyList<StatementNode> body)
+    public UserDefinedFunctionDefinition(TokenLocation location, IReadOnlyList<IVariableDeclarationNode> parameters, IReadOnlyList<StatementNode> body)
     {
+        this.location = location;
         this.parameters = parameters;
         Body = body;
     }
@@ -43,7 +45,18 @@ public class UserDefinedFunctionDefinition : FunctionDefinition
 
         interpreter.Execute(Body);
 
-        return interpreter.PopScope().TryGetResult(out var result) ? result : VoidResult.Instance;
+        if (interpreter.PopScope().TryGetResult(out var resultValue, out var resultLocation))
+            return CheckResult(resultLocation, resultValue);
+
+        return CheckResult(location, VoidResult.Instance);
+    }
+
+    private ExpressionResult CheckResult(TokenLocation resultLocation, ExpressionResult resultValue)
+    {
+        if (!ReturnTypes.Contains(resultValue.ResultType))
+            throw new InvalidReturnTypeException(resultLocation, resultValue.ResultType, ReturnTypes);
+
+        return resultValue;
     }
 
     private List<(TokenLocation, ExpressionResult)> EvaluateArguments(IExpressionEvaluator evaluator, IReadOnlyCollection<ExpressionNode> arguments)

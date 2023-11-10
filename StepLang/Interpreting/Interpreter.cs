@@ -69,7 +69,7 @@ public partial class Interpreter : IRootNodeVisitor, IStatementVisitor, IExpress
 
             Execute(statement);
 
-            if (!CurrentScope.TryGetResult(out _))
+            if (!CurrentScope.TryGetResult(out _, out _))
                 continue;
 
             DebugOut?.WriteLine("Result found, continuing");
@@ -99,7 +99,8 @@ public partial class Interpreter : IRootNodeVisitor, IStatementVisitor, IExpress
 
         Execute(statementNode.Body);
 
-        PopScope();
+        if (PopScope().TryGetResult(out var resultValue, out var resultLocation))
+            CurrentScope.SetResult(resultLocation, resultValue);
     }
 
     public ExpressionResult Evaluate(IdentifierExpressionNode expressionNode)

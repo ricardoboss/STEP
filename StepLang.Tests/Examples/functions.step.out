@@ -14,3 +14,7 @@ with default parameter:
 1
 with default parameter but another value:
 3
+loop(true, true): 0
+loop(true, false): 6
+loop(false, true): 0
+loop(false, false): 6

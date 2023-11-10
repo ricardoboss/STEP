@@ -25,6 +25,37 @@ function add = (number a, number b = 0) {
 	return a + b
 }
 
+function loop = (bool whileLoop, bool breakOrReturn) {
+	if (whileLoop) {
+		number i = 0
+		while (i < 10) {
+			i = i + 1
+
+			if (i > 5) {
+				if (breakOrReturn) {
+					break
+				} else {
+					return i
+				}
+			}
+		}
+
+		return 0
+	}
+
+	foreach (number i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]) {
+		if (i > 5) {
+			if (breakOrReturn) {
+				break
+			} else {
+				return i
+			}
+		}
+	}
+
+	return 0
+}
+
 println("Inline function definition and call:")
 println((number a, number b) {
 	return a + b
@@ -47,3 +78,8 @@ println(add(1))
 
 println("with default parameter but another value:")
 println(add(1, 2))
+
+println("loop(true, true): ", loop(true, true))
+println("loop(true, false): ", loop(true, false))
+println("loop(false, true): ", loop(false, true))
+println("loop(false, false): ", loop(false, false))
