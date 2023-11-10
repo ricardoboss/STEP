@@ -9,6 +9,8 @@ public interface IVariableDeclarationNode : IEvaluatableNode<IVariableDeclaratio
     IReadOnlyCollection<Token> Types { get; }
 
     Token Identifier { get; }
+
+    bool HasValue { get; }
 }
 
 public static class VariableDeclarationNodeExtensions
