@@ -11,4 +11,6 @@ public sealed record NullableVariableDeclarationNode(IReadOnlyCollection<Token> 
     }
 
     public TokenLocation Location => Types.First().Location;
+
+    public bool HasValue => false;
 }

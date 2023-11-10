@@ -27,8 +27,9 @@ public abstract class GenericFunction<T1> : GenericOneParameterFunction where T1
     public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
     {
         var requiredCount = GetRequiredCount();
+        var totalCount = GetArgumentTotalCount();
 
-        if (arguments.Count < requiredCount)
+        if (arguments.Count < requiredCount || arguments.Count > totalCount)
             throw new InvalidArgumentCountException(requiredCount, arguments.Count);
 
         var argument1 = GetArgument<T1>(0, interpreter, arguments);
@@ -46,8 +47,9 @@ public abstract class GenericFunction<T1, T2> : GenericTwoParameterFunction
     public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
     {
         var requiredCount = GetRequiredCount();
+        var totalCount = GetArgumentTotalCount();
 
-        if (arguments.Count < requiredCount)
+        if (arguments.Count < requiredCount || arguments.Count > totalCount)
             throw new InvalidArgumentCountException(requiredCount, arguments.Count);
 
         var argument1 = GetArgument<T1>(0, interpreter, arguments);
@@ -67,8 +69,9 @@ public abstract class GenericFunction<T1, T2, T3> : GenericThreeParameterFunctio
     public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
     {
         var requiredCount = GetRequiredCount();
+        var totalCount = GetArgumentTotalCount();
 
-        if (arguments.Count < requiredCount)
+        if (arguments.Count < requiredCount || arguments.Count > totalCount)
             throw new InvalidArgumentCountException(requiredCount, arguments.Count);
 
         var argument1 = GetArgument<T1>(0, interpreter, arguments);
@@ -82,6 +85,7 @@ public abstract class GenericFunction<T1, T2, T3> : GenericThreeParameterFunctio
 public abstract class GenericParameterlessFunction : NativeFunction
 {
     protected virtual int GetRequiredCount() => 0;
+    protected virtual int GetArgumentTotalCount() => NativeParameters.Count();
     protected virtual ExpressionNode GetDefaultExpression(int index) => throw new InvalidOperationException();
     protected virtual IReadOnlyList<ResultType> GetArgumentTypes(int index) => throw new InvalidOperationException();
 
