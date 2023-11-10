@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
 using StepLang.Parsing;
@@ -36,7 +37,7 @@ public class UserDefinedFunctionDefinition : FunctionDefinition
             throw new InvalidArgumentCountException(parameters.Count, arguments.Count);
 
         // evaluate args _before_ pushing scope
-        var evaldArgs = EvaluateArguments(interpreter, arguments);
+        var evaldArgs = EvaluateArguments(interpreter, arguments).ToList();
 
         interpreter.PushScope();
 
@@ -59,33 +60,36 @@ public class UserDefinedFunctionDefinition : FunctionDefinition
         return resultValue;
     }
 
-    private List<(TokenLocation, ExpressionResult)> EvaluateArguments(IExpressionEvaluator evaluator, IReadOnlyCollection<ExpressionNode> arguments)
+    private IEnumerable<(TokenLocation, ExpressionResult)> EvaluateArguments(IExpressionEvaluator evaluator, IEnumerable<ExpressionNode> arguments)
     {
-        var evaldArgs = new List<(TokenLocation, ExpressionResult)>(TotalParametersCount);
-
+        var suppliedArgs = 0;
         foreach (var argExpression in arguments)
         {
-            var location = argExpression.Location;
-            var value = argExpression.EvaluateUsing(evaluator);
+            var argLocation = argExpression.Location;
+            var argValue = argExpression.EvaluateUsing(evaluator);
 
-            evaldArgs.Add((location, value));
+            suppliedArgs++;
+
+            yield return (argLocation, argValue);
         }
 
-        for (var i = arguments.Count; i < TotalParametersCount; i++)
+        Debug.Assert(suppliedArgs <= TotalParametersCount);
+
+        for (; suppliedArgs < TotalParametersCount; suppliedArgs++)
         {
-            var parameter = parameters[i];
-            var location = parameter.Location;
-            var value = parameter switch
+            var parameter = parameters[suppliedArgs];
+            var parameterLocation = parameter.Location;
+            var defaultValue = parameter switch
             {
                 NullableVariableInitializationNode nullable => nullable.Expression.EvaluateUsing(evaluator),
                 VariableInitializationNode initialization => initialization.Expression.EvaluateUsing(evaluator),
                 _ => throw new InvalidOperationException("Invalid parameter type"),
             };
 
-            evaldArgs.Add((location, value));
+            yield return (parameterLocation, defaultValue);
         }
 
-        return evaldArgs;
+        Debug.Assert(suppliedArgs == TotalParametersCount);
     }
 
     private void CreateArgumentVariables(IVariableDeclarationEvaluator evaluator, IReadOnlyList<(TokenLocation, ExpressionResult)> arguments)
