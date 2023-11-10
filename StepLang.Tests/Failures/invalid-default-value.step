@@ -1,0 +1,5 @@
+function a = (number i = "test") {
+	return i
+}
+
+println(a())
