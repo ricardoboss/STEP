@@ -25,8 +25,8 @@ public class SortedFunction : ListManipulationFunction
         if (callbackParameters.Count != 2)
             throw new InvalidArgumentTypeException(null, $"Callback function must have 2 parameters, but has {callbackParameters.Count}");
 
-        if (!callbackParameters[0].ResultTypes.SequenceEqual(callbackParameters[1].ResultTypes))
-            throw new InvalidArgumentTypeException(null, $"Both parameters of callback function must have the same type, but are {string.Join("|", callbackParameters[0].ResultTypes.Select(t => t.ToTypeName()))} and {string.Join("|", callbackParameters[1].ResultTypes.Select(t => t.ToTypeName()))}");
+        if (!callbackParameters[0].GetResultTypes().SequenceEqual(callbackParameters[1].GetResultTypes()))
+            throw new InvalidArgumentTypeException(null, $"Both parameters of callback function must have the same type, but are {callbackParameters[0].ResultTypesToString()} and {callbackParameters[1].ResultTypesToString()}");
 
         return list.Select(e => new[] { e.ToExpressionNode() });
     }

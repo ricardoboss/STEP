@@ -34,8 +34,8 @@ public abstract class ListManipulationFunction : GenericFunction<ListResult, Fun
             case < 1 or > 2:
                 throw new InvalidArgumentTypeException(null, $"Callback function must have 1 or 2 parameters, but has {callbackParameters.Count}");
             case 2:
-                if (!callbackParameters[1].ResultTypes.Contains(ResultType.Number))
-                    throw new InvalidArgumentTypeException(null, $"Second parameter of callback function must accept numbers, but is {string.Join("|", callbackParameters[1].ResultTypes.Select(t => t.ToTypeName()))}");
+                if (!callbackParameters[1].HasResultType(ResultType.Number))
+                    throw new InvalidArgumentTypeException(null, $"Second parameter of callback function must accept numbers, but is {callbackParameters[1].ResultTypesToString()}");
 
                 argsConverter = (element, index) =>
                 {
