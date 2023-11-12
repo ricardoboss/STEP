@@ -14,6 +14,7 @@ public class Tokenizer
     private TokenLocation? stringStartLocation;
     private char? stringQuote;
     private bool escaped;
+    private int? stringSourceLength;
 
     public Tokenizer(bool strict = true)
     {
@@ -51,6 +52,7 @@ public class Tokenizer
 
                 stringQuote = character;
                 stringStartLocation = characterQueue.CurrentLocation;
+                stringStartLocation = stringStartLocation with { Column = stringStartLocation.Column - 1 };
 
                 continue;
             }
@@ -78,7 +80,7 @@ public class Tokenizer
 
         if (tokenBuilder.Length == 0)
         {
-            yield return new(TokenType.EndOfFile, "", characterQueue.CurrentLocation);
+            yield return FinalizeToken(TokenType.EndOfFile);
 
             yield break;
         }
@@ -86,7 +88,7 @@ public class Tokenizer
         var leftOverToken = TryFinalizeTokenFromBuilder(true);
         if (leftOverToken is not null) yield return leftOverToken;
 
-        yield return new(TokenType.EndOfFile, "", characterQueue.CurrentLocation);
+        yield return FinalizeToken(TokenType.EndOfFile);
     }
 
     private IEnumerable<Token> HandleLineComment(char character)
@@ -115,6 +117,9 @@ public class Tokenizer
 
     private IEnumerable<Token> HandleString(char c)
     {
+        stringSourceLength ??= 1; // assume the source already includes the quote character
+        stringSourceLength++;
+
         if (escaped)
         {
             var escapedChar = $"\\{c}";
@@ -133,7 +138,10 @@ public class Tokenizer
             stringQuote = null;
             stringStartLocation = null;
 
-            yield return FinalizeToken(TokenType.LiteralString);
+            yield return FinalizeToken(TokenType.LiteralString, stringSourceLength);
+
+            stringSourceLength = null;
+
             yield break;
         }
 
@@ -153,10 +161,15 @@ public class Tokenizer
             stringQuote = null;
             stringStartLocation = null;
 
-            yield return FinalizeToken(TokenType.LiteralString);
+            yield return FinalizeToken(TokenType.LiteralString, stringSourceLength);
 
-            if (c is '\n')
-                yield return new(TokenType.NewLine, c.ToString(), characterQueue.CurrentLocation);
+            stringSourceLength = null;
+
+            if (c is not '\n')
+                yield break;
+
+            tokenBuilder.Append(c);
+            yield return FinalizeToken(TokenType.NewLine);
 
             yield break;
         }
@@ -171,8 +184,9 @@ public class Tokenizer
             if (TryFinalizePreviousToken() is { } previousToken)
                 yield return previousToken;
 
-            yield return new(symbolType.Value, c.ToString(), characterQueue.CurrentLocation);
+            tokenBuilder.Append(c);
 
+            yield return FinalizeToken(symbolType.Value);
             yield break;
         }
 
@@ -224,12 +238,19 @@ public class Tokenizer
         return char.IsDigit(c) || c is '.' or '-';
     }
 
-    private Token FinalizeToken(TokenType type)
+    private Token FinalizeToken(TokenType type, int? sourceLength = null)
     {
         var value = tokenBuilder.ToString();
-
         tokenBuilder.Clear();
 
-        return new(type, value, characterQueue.CurrentLocation);
+        sourceLength ??= value.Length;
+
+        var endLocation = characterQueue.CurrentLocation;
+
+        var startColumn = endLocation.Column - sourceLength.Value;
+
+        var startLocation = endLocation with { Column = startColumn, Length = sourceLength };
+
+        return new(type, value, startLocation);
     }
 }

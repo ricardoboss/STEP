@@ -10,6 +10,15 @@ public class Token
 
     public TokenLocation Location { get; }
 
+    public static Token FromEndLocation(TokenType type, string value, TokenLocation endLocation)
+    {
+        var startColumn = endLocation.Column - value.Length;
+
+        var startLocation = endLocation with { Column = startColumn };
+
+        return new(type, value, startLocation);
+    }
+
     public Token(TokenType type, string value, TokenLocation? location = null)
     {
         Type = type;

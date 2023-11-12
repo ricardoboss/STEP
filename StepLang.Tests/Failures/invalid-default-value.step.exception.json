@@ -3,5 +3,6 @@
   "Message": "Cannot assign a value of type string to a variable declared as number",
   "HelpText": "Make sure the value you are trying to assign to i is of type number and not null.",
   "Line": 1,
-  "Column": 24
+  "Column": 24,
+  "Length": 1
 }

@@ -1,6 +1,6 @@
 namespace StepLang.Tokenizing;
 
-public record TokenLocation(FileSystemInfo? File = null, int Line = 1, int Column = 1)
+public record TokenLocation(FileSystemInfo? File = null, int Line = 1, int Column = 1, int? Length = null)
 {
     /// <inheritdoc />
     public override string ToString()

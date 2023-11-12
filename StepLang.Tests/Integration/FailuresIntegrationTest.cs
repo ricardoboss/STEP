@@ -51,7 +51,7 @@ public class FailuresIntegrationTest
         Assert.Equal(exampleFile, exception.Location?.File);
         Assert.Equal(details.Line, exception.Location?.Line);
         Assert.Equal(details.Column, exception.Location?.Column);
-        Assert.Equal(details.Column, exception.Location?.Column);
+        Assert.Equal(details.Length, exception.Location?.Length);
     }
 
     [SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Used by xUnit")]
@@ -75,5 +75,6 @@ public class FailuresIntegrationTest
         public string? HelpText { get; init; }
         public int Line { get; init; }
         public int Column { get; init; }
+        public int? Length { get; init; }
     }
 }
