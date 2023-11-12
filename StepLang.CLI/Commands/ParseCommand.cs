@@ -23,11 +23,8 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
         var scriptFile = new FileInfo(settings.File);
-
-        var chars = await File.ReadAllTextAsync(scriptFile.FullName);
-        var tokenizer = new Tokenizer();
-        tokenizer.UpdateFile(scriptFile);
-        tokenizer.Add(chars);
+        var source = await CharacterSource.FromFileAsync(scriptFile);
+        var tokenizer = new Tokenizer(source);
         var tokens = tokenizer.Tokenize();
         var parser = new Parser(tokens);
         var root = parser.ParseRoot();

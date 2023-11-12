@@ -19,14 +19,14 @@ public class Variable
         Value = VoidResult.Instance;
     }
 
-    public void Assign(TokenLocation location, ExpressionResult newValue)
+    public void Assign(TokenLocation assignmentLocation, ExpressionResult newValue)
     {
         if (!Accepts(newValue))
         {
             if (Nullable || newValue is NullResult)
-                throw new IncompatibleVariableTypeException(location, this, newValue);
+                throw new IncompatibleVariableTypeException(assignmentLocation, this, newValue);
 
-            throw new NonNullableVariableAssignmentException(location, this, newValue);
+            throw new NonNullableVariableAssignmentException(assignmentLocation, this, newValue);
         }
 
         Value = newValue;

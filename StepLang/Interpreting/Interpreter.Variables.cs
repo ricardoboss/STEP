@@ -14,28 +14,28 @@ public partial class Interpreter : IVariableDeclarationEvaluator
     {
         var validResults = statementNode.GetResultTypes().ToList();
 
-        return CurrentScope.CreateVariable(statementNode.Identifier, validResults, ExpressionResult.DefaultFor(validResults.First()), nullable: false);
+        return CurrentScope.CreateVariable(statementNode.Location, statementNode.Identifier, validResults, ExpressionResult.DefaultFor(validResults.First()), nullable: false);
     }
 
     public Variable Execute(NullableVariableDeclarationNode statementNode)
     {
         var validResults = statementNode.GetResultTypes().ToList();
 
-        return CurrentScope.CreateVariable(statementNode.Identifier, validResults, NullResult.Instance, nullable: true);
+        return CurrentScope.CreateVariable(statementNode.Location, statementNode.Identifier, validResults, NullResult.Instance, nullable: true);
     }
 
     public Variable Execute(VariableInitializationNode statementNode)
     {
         var validResults = statementNode.GetResultTypes().ToList();
 
-        return CurrentScope.CreateVariable(statementNode.Identifier, validResults, statementNode.Expression.EvaluateUsing(this), nullable: false);
+        return CurrentScope.CreateVariable(statementNode.Location, statementNode.Identifier, validResults, statementNode.Expression.EvaluateUsing(this), nullable: false);
     }
 
     public Variable Execute(NullableVariableInitializationNode statementNode)
     {
         var validResults = statementNode.GetResultTypes().ToList();
 
-        return CurrentScope.CreateVariable(statementNode.Identifier, validResults, statementNode.Expression.EvaluateUsing(this), nullable: true);
+        return CurrentScope.CreateVariable(statementNode.Location, statementNode.Identifier, validResults, statementNode.Expression.EvaluateUsing(this), nullable: true);
     }
 
     public void Execute(VariableAssignmentNode statementNode)

@@ -94,17 +94,17 @@ public class Scope
         CreateVariable("e", new NumberResult(Math.E));
     }
 
-    public void CreateVariable(string identifier, ExpressionResult initialValue, bool nullable = false) =>
-        CreateVariable(new(TokenType.Identifier, identifier), new[] { initialValue.ResultType }, initialValue, nullable);
+    private void CreateVariable(string identifier, ExpressionResult initialValue, bool nullable = false) =>
+        CreateVariable(new(), new(TokenType.Identifier, identifier), new[] { initialValue.ResultType }, initialValue, nullable);
 
-    public Variable CreateVariable(Token identifierToken, IReadOnlyList<ResultType> types, ExpressionResult initialValue, bool nullable = false)
+    public Variable CreateVariable(TokenLocation assignmentLocation, Token identifierToken, IReadOnlyList<ResultType> types, ExpressionResult initialValue, bool nullable = false)
     {
         if (Exists(identifierToken.Value, false))
             throw new VariableAlreadyDeclaredException(identifierToken);
 
         var variable = new Variable(identifierToken.Value, types, nullable);
 
-        variable.Assign(identifierToken.Location, initialValue);
+        variable.Assign(assignmentLocation, initialValue);
 
         identifiers[identifierToken.Value] = variable;
 

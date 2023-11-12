@@ -28,13 +28,9 @@ public class FailuresIntegrationTest
         var stdErr = new StringWriter();
         var stdIn = new StringReader(stdInText);
 
-        var tokenizer = new Tokenizer();
-        tokenizer.UpdateFile(exampleFile);
-        var interpreter = new Interpreter(stdOut, stdErr, stdIn);
-
         // act
-        var chars = await File.ReadAllTextAsync(exampleFile.FullName);
-        tokenizer.Add(chars);
+        var tokenizer = new Tokenizer(exampleFile);
+        var interpreter = new Interpreter(stdOut, stdErr, stdIn);
 
         // assert
         var exception = Assert.ThrowsAny<StepLangException>(() =>

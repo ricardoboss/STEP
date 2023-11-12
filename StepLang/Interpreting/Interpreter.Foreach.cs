@@ -10,9 +10,9 @@ public partial class Interpreter
     public void Execute(ForeachDeclareKeyDeclareValueStatementNode statementNode)
     {
         var keyVariable = statementNode.KeyDeclaration.EvaluateUsing(this);
-        var keyLocation = statementNode.KeyDeclaration.Identifier.Location;
+        var keyLocation = statementNode.KeyDeclaration.Types.First().Location;
         var valueVariable = statementNode.ValueDeclaration.EvaluateUsing(this);
-        var valueLocation = statementNode.ValueDeclaration.Identifier.Location;
+        var valueLocation = statementNode.ValueDeclaration.Types.First().Location;
         var collection = statementNode.Collection.EvaluateUsing(this);
 
         RunForeachLoop(keyLocation, keyVariable, valueLocation, valueVariable, collection, statementNode.Body);
@@ -21,7 +21,7 @@ public partial class Interpreter
     public void Execute(ForeachDeclareKeyValueStatementNode statementNode)
     {
         var keyVariable = statementNode.KeyDeclaration.EvaluateUsing(this);
-        var keyLocation = statementNode.KeyDeclaration.Identifier.Location;
+        var keyLocation = statementNode.KeyDeclaration.Types.First().Location;
         var valueVariable = CurrentScope.GetVariable(statementNode.ValueIdentifier);
         var valueLocation = statementNode.ValueIdentifier.Location;
         var collection = statementNode.Collection.EvaluateUsing(this);
@@ -32,7 +32,7 @@ public partial class Interpreter
     public void Execute(ForeachDeclareValueStatementNode statementNode)
     {
         var valueVariable = statementNode.ValueDeclaration.EvaluateUsing(this);
-        var valueLocation = statementNode.ValueDeclaration.Identifier.Location;
+        var valueLocation = statementNode.ValueDeclaration.Types.First().Location;
         var collection = statementNode.Collection.EvaluateUsing(this);
 
         RunForeachLoop(null, null, valueLocation, valueVariable, collection, statementNode.Body);
@@ -54,7 +54,7 @@ public partial class Interpreter
         var keyVariable = CurrentScope.GetVariable(statementNode.KeyIdentifier);
         var keyLocation = statementNode.KeyIdentifier.Location;
         var valueVariable = statementNode.ValueDeclaration.EvaluateUsing(this);
-        var valueLocation = statementNode.ValueDeclaration.Identifier.Location;
+        var valueLocation = statementNode.ValueDeclaration.Types.First().Location;
         var collection = statementNode.Collection.EvaluateUsing(this);
 
         RunForeachLoop(keyLocation, keyVariable, valueLocation, valueVariable, collection, statementNode.Body);

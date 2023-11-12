@@ -54,10 +54,9 @@ public abstract class NativeFunction : FunctionDefinition
             }
 
             if (!nullable)
-                return new VariableInitializationNode(types, identifier, p.DefaultValue);
+                return new VariableInitializationNode(new(), types, identifier, p.DefaultValue);
 
-            return new NullableVariableInitializationNode(types, new(TokenType.QuestionMarkSymbol, "?"), identifier, p.DefaultValue);
-
+            return new NullableVariableInitializationNode(new(), types, new(TokenType.QuestionMarkSymbol, "?"), identifier, p.DefaultValue);
         })
         .ToList();
 
