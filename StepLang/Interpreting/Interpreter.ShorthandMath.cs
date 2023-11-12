@@ -10,7 +10,7 @@ public partial class Interpreter
         var variable = CurrentScope.GetVariable(statementNode.Identifier);
         var value = variable.Value;
         if (value is not NumberResult number)
-            throw new IncompatibleExpressionOperandsException(value, "increment");
+            throw new IncompatibleExpressionOperandsException(statementNode.Location, value, "increment");
 
         variable.Assign(statementNode.Location, number + 1);
     }
@@ -20,7 +20,7 @@ public partial class Interpreter
         var variable = CurrentScope.GetVariable(statementNode.Identifier);
         var value = variable.Value;
         if (value is not NumberResult number)
-            throw new IncompatibleExpressionOperandsException(value, "decrement");
+            throw new IncompatibleExpressionOperandsException(statementNode.Location, value, "decrement");
 
         variable.Assign(statementNode.Location, number - 1);
     }
