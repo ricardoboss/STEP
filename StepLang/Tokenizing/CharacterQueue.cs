@@ -7,9 +7,9 @@ public class CharacterQueue
 {
     private readonly Queue<char> charQueue = new();
 
-    public int Column { get; private set; }
+    private int Column { get; set; } = 1;
 
-    public int Line { get; private set; }
+    private int Line { get; set; } = 1;
 
     private FileSystemInfo? file;
     public FileSystemInfo? File
@@ -50,7 +50,7 @@ public class CharacterQueue
         return true;
     }
 
-    public bool TryPeek(int offset, out char character)
+    private bool TryPeek(int offset, out char character)
     {
         character = charQueue.Skip(offset).FirstOrDefault();
 

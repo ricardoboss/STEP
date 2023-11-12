@@ -58,7 +58,7 @@ internal static class ErrorHandler
                 var contextLines = lines[contextStartLine..contextEndLine];
                 var context = string.Join(Environment.NewLine, contextLines);
 
-                var code = new Code(context, ColorScheme.Pale, true, contextStartLine, location.Line);
+                var code = new Code(context, ColorScheme.Pale, true, contextStartLine, location.Line, location.Column, location.Length);
 
                 var codePanel = new Panel(code)
                         .Header("[bold]Code[/]", Justify.Left)

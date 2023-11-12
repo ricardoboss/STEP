@@ -17,7 +17,11 @@ public class TokenizerTest
         Assert.Equal(TokenType.LiteralString, tokens[0].Type);
         Assert.Equal(source, tokens[0].Value);
         Assert.Equal("abc", tokens[0].StringValue);
+        Assert.Equal(1, tokens[0].Location.Line);
+        Assert.Equal(1, tokens[0].Location.Column);
         Assert.Equal(TokenType.EndOfFile, tokens[1].Type);
+        Assert.Equal(1, tokens[1].Location.Line);
+        Assert.Equal(source.Length + 1, tokens[1].Location.Column);
     }
 
     [Fact]
@@ -32,7 +36,11 @@ public class TokenizerTest
         Assert.Equal(2, tokens.Length);
         Assert.Equal(TokenType.LiteralString, tokens[0].Type);
         Assert.Equal("\n", tokens[0].StringValue);
+        Assert.Equal(1, tokens[0].Location.Line);
+        Assert.Equal(1, tokens[0].Location.Column);
         Assert.Equal(TokenType.EndOfFile, tokens[1].Type);
+        Assert.Equal(1, tokens[1].Location.Line);
+        Assert.Equal(source.Length + 1, tokens[1].Location.Column);
     }
 
     [Fact]
@@ -47,7 +55,11 @@ public class TokenizerTest
         Assert.Equal(2, tokens.Length);
         Assert.Equal(TokenType.LiteralNumber, tokens[0].Type);
         Assert.Equal("123", tokens[0].Value);
+        Assert.Equal(1, tokens[0].Location.Line);
+        Assert.Equal(1, tokens[0].Location.Column);
         Assert.Equal(TokenType.EndOfFile, tokens[1].Type);
+        Assert.Equal(1, tokens[1].Location.Line);
+        Assert.Equal(source.Length + 1, tokens[1].Location.Column);
     }
 
     [Fact]
@@ -62,9 +74,15 @@ public class TokenizerTest
         Assert.Equal(3, tokens.Length);
         Assert.Equal(TokenType.MinusSymbol, tokens[0].Type);
         Assert.Equal("-", tokens[0].Value);
+        Assert.Equal(1, tokens[0].Location.Line);
+        Assert.Equal(1, tokens[0].Location.Column);
         Assert.Equal(TokenType.LiteralNumber, tokens[1].Type);
         Assert.Equal("123", tokens[1].Value);
+        Assert.Equal(1, tokens[1].Location.Line);
+        Assert.Equal(2, tokens[1].Location.Column);
         Assert.Equal(TokenType.EndOfFile, tokens[2].Type);
+        Assert.Equal(1, tokens[2].Location.Line);
+        Assert.Equal(source.Length + 1, tokens[2].Location.Column);
     }
 
     [Fact]
@@ -79,9 +97,15 @@ public class TokenizerTest
         Assert.Equal(3, tokens.Length);
         Assert.Equal(TokenType.MinusSymbol, tokens[0].Type);
         Assert.Equal("-", tokens[0].Value);
+        Assert.Equal(1, tokens[0].Location.Line);
+        Assert.Equal(1, tokens[0].Location.Column);
         Assert.Equal(TokenType.LiteralNumber, tokens[1].Type);
         Assert.Equal("1.23", tokens[1].Value);
+        Assert.Equal(1, tokens[1].Location.Line);
+        Assert.Equal(2, tokens[1].Location.Column);
         Assert.Equal(TokenType.EndOfFile, tokens[2].Type);
+        Assert.Equal(1, tokens[2].Location.Line);
+        Assert.Equal(source.Length + 1, tokens[2].Location.Column);
     }
 
     [Fact]
@@ -97,7 +121,11 @@ public class TokenizerTest
         Assert.Equal(TokenType.LiteralString, tokens[0].Type);
         Assert.Equal(source, tokens[0].Value);
         Assert.Equal("abc def", tokens[0].StringValue);
+        Assert.Equal(1, tokens[0].Location.Line);
+        Assert.Equal(1, tokens[0].Location.Column);
         Assert.Equal(TokenType.EndOfFile, tokens[1].Type);
+        Assert.Equal(1, tokens[1].Location.Line);
+        Assert.Equal(source.Length + 1, tokens[1].Location.Column);
     }
 
     [Theory]
@@ -111,7 +139,11 @@ public class TokenizerTest
         Assert.Equal(2, tokens.Length);
         Assert.Equal(TokenType.LiteralString, tokens[0].Type);
         Assert.Equal(expected, tokens[0].StringValue);
+        Assert.Equal(1, tokens[0].Location.Line);
+        Assert.Equal(1, tokens[0].Location.Column);
         Assert.Equal(TokenType.EndOfFile, tokens[1].Type);
+        Assert.Equal(1, tokens[1].Location.Line);
+        Assert.Equal(source.Length + 1, tokens[1].Location.Column);
     }
 
     [Theory]
@@ -128,7 +160,11 @@ public class TokenizerTest
         Assert.Equal(2, tokens.Count);
         Assert.Equal(TokenType.TypeName, tokens[0].Type);
         Assert.Equal(source, tokens[0].Value);
+        Assert.Equal(1, tokens[0].Location.Line);
+        Assert.Equal(1, tokens[0].Location.Column);
         Assert.Equal(TokenType.EndOfFile, tokens[1].Type);
+        Assert.Equal(1, tokens[1].Location.Line);
+        Assert.Equal(source.Length + 1, tokens[1].Location.Column);
     }
 
     [Theory]
@@ -146,7 +182,11 @@ public class TokenizerTest
         Assert.Equal(2, tokens.Length);
         Assert.Equal(type, tokens[0].Type);
         Assert.Equal(source, tokens[0].Value);
+        Assert.Equal(1, tokens[0].Location.Line);
+        Assert.Equal(1, tokens[0].Location.Column);
         Assert.Equal(TokenType.EndOfFile, tokens[1].Type);
+        Assert.Equal(1, tokens[1].Location.Line);
+        Assert.Equal(source.Length + 1, tokens[1].Location.Column);
     }
 
     [Fact]
@@ -161,19 +201,35 @@ public class TokenizerTest
         Assert.Equal(8, tokens.Count);
         Assert.Equal(TokenType.TypeName, tokens[0].Type);
         Assert.Equal("number", tokens[0].Value);
+        Assert.Equal(1, tokens[0].Location.Line);
+        Assert.Equal(1, tokens[0].Location.Column);
         Assert.Equal(TokenType.Whitespace, tokens[1].Type);
         Assert.Equal(" ", tokens[1].Value);
+        Assert.Equal(1, tokens[1].Location.Line);
+        Assert.Equal(7, tokens[1].Location.Column);
         Assert.Equal(TokenType.Identifier, tokens[2].Type);
         Assert.Equal("identifier", tokens[2].Value);
+        Assert.Equal(1, tokens[2].Location.Line);
+        Assert.Equal(9, tokens[2].Location.Column);
         Assert.Equal(TokenType.Whitespace, tokens[3].Type);
         Assert.Equal(" ", tokens[3].Value);
+        Assert.Equal(1, tokens[3].Location.Line);
+        Assert.Equal(18, tokens[3].Location.Column);
         Assert.Equal(TokenType.EqualsSymbol, tokens[4].Type);
         Assert.Equal("=", tokens[4].Value);
+        Assert.Equal(1, tokens[4].Location.Line);
+        Assert.Equal(19, tokens[4].Location.Column);
         Assert.Equal(TokenType.Whitespace, tokens[5].Type);
         Assert.Equal(" ", tokens[5].Value);
+        Assert.Equal(1, tokens[5].Location.Line);
+        Assert.Equal(20, tokens[5].Location.Column);
         Assert.Equal(TokenType.LiteralNumber, tokens[6].Type);
         Assert.Equal("1", tokens[6].Value);
+        Assert.Equal(1, tokens[6].Location.Line);
+        Assert.Equal(21, tokens[6].Location.Column);
         Assert.Equal(TokenType.EndOfFile, tokens[7].Type);
+        Assert.Equal(1, tokens[7].Location.Line);
+        Assert.Equal(22, tokens[7].Location.Column);
     }
 
     [Fact]
@@ -188,15 +244,27 @@ public class TokenizerTest
         Assert.Equal(6, tokens.Count);
         Assert.Equal(TokenType.IfKeyword, tokens[0].Type);
         Assert.Equal("if", tokens[0].Value);
+        Assert.Equal(1, tokens[0].Location.Line);
+        Assert.Equal(1, tokens[0].Location.Column);
         Assert.Equal(TokenType.Whitespace, tokens[1].Type);
         Assert.Equal(" ", tokens[1].Value);
+        Assert.Equal(1, tokens[1].Location.Line);
+        Assert.Equal(3, tokens[1].Location.Column);
         Assert.Equal(TokenType.OpeningParentheses, tokens[2].Type);
         Assert.Equal("(", tokens[2].Value);
+        Assert.Equal(1, tokens[2].Location.Line);
+        Assert.Equal(4, tokens[2].Location.Column);
         Assert.Equal(TokenType.LiteralBoolean, tokens[3].Type);
         Assert.Equal("true", tokens[3].Value);
+        Assert.Equal(1, tokens[3].Location.Line);
+        Assert.Equal(5, tokens[3].Location.Column);
         Assert.Equal(TokenType.ClosingParentheses, tokens[4].Type);
         Assert.Equal(")", tokens[4].Value);
+        Assert.Equal(1, tokens[4].Location.Line);
+        Assert.Equal(9, tokens[4].Location.Column);
         Assert.Equal(TokenType.EndOfFile, tokens[5].Type);
+        Assert.Equal(1, tokens[5].Location.Line);
+        Assert.Equal(10, tokens[5].Location.Column);
     }
 
     [Fact]
