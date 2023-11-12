@@ -33,13 +33,10 @@ public class ExamplesIntegrationTest
         if (File.Exists(exampleFile.FullName + ".err"))
             expectedError = await File.ReadAllTextAsync(exampleFile.FullName + ".err");
 
-        var tokenizer = new Tokenizer();
-        tokenizer.UpdateFile(exampleFile);
-        var interpreter = new Interpreter(stdOut, stdErr, stdIn);
 
         // act
-        var chars = await File.ReadAllTextAsync(exampleFile.FullName);
-        tokenizer.Add(chars);
+        var tokenizer = new Tokenizer(exampleFile);
+        var interpreter = new Interpreter(stdOut, stdErr, stdIn);
         var tokens = tokenizer.Tokenize();
         var parser = new Parser(tokens);
         var root = parser.ParseRoot();

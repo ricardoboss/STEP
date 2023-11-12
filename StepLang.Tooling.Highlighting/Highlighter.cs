@@ -13,12 +13,10 @@ public class Highlighter
 
     public IEnumerable<StyledToken> Highlight(string sourceCode)
     {
-        var tokenizer = new Tokenizer(false);
-        tokenizer.Add(sourceCode);
+        var tokenizer = new Tokenizer(sourceCode, false);
+
         foreach (var token in tokenizer.Tokenize())
-        {
             yield return new(token.Type, token.Value, GetStyle(token.Type, scheme));
-        }
     }
 
     public static Style GetStyle(TokenType tokenType, ColorScheme scheme) => tokenType switch

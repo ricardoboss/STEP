@@ -8,33 +8,42 @@ namespace StepLang.Tokenizing;
 public class Tokenizer
 {
     private readonly StringBuilder tokenBuilder = new();
-    private readonly CharacterQueue characterQueue = new();
+    private readonly CharacterSource source;
     private readonly bool strict;
 
-    private TokenLocation? stringStartLocation;
+    private TokenLocation tokenStartLocation;
     private char? stringQuote;
     private bool escaped;
     private int? stringSourceLength;
 
-    public Tokenizer(bool strict = true)
+    public Tokenizer(CharacterSource source, bool strict = true)
     {
+        this.source = source;
         this.strict = strict;
+
+        tokenStartLocation = GetCurrentLocation();
     }
 
-    public void Add(IEnumerable<char> characters) => characterQueue.Enqueue(characters);
+    private bool InString => stringQuote.HasValue;
 
-    public void UpdateFile(FileSystemInfo file)
+    private TokenLocation GetCurrentLocation()
     {
-        characterQueue.File = file;
+        var length = tokenBuilder.Length;
+        if (InString && stringSourceLength is not null)
+            length += stringSourceLength.Value;
+
+        var column = source.Column - length;
+
+        return new(source.File, source.Line, column, length);
     }
 
     public IEnumerable<Token> Tokenize(CancellationToken cancellationToken = default)
     {
-        while (characterQueue.TryDequeue(out var character))
+        while (source.TryConsume(out var character))
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (stringQuote.HasValue)
+            if (InString)
             {
                 var tokens = HandleString(character);
                 foreach (var token in tokens)
@@ -45,19 +54,15 @@ public class Tokenizer
 
             if (character is '"')
             {
-                if (TryFinalizePreviousToken() is { } previousToken)
-                    yield return previousToken;
-
-                tokenBuilder.Append(character);
+                foreach (var previous in TryFinalizePreviousAndStartNewToken(character))
+                    yield return previous;
 
                 stringQuote = character;
-                stringStartLocation = characterQueue.CurrentLocation;
-                stringStartLocation = stringStartLocation with { Column = stringStartLocation.Column - 1 };
 
                 continue;
             }
 
-            if (character is '/' && characterQueue.TryPeek(out var nextCharacter) && nextCharacter is '/')
+            if (character is '/' && source.TryPeek(out var nextCharacter) && nextCharacter is '/')
             {
                 foreach (var commentToken in HandleLineComment(character))
                     yield return commentToken;
@@ -65,7 +70,7 @@ public class Tokenizer
                 continue;
             }
 
-            if (character is '\r' && characterQueue.TryPeek(out nextCharacter) && nextCharacter is '\n')
+            if (character is '\r' && source.TryPeek(out nextCharacter) && nextCharacter is '\n')
             {
                 // skip \r in new lines
                 continue;
@@ -76,7 +81,7 @@ public class Tokenizer
         }
 
         if (stringQuote.HasValue && strict)
-            throw new UnterminatedStringException(stringStartLocation, stringQuote!.Value);
+            throw new UnterminatedStringException(tokenStartLocation, stringQuote!.Value);
 
         if (tokenBuilder.Length == 0)
         {
@@ -91,28 +96,36 @@ public class Tokenizer
         yield return FinalizeToken(TokenType.EndOfFile);
     }
 
-    private IEnumerable<Token> HandleLineComment(char character)
+    private IEnumerable<Token> TryFinalizePreviousAndStartNewToken(char newTokenFirstChar)
     {
-        if (TryFinalizePreviousToken() is { } previousToken)
-            yield return previousToken;
+        var tokenEmitted = false;
+        if (tokenBuilder.Length > 0 && TryFinalizeTokenFromBuilder(true) is { } token)
+        {
+            tokenEmitted = true;
 
-        tokenBuilder.Append(character);
-        foreach (var commentCharacter in characterQueue.DequeueUntil('\n').TakeWhile(c => c is not '\r'))
-            tokenBuilder.Append(commentCharacter);
-
-        yield return FinalizeToken(TokenType.LineComment);
-    }
-
-    private Token? TryFinalizePreviousToken()
-    {
-        if (tokenBuilder.Length <= 0)
-            return null;
-
-        var token = TryFinalizeTokenFromBuilder(true);
+            yield return token;
+        }
 
         Debug.Assert(tokenBuilder.Length == 0);
 
-        return token;
+        tokenBuilder.Append(newTokenFirstChar);
+
+        if (tokenEmitted)
+        {
+            // the new tokens first char was already consumed, so we need to adjust the new token start location
+            tokenStartLocation = tokenStartLocation with { Column = tokenStartLocation.Column - 1 };
+        }
+    }
+
+    private IEnumerable<Token> HandleLineComment(char character)
+    {
+        foreach (var previous in TryFinalizePreviousAndStartNewToken(character))
+            yield return previous;
+
+        foreach (var commentCharacter in source.ConsumeUntil('\n').TakeWhile(c => c is not '\r'))
+            tokenBuilder.Append(commentCharacter);
+
+        yield return FinalizeToken(TokenType.LineComment);
     }
 
     private IEnumerable<Token> HandleString(char c)
@@ -136,9 +149,8 @@ public class Tokenizer
             tokenBuilder.Append(c);
 
             stringQuote = null;
-            stringStartLocation = null;
 
-            yield return FinalizeToken(TokenType.LiteralString, stringSourceLength);
+            yield return FinalizeToken(TokenType.LiteralString);
 
             stringSourceLength = null;
 
@@ -156,12 +168,11 @@ public class Tokenizer
         if (char.IsControl(c))
         {
             if (strict)
-                throw new UnterminatedStringException(stringStartLocation!, stringQuote!.Value);
+                throw new UnterminatedStringException(tokenStartLocation, stringQuote!.Value);
 
             stringQuote = null;
-            stringStartLocation = null;
 
-            yield return FinalizeToken(TokenType.LiteralString, stringSourceLength);
+            yield return FinalizeToken(TokenType.LiteralString);
 
             stringSourceLength = null;
 
@@ -181,10 +192,8 @@ public class Tokenizer
     {
         if (c.TryParseSymbol(out var symbolType))
         {
-            if (TryFinalizePreviousToken() is { } previousToken)
-                yield return previousToken;
-
-            tokenBuilder.Append(c);
+            foreach (var previous in TryFinalizePreviousAndStartNewToken(c))
+                yield return previous;
 
             yield return FinalizeToken(symbolType.Value);
             yield break;
@@ -205,7 +214,7 @@ public class Tokenizer
         var tokenValue = tokenBuilder.ToString();
 
         // keywords are only valid if they are not surrounded by alphanumeric characters
-        var nextCharAvailable = characterQueue.TryPeek(out var nextChar);
+        var nextCharAvailable = source.TryPeek(out var nextChar);
         if (!nextCharAvailable || nextCharAvailable && !char.IsLetterOrDigit(nextChar))
         {
             if (tokenValue.IsKnownTypeName())
@@ -230,7 +239,7 @@ public class Tokenizer
         if (tokenValue.IsValidIdentifier() || !strict)
             return FinalizeToken(TokenType.Identifier);
 
-        throw new InvalidIdentifierException(characterQueue.CurrentLocation, tokenValue);
+        throw new InvalidIdentifierException(GetCurrentLocation(), tokenValue);
     }
 
     private static bool IsPartOfLiteralNumber(char c)
@@ -238,19 +247,15 @@ public class Tokenizer
         return char.IsDigit(c) || c is '.' or '-';
     }
 
-    private Token FinalizeToken(TokenType type, int? sourceLength = null)
+    private Token FinalizeToken(TokenType type)
     {
         var value = tokenBuilder.ToString();
+        var token = new Token(type, value, tokenStartLocation with { Length = value.Length });
+
+        // prepare for next token
         tokenBuilder.Clear();
+        tokenStartLocation = GetCurrentLocation();
 
-        sourceLength ??= value.Length;
-
-        var endLocation = characterQueue.CurrentLocation;
-
-        var startColumn = endLocation.Column - sourceLength.Value;
-
-        var startLocation = endLocation with { Column = startColumn, Length = sourceLength };
-
-        return new(type, value, startLocation);
+        return token;
     }
 }

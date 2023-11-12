@@ -30,11 +30,8 @@ public partial class Interpreter : IImportNodeVisitor
         if (importedFile.FullName == pathToken.Location.File?.FullName)
             throw new ImportedFileIsSelfException(pathToken.Location, importedFile);
 
-        var fileContents = File.ReadAllText(importedFile.FullName);
-
-        var tokenizer = new Tokenizer();
-        tokenizer.UpdateFile(importedFile);
-        tokenizer.Add(fileContents);
+        var source = CharacterSource.FromFile(importedFile);
+        var tokenizer = new Tokenizer(source);
         var tokens = tokenizer.Tokenize();
 
         var parser = new Parser(tokens);

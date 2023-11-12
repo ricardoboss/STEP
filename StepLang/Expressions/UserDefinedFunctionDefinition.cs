@@ -97,13 +97,13 @@ public class UserDefinedFunctionDefinition : FunctionDefinition
         for (var i = 0; i < parameters.Count; i++)
         {
             var parameter = parameters[i];
-            var (argumentLocation, argumentValue) = arguments[i];
+            var (assignmentLocation, argumentValue) = arguments[i];
 
             // this will create the variable in the current scope
             var argument = parameter.EvaluateUsing(evaluator);
 
             // and set the value
-            argument.Assign(argumentLocation, argumentValue);
+            argument.Assign(assignmentLocation, argumentValue);
         }
     }
 }

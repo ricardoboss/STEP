@@ -9,8 +9,7 @@ public class TokenizerTest
     {
         const string source = "\"abc\"";
 
-        var tokenizer = new Tokenizer();
-        tokenizer.Add(source);
+        var tokenizer = new Tokenizer(source);
         var tokens = tokenizer.Tokenize().ToArray();
 
         Assert.Equal(2, tokens.Length);
@@ -29,8 +28,7 @@ public class TokenizerTest
     {
         const string source = "\"\\n\"";
 
-        var tokenizer = new Tokenizer();
-        tokenizer.Add(source);
+        var tokenizer = new Tokenizer(source);
         var tokens = tokenizer.Tokenize().ToArray();
 
         Assert.Equal(2, tokens.Length);
@@ -48,8 +46,7 @@ public class TokenizerTest
     {
         const string source = "123";
 
-        var tokenizer = new Tokenizer();
-        tokenizer.Add(source);
+        var tokenizer = new Tokenizer(source);
         var tokens = tokenizer.Tokenize().ToArray();
 
         Assert.Equal(2, tokens.Length);
@@ -67,8 +64,7 @@ public class TokenizerTest
     {
         const string source = "-123";
 
-        var tokenizer = new Tokenizer();
-        tokenizer.Add(source);
+        var tokenizer = new Tokenizer(source);
         var tokens = tokenizer.Tokenize().ToArray();
 
         Assert.Equal(3, tokens.Length);
@@ -90,8 +86,7 @@ public class TokenizerTest
     {
         const string source = "-1.23";
 
-        var tokenizer = new Tokenizer();
-        tokenizer.Add(source);
+        var tokenizer = new Tokenizer(source);
         var tokens = tokenizer.Tokenize().ToArray();
 
         Assert.Equal(3, tokens.Length);
@@ -113,8 +108,7 @@ public class TokenizerTest
     {
         const string source = "\"abc def\"";
 
-        var tokenizer = new Tokenizer();
-        tokenizer.Add(source);
+        var tokenizer = new Tokenizer(source);
         var tokens = tokenizer.Tokenize().ToArray();
 
         Assert.Equal(2, tokens.Length);
@@ -132,8 +126,7 @@ public class TokenizerTest
     [InlineData("\"abc\\\"def\"", "abc\"def")]
     public void TestTokenizeLiteralStringWithEscapedQuotes(string source, string expected)
     {
-        var tokenizer = new Tokenizer();
-        tokenizer.Add(source);
+        var tokenizer = new Tokenizer(source);
         var tokens = tokenizer.Tokenize().ToArray();
 
         Assert.Equal(2, tokens.Length);
@@ -153,8 +146,7 @@ public class TokenizerTest
     [InlineData("function")]
     public void TestTokenizeKnownType(string source)
     {
-        var tokenizer = new Tokenizer();
-        tokenizer.Add(source);
+        var tokenizer = new Tokenizer(source);
         var tokens = tokenizer.Tokenize().ToList();
 
         Assert.Equal(2, tokens.Count);
@@ -175,8 +167,7 @@ public class TokenizerTest
     [InlineData("continue", TokenType.ContinueKeyword)]
     public void TestTokenizeKeyword(string source, TokenType type)
     {
-        var tokenizer = new Tokenizer();
-        tokenizer.Add(source);
+        var tokenizer = new Tokenizer(source);
         var tokens = tokenizer.Tokenize().ToArray();
 
         Assert.Equal(2, tokens.Length);
@@ -194,42 +185,58 @@ public class TokenizerTest
     {
         const string source = "number identifier = 1";
 
-        var tokenizer = new Tokenizer();
-        tokenizer.Add(source);
+        var tokenizer = new Tokenizer(source);
         var tokens = tokenizer.Tokenize().ToList();
 
         Assert.Equal(8, tokens.Count);
+
         Assert.Equal(TokenType.TypeName, tokens[0].Type);
         Assert.Equal("number", tokens[0].Value);
         Assert.Equal(1, tokens[0].Location.Line);
         Assert.Equal(1, tokens[0].Location.Column);
+        Assert.Equal(6, tokens[0].Location.Length);
+
         Assert.Equal(TokenType.Whitespace, tokens[1].Type);
         Assert.Equal(" ", tokens[1].Value);
         Assert.Equal(1, tokens[1].Location.Line);
         Assert.Equal(7, tokens[1].Location.Column);
+        Assert.Equal(1, tokens[1].Location.Length);
+
         Assert.Equal(TokenType.Identifier, tokens[2].Type);
         Assert.Equal("identifier", tokens[2].Value);
         Assert.Equal(1, tokens[2].Location.Line);
-        Assert.Equal(9, tokens[2].Location.Column);
+        Assert.Equal(8, tokens[2].Location.Column);
+        Assert.Equal(10, tokens[2].Location.Length);
+
         Assert.Equal(TokenType.Whitespace, tokens[3].Type);
         Assert.Equal(" ", tokens[3].Value);
         Assert.Equal(1, tokens[3].Location.Line);
         Assert.Equal(18, tokens[3].Location.Column);
+        Assert.Equal(1, tokens[3].Location.Length);
+
         Assert.Equal(TokenType.EqualsSymbol, tokens[4].Type);
         Assert.Equal("=", tokens[4].Value);
         Assert.Equal(1, tokens[4].Location.Line);
         Assert.Equal(19, tokens[4].Location.Column);
+        Assert.Equal(tokens[3].Location.Column + tokens[3].Location.Length, tokens[4].Location.Column);
+        Assert.Equal(1, tokens[4].Location.Length);
+
         Assert.Equal(TokenType.Whitespace, tokens[5].Type);
         Assert.Equal(" ", tokens[5].Value);
         Assert.Equal(1, tokens[5].Location.Line);
         Assert.Equal(20, tokens[5].Location.Column);
+        Assert.Equal(1, tokens[5].Location.Length);
+
         Assert.Equal(TokenType.LiteralNumber, tokens[6].Type);
         Assert.Equal("1", tokens[6].Value);
         Assert.Equal(1, tokens[6].Location.Line);
         Assert.Equal(21, tokens[6].Location.Column);
+        Assert.Equal(1, tokens[6].Location.Length);
+
         Assert.Equal(TokenType.EndOfFile, tokens[7].Type);
         Assert.Equal(1, tokens[7].Location.Line);
         Assert.Equal(22, tokens[7].Location.Column);
+        Assert.Equal(0, tokens[7].Location.Length);
     }
 
     [Fact]
@@ -237,8 +244,7 @@ public class TokenizerTest
     {
         const string source = "if (true)";
 
-        var tokenizer = new Tokenizer();
-        tokenizer.Add(source);
+        var tokenizer = new Tokenizer(source);
         var tokens = tokenizer.Tokenize().ToList();
 
         Assert.Equal(6, tokens.Count);
@@ -272,8 +278,7 @@ public class TokenizerTest
     {
         const string source = "print(\"hello\")";
 
-        var tokenizer = new Tokenizer();
-        tokenizer.Add(source);
+        var tokenizer = new Tokenizer(source);
         var tokens = tokenizer.Tokenize().ToList();
 
         Assert.Equal(5, tokens.Count);
@@ -293,8 +298,7 @@ public class TokenizerTest
     {
         const string source = "f(variable) // this is a comment\nprintln(\"text\") // more comments";
 
-        var tokenizer = new Tokenizer();
-        tokenizer.Add(source);
+        var tokenizer = new Tokenizer(source);
         var tokens = tokenizer.Tokenize().ToList();
 
         Assert.Equal(14, tokens.Count);
@@ -332,8 +336,7 @@ public class TokenizerTest
     {
         const string source = "identifier\"\"";
 
-        var tokenizer = new Tokenizer();
-        tokenizer.Add(source);
+        var tokenizer = new Tokenizer(source);
         var tokens = tokenizer.Tokenize().ToList();
 
         Assert.Equal(3, tokens.Count);
@@ -349,8 +352,7 @@ public class TokenizerTest
     {
         const string source = "number a.b = 1";
 
-        var tokenizer = new Tokenizer();
-        tokenizer.Add(source);
+        var tokenizer = new Tokenizer(source);
         var exception = Assert.Throws<InvalidIdentifierException>(() => tokenizer.Tokenize().ToList());
 
         Assert.Equal("TOK001", exception.ErrorCode);
@@ -361,8 +363,7 @@ public class TokenizerTest
     {
         const string source = "\"string";
 
-        var tokenizer = new Tokenizer();
-        tokenizer.Add(source);
+        var tokenizer = new Tokenizer(source);
         var exception = Assert.Throws<UnterminatedStringException>(() => tokenizer.Tokenize().ToList());
 
         Assert.Equal("TOK002", exception.ErrorCode);
@@ -375,8 +376,7 @@ public class TokenizerTest
         // identifier "ifempty" contains the keyword "if"
         const string source = "println(ifempty(\"abc\", \"b\"))";
 
-        var tokenizer = new Tokenizer();
-        tokenizer.Add(source);
+        var tokenizer = new Tokenizer(source);
         var tokens = tokenizer.Tokenize().ToList();
 
         Assert.Equal(11, tokens.Count);

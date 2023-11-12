@@ -172,31 +172,31 @@ public class Parser
         Debug.Assert(operatorTokens.Count > 0);
 
         _ = tokens.Dequeue(operatorTokens.Count);
-        _ = tokens.Dequeue(TokenType.EqualsSymbol);
+        var assignmentToken = tokens.Dequeue(TokenType.EqualsSymbol);
 
         var expression = ParseExpression();
         var firstOperator = operatorTokens[0];
 
         return firstOperator.Type switch
         {
-            TokenType.PlusSymbol => new(identifier, new AddExpressionNode(firstOperator.Location, identifierExpression, expression)),
-            TokenType.MinusSymbol => new(identifier, new SubtractExpressionNode(firstOperator.Location, identifierExpression, expression)),
+            TokenType.PlusSymbol => new(assignmentToken.Location, identifier, new AddExpressionNode(firstOperator.Location, identifierExpression, expression)),
+            TokenType.MinusSymbol => new(assignmentToken.Location, identifier, new SubtractExpressionNode(firstOperator.Location, identifierExpression, expression)),
             TokenType.AsteriskSymbol => operatorTokens.Count switch
             {
-                1 => new(identifier, new MultiplyExpressionNode(firstOperator.Location, identifierExpression, expression)),
+                1 => new(assignmentToken.Location, identifier, new MultiplyExpressionNode(firstOperator.Location, identifierExpression, expression)),
                 2 => operatorTokens[1].Type switch
                 {
-                    TokenType.AsteriskSymbol => new(identifier, new PowerExpressionNode(firstOperator.Location, identifierExpression, expression)),
+                    TokenType.AsteriskSymbol => new(assignmentToken.Location, identifier, new PowerExpressionNode(firstOperator.Location, identifierExpression, expression)),
                     _ => throw new UnexpectedTokenException(operatorTokens[1], TokenType.AsteriskSymbol),
                 },
                 _ => throw new UnexpectedEndOfTokensException(firstOperator.Location, "Expected an operator"),
             },
-            TokenType.SlashSymbol => new(identifier, new DivideExpressionNode(firstOperator.Location, identifierExpression, expression)),
-            TokenType.PercentSymbol => new(identifier, new ModuloExpressionNode(firstOperator.Location, identifierExpression, expression)),
-            TokenType.PipeSymbol => new(identifier, new BitwiseOrExpressionNode(firstOperator.Location, identifierExpression, expression)),
-            TokenType.AmpersandSymbol => new(identifier, new BitwiseAndExpressionNode(firstOperator.Location, identifierExpression, expression)),
-            TokenType.HatSymbol => new(identifier, new BitwiseXorExpressionNode(firstOperator.Location, identifierExpression, expression)),
-            TokenType.QuestionMarkSymbol => new(identifier, new CoalesceExpressionNode(firstOperator.Location, identifierExpression, expression)),
+            TokenType.SlashSymbol => new(assignmentToken.Location, identifier, new DivideExpressionNode(firstOperator.Location, identifierExpression, expression)),
+            TokenType.PercentSymbol => new(assignmentToken.Location, identifier, new ModuloExpressionNode(firstOperator.Location, identifierExpression, expression)),
+            TokenType.PipeSymbol => new(assignmentToken.Location, identifier, new BitwiseOrExpressionNode(firstOperator.Location, identifierExpression, expression)),
+            TokenType.AmpersandSymbol => new(assignmentToken.Location, identifier, new BitwiseAndExpressionNode(firstOperator.Location, identifierExpression, expression)),
+            TokenType.HatSymbol => new(assignmentToken.Location, identifier, new BitwiseXorExpressionNode(firstOperator.Location, identifierExpression, expression)),
+            TokenType.QuestionMarkSymbol => new(assignmentToken.Location, identifier, new CoalesceExpressionNode(firstOperator.Location, identifierExpression, expression)),
             _ => throw new UnexpectedTokenException(firstOperator, TokenType.PlusSymbol, TokenType.MinusSymbol, TokenType.AsteriskSymbol, TokenType.SlashSymbol, TokenType.PercentSymbol, TokenType.PipeSymbol, TokenType.AmpersandSymbol, TokenType.HatSymbol, TokenType.QuestionMarkSymbol),
         };
     }
@@ -401,22 +401,22 @@ public class Parser
             return new VariableDeclarationNode(new[] { type }, identifier);
         }
 
-        _ = tokens.Dequeue(TokenType.EqualsSymbol);
+        var assignmentToken = tokens.Dequeue(TokenType.EqualsSymbol);
 
         var expression = ParseExpression();
 
         if (nullabilityIndicator is not null)
-            return new NullableVariableInitializationNode(new[] { type }, nullabilityIndicator, identifier, expression);
+            return new NullableVariableInitializationNode(assignmentToken.Location, new[] { type }, nullabilityIndicator, identifier, expression);
 
-        return new VariableInitializationNode(new[] { type }, identifier, expression);
+        return new VariableInitializationNode(assignmentToken.Location, new[] { type }, identifier, expression);
     }
 
     private VariableAssignmentNode ParseVariableAssignment()
     {
         var identifier = tokens.Dequeue(TokenType.Identifier);
-        _ = tokens.Dequeue(TokenType.EqualsSymbol);
+        var assignmentToken = tokens.Dequeue(TokenType.EqualsSymbol);
         var expression = ParseExpression();
-        return new(identifier, expression);
+        return new(assignmentToken.Location, identifier, expression);
     }
 
     private ExpressionNode ParseExpression(int parentPrecedence = 0)
