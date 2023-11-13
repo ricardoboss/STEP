@@ -65,6 +65,7 @@ public class Scope
         CreateVariable(SortedFunction.Identifier, new SortedFunction().ToResult());
         CreateVariable(CloneFunction.Identifier, new CloneFunction().ToResult());
         CreateVariable(LengthFunction.Identifier, new LengthFunction().ToResult());
+        CreateVariable(CompareToFunction.Identifier, new CompareToFunction().ToResult());
 
         // conversion functions
         CreateVariable(ToJsonFunction.Identifier, new ToJsonFunction().ToResult());
@@ -94,7 +95,7 @@ public class Scope
         CreateVariable("e", new NumberResult(Math.E));
     }
 
-    private void CreateVariable(string identifier, ExpressionResult initialValue, bool nullable = false) =>
+    public void CreateVariable(string identifier, ExpressionResult initialValue, bool nullable = false) =>
         CreateVariable(new(), new(TokenType.Identifier, identifier), new[] { initialValue.ResultType }, initialValue, nullable);
 
     public Variable CreateVariable(TokenLocation assignmentLocation, Token identifierToken, IReadOnlyList<ResultType> types, ExpressionResult initialValue, bool nullable = false)
@@ -110,22 +111,6 @@ public class Scope
 
         return variable;
     }
-
-    // public void UpdateValue(Token identifierToken, ExpressionResult value, bool onlyCurrentScope = true)
-    // {
-    //     Variable? variable;
-    //     if (onlyCurrentScope)
-    //     {
-    //         // only look for variable in the current scope for assigning
-    //         // this enables use to shadow variables from parent scopes
-    //         if (!identifiers.TryGetValue(identifierToken.Value, out variable))
-    //             throw new UndefinedIdentifierException(identifierToken);
-    //     }
-    //     else
-    //         variable = GetVariable(identifierToken);
-    //
-    //     variable.Assign(value);
-    // }
 
     public bool Exists(string identifier, bool includeParent)
     {

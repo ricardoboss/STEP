@@ -38,6 +38,9 @@ public class FileWriteFunction : GenericFunction<StringResult, StringResult, Boo
         }
         catch (Exception e) when (e is IOException or SystemException)
         {
+            if (interpreter.DebugOut is { } debugOut)
+                debugOut.WriteLine($"Failed to write to file '{path}': {e.Message}");
+
             return false;
         }
 

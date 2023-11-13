@@ -16,7 +16,7 @@ public class FilteredFunction : ListManipulationFunction
         {
             var result = callback.Invoke(callLocation, interpreter, args);
             if (result is not BoolResult boolResult)
-                throw new InvalidResultTypeException(result, ResultType.Bool);
+                throw new InvalidResultTypeException(callLocation, result, ResultType.Bool);
 
             return boolResult;
         }).Select(args => args[0].EvaluateUsing(interpreter));

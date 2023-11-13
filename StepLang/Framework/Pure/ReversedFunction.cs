@@ -22,7 +22,7 @@ public class ReversedFunction : GenericFunction<ExpressionResult>
         {
             ListResult list => new ListResult(list.DeepClone().Value.Reverse().ToList()),
             StringResult str => new StringResult(str.Value.ReverseGraphemes()),
-            _ => throw new InvalidResultTypeException(argument1, ResultType.List, ResultType.Str),
+            _ => throw new InvalidResultTypeException(callLocation, argument1, ResultType.List, ResultType.Str),
         };
     }
 }

@@ -1,5 +1,5 @@
 using StepLang.Interpreting;
-using StepLang.Statements;
+using StepLang.Parsing;
 using StepLang.Tokenizing;
 
 namespace StepLang.Tests.Framework.Pure;
@@ -26,19 +26,17 @@ public class SubstringFunctionTest
     [InlineData("substring(\"Hello, world!\", -13, 5)", "Hello")]
     [InlineData("substring(\"Hello, world!\", -14, 5)", "")]
     [InlineData("substring(\"Hello, world!\", -100, 5)", "")]
-    public async Task TestSubstring(string code, string result)
+    public void TestSubstring(string code, string result)
     {
-        var tokenizer = new Tokenizer();
-        tokenizer.Add($"print({code})");
+        var tokenizer = new Tokenizer($"print({code})");
         var tokens = tokenizer.Tokenize();
 
-        var parser = new StatementParser();
-        parser.Add(tokens);
-        var statements = parser.ParseAsync();
+        var parser = new Parser(tokens);
+        var root = parser.ParseRoot();
 
         var output = new StringWriter();
         var interpreter = new Interpreter(output);
-        await interpreter.InterpretAsync(statements);
+        root.Accept(interpreter);
 
         Assert.Equal(result, output.ToString());
     }

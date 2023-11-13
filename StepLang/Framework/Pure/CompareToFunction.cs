@@ -19,10 +19,10 @@ public class CompareToFunction : GenericFunction<ExpressionResult, ExpressionRes
     protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
         ExpressionResult argument1, ExpressionResult argument2)
     {
-        return GetResult(argument1, argument2);
+        return GetResult(callLocation, argument1, argument2);
     }
 
-    private static NumberResult GetResult(ExpressionResult a, ExpressionResult b)
+    private static NumberResult GetResult(TokenLocation evaluationLocation, ExpressionResult a, ExpressionResult b)
     {
         return a switch
         {
@@ -34,7 +34,7 @@ public class CompareToFunction : GenericFunction<ExpressionResult, ExpressionRes
             FunctionResult when b is FunctionResult => 0,
             NullResult when b is NullResult => 0,
             VoidResult when b is VoidResult => 0,
-            { ResultType: var aType } when b.ResultType != aType => throw new InvalidResultTypeException(b, a.ResultType),
+            { ResultType: var aType } when b.ResultType != aType => throw new InvalidResultTypeException(evaluationLocation, b, a.ResultType),
             _ => throw new NotImplementedException(),
         };
     }

@@ -1,121 +1,107 @@
-using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
-using StepLang.Statements;
 
 namespace StepLang.Tests.Interpreting;
 
 public class InterpretationTest
 {
     [Fact]
-    public async Task TestUndefinedIdentifierThrows()
+    public void TestUndefinedIdentifierThrows()
     {
-        var statement = await "number a = b + 1".AsStatementAsync();
-        var interpreter = new Interpreter();
-        var exception = await Assert.ThrowsAsync<UndefinedIdentifierException>(async () => await statement.ExecuteAsync(interpreter));
+        const string source = "number a = b + 1";
+
+        var exception = Assert.Throws<UndefinedIdentifierException>(() => source.Interpret());
 
         Assert.Equal("INT001", exception.ErrorCode);
     }
 
     [Fact]
-    public async Task TestInvalidArgumentCountThrows()
+    public void TestInvalidArgumentCountThrows()
     {
-        var statements = await """
-                               function add = (number a, number b) {
-                                   return a + b
-                               }
+        const string source = """
+                   function add = (number a, number b) {
+                       return a + b
+                   }
 
-                               number result = add(1, 2, 3)
-                               """.AsStatementsAsync();
-        var interpreter = new Interpreter();
-        var exception = await Assert.ThrowsAsync<InvalidFunctionCallException>(async () => await interpreter.InterpretAsync(statements.ToAsyncEnumerable()));
+                   number result = add(1, 2, 3)
+                   """;
+
+        var exception = Assert.Throws<InvalidArgumentCountException>(() => source.Interpret());
 
         Assert.Equal("INT002", exception.ErrorCode);
-        Assert.IsType<InvalidArgumentCountException>(exception.InnerException);
     }
 
     [Fact]
-    public async Task TestInvalidDepthThrows()
+    public void TestInvalidExpressionTypeThrows()
     {
-        var statements = await "break 1 - 2".AsStatementsAsync();
-        var interpreter = new Interpreter();
-        var exception = await Assert.ThrowsAsync<InvalidDepthResultException>(async () => await interpreter.InterpretAsync(statements.ToAsyncEnumerable()));
+        const string source = "toTypeName(1)";
 
-        Assert.Equal("INT003", exception.ErrorCode);
-    }
-
-    [Fact]
-    public async Task TestInvalidExpressionTypeThrows()
-    {
-        var statements = await "toTypeName(1)".AsStatementsAsync();
-        var interpreter = new Interpreter();
-        var exception = await Assert.ThrowsAsync<InvalidExpressionTypeException>(async () => await interpreter.InterpretAsync(statements.ToAsyncEnumerable()));
+        var exception = Assert.Throws<InvalidExpressionTypeException>(() => source.Interpret());
 
         Assert.Equal("INT004", exception.ErrorCode);
     }
 
     [Fact]
-    public async Task TestListIndexOutOfBoundsThrows()
+    public void TestListIndexOutOfBoundsThrows()
     {
-        var statements = await """
-                               list k = [1, 2, 3]
-                               doRemoveAt(k, 3)
-                               """.AsStatementsAsync();
-        var interpreter = new Interpreter();
-        var exception = await Assert.ThrowsAsync<IndexOutOfBoundsException>(async () => await interpreter.InterpretAsync(statements.ToAsyncEnumerable()));
+        const string source = """
+                              list k = [1, 2, 3]
+                              doRemoveAt(k, 3)
+                              """;
+
+        var exception = Assert.Throws<IndexOutOfBoundsException>(() => source.Interpret());
 
         Assert.Equal("INT005", exception.ErrorCode);
     }
 
     [Fact]
-    public async Task TestInvalidValueAssignmentThrows()
+    public void TestInvalidValueAssignmentThrows()
     {
-        var statement = await "number a = \"Hello\"".AsStatementAsync();
-        var interpreter = new Interpreter();
-        var exception = await Assert.ThrowsAsync<InvalidVariableAssignmentException>(async () => await statement.ExecuteAsync(interpreter));
+        const string source = "number a = \"Hello\"";
 
-        Assert.Equal("TYP001", exception.ErrorCode);
+        var exception = Assert.Throws<NonNullableVariableAssignmentException>(() => source.Interpret());
+
+        Assert.Equal("INT007", exception.ErrorCode);
     }
 
     [Fact]
-    public async Task TestAddWithBoolsThrowsException()
+    public void TestAddWithBoolsThrowsException()
     {
-        var statement = await "string a = true + false".AsStatementAsync();
-        var interpreter = new Interpreter();
-        var exception = await Assert.ThrowsAsync<IncompatibleExpressionOperandsException>(async () => await statement.ExecuteAsync(interpreter));
+        const string source = "string a = true + false";
+
+        var exception = Assert.Throws<IncompatibleExpressionOperandsException>(() => source.Interpret());
 
         Assert.Equal("TYP002", exception.ErrorCode);
     }
 
     [Fact]
-    public async Task TestInvalidArgumentTypeThrows()
+    public void TestInvalidArgumentTypeThrows()
     {
-        var statements = await """
+        const string source = """
                               function add = (number a, number b) {
                                   return a + b
                               }
 
-                              add(1, "2")
-                              """.AsStatementsAsync();
-        var interpreter = new Interpreter();
-        var exception = await Assert.ThrowsAsync<InvalidFunctionCallException>(async () => await interpreter.InterpretAsync(statements.ToAsyncEnumerable()));
+                              _ = add(1, "2")
+                              """;
 
-        Assert.Equal("TYP003", exception.ErrorCode);
-        Assert.IsType<InvalidArgumentTypeException>(exception.InnerException);
+        var exception = Assert.Throws<NonNullableVariableAssignmentException>(() => source.Interpret());
+
+        Assert.Equal("INT007", exception.ErrorCode);
     }
 
     [Fact]
-    public async Task TestInvalidResultTypeThrows()
+    public void TestInvalidResultTypeThrows()
     {
-        var statements = await """
-                               function add = (number a, number b) {
-                                   return a + b
-                               }
+        const string source = """
+                              function add = (number a, number b) {
+                                  return a + b
+                              }
 
-                               add(1, 2)
-                               """.AsStatementsAsync();
-        var interpreter = new Interpreter();
-        var exception = await Assert.ThrowsAsync<InvalidResultTypeException>(async () => await interpreter.InterpretAsync(statements.ToAsyncEnumerable()));
+                              add(1, 2)
+                              """;
+
+        var exception = Assert.Throws<InvalidResultTypeException>(() => source.Interpret());
 
         Assert.Equal("TYP004", exception.ErrorCode);
     }

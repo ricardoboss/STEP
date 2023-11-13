@@ -109,6 +109,9 @@ public class Parser
                     .ToArray());
         }
 
+        if (token.Type == TokenType.UnderscoreSymbol)
+            return ParseDiscardStatement();
+
         if (token.Type == TokenType.IfKeyword)
             return ParseIfStatement();
 
@@ -131,6 +134,17 @@ public class Parser
             return ParseCodeBlock();
 
         throw new UnexpectedTokenException(token, TokenType.TypeName, TokenType.Identifier, TokenType.NewLine, TokenType.LineComment);
+    }
+
+    private DiscardStatementNode ParseDiscardStatement()
+    {
+        var underscore = tokens.Dequeue(TokenType.UnderscoreSymbol);
+
+        _ = tokens.Dequeue(TokenType.EqualsSymbol);
+
+        var expression = ParseExpression();
+
+        return new(underscore.Location, expression);
     }
 
     private IdentifierIndexAssignmentNode ParseIndexAssignment()

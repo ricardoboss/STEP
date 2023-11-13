@@ -3,6 +3,7 @@ using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Framework.Pure;
 using StepLang.Interpreting;
+using StepLang.Parsing;
 using StepLang.Tokenizing;
 
 namespace StepLang.Tests.Framework.Pure;
@@ -11,80 +12,77 @@ public class LengthFunctionTest
 {
     [Theory]
     [ClassData(typeof(LengthData))]
-    public async Task TestEvaluateAsync(Expression value, NumberResult expected)
+    public void TestInvoke(ExpressionNode value, NumberResult expected)
     {
         var interpreter = new Interpreter();
         var function = new LengthFunction();
-        var result = await function.EvaluateAsync(interpreter, new[] { value });
+        var result = function.Invoke(new(), interpreter, new[] { value });
 
-        var numberResult = result.ExpectInteger();
-
-        Assert.Equal(expected.Value, numberResult.Value);
+        Assert.Equal(expected.Value, result.Value);
     }
 
     [Fact]
-    public async Task TestEvaluateWithVariableAsync()
+    public void TestEvaluateWithVariable()
     {
         var interpreter = new Interpreter();
-        interpreter.CurrentScope.CreateVariable("foo", LiteralExpression.Str("Hello").Result);
+        interpreter.CurrentScope.CreateVariable("foo", new StringResult("Hello"));
 
         var function = new LengthFunction();
-        var result = await function.EvaluateAsync(interpreter, new[] { new VariableExpression(new(TokenType.Identifier, "foo")) });
+        var result = function.Invoke(new(), interpreter, new[] { new IdentifierExpressionNode(new(TokenType.Identifier, "foo")) });
 
-        var numberResult = result.ExpectInteger();
-
-        Assert.Equal(5, numberResult.Value);
+        Assert.Equal(5, result.Value);
     }
 
     [Fact]
-    public async Task TestEvaluateThrowsForUnexpectedType()
+    public void TestEvaluateThrowsForUnexpectedType()
     {
         var interpreter = new Interpreter();
         var function = new LengthFunction();
 
-        await Assert.ThrowsAsync<InvalidArgumentTypeException>(() => function.EvaluateAsync(interpreter, new[] { LiteralExpression.Number(0) }));
+        Assert.Throws<InvalidArgumentTypeException>(() => function.Invoke(new(), interpreter, new[] { LiteralExpressionNode.FromInt32(0) }));
     }
 
     [SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Used by xUnit")]
-    private sealed class LengthData : TheoryData<Expression, NumberResult>
+    private sealed class LengthData : TheoryData<ExpressionNode, NumberResult>
     {
         public LengthData()
         {
-            Add(LiteralExpression.Str(""), new NumberResult(0));
-            Add(LiteralExpression.Str("Hello"), new NumberResult(5));
+            Add(LiteralExpressionNode.FromString(""), 0);
+            Add(LiteralExpressionNode.FromString("Hello"), 5);
 
-            var list = new ListExpression(new List<Expression>
+            var list = new ListExpressionNode(new(TokenType.OpeningSquareBracket, "["), new List<ExpressionNode>
             {
-                LiteralExpression.Str("A"),
-                LiteralExpression.Number(1),
-                LiteralExpression.Bool(true),
+                LiteralExpressionNode.FromString("A"),
+                LiteralExpressionNode.FromInt32(1),
+                LiteralExpressionNode.FromBoolean(true),
             });
 
-            Add(list, new NumberResult(3));
+            Add(list, 3);
 
-            var constantList = LiteralExpression.List(new List<ExpressionResult>(new[]
+            var constantList = new ListExpressionNode(new(TokenType.OpeningSquareBracket, "["), new List<ExpressionNode>(new[]
             {
-                new NumberResult(123),
+                LiteralExpressionNode.FromInt32(123),
             }));
-            Add(constantList, new NumberResult(1));
 
-            var map = new MapExpression(new Dictionary<string, Expression>
+            Add(constantList, 1);
+
+            var map = new MapExpressionNode(new(TokenType.OpeningCurlyBracket, "{"), new Dictionary<Token, ExpressionNode>
             {
                 {
-                    "Foo", LiteralExpression.Str("A")
+                    new(TokenType.LiteralString, "\"Foo\""), LiteralExpressionNode.FromString("A")
                 },
                 {
-                    "Bar", LiteralExpression.Number(1)
+                    new(TokenType.LiteralString, "\"Bar\""), LiteralExpressionNode.FromInt32(1)
                 },
                 {
-                    "Baz", LiteralExpression.Bool(true)
+                    new(TokenType.LiteralString, "\"Baz\""), LiteralExpressionNode.FromBoolean(true)
                 },
                 {
-                    "Bum", LiteralExpression.Str("lol")
+                    new(TokenType.LiteralString, "\"Bum\""), LiteralExpressionNode.FromString("lol")
                 },
             });
 
-            Add(map, new NumberResult(4));
+            Add(map, 4);
         }
     }
 }
