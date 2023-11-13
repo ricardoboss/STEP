@@ -114,8 +114,11 @@ internal sealed class Code : IRenderable
                 yield return new(new(' ', PaddingWidth), defaultStyle);
             }
 
+            var currentLineTabCount = 0;
             while (enumerator.Current is not null && enumerator.Current.Type != TokenType.NewLine)
             {
+                currentLineTabCount += enumerator.Current.Text.Count(c => c == '\t');
+
                 yield return new(enumerator.Current.Text.Replace("\t", "    "), enumerator.Current.Style.ToSpectreStyle());
 
                 enumerator.MoveNext();
@@ -126,6 +129,9 @@ internal sealed class Code : IRenderable
                 yield return Segment.LineBreak;
 
                 var column = markedColumnNumber.Value;
+                var markerOffset = column - 1;
+                for (var i = 0; i < currentLineTabCount; i++)
+                    markerOffset += 3;
 
                 yield return new(new(' ', LineMarkerWidth + PaddingWidth), defaultStyle);
 
@@ -136,7 +142,7 @@ internal sealed class Code : IRenderable
                     yield return new(new(' ', PaddingWidth), defaultStyle);
                 }
 
-                yield return new(new(' ', column - 1), markerStyle);
+                yield return new(new(' ', markerOffset), markerStyle);
                 yield return new(columnMarker, markerStyle);
 
                 if (markedColumnCount is > 1)
