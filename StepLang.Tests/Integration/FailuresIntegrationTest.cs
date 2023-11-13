@@ -38,7 +38,7 @@ public class FailuresIntegrationTest
             var tokens = tokenizer.Tokenize();
             var parser = new Parser(tokens);
             var root = parser.ParseRoot();
-            interpreter.Run(root);
+            root.Accept(interpreter);
         });
 
         Assert.Equal(details.ErrorCode, exception.ErrorCode);
