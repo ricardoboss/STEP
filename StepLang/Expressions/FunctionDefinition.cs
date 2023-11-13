@@ -8,6 +8,7 @@ namespace StepLang.Expressions;
 
 public abstract class FunctionDefinition
 {
+    [ExcludeFromCodeCoverage]
     private string DebugParamsString => string.Join(", ", Parameters.Select(p =>
     {
         if (p is NullableVariableDeclarationNode nullable)
@@ -16,8 +17,10 @@ public abstract class FunctionDefinition
         return $"{p.ResultTypesToString()} {p.Identifier.Value}";
     }));
 
+    [ExcludeFromCodeCoverage]
     private string DebugReturnTypeString => string.Join("|", ReturnTypes.Select(r => r.ToString()));
 
+    [ExcludeFromCodeCoverage]
     protected abstract string DebugBodyString { get; }
 
     /// <inheritdoc />

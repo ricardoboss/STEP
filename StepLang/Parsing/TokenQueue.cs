@@ -8,13 +8,13 @@ public class TokenQueue
 {
     private readonly LinkedList<Token> tokenList;
 
-    private Token? lastToken;
-
     public TokenQueue() => tokenList = new();
 
     public TokenQueue(IEnumerable<Token> tokens) => tokenList = new(tokens);
 
     public bool IgnoreWhitespace { get; set; }
+
+    public Token? LastToken { get; private set; }
 
     public bool TryDequeue([NotNullWhen(true)] out Token? token)
     {
@@ -32,7 +32,7 @@ public class TokenQueue
         if (token is null)
             return false;
 
-        lastToken = token;
+        LastToken = token;
 
         for (; skip > 0; skip--)
             tokenList.RemoveFirst();
@@ -43,7 +43,7 @@ public class TokenQueue
     public Token Dequeue()
     {
         if (!TryDequeue(out var token))
-            throw new UnexpectedEndOfTokensException(lastToken?.Location);
+            throw new UnexpectedEndOfTokensException(LastToken?.Location);
 
         return token;
     }
@@ -89,7 +89,7 @@ public class TokenQueue
                 _ => $"any one of {string.Join(',', allowed.Select(TokenTypes.ToDisplay))}",
             };
 
-            throw new UnexpectedEndOfTokensException(lastToken?.Location, $"Expected {typeInfo}");
+            throw new UnexpectedEndOfTokensException(LastToken?.Location, $"Expected {typeInfo}");
         } while (!token.Type.HasMeaning() && IgnoreWhitespace);
 
         if (!allowed.Contains(token.Type))
@@ -97,8 +97,4 @@ public class TokenQueue
 
         return token;
     }
-
-    public bool IsNotEmpty => tokenList.Count > 0;
-
-    public Token? LastToken => lastToken;
 }
