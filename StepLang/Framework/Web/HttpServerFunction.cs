@@ -52,7 +52,7 @@ public class HttpServerFunction : NativeFunction
         return VoidResult.Instance;
     }
 
-    private static async Task Serve(Interpreter interpreter, int port, IDictionary<string, ExpressionResult> options, FunctionDefinition handler, CancellationToken cancellationToken)
+    private static async Task Serve(Interpreter interpreter, int port, IDictionary<string, ExpressionResult> options, FunctionDefinition callback, CancellationToken cancellationToken)
     {
         var url = $"http://localhost:{port}/";
 
@@ -72,117 +72,52 @@ public class HttpServerFunction : NativeFunction
 
         try
         {
-            await Parallel.ForEachAsync(Enumerable.Range(0, Environment.ProcessorCount - 1), cancellationToken, async (workerId, c) =>
-            {
-                while (!c.IsCancellationRequested)
-                {
-                    var context = await server.GetContextAsync();
-                    var request = context.Request;
-                    var response = context.Response;
-
-                    var requestMethod = new StringResult(request.HttpMethod);
-                    ExpressionResult requestUrl = NullResult.Instance;
-                    ExpressionResult requestPath = NullResult.Instance;
-                    if (request.Url is not null)
-                    {
-                        requestUrl = new StringResult(request.Url.ToString());
-                        requestPath = new StringResult(request.Url.AbsolutePath);
-                    }
-
-                    var requestHeaderDict = request
-                        .Headers
-                        .AllKeys
-                        .Where(k => k != null)
-                        .Cast<string>()
-                        .ToDictionary(k => k, k => (ExpressionResult)new StringResult(request.Headers[k]!));
-
-                    var requestHeaderResult = new MapResult(requestHeaderDict);
-
-                    string requestBody;
-                    using (var reader = new StreamReader(request.InputStream))
-                        requestBody = await reader.ReadToEndAsync(c);
-
-                    var requestBodyResult = new StringResult(requestBody);
-
-                    var requestMap = new MapResult(new Dictionary<string, ExpressionResult>
-                    {
-                        ["method"] = requestMethod,
-                        ["url"] = requestUrl,
-                        ["path"] = requestPath,
-                        ["headers"] = requestHeaderResult,
-                        ["body"] = requestBodyResult,
-                    });
-
-                    interpreter.StdOut?.WriteLineAsync($"({workerId}) {request.RemoteEndPoint} -> {request.HttpMethod} {request.Url?.AbsolutePath}");
-
-                    ExpressionResult responseResult;
-                    try
-                    {
-                        responseResult = await handler.EvaluateAsync(interpreter, new Expression []
-                        {
-                            requestMap.ToLiteralExpression(),
-                        }, c);
-                    }
-                    catch (Exception e)
-                    {
-                        responseResult = new MapResult(new Dictionary<string, ExpressionResult>
-                        {
-                            {
-                                "status", new NumberResult(500)
-                            },
-                            {
-                                "body", new StringResult(RenderExceptionPage(e))
-                            },
-                        });
-                    }
-
-                    IDictionary<string, ExpressionResult> responseMap;
-                    if (responseResult is MapResult map)
-                    {
-                        responseMap = map.Value;
-                    }
-                    else
-                    {
-                        responseMap = new Dictionary<string, ExpressionResult>
-                        {
-                            ["body"] = responseResult,
-                        };
-                    }
-
-                    response.StatusCode = responseMap.TryGetValue("status", out var statusResult)
-                        ? statusResult.ExpectInteger().RoundedIntValue
-                        : 200;
-
-                    interpreter.StdOut?.WriteLineAsync($"({workerId}) {request.RemoteEndPoint} <- {response.StatusCode}");
-
-                    foreach (var (key, value) in defaultResponseHeaders)
-                        response.Headers.Add(key, value);
-
-                    if (responseMap.TryGetValue("headers", out var responseHeaders))
-                    {
-                        var headers = responseHeaders.ExpectMap().Value;
-                        foreach (var (key, value) in headers)
-                            response.Headers.Add(key, ToStringFunction.Render(value));
-                    }
-
-                    if (responseMap.TryGetValue("body", out var bodyResult))
-                    {
-                        var body = ToStringFunction.Render(bodyResult);
-                        var buffer = Encoding.UTF8.GetBytes(body);
-
-                        response.ContentLength64 = buffer.Length;
-
-                        await response.OutputStream.WriteAsync(buffer, c);
-                    }
-
-                    response.Close();
-                }
-            });
+            var handlers = Enumerable.Range(0, Environment.ProcessorCount - 1).Select(i => new RequestHandler(i, interpreter, defaultResponseHeaders, callback));
+            await Parallel.ForEachAsync(
+                handlers,
+                cancellationToken,
+                async (handler, c) => await handler.Loop(server, c));
         }
         finally
         {
             server.Stop();
         }
+    }
+
+    private static async Task<MapResult> ToRequestMapAsync(HttpListenerRequest request, CancellationToken cancellationToken)
+    {
+        var requestMethod = new StringResult(request.HttpMethod);
+        ExpressionResult requestUrl = NullResult.Instance;
+        ExpressionResult requestPath = NullResult.Instance;
+        if (request.Url is not null)
+        {
+            requestUrl = new StringResult(request.Url.ToString());
+            requestPath = new StringResult(request.Url.AbsolutePath);
+        }
+
+        var requestHeaderDict = request
+            .Headers
+            .AllKeys
+            .Where(k => k != null)
+            .Cast<string>()
+            .ToDictionary(k => k, k => (ExpressionResult)new StringResult(request.Headers[k]!));
+
+        var requestHeaderResult = new MapResult(requestHeaderDict);
+
+        string requestBody;
+        using (var reader = new StreamReader(request.InputStream))
+            requestBody = await reader.ReadToEndAsync(cancellationToken);
+
+        var requestBodyResult = new StringResult(requestBody);
+
+        return new(new Dictionary<string, ExpressionResult>
+        {
+            ["method"] = requestMethod,
+            ["url"] = requestUrl,
+            ["path"] = requestPath,
+            ["headers"] = requestHeaderResult,
+            ["body"] = requestBodyResult,
+        });
     }
 
     private static string RenderExceptionPage(Exception e)
@@ -242,5 +177,95 @@ public class HttpServerFunction : NativeFunction
                  </body>
                  </html>
                  """;
+    }
+
+    private class RequestHandler
+    {
+        private readonly int workerId;
+        private readonly Interpreter interpreter;
+        private readonly Dictionary<string, string> defaultResponseHeaders;
+        private readonly FunctionDefinition callback;
+
+        public RequestHandler(int workerId, Interpreter interpreter, Dictionary<string, string> defaultResponseHeaders, FunctionDefinition callback)
+        {
+            this.workerId = workerId;
+            this.interpreter = interpreter;
+            this.defaultResponseHeaders = defaultResponseHeaders;
+            this.callback = callback;
+        }
+
+        public async ValueTask Loop(HttpListener server, CancellationToken cancellationToken)
+        {
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                var context = await server.GetContextAsync();
+                var request = context.Request;
+                var response = context.Response;
+
+                var requestMap = await ToRequestMapAsync(request, cancellationToken);
+
+                interpreter.StdOut?.WriteLineAsync($"({workerId}) {request.RemoteEndPoint} -> {request.HttpMethod} {request.Url?.AbsolutePath}");
+
+                ExpressionResult responseResult;
+                try
+                {
+                    responseResult = await callback.EvaluateAsync(interpreter, new Expression[]
+                    {
+                        requestMap.ToLiteralExpression(),
+                    }, cancellationToken);
+                }
+                catch (StepLangException e)
+                {
+                    responseResult = new MapResult(new Dictionary<string, ExpressionResult>
+                    {
+                        {
+                            "status", new NumberResult(500)
+                        },
+                        {
+                            "body", new StringResult(RenderExceptionPage(e))
+                        },
+                    });
+                }
+
+                IDictionary<string, ExpressionResult> responseMap;
+                if (responseResult is MapResult map)
+                {
+                    responseMap = map.Value;
+                }
+                else
+                {
+                    responseMap = new Dictionary<string, ExpressionResult>
+                    {
+                        ["body"] = responseResult,
+                    };
+                }
+
+                response.StatusCode = responseMap.TryGetValue("status", out var statusResult) ? statusResult.ExpectInteger().RoundedIntValue : 200;
+
+                interpreter.StdOut?.WriteLineAsync($"({workerId}) {request.RemoteEndPoint} <- {response.StatusCode}");
+
+                foreach (var (key, value) in defaultResponseHeaders)
+                    response.Headers.Add(key, value);
+
+                if (responseMap.TryGetValue("headers", out var responseHeaders))
+                {
+                    var headers = responseHeaders.ExpectMap().Value;
+                    foreach (var (key, value) in headers)
+                        response.Headers.Add(key, ToStringFunction.Render(value));
+                }
+
+                if (responseMap.TryGetValue("body", out var bodyResult))
+                {
+                    var body = ToStringFunction.Render(bodyResult);
+                    var buffer = Encoding.UTF8.GetBytes(body);
+
+                    response.ContentLength64 = buffer.Length;
+
+                    await response.OutputStream.WriteAsync(buffer, cancellationToken);
+                }
+
+                response.Close();
+            }
+        }
     }
 }
