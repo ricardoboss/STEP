@@ -59,6 +59,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang.Homepage", "StepLang.Homepage\StepLang.Homepage.proj", "{9F92D1B5-7391-4F60-8E38-08E9438BECCF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang.Tooling.Highlighting.Tests", "StepLang.Tooling.Highlighting.Tests\StepLang.Tooling.Highlighting.Tests.csproj", "{6754E592-D96F-455D-86E5-142B9E7A7D21}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +95,10 @@ Global
 		{4C0CFABA-DFA6-43EA-BEA3-29CB8A1E83A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C0CFABA-DFA6-43EA-BEA3-29CB8A1E83A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C0CFABA-DFA6-43EA-BEA3-29CB8A1E83A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6754E592-D96F-455D-86E5-142B9E7A7D21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6754E592-D96F-455D-86E5-142B9E7A7D21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6754E592-D96F-455D-86E5-142B9E7A7D21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6754E592-D96F-455D-86E5-142B9E7A7D21}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -105,5 +111,6 @@ Global
 		{4C0CFABA-DFA6-43EA-BEA3-29CB8A1E83A0} = {A9BE3B66-38F1-454B-9A12-E1BF21E307CF}
 		{3BE9363F-EC32-4325-87C7-B8BDF8F8B139} = {7DB97B10-29C3-4217-8911-2B36058B50D6}
 		{9F92D1B5-7391-4F60-8E38-08E9438BECCF} = {7DB97B10-29C3-4217-8911-2B36058B50D6}
+		{6754E592-D96F-455D-86E5-142B9E7A7D21} = {A9BE3B66-38F1-454B-9A12-E1BF21E307CF}
 	EndGlobalSection
 EndGlobal

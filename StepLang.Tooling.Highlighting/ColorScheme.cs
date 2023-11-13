@@ -20,7 +20,7 @@ public record ColorScheme(Style Default, Style Keyword, Style Type, Style Identi
     }
 
     public static ColorScheme Pale { get; } = new(
-        new(Color.White),
+        new(Color.White, IsDefault: true),
         new(Color.PaleVioletRed),
         new(Color.Turquoise),
         new(Color.PaleGoldenrod),
@@ -33,7 +33,7 @@ public record ColorScheme(Style Default, Style Keyword, Style Type, Style Identi
     );
 
     public static ColorScheme Dim { get; } = new(
-        new(Color.Black),
+        new(Color.Black, IsDefault: true),
         new(Color.MediumVioletRed),
         new(Color.DarkCyan),
         new(Color.DarkBlue),
@@ -46,7 +46,7 @@ public record ColorScheme(Style Default, Style Keyword, Style Type, Style Identi
     );
 
     public static ColorScheme Mono { get; } = new(
-        new(Color.Gray),
+        new(Color.Gray, IsDefault: true),
         new(Color.LightGray),
         new(Color.Gray),
         new(Color.DarkGray),

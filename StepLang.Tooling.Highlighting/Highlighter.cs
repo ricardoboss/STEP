@@ -19,7 +19,7 @@ public class Highlighter
             yield return new(token.Type, token.Value, GetStyle(token.Type, scheme));
     }
 
-    private static Style GetStyle(TokenType tokenType, ColorScheme scheme) => tokenType switch
+    public static Style GetStyle(TokenType tokenType, ColorScheme scheme) => tokenType switch
     {
         TokenType.Identifier => scheme.Identifier,
         TokenType.TypeName => scheme.Type,
