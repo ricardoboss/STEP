@@ -12,7 +12,7 @@ public class HighlighterTest
         var highlighter = new Highlighter(ColorScheme.Mono);
         var tokens = highlighter.Highlight(source).ToList();
 
-        Assert.Equal(7, tokens.Count);
+        Assert.Equal(8, tokens.Count);
     }
 
     [Theory]
@@ -32,6 +32,7 @@ public class HighlighterTest
             {
                 TokenType.Whitespace,
                 TokenType.NewLine,
+                TokenType.EndOfFile,
             })
             .Select(t => new object[] { t });
     }
