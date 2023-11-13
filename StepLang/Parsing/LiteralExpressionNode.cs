@@ -13,7 +13,7 @@ public sealed record LiteralExpressionNode(Token Literal) : ExpressionNode
 
     public override TokenLocation Location => Literal.Location;
 
-    public static implicit operator LiteralExpressionNode(string literal) => new(new Token(TokenType.LiteralString, literal));
+    public static implicit operator LiteralExpressionNode(string literal) => new(new Token(TokenType.LiteralString, $"\"{literal}\""));
 
     public static implicit operator LiteralExpressionNode(double literal) => new(new Token(TokenType.LiteralNumber, literal.ToString(CultureInfo.InvariantCulture)));
 

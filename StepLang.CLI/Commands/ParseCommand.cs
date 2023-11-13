@@ -358,6 +358,15 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
         {
             root.AddNode("ReturnStatement");
         }
+
+        public void Execute(DiscardStatementNode discardStatementNode)
+        {
+            var node = root.AddNode("DiscardStatement");
+
+            var expressionNode = node.AddNode("Expression:");
+            var expressionTreeBuilder = new ExpressionTreeBuilder(expressionNode);
+            discardStatementNode.Expression.EvaluateUsing(expressionTreeBuilder);
+        }
     }
 
     private sealed class VariableDeclarationTreeBuilder : IVariableDeclarationEvaluator

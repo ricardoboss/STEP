@@ -10,20 +10,20 @@ public partial class Interpreter
     {
         var variable = CurrentScope.GetVariable(statementNode.CallExpression.Identifier);
         if (variable.Value is not FunctionResult function)
-            throw new InvalidOperationException("Variable is not a function.");
+            throw new InvalidResultTypeException(statementNode.CallExpression.Location, variable.Value, ResultType.Function);
 
         // TODO: check if function returns anything other than void and abort call
 
         var result = function.Value.Invoke(statementNode.Location, this, statementNode.CallExpression.Arguments);
         if (result is not VoidResult)
-            throw new InvalidOperationException("Function call must return void.");
+            throw new InvalidResultTypeException(statementNode.Location, result, ResultType.Void);
     }
 
     public ExpressionResult Evaluate(CallExpressionNode expressionNode)
     {
         var variable = CurrentScope.GetVariable(expressionNode.Identifier);
         if (variable.Value is not FunctionResult function)
-            throw new InvalidOperationException("Variable is not a function.");
+            throw new InvalidResultTypeException(expressionNode.Location, variable.Value, ResultType.Function);
 
         return function.Value.Invoke(expressionNode.Location, this, expressionNode.Arguments);
     }

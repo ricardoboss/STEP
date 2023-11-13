@@ -1,4 +1,5 @@
 using StepLang.Expressions.Results;
+using StepLang.Tokenizing;
 
 namespace StepLang.Interpreting;
 
@@ -10,13 +11,6 @@ public class InvalidResultTypeException : IncompatibleTypesException
         1 => $"a {expected[0].ToTypeName()}",
         _ => $"one of {string.Join(", ", expected.Select(e => e.ToTypeName()))}",
     };
-
-    private static string BuildMessage(ResultType got, IReadOnlyList<ResultType> expected)
-    {
-        var expectation = ToExpectation(expected);
-
-        return $"Invalid result type: expected {expectation}, got {got.ToTypeName()}";
-    }
 
     private static string BuildMessage(ExpressionResult got, IReadOnlyList<ResultType> expected)
     {
@@ -33,15 +27,11 @@ public class InvalidResultTypeException : IncompatibleTypesException
         return $"Invalid result type: expected {expectation}, got {gotString}";
     }
 
-    public InvalidResultTypeException(ResultType got, params ResultType[] expected) : this(BuildMessage(got, expected))
+    public InvalidResultTypeException(TokenLocation evaluationLocation, ExpressionResult got, params ResultType[] expected) : this(evaluationLocation, BuildMessage(got, expected))
     {
     }
 
-    public InvalidResultTypeException(ExpressionResult got, params ResultType[] expected) : this(BuildMessage(got, expected))
-    {
-    }
-
-    private InvalidResultTypeException(string message) : base(4, null, message, "An expression evaluated to an unexpected type. Check what types of expression results are allowed in the current context.")
+    private InvalidResultTypeException(TokenLocation evaluationLocation, string message) : base(4, evaluationLocation, message, "An expression evaluated to an unexpected type. Check what types of expression results are allowed in the current context.")
     {
     }
 }

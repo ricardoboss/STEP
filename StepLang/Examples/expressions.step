@@ -18,3 +18,6 @@ println(-1.4)
 println(-a)
 println(!false)
 println(!(true && !false))
+
+// discard:
+_ = 1

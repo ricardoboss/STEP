@@ -26,7 +26,7 @@ public class FetchFunction : GenericFunction<StringResult, MapResult>
         var url = argument1.Value;
         var options = argument2.Value;
 
-        using var response = Fetch(url, options);
+        using var response = Fetch(callLocation, url, options);
         if (!response.IsSuccessStatusCode)
             return NullResult.Instance;
 
@@ -35,7 +35,7 @@ public class FetchFunction : GenericFunction<StringResult, MapResult>
         return new StringResult(body);
     }
 
-    private static HttpResponseMessage Fetch(string url, IDictionary<string, ExpressionResult> options)
+    private static HttpResponseMessage Fetch(TokenLocation callLocation, string url, IDictionary<string, ExpressionResult> options)
     {
         using var client = new HttpClient();
 
@@ -52,7 +52,7 @@ public class FetchFunction : GenericFunction<StringResult, MapResult>
                 if (value is StringResult { Value: var headerValue })
                     request.Headers.Add(key, headerValue);
                 else
-                    throw new InvalidResultTypeException(value, ResultType.Str);
+                    throw new InvalidResultTypeException(callLocation, value, ResultType.Str);
             }
         }
 

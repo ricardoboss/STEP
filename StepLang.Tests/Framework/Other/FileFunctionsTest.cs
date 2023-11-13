@@ -1,61 +1,64 @@
 using System.Runtime.InteropServices;
-using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Framework.Other;
 using StepLang.Interpreting;
+using StepLang.Parsing;
 
 namespace StepLang.Tests.Framework.Other;
 
 public class FileFunctionsTest
 {
     [SkippableTheory]
-    [InlineData("Windows", @"C:\temp\test.txt", "Hello World")]
-    [InlineData("Linux", "/tmp/test.txt", "Hello World")]
-    [InlineData("OSX", "/tmp/test.txt", "Hello World")]
-    public async Task TestFileFunctions(string platform, string filename, string content)
+    [InlineData("Windows", @"C:\temp\test.txt")]
+    [InlineData("Linux", "/tmp/test.txt")]
+    [InlineData("OSX", "/tmp/test.txt")]
+    public void TestFileFunctions(string platform, string filename)
     {
         Skip.IfNot(RuntimeInformation.IsOSPlatform(OSPlatform.Create(platform)), $"Test only for {platform}");
 
-        var interpreter = new Interpreter();
+        const string content = "Hello World";
+
+        var debugOut = new StringWriter();
+        var interpreter = new Interpreter(debugOut: debugOut);
 
         var fileExistsFunction = new FileExistsFunction();
         var fileWriteFunction = new FileWriteFunction();
         var fileReadFunction = new FileReadFunction();
         var fileDeleteFunction = new FileDeleteFunction();
 
-        var preWriteExistsResult = await fileExistsFunction.EvaluateAsync(interpreter, new List<Expression> { LiteralExpression.Str(filename) });
+        var preWriteExistsResult = fileExistsFunction.Invoke(new(), interpreter, new List<ExpressionNode> { LiteralExpressionNode.FromString(filename) });
 
         Assert.IsType<BoolResult>(preWriteExistsResult);
-        Assert.False(preWriteExistsResult.ExpectBool().Value);
+        Assert.False(((BoolResult)preWriteExistsResult).Value);
 
-        var writeResult = await fileWriteFunction.EvaluateAsync(interpreter, new List<Expression> { LiteralExpression.Str(filename), LiteralExpression.Str(content) });
+        var writeResult = fileWriteFunction.Invoke(new(), interpreter, new List<ExpressionNode> { LiteralExpressionNode.FromString(filename), LiteralExpressionNode.FromString(content) });
 
         Assert.IsType<BoolResult>(writeResult);
-        Assert.True(writeResult.ExpectBool().Value);
+        Assert.True(((BoolResult)writeResult).Value);
 
-        var postWriteExistsResult = await fileExistsFunction.EvaluateAsync(interpreter, new List<Expression> { LiteralExpression.Str(filename) });
+        var postWriteExistsResult = fileExistsFunction.Invoke(new(), interpreter, new List<ExpressionNode> { LiteralExpressionNode.FromString(filename) });
 
         Assert.IsType<BoolResult>(postWriteExistsResult);
-        Assert.True(postWriteExistsResult.ExpectBool().Value);
+        Assert.True(((BoolResult)postWriteExistsResult).Value);
 
-        var firstReadResult = await fileReadFunction.EvaluateAsync(interpreter, new List<Expression> { LiteralExpression.Str(filename) });
+        var firstReadResult = fileReadFunction.Invoke(new(), interpreter, new List<ExpressionNode> { LiteralExpressionNode.FromString(filename) });
 
         Assert.IsType<StringResult>(firstReadResult);
-        Assert.Equal(content, firstReadResult.ExpectString().Value);
+        Assert.Equal(content, ((StringResult)firstReadResult).Value);
 
-        var appendResult = await fileWriteFunction.EvaluateAsync(interpreter, new List<Expression> { LiteralExpression.Str(filename), LiteralExpression.Str(content), LiteralExpression.True });
+        var appendResult = fileWriteFunction.Invoke(new(), interpreter, new List<ExpressionNode> { LiteralExpressionNode.FromString(filename), LiteralExpressionNode.FromString(content), LiteralExpressionNode.FromBoolean(true) });
 
         Assert.IsType<BoolResult>(appendResult);
-        Assert.True(appendResult.ExpectBool().Value);
+        Assert.True(((BoolResult)appendResult).Value);
 
-        var secondReadResult = await fileReadFunction.EvaluateAsync(interpreter, new List<Expression> { LiteralExpression.Str(filename) });
+        var secondReadResult = fileReadFunction.Invoke(new(), interpreter, new List<ExpressionNode> { LiteralExpressionNode.FromString(filename) });
 
         Assert.IsType<StringResult>(secondReadResult);
-        Assert.Equal(content + content, secondReadResult.ExpectString().Value);
+        Assert.Equal(content + content, ((StringResult)secondReadResult).Value);
 
-        var deleteResult = await fileDeleteFunction.EvaluateAsync(interpreter, new List<Expression> { LiteralExpression.Str(filename) });
+        var deleteResult = fileDeleteFunction.Invoke(new(), interpreter, new List<ExpressionNode> { LiteralExpressionNode.FromString(filename) });
 
         Assert.IsType<BoolResult>(deleteResult);
-        Assert.True(deleteResult.ExpectBool().Value);
+        Assert.True(((BoolResult)deleteResult).Value);
     }
 }

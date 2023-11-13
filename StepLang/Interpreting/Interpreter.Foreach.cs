@@ -14,8 +14,9 @@ public partial class Interpreter
         var valueVariable = statementNode.ValueDeclaration.EvaluateUsing(this);
         var valueLocation = statementNode.ValueDeclaration.Types.First().Location;
         var collection = statementNode.Collection.EvaluateUsing(this);
+        var collectionLocation = statementNode.Collection.Location;
 
-        RunForeachLoop(keyLocation, keyVariable, valueLocation, valueVariable, collection, statementNode.Body);
+        RunForeachLoop(keyLocation, keyVariable, valueLocation, valueVariable, collectionLocation, collection, statementNode.Body);
     }
 
     public void Execute(ForeachDeclareKeyValueStatementNode statementNode)
@@ -25,8 +26,9 @@ public partial class Interpreter
         var valueVariable = CurrentScope.GetVariable(statementNode.ValueIdentifier);
         var valueLocation = statementNode.ValueIdentifier.Location;
         var collection = statementNode.Collection.EvaluateUsing(this);
+        var collectionLocation = statementNode.Collection.Location;
 
-        RunForeachLoop(keyLocation, keyVariable, valueLocation, valueVariable, collection, statementNode.Body);
+        RunForeachLoop(keyLocation, keyVariable, valueLocation, valueVariable, collectionLocation, collection, statementNode.Body);
     }
 
     public void Execute(ForeachDeclareValueStatementNode statementNode)
@@ -34,8 +36,9 @@ public partial class Interpreter
         var valueVariable = statementNode.ValueDeclaration.EvaluateUsing(this);
         var valueLocation = statementNode.ValueDeclaration.Types.First().Location;
         var collection = statementNode.Collection.EvaluateUsing(this);
+        var collectionLocation = statementNode.Collection.Location;
 
-        RunForeachLoop(null, null, valueLocation, valueVariable, collection, statementNode.Body);
+        RunForeachLoop(null, null, valueLocation, valueVariable, collectionLocation, collection, statementNode.Body);
     }
 
     public void Execute(ForeachKeyValueStatementNode statementNode)
@@ -45,8 +48,9 @@ public partial class Interpreter
         var valueVariable = CurrentScope.GetVariable(statementNode.ValueIdentifier);
         var valueLocation = statementNode.ValueIdentifier.Location;
         var collection = statementNode.Collection.EvaluateUsing(this);
+        var collectionLocation = statementNode.Collection.Location;
 
-        RunForeachLoop(keyLocation, keyVariable, valueLocation, valueVariable, collection, statementNode.Body);
+        RunForeachLoop(keyLocation, keyVariable, valueLocation, valueVariable, collectionLocation, collection, statementNode.Body);
     }
 
     public void Execute(ForeachKeyDeclareValueStatementNode statementNode)
@@ -56,8 +60,9 @@ public partial class Interpreter
         var valueVariable = statementNode.ValueDeclaration.EvaluateUsing(this);
         var valueLocation = statementNode.ValueDeclaration.Types.First().Location;
         var collection = statementNode.Collection.EvaluateUsing(this);
+        var collectionLocation = statementNode.Collection.Location;
 
-        RunForeachLoop(keyLocation, keyVariable, valueLocation, valueVariable, collection, statementNode.Body);
+        RunForeachLoop(keyLocation, keyVariable, valueLocation, valueVariable, collectionLocation, collection, statementNode.Body);
     }
 
     public void Execute(ForeachValueStatementNode statementNode)
@@ -65,11 +70,12 @@ public partial class Interpreter
         var valueVariable = CurrentScope.GetVariable(statementNode.Identifier);
         var valueLocation = statementNode.Identifier.Location;
         var collection = statementNode.Collection.EvaluateUsing(this);
+        var collectionLocation = statementNode.Collection.Location;
 
-        RunForeachLoop(null, null, valueLocation, valueVariable, collection, statementNode.Body);
+        RunForeachLoop(null, null, valueLocation, valueVariable, collectionLocation, collection, statementNode.Body);
     }
 
-    private static IEnumerable<(ExpressionResult, ExpressionResult)> ConvertToForeachEnumerable(ExpressionResult collection)
+    private static IEnumerable<(ExpressionResult, ExpressionResult)> ConvertToForeachEnumerable(TokenLocation evaluationLocation, ExpressionResult collection)
     {
         switch (collection)
         {
@@ -93,15 +99,15 @@ public partial class Interpreter
                     yield break;
                 }
             default:
-                throw new InvalidResultTypeException(collection, ResultType.List, ResultType.Map);
+                throw new InvalidResultTypeException(evaluationLocation, collection, ResultType.List, ResultType.Map);
         }
     }
 
-    private void RunForeachLoop(TokenLocation? keyAssignmentLocation, Variable? key, TokenLocation valueAssignmentLocation, Variable value, ExpressionResult collection, IReadOnlyCollection<StatementNode> body)
+    private void RunForeachLoop(TokenLocation? keyAssignmentLocation, Variable? key, TokenLocation valueAssignmentLocation, Variable value, TokenLocation collectionLocation, ExpressionResult collection, IReadOnlyCollection<StatementNode> body)
     {
         Debug.Assert(keyAssignmentLocation is null || key is not null);
 
-        var pairs = ConvertToForeachEnumerable(collection);
+        var pairs = ConvertToForeachEnumerable(collectionLocation, collection);
 
         foreach (var (keyValue, valueValue) in pairs)
         {

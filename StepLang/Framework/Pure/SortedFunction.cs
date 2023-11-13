@@ -43,7 +43,7 @@ public class SortedFunction : ListManipulationFunction
 
             var result = callback.Invoke(callLocation, interpreter, args);
             if (result is not NumberResult numberResult)
-                throw new InvalidResultTypeException(result, ResultType.Number);
+                throw new InvalidResultTypeException(callLocation, result, ResultType.Number);
 
             return Math.Sign(numberResult);
         });

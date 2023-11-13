@@ -1,4 +1,5 @@
-using StepLang.Statements;
+using StepLang.Interpreting;
+using StepLang.Parsing;
 using StepLang.Tokenizing;
 
 namespace StepLang.Tests;
@@ -7,29 +8,24 @@ public static class TestHelper
 {
     public static IEnumerable<Token> AsTokens(this string code)
     {
-        var tokenizer = new Tokenizer();
-        tokenizer.Add(code);
+        var tokenizer = new Tokenizer(code);
+
         return tokenizer.Tokenize();
     }
 
-    public static async Task<List<Statement>> AsStatementsAsync(this string code)
+    public static RootNode AsParsed(this string code)
     {
-        var parser = new StatementParser();
-        parser.Add(code.AsTokens());
-        return await parser.ParseAsync(CancellationToken.None).ToListAsync();
+        var parser = new Parser(code.AsTokens());
+
+        return parser.ParseRoot();
     }
 
-    public static async Task<Statement> AsStatementAsync(this string code)
+    public static void Interpret(this string code)
     {
-        var statements = await code.AsStatementsAsync();
+        var root = code.AsParsed();
 
-        return statements.Single();
-    }
+        var interpreter = new Interpreter();
 
-    public static StatementParser AsParsable(this string code)
-    {
-        var parser = new StatementParser();
-        parser.Add(code.AsTokens());
-        return parser;
+        root.Accept(interpreter);
     }
 }
