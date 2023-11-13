@@ -3,7 +3,7 @@ using System.Drawing;
 namespace StepLang.Tooling.Highlighting;
 
 public record ColorScheme(Style Default, Style Keyword, Style Type, Style Identifier, Style String, Style Number,
-    Style Bool, Style Comment,
+    Style Bool, Style Null, Style Comment,
     Style Operator, Style Punctuation)
 {
     public static IEnumerable<string> Names => new[] { "Pale", "Dim", "Mono" };
@@ -27,7 +27,8 @@ public record ColorScheme(Style Default, Style Keyword, Style Type, Style Identi
         new(Color.DarkSeaGreen),
         new(Color.Plum),
         new(Color.CadetBlue),
-        new(Color.Gray, true),
+        new(Color.CadetBlue),
+        new(Color.Gray, Italic: true),
         new(Color.White),
         new(Color.White)
     );
@@ -40,7 +41,8 @@ public record ColorScheme(Style Default, Style Keyword, Style Type, Style Identi
         new(Color.Brown),
         new(Color.DarkGreen),
         new(Color.CadetBlue),
-        new(Color.DarkGray, true),
+        new(Color.CadetBlue),
+        new(Color.DarkGray, Italic: true),
         new(Color.Black),
         new(Color.Black)
     );
@@ -50,10 +52,11 @@ public record ColorScheme(Style Default, Style Keyword, Style Type, Style Identi
         new(Color.LightGray),
         new(Color.Gray),
         new(Color.DarkGray),
-        new(Color.DarkGray, true),
-        new(Color.DarkGray, true),
-        new(Color.DarkGray, true),
-        new(Color.DimGray, true),
+        new(Color.DarkGray, Italic: true),
+        new(Color.DarkGray, Italic: true),
+        new(Color.DarkGray, Italic: true),
+        new(Color.DarkGray, Italic: true),
+        new(Color.DimGray, Italic: true),
         new(Color.Gray),
         new(Color.Gray)
     );

@@ -27,6 +27,7 @@ public class Highlighter
         TokenType.LiteralString => scheme.String,
         TokenType.LiteralNumber => scheme.Number,
         TokenType.LiteralBoolean => scheme.Bool,
+        TokenType.LiteralNull => scheme.Null,
         TokenType.IfKeyword => scheme.Keyword,
         TokenType.ElseKeyword => scheme.Keyword,
         TokenType.WhileKeyword => scheme.Keyword,
