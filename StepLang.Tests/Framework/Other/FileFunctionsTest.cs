@@ -18,8 +18,7 @@ public class FileFunctionsTest
 
         const string content = "Hello World";
 
-        var debugOut = new StringWriter();
-        var interpreter = new Interpreter(debugOut: debugOut);
+        var interpreter = new Interpreter();
 
         var fileExistsFunction = new FileExistsFunction();
         var fileWriteFunction = new FileWriteFunction();
