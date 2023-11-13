@@ -31,7 +31,7 @@ internal sealed class RunCommand : AsyncCommand<RunCommand.Settings>
         var root = parser.ParseRoot();
 
         var interpreter = new Interpreter(Console.Out, Console.Error, Console.In);
-        interpreter.Run(root);
+        root.Accept(interpreter);
 
         return interpreter.ExitCode;
     }
