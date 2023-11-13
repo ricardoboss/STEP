@@ -142,37 +142,130 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
         public void Execute(ForeachDeclareKeyValueStatementNode statementNode)
         {
-            throw new NotImplementedException();
+            var node = root.AddNode("ForeachStatement:");
+
+            var keyDeclarationNode = node.AddNode("KeyDeclaration:");
+            var keyExpressionBuilder = new VariableDeclarationTreeBuilder(keyDeclarationNode);
+            statementNode.KeyDeclaration.EvaluateUsing(keyExpressionBuilder);
+
+            node.AddNode("ValueIdentifier: " + statementNode.ValueIdentifier.ToString().EscapeMarkup());
+
+            var expressionNode = node.AddNode("Expression:");
+            var expressionBuilder = new ExpressionTreeBuilder(expressionNode);
+            statementNode.Collection.EvaluateUsing(expressionBuilder);
+
+            var bodyNode = node.AddNode("Body:");
+            var statementTreeBuilder = new StatementTreeBuilder(bodyNode);
+            foreach (var statement in statementNode.Body)
+                statement.Accept(statementTreeBuilder);
         }
 
         public void Execute(ForeachDeclareValueStatementNode statementNode)
         {
-            throw new NotImplementedException();
+            var node = root.AddNode("ForeachStatement:");
+
+            var valueDeclarationNode = node.AddNode("ValueDeclaration:");
+            var valueExpressionBuilder = new VariableDeclarationTreeBuilder(valueDeclarationNode);
+            statementNode.ValueDeclaration.EvaluateUsing(valueExpressionBuilder);
+
+            var expressionNode = node.AddNode("Expression:");
+            var expressionBuilder = new ExpressionTreeBuilder(expressionNode);
+            statementNode.Collection.EvaluateUsing(expressionBuilder);
+
+            var bodyNode = node.AddNode("Body:");
+            var statementTreeBuilder = new StatementTreeBuilder(bodyNode);
+            foreach (var statement in statementNode.Body)
+                statement.Accept(statementTreeBuilder);
         }
 
         public void Execute(ForeachKeyValueStatementNode statementNode)
         {
-            throw new NotImplementedException();
+            var node = root.AddNode("ForeachStatement:");
+
+            node.AddNode("KeyIdentifier: " + statementNode.KeyIdentifier.ToString().EscapeMarkup());
+            node.AddNode("ValueIdentifier: " + statementNode.ValueIdentifier.ToString().EscapeMarkup());
+
+            var expressionNode = node.AddNode("Expression:");
+            var expressionBuilder = new ExpressionTreeBuilder(expressionNode);
+            statementNode.Collection.EvaluateUsing(expressionBuilder);
+
+            var bodyNode = node.AddNode("Body:");
+            var statementTreeBuilder = new StatementTreeBuilder(bodyNode);
+            foreach (var statement in statementNode.Body)
+                statement.Accept(statementTreeBuilder);
         }
 
         public void Execute(ForeachKeyDeclareValueStatementNode statementNode)
         {
-            throw new NotImplementedException();
+            var node = root.AddNode("ForeachStatement:");
+
+            node.AddNode("KeyIdentifier: " + statementNode.KeyIdentifier.ToString().EscapeMarkup());
+
+            var valueDeclarationNode = node.AddNode("ValueDeclaration:");
+            var valueExpressionBuilder = new VariableDeclarationTreeBuilder(valueDeclarationNode);
+            statementNode.ValueDeclaration.EvaluateUsing(valueExpressionBuilder);
+
+            var expressionNode = node.AddNode("Expression:");
+            var expressionBuilder = new ExpressionTreeBuilder(expressionNode);
+            statementNode.Collection.EvaluateUsing(expressionBuilder);
+
+            var bodyNode = node.AddNode("Body:");
+            var statementTreeBuilder = new StatementTreeBuilder(bodyNode);
+            foreach (var statement in statementNode.Body)
+                statement.Accept(statementTreeBuilder);
         }
 
         public void Execute(ForeachValueStatementNode statementNode)
         {
-            throw new NotImplementedException();
+            var node = root.AddNode("ForeachStatement:");
+
+            node.AddNode("ValueIdentifier: " + statementNode.Identifier.ToString().EscapeMarkup());
+
+            var expressionNode = node.AddNode("Expression:");
+            var expressionBuilder = new ExpressionTreeBuilder(expressionNode);
+            statementNode.Collection.EvaluateUsing(expressionBuilder);
+
+            var bodyNode = node.AddNode("Body:");
+            var statementTreeBuilder = new StatementTreeBuilder(bodyNode);
+            foreach (var statement in statementNode.Body)
+                statement.Accept(statementTreeBuilder);
         }
 
         public void Execute(IdentifierIndexAssignmentNode statementNode)
         {
-            throw new NotImplementedException();
+            var node = root.AddNode("IdentifierIndexAssignment:");
+            node.AddNode("Identifier: " + statementNode.Identifier.ToString().EscapeMarkup());
+
+            var indexNode = node.AddNode("Index:");
+            var indexTreeBuilder = new ExpressionTreeBuilder(indexNode);
+            statementNode.IndexExpression.EvaluateUsing(indexTreeBuilder);
+
+            var expressionNode = node.AddNode("Expression:");
+            var expressionTreeBuilder = new ExpressionTreeBuilder(expressionNode);
+            statementNode.ValueExpression.EvaluateUsing(expressionTreeBuilder);
         }
 
         public void Execute(IfElseIfStatementNode statementNode)
         {
-            throw new NotImplementedException();
+            var node = root.AddNode("IfElseIfStatement:");
+
+            var conditionNode = node.AddNode("Condition:");
+            var expressionTreeBuilder = new ExpressionTreeBuilder(conditionNode);
+            statementNode.Condition.EvaluateUsing(expressionTreeBuilder);
+
+            var body = node.AddNode("Body:");
+            var statementTreeBuilder = new StatementTreeBuilder(body);
+            foreach (var statement in statementNode.Body)
+                statement.Accept(statementTreeBuilder);
+
+            var elseIfConditionNode = node.AddNode("ElseIfCondition:");
+            var elseIfExpressionTreeBuilder = new ExpressionTreeBuilder(elseIfConditionNode);
+            statementNode.ElseCondition.EvaluateUsing(elseIfExpressionTreeBuilder);
+
+            var elseIfBody = node.AddNode("ElseBody:");
+            var elseIfStatementTreeBuilder = new StatementTreeBuilder(elseIfBody);
+            foreach (var statement in statementNode.ElseBody)
+                statement.Accept(elseIfStatementTreeBuilder);
         }
 
         public void Execute(IfElseStatementNode statementNode)
