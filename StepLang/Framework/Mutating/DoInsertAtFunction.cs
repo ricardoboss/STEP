@@ -1,5 +1,6 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
+using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Mutating;
 
@@ -14,7 +15,8 @@ public class DoInsertAtFunction : GenericFunction<ListResult, NumberResult, Expr
         new(AnyValueType, "value"),
     };
 
-    protected override ExpressionResult Invoke(Interpreter interpreter, ListResult argument1, NumberResult argument2, ExpressionResult argument3)
+    protected override ExpressionResult Invoke(TokenLocation tokenLocation, Interpreter interpreter,
+        ListResult argument1, NumberResult argument2, ExpressionResult argument3)
     {
         var list = argument1.Value;
         var index = argument2;

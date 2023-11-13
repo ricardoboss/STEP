@@ -1,5 +1,6 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
+using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Pure;
 
@@ -14,7 +15,8 @@ public class InterpolateFunction : GenericFunction<NumberResult, NumberResult, N
         new(OnlyNumber, "t"),
     };
 
-    protected override ExpressionResult Invoke(Interpreter interpreter, NumberResult argument1, NumberResult argument2, NumberResult argument3)
+    protected override ExpressionResult Invoke(TokenLocation tokenLocation, Interpreter interpreter,
+        NumberResult argument1, NumberResult argument2, NumberResult argument3)
     {
         var a = argument1;
         var b = argument2;

@@ -1,6 +1,7 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
 using StepLang.Parsing;
+using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Conversion;
 
@@ -16,9 +17,10 @@ public class ToTypeNameFunction : NativeFunction
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyString;
 
     /// <inheritdoc />
-    public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
+    public override StringResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+        IReadOnlyList<ExpressionNode> arguments)
     {
-        CheckArgumentCount(arguments);
+        CheckArgumentCount(callLocation, arguments);
 
         var exp = arguments.Single();
         if (exp is not IdentifierExpressionNode varExp)
@@ -26,6 +28,6 @@ public class ToTypeNameFunction : NativeFunction
 
         var variable = interpreter.CurrentScope.GetVariable(varExp.Identifier);
 
-        return new StringResult(variable.TypeString);
+        return variable.TypeString;
     }
 }

@@ -1,5 +1,6 @@
 using StepLang.Interpreting;
 using StepLang.Parsing;
+using StepLang.Tokenizing;
 
 namespace StepLang.Expressions.Results;
 
@@ -23,7 +24,8 @@ public class FunctionResult : ValueExpressionResult<FunctionDefinition>
     {
         protected override string DebugBodyString => "";
 
-        public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments) => VoidResult.Instance;
+        public override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+            IReadOnlyList<ExpressionNode> arguments) => VoidResult.Instance;
 
         public override IReadOnlyCollection<IVariableDeclarationNode> Parameters => Array.Empty<IVariableDeclarationNode>();
 

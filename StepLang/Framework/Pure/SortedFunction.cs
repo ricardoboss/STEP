@@ -2,6 +2,7 @@ using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
 using StepLang.Parsing;
+using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Pure;
 
@@ -9,14 +10,15 @@ public class SortedFunction : ListManipulationFunction
 {
     public const string Identifier = "sorted";
 
-    public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
+    public override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+        IReadOnlyList<ExpressionNode> arguments)
     {
-        CheckArgumentCount(arguments, 1, 2);
+        CheckArgumentCount(callLocation, arguments, 1, 2);
 
         if (arguments.Count == 2)
-            return base.Invoke(interpreter, arguments);
+            return base.Invoke(callLocation, interpreter, arguments);
 
-        return base.Invoke(interpreter, new[] { arguments[0], new CompareToFunction().ToResult().ToExpressionNode() });
+        return base.Invoke(callLocation, interpreter, new[] { arguments[0], new CompareToFunction().ToResult().ToExpressionNode() });
     }
 
     protected override IEnumerable<ExpressionNode[]> PrepareArgsForCallback(IEnumerable<ExpressionResult> list, FunctionDefinition callback)
@@ -31,7 +33,7 @@ public class SortedFunction : ListManipulationFunction
         return list.Select(e => new[] { e.ToExpressionNode() });
     }
 
-    protected override IEnumerable<ExpressionResult> EvaluateListManipulation(Interpreter interpreter, IEnumerable<ExpressionNode[]> arguments, FunctionDefinition callback)
+    protected override IEnumerable<ExpressionResult> EvaluateListManipulation(TokenLocation callLocation, Interpreter interpreter, IEnumerable<ExpressionNode[]> arguments, FunctionDefinition callback)
     {
         var arr = arguments.ToArray();
 
@@ -39,7 +41,7 @@ public class SortedFunction : ListManipulationFunction
         {
             var args = new[] { a[0], b[0] };
 
-            var result = callback.Invoke(interpreter, args);
+            var result = callback.Invoke(callLocation, interpreter, args);
             if (result is not NumberResult numberResult)
                 throw new InvalidResultTypeException(result, ResultType.Number);
 

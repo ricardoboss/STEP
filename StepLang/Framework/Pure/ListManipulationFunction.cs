@@ -2,6 +2,7 @@ using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
 using StepLang.Parsing;
+using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Pure;
 
@@ -13,13 +14,13 @@ public abstract class ListManipulationFunction : GenericFunction<ListResult, Fun
         new(OnlyFunction, "callback"),
     };
 
-    protected override ExpressionResult Invoke(Interpreter interpreter, ListResult argument1, FunctionResult argument2)
+    protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter, ListResult argument1, FunctionResult argument2)
     {
         var list = argument1.DeepClone().Value;
         var callback = argument2.Value;
 
         var args = PrepareArgsForCallback(list, callback);
-        var result = EvaluateListManipulation(interpreter, args, callback).ToList();
+        var result = EvaluateListManipulation(callLocation, interpreter, args, callback).ToList();
 
         return new ListResult(result);
     }
@@ -58,5 +59,5 @@ public abstract class ListManipulationFunction : GenericFunction<ListResult, Fun
         return list.Select(argsConverter);
     }
 
-    protected abstract IEnumerable<ExpressionResult> EvaluateListManipulation(Interpreter interpreter, IEnumerable<ExpressionNode[]> arguments, FunctionDefinition callback);
+    protected abstract IEnumerable<ExpressionResult> EvaluateListManipulation(TokenLocation callLocation, Interpreter interpreter, IEnumerable<ExpressionNode[]> arguments, FunctionDefinition callback);
 }

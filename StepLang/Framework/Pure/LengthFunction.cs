@@ -2,6 +2,7 @@ using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
 using StepLang.Parsing;
+using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Pure;
 
@@ -16,17 +17,17 @@ public class LengthFunction : NativeFunction
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = new[] { ResultType.Number };
 
-    public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
+    public override NumberResult Invoke(TokenLocation callLocation, Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
     {
-        CheckArgumentCount(arguments);
+        CheckArgumentCount(callLocation, arguments);
 
         var subjectResult = arguments.Single().EvaluateUsing(interpreter);
 
         return subjectResult switch
         {
-            StringResult { Value: var str } => new NumberResult(str.GraphemeLength()),
-            ListResult { Value: var list } => new NumberResult(list.Count),
-            MapResult { Value: var map } => new NumberResult(map.Count),
+            StringResult { Value: var str } => str.GraphemeLength(),
+            ListResult { Value: var list } => list.Count,
+            MapResult { Value: var map } => map.Count,
             _ => throw new InvalidArgumentTypeException(arguments.Single().Location, NativeParameters.Single().Types, subjectResult),
         };
     }

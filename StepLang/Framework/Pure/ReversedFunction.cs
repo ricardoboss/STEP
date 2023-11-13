@@ -1,5 +1,6 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
+using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Pure;
 
@@ -14,7 +15,8 @@ public class ReversedFunction : GenericFunction<ExpressionResult>
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = new[] { ResultType.List, ResultType.Str };
 
-    protected override ExpressionResult Invoke(Interpreter interpreter, ExpressionResult argument1)
+    protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+        ExpressionResult argument1)
     {
         return argument1 switch
         {

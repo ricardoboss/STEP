@@ -1,5 +1,6 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
+using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Pure;
 
@@ -9,7 +10,7 @@ public class ReadFunction : GenericFunction
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = NullableString;
 
-    protected override ExpressionResult Invoke(Interpreter interpreter)
+    protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter)
     {
         if (interpreter.StdIn is not { } stdIn)
             return NullResult.Instance;

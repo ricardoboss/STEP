@@ -1,5 +1,6 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
+using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Pure;
 
@@ -16,7 +17,7 @@ public class SubstringFunction : GenericFunction<StringResult, NumberResult, Num
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyString;
 
-    protected override StringResult Invoke(Interpreter interpreter, StringResult argument1, NumberResult argument2, NumberResult argument3)
+    protected override StringResult Invoke(TokenLocation tokenLocation, Interpreter interpreter, StringResult argument1, NumberResult argument2, NumberResult argument3)
     {
         return argument1.Value.GraphemeSubstring(argument2, argument3);
     }

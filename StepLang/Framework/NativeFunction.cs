@@ -24,17 +24,17 @@ public abstract class NativeFunction : FunctionDefinition
     protected static IReadOnlyList<ResultType> OnlyMap => new[] { ResultType.Map };
     protected static IReadOnlyList<ResultType> OnlyFunction => new[] { ResultType.Function };
 
-    protected void CheckArgumentCount(IReadOnlyList<ExpressionNode> arguments)
+    protected void CheckArgumentCount(TokenLocation location, IReadOnlyList<ExpressionNode> arguments)
     {
         var expectedCount = Parameters.Count;
         if (arguments.Count != expectedCount)
-            throw new InvalidArgumentCountException(expectedCount, arguments.Count);
+            throw new InvalidArgumentCountException(location, expectedCount, arguments.Count);
     }
 
-    protected static void CheckArgumentCount(IReadOnlyList<ExpressionNode> arguments, int minCount, int maxCount)
+    protected static void CheckArgumentCount(TokenLocation location, IReadOnlyList<ExpressionNode> arguments, int minCount, int maxCount)
     {
         if (arguments.Count < minCount || arguments.Count > maxCount)
-            throw new InvalidArgumentCountException(minCount, arguments.Count, maxCount);
+            throw new InvalidArgumentCountException(location, minCount, arguments.Count, maxCount);
     }
 
     public override IReadOnlyCollection<IVariableDeclarationNode> Parameters => NativeParameters

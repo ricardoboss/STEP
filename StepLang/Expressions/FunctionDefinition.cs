@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
 using StepLang.Parsing;
+using StepLang.Tokenizing;
 
 namespace StepLang.Expressions;
 
@@ -32,7 +33,7 @@ public abstract class FunctionDefinition
 
     public FunctionResult ToResult() => new(this);
 
-    public abstract ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments);
+    public abstract ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments);
 
     public abstract IReadOnlyCollection<IVariableDeclarationNode> Parameters { get; }
 

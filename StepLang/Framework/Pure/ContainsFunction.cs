@@ -1,5 +1,6 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
+using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Pure;
 
@@ -14,7 +15,7 @@ public class ContainsFunction : GenericFunction<ExpressionResult, ExpressionResu
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyBool;
 
-    protected override BoolResult Invoke(Interpreter interpreter, ExpressionResult argument1, ExpressionResult argument2)
+    protected override BoolResult Invoke(TokenLocation callLocation, Interpreter interpreter, ExpressionResult argument1, ExpressionResult argument2)
     {
         var result = IndexOfFunction.GetResult(argument1, argument2);
 

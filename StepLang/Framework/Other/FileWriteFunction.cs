@@ -2,6 +2,7 @@ using System.Text;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
 using StepLang.Parsing;
+using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Other;
 
@@ -16,7 +17,7 @@ public class FileWriteFunction : GenericFunction<StringResult, StringResult, Boo
         new(OnlyBool, "append", DefaultValue: LiteralExpressionNode.FromBoolean(false)),
     };
 
-    protected override BoolResult Invoke(Interpreter interpreter, StringResult argument1, StringResult argument2, BoolResult argument3)
+    protected override BoolResult Invoke(TokenLocation tokenLocation, Interpreter interpreter, StringResult argument1, StringResult argument2, BoolResult argument3)
     {
         var path = argument1.Value;
         var content = argument2.Value;

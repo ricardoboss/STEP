@@ -1,5 +1,6 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
+using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Other;
 
@@ -12,7 +13,8 @@ public class SeedFunction : GenericFunction<ExpressionResult>
         new(NullableNumber, "seed"),
     };
 
-    protected override ExpressionResult Invoke(Interpreter interpreter, ExpressionResult argument1)
+    protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+        ExpressionResult argument1)
     {
         int seed;
         if (argument1 is NumberResult numberResult)

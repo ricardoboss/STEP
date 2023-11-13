@@ -1,6 +1,7 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
 using StepLang.Parsing;
+using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Pure;
 
@@ -15,15 +16,13 @@ public class MinFunction : NativeFunction
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = new[] { ResultType.Number };
 
-    public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
+    public override NumberResult Invoke(TokenLocation callLocation, Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
     {
-        CheckArgumentCount(arguments, 1, int.MaxValue);
+        CheckArgumentCount(callLocation, arguments, 1, int.MaxValue);
 
-        var min = arguments
+        return arguments
             .Select(argument => argument.EvaluateUsing(interpreter))
             .OfType<NumberResult>()
             .Min(argument => argument.Value);
-
-        return new NumberResult(min);
     }
 }

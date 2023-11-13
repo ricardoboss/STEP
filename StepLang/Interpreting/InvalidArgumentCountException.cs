@@ -4,7 +4,7 @@ namespace StepLang.Interpreting;
 
 public class InvalidArgumentCountException : InterpreterException
 {
-    public InvalidArgumentCountException(int required, int got, int? allowed = null) : base(2, (TokenLocation?)null, $"Invalid number of arguments, expected {(allowed is null ? "at least " : "")}{required}{(allowed is not null ? $"-{allowed}" : "")}, got {got}", "Check the function documentation on the required/allowed number of arguments")
+    public InvalidArgumentCountException(TokenLocation location, int required, int got, int? allowed = null) : base(2, location, $"Invalid number of arguments, expected {required}{(allowed is not null ? $"-{allowed}" : "")}, got {got}", "Check the function documentation on the required/allowed number of arguments")
     {
     }
 }

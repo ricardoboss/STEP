@@ -1,5 +1,6 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
+using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Pure;
 
@@ -15,7 +16,8 @@ public class CompareToFunction : GenericFunction<ExpressionResult, ExpressionRes
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyNumber;
 
-    protected override NumberResult Invoke(Interpreter interpreter, ExpressionResult argument1, ExpressionResult argument2)
+    protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+        ExpressionResult argument1, ExpressionResult argument2)
     {
         return GetResult(argument1, argument2);
     }
