@@ -80,7 +80,7 @@ public abstract class ExpressionResult : IEquatable<ExpressionResult>
             NumberResult numberResult => new LiteralExpressionNode(new(TokenType.LiteralNumber, numberResult)),
             StringResult stringResult => new LiteralExpressionNode(new(TokenType.LiteralString, stringResult.ToString())),
             ListResult listResult => new ListExpressionNode(new(TokenType.OpeningSquareBracket, "["), listResult.Value.Select(result => result.ToExpressionNode()).ToList()),
-            MapResult mapResult => new MapExpressionNode(new(TokenType.OpeningCurlyBracket, "{"), mapResult.Value.ToDictionary(kvp => new Token(TokenType.LiteralString, kvp.Key), kvp => kvp.Value.ToExpressionNode())),
+            MapResult mapResult => new MapExpressionNode(new(TokenType.OpeningCurlyBracket, "{"), mapResult.Value.ToDictionary(kvp => new Token(TokenType.LiteralString, $"\"{kvp.Key}\""), kvp => kvp.Value.ToExpressionNode())),
             FunctionResult { Value: UserDefinedFunctionDefinition userDefinedFunctionDefinition } => new FunctionDefinitionExpressionNode(new(TokenType.OpeningParentheses, "("), userDefinedFunctionDefinition.Parameters, userDefinedFunctionDefinition.Body),
             FunctionResult { Value: NativeFunction nativeFunctionDefinition } => new NativeFunctionDefinitionExpressionNode(nativeFunctionDefinition),
             VoidResult => throw new InvalidOperationException("Cannot convert void result to expression node"),
