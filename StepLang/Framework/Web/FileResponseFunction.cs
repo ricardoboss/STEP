@@ -1,44 +1,46 @@
-using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
 
 namespace StepLang.Framework.Web;
 
-public class FileResponseFunction : NativeFunction
+public class FileResponseFunction : GenericFunction<StringResult, ExpressionResult>
 {
     public const string Identifier = "fileResponse";
 
     /// <inheritdoc />
-    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.Str }, "file"), (new[] { ResultType.Number }, "status") };
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter []
+    {
+        new(OnlyString, "file"),
+        new(NullableNumber, "status"),
+    };
 
     /// <inheritdoc />
-    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
-    {
-        CheckArgumentCount(arguments, 1, 2);
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyMap;
 
-        var file = await arguments[0].EvaluateAsync(interpreter, r => r.ExpectString().Value, cancellationToken);
-        if (!File.Exists(file))
+    /// <inheritdoc />
+    protected override MapResult Invoke(Interpreter interpreter, StringResult argument1, ExpressionResult argument2)
+    {
+        var path = argument1.Value;
+        if (!File.Exists(path))
         {
-            return new MapResult(new Dictionary<string, ExpressionResult>
+            return new Dictionary<string, ExpressionResult>
             {
                 ["status"] = new NumberResult(404),
-            });
+            };
         }
 
-        var fileContents = await File.ReadAllTextAsync(file, cancellationToken);
+        var fileContents = File.ReadAllText(path);
 
         var response = new Dictionary<string, ExpressionResult>
         {
             ["body"] = new StringResult(fileContents),
         };
 
-        if (arguments.Count == 2)
+        if (argument2 is NumberResult status)
         {
-            var status = await arguments[1].EvaluateAsync(interpreter, r => r.ExpectInteger().RoundedIntValue, cancellationToken);
-
-            response["status"] = new NumberResult(status);
+            response["status"] = status;
         }
 
-        return new MapResult(response);
+        return response;
     }
 }

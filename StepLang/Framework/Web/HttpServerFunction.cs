@@ -4,55 +4,54 @@ using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Framework.Conversion;
 using StepLang.Interpreting;
+using StepLang.Parsing;
 
 namespace StepLang.Framework.Web;
 
-public class HttpServerFunction : NativeFunction
+public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResult>
 {
     public const string Identifier = "httpServer";
 
     /// <inheritdoc />
-    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.Map, ResultType.Number }, "portOrOptions"), (new[] { ResultType.Function }, "handler") };
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter []
+    {
+        new(new[] { ResultType.Map, ResultType.Number }, "portOrOptions"),
+        new(OnlyFunction, "handler"),
+    };
 
     /// <inheritdoc />
-    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
+    protected override ExpressionResult Invoke(Interpreter interpreter, ExpressionResult argument1, FunctionResult argument2)
     {
-        CheckArgumentCount(arguments);
-
-        var portOrOptions = await arguments[0].EvaluateAsync(interpreter, cancellationToken);
-
         int port;
-        IDictionary<string, ExpressionResult> options;
-        if (portOrOptions.ResultType is ResultType.Map)
+        if (argument1 is MapResult { Value: var options })
         {
-            options = portOrOptions.ExpectMap().Value;
-
             if (options.TryGetValue("port", out var portResult))
             {
-                port = portResult.ExpectInteger().RoundedIntValue;
+                if (portResult is not NumberResult portNumber)
+                    throw new InvalidResultTypeException(portResult, ResultType.Number);
 
-                if (port is < 0 or > 65535)
-                    throw new ArgumentException("Port must be between 0 and 65535");
+                if (portNumber < 0 || portNumber > 65535)
+                    throw new InvalidArgumentValueException(null, "Port must be between 0 and 65535");
+
+                port = portNumber;
             }
             else
                 port = 8080;
         }
-        else if (portOrOptions.ResultType is ResultType.Number)
+        else if (argument1 is NumberResult portNumber)
         {
-            port = portOrOptions.ExpectInteger().RoundedIntValue;
+            port = portNumber;
             options = new Dictionary<string, ExpressionResult>();
         }
         else
-            throw new NotImplementedException("Expected port or options");
+            throw new InvalidResultTypeException(argument1, ResultType.Number, ResultType.Map);
 
-        var handler = await arguments[1].EvaluateAsync(interpreter, r => r.ExpectFunction().Value, cancellationToken);
-
-        await Serve(interpreter, port, options, handler, cancellationToken);
+        Serve(interpreter, port, options, argument2.Value);
 
         return VoidResult.Instance;
     }
 
-    private static async Task Serve(Interpreter interpreter, int port, IDictionary<string, ExpressionResult> options, FunctionDefinition callback, CancellationToken cancellationToken)
+    private static void Serve(Interpreter interpreter, int port, IDictionary<string, ExpressionResult> options, FunctionDefinition callback)
     {
         var url = $"http://localhost:{port}/";
 
@@ -65,26 +64,29 @@ public class HttpServerFunction : NativeFunction
         var defaultResponseHeaders = new Dictionary<string, string>();
         if (options.TryGetValue("headers", out var headersResult))
         {
-            var headers = headersResult.ExpectMap().Value;
+            if (headersResult is not MapResult { Value: var headers })
+                throw new InvalidResultTypeException(headersResult, ResultType.Map);
+
             foreach (var (key, value) in headers)
                 defaultResponseHeaders.Add(key, ToStringFunction.Render(value));
         }
 
+        var handlers = Enumerable.Range(0, Environment.ProcessorCount - 1)
+            .Select(i => new RequestHandler(i, interpreter, defaultResponseHeaders, callback))
+            .ToList();
+
         try
         {
-            var handlers = Enumerable.Range(0, Environment.ProcessorCount - 1).Select(i => new RequestHandler(i, interpreter, defaultResponseHeaders, callback));
-            await Parallel.ForEachAsync(
-                handlers,
-                cancellationToken,
-                async (handler, c) => await handler.Loop(server, c));
+            Parallel.ForEach(handlers, handler => handler.Loop(server));
         }
         finally
         {
+            handlers.ForEach(h => h.Dispose());
             server.Stop();
         }
     }
 
-    private static async Task<MapResult> ToRequestMapAsync(HttpListenerRequest request, CancellationToken cancellationToken)
+    private static MapResult ToRequestMap(HttpListenerRequest request)
     {
         var requestMethod = new StringResult(request.HttpMethod);
         ExpressionResult requestUrl = NullResult.Instance;
@@ -106,7 +108,7 @@ public class HttpServerFunction : NativeFunction
 
         string requestBody;
         using (var reader = new StreamReader(request.InputStream))
-            requestBody = await reader.ReadToEndAsync(cancellationToken);
+            requestBody = reader.ReadToEnd();
 
         var requestBodyResult = new StringResult(requestBody);
 
@@ -179,12 +181,14 @@ public class HttpServerFunction : NativeFunction
                  """;
     }
 
-    private class RequestHandler
+    private sealed class RequestHandler : IDisposable
     {
         private readonly int workerId;
         private readonly Interpreter interpreter;
         private readonly Dictionary<string, string> defaultResponseHeaders;
         private readonly FunctionDefinition callback;
+
+        private bool disposed;
 
         public RequestHandler(int workerId, Interpreter interpreter, Dictionary<string, string> defaultResponseHeaders, FunctionDefinition callback)
         {
@@ -194,25 +198,22 @@ public class HttpServerFunction : NativeFunction
             this.callback = callback;
         }
 
-        public async ValueTask Loop(HttpListener server, CancellationToken cancellationToken)
+        public void Loop(HttpListener server)
         {
-            while (!cancellationToken.IsCancellationRequested)
+            while (!disposed)
             {
-                var context = await server.GetContextAsync();
+                var context = server.GetContext();
                 var request = context.Request;
                 var response = context.Response;
 
-                var requestMap = await ToRequestMapAsync(request, cancellationToken);
+                var requestMap = ToRequestMap(request);
 
                 interpreter.StdOut?.WriteLineAsync($"({workerId}) {request.RemoteEndPoint} -> {request.HttpMethod} {request.Url?.AbsolutePath}");
 
                 ExpressionResult responseResult;
                 try
                 {
-                    responseResult = await callback.EvaluateAsync(interpreter, new Expression[]
-                    {
-                        requestMap.ToLiteralExpression(),
-                    }, cancellationToken);
+                    responseResult = callback.Invoke(interpreter, new ExpressionNode[] { requestMap });
                 }
                 catch (StepLangException e)
                 {
@@ -240,7 +241,9 @@ public class HttpServerFunction : NativeFunction
                     };
                 }
 
-                response.StatusCode = responseMap.TryGetValue("status", out var statusResult) ? statusResult.ExpectInteger().RoundedIntValue : 200;
+                response.StatusCode = responseMap.TryGetValue("status", out var statusResult) && statusResult is NumberResult statusNumber
+                    ? statusNumber
+                    : 200;
 
                 interpreter.StdOut?.WriteLineAsync($"({workerId}) {request.RemoteEndPoint} <- {response.StatusCode}");
 
@@ -249,7 +252,9 @@ public class HttpServerFunction : NativeFunction
 
                 if (responseMap.TryGetValue("headers", out var responseHeaders))
                 {
-                    var headers = responseHeaders.ExpectMap().Value;
+                    if (responseHeaders is not MapResult { Value: var headers })
+                        throw new InvalidResultTypeException(responseHeaders, ResultType.Map);
+
                     foreach (var (key, value) in headers)
                         response.Headers.Add(key, ToStringFunction.Render(value));
                 }
@@ -261,11 +266,20 @@ public class HttpServerFunction : NativeFunction
 
                     response.ContentLength64 = buffer.Length;
 
-                    await response.OutputStream.WriteAsync(buffer, cancellationToken);
+                    response.OutputStream.Write(buffer);
                 }
 
                 response.Close();
             }
+        }
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            if (disposed)
+                return;
+
+            disposed = true;
         }
     }
 }
