@@ -23,4 +23,6 @@ public class MapResult : ValueExpressionResult<IDictionary<string, ExpressionRes
 
     /// <inheritdoc />
     public override string ToString() => $"{{{string.Join(", ", Value.Select(p => $"{p.Key}: {p.Value}"))}}}";
+
+    public static implicit operator MapResult(Dictionary<string, ExpressionResult> value) => new(value);
 }
