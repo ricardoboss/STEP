@@ -1,6 +1,7 @@
 using System.Text.Json;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
+using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Conversion;
 
@@ -15,7 +16,7 @@ public class ToJsonFunction : GenericFunction<ExpressionResult>
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyString;
 
-    protected override StringResult Invoke(Interpreter interpreter, ExpressionResult argument1)
+    protected override StringResult Invoke(TokenLocation callLocation, Interpreter interpreter, ExpressionResult argument1)
     {
         return JsonSerializer.Serialize(argument1, JsonConversionContext.Default.ExpressionResult);
     }

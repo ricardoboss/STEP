@@ -1,6 +1,7 @@
 using System.Text.Json;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
+using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Conversion;
 
@@ -15,7 +16,8 @@ public class FromJsonFunction : GenericFunction<StringResult>
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = AnyValueType;
 
-    protected override ExpressionResult Invoke(Interpreter interpreter, StringResult argument1)
+    protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+        StringResult argument1)
     {
         try
         {

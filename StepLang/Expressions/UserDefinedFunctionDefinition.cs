@@ -31,10 +31,10 @@ public class UserDefinedFunctionDefinition : FunctionDefinition
 
     private int TotalParametersCount => parameters.Count;
 
-    public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
+    public override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
     {
         if (arguments.Count < RequiredParametersCount || arguments.Count > TotalParametersCount)
-            throw new InvalidArgumentCountException(parameters.Count, arguments.Count);
+            throw new InvalidArgumentCountException(callLocation, parameters.Count, arguments.Count);
 
         // evaluate args _before_ pushing scope
         var evaldArgs = EvaluateArguments(interpreter, arguments).ToList();

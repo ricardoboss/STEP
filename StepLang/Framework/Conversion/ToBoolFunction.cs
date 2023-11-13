@@ -1,5 +1,6 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
+using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Conversion;
 
@@ -14,5 +15,5 @@ public class ToBoolFunction : GenericFunction<ExpressionResult>
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyBool;
 
-    protected override BoolResult Invoke(Interpreter interpreter, ExpressionResult argument1) => argument1.IsTruthy();
+    protected override BoolResult Invoke(TokenLocation callLocation, Interpreter interpreter, ExpressionResult argument1) => argument1.IsTruthy();
 }

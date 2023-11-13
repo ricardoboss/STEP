@@ -1,6 +1,7 @@
 using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
+using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Mutating;
 
@@ -17,7 +18,8 @@ public class DoSwapFunction : GenericFunction<ExpressionResult, ExpressionResult
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyBool;
 
-    protected override ExpressionResult Invoke(Interpreter interpreter, ExpressionResult argument1, ExpressionResult argument2, ExpressionResult argument3)
+    protected override ExpressionResult Invoke(TokenLocation tokenLocation, Interpreter interpreter,
+        ExpressionResult argument1, ExpressionResult argument2, ExpressionResult argument3)
     {
         return argument1 switch
         {

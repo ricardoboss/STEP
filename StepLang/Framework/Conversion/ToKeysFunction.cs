@@ -1,5 +1,6 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
+using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Conversion;
 
@@ -14,7 +15,7 @@ public class ToKeysFunction : GenericFunction<MapResult>
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyList;
 
-    protected override ListResult Invoke(Interpreter interpreter, MapResult argument1)
+    protected override ListResult Invoke(TokenLocation callLocation, Interpreter interpreter, MapResult argument1)
     {
         var keys = argument1.Value.Keys
             .Select(k => new StringResult(k))

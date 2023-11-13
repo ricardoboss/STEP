@@ -1,6 +1,7 @@
 using System.Text;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
+using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Other;
 
@@ -15,7 +16,8 @@ public class FileReadFunction : GenericFunction<StringResult>
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = NullableString;
 
-    protected override ExpressionResult Invoke(Interpreter interpreter, StringResult argument1)
+    protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+        StringResult argument1)
     {
         var path = argument1.Value;
 

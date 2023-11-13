@@ -20,7 +20,8 @@ public class FetchFunction : GenericFunction<StringResult, MapResult>
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = NullableString;
 
-    protected override ExpressionResult Invoke(Interpreter interpreter, StringResult argument1, MapResult argument2)
+    protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+        StringResult argument1, MapResult argument2)
     {
         var url = argument1.Value;
         var options = argument2.Value;

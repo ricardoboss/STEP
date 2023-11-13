@@ -1,5 +1,6 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
+using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Pure;
 
@@ -11,5 +12,5 @@ public class TanFunction : GenericFunction<NumberResult>
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyNumber;
 
-    protected override NumberResult Invoke(Interpreter interpreter, NumberResult argument1) => Math.Tan(argument1);
+    protected override NumberResult Invoke(TokenLocation callLocation, Interpreter interpreter, NumberResult argument1) => Math.Tan(argument1);
 }

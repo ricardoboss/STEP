@@ -2,6 +2,7 @@ using StepLang.Expressions.Results;
 using StepLang.Framework.Conversion;
 using StepLang.Interpreting;
 using StepLang.Parsing;
+using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Pure;
 
@@ -14,7 +15,8 @@ public class PrintFunction : NativeFunction
     protected override IEnumerable<ResultType> ReturnTypes => new[] { ResultType.Void };
 
     /// <inheritdoc />
-    public override ExpressionResult Invoke(Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
+    public override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+        IReadOnlyList<ExpressionNode> arguments)
     {
         if (interpreter.StdOut is not { } stdOut)
             return VoidResult.Instance;

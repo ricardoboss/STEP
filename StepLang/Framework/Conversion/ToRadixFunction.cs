@@ -1,5 +1,6 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
+using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Conversion;
 
@@ -15,7 +16,8 @@ public class ToRadixFunction : GenericFunction<NumberResult, NumberResult>
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = NullableString;
 
-    protected override ExpressionResult Invoke(Interpreter interpreter, NumberResult argument1, NumberResult argument2)
+    protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+        NumberResult argument1, NumberResult argument2)
     {
         var number = argument1;
         var radix = argument2;

@@ -1,6 +1,7 @@
 using System.Globalization;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
+using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Conversion;
 
@@ -15,7 +16,8 @@ public class ToStringFunction : GenericFunction<ExpressionResult>
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyString;
 
-    protected override ExpressionResult Invoke(Interpreter interpreter, ExpressionResult argument1)
+    protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+        ExpressionResult argument1)
     {
         return new StringResult(Render(argument1));
     }
