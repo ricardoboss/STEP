@@ -36,11 +36,11 @@ public class ExamplesIntegrationTest
 
         // act
         var tokenizer = new Tokenizer(exampleFile);
-        var interpreter = new Interpreter(stdOut, stdErr, stdIn);
         var tokens = tokenizer.Tokenize();
         var parser = new Parser(tokens);
         var root = parser.ParseRoot();
-        interpreter.Run(root);
+        var interpreter = new Interpreter(stdOut, stdErr, stdIn);
+        root.Accept(interpreter);
 
         // assert
         Assert.Equal(expectedExitCode, interpreter.ExitCode);
