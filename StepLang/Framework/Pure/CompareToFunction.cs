@@ -35,7 +35,7 @@ public class CompareToFunction : GenericFunction<ExpressionResult, ExpressionRes
             NullResult when b is NullResult => 0,
             VoidResult when b is VoidResult => 0,
             { ResultType: var aType } when b.ResultType != aType => throw new InvalidResultTypeException(evaluationLocation, b, a.ResultType),
-            _ => throw new NotImplementedException(),
+            _ => throw new NotSupportedException("Unknown expression result type"),
         };
     }
 }

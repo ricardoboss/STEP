@@ -34,7 +34,7 @@ public class ToStringFunction : GenericFunction<ExpressionResult>
             FunctionResult => "function",
             ListResult list => RenderList(list),
             MapResult map => RenderMap(map),
-            _ => throw new NotImplementedException(),
+            _ => throw new NotSupportedException("Unknown expression result type"),
         };
     }
 

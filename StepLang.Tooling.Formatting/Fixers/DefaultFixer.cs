@@ -21,7 +21,7 @@ public class DefaultFixer : BaseFixer
                 fileFixResult.FixedFile.MoveTo(file.FullName, true);
                 break;
             default:
-                throw new NotImplementedException($"Unknown fix result type '{result.GetType().FullName}'");
+                throw new NotSupportedException($"Unknown fix result type '{result.GetType().FullName}'");
         }
 
         sw.Stop();
