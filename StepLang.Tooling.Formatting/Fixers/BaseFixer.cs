@@ -77,7 +77,7 @@ public abstract class BaseFixer : IFixer
             {
                 IStringAnalyzer stringFixer => await RunStringAnalyzer(stringFixer, file, cancellationToken),
                 IFileAnalyzer fileFixer => await RunFileAnalyzer(fileFixer, file, cancellationToken),
-                _ => throw new NotImplementedException($"Unknown analyzer type '{analyzer.GetType().FullName}'"),
+                _ => throw new NotSupportedException($"Unknown analyzer type '{analyzer.GetType().FullName}'"),
             };
 
             sw.Stop();

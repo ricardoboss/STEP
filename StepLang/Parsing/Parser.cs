@@ -516,7 +516,7 @@ public class Parser
             BinaryExpressionOperator.BitwiseShiftRight => new BitwiseShiftRightExpressionNode(operatorLocation, left, right),
             BinaryExpressionOperator.BitwiseRotateLeft => new BitwiseRotateLeftExpressionNode(operatorLocation, left, right),
             BinaryExpressionOperator.BitwiseRotateRight => new BitwiseRotateRightExpressionNode(operatorLocation, left, right),
-            _ => throw new NotImplementedException("Expression for operator " + binaryOperator.ToSymbol() + " not implemented"),
+            _ => throw new NotSupportedException("Expression for operator " + binaryOperator.ToSymbol() + " not supported"),
         };
     }
 

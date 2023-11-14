@@ -9,7 +9,7 @@ public class ExpressionResultJsonConverter : JsonConverter<ExpressionResult>
     public override ExpressionResult Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         if (typeToConvert != typeof(ExpressionResult))
-            throw new NotImplementedException("Can only convert to ExpressionResult");
+            throw new NotSupportedException("Can only convert to ExpressionResult");
 
         return reader.TokenType switch
         {
@@ -20,7 +20,7 @@ public class ExpressionResultJsonConverter : JsonConverter<ExpressionResult>
             JsonTokenType.String => new StringResult(reader.GetString() ?? string.Empty),
             JsonTokenType.StartArray => new ListResult(ReadArray(ref reader)),
             JsonTokenType.StartObject => new MapResult(ReadObject(ref reader)),
-            _ => throw new NotImplementedException($"Conversion of {reader.TokenType} to ExpressionResult is not implemented"),
+            _ => throw new NotSupportedException($"Conversion of {reader.TokenType} to ExpressionResult is not supported"),
         };
     }
 
@@ -98,7 +98,7 @@ public class ExpressionResultJsonConverter : JsonConverter<ExpressionResult>
                 writer.WriteEndObject();
                 return;
             default:
-                throw new NotImplementedException($"Conversion of {value} to JSON is not implemented");
+                throw new NotSupportedException($"Conversion of {value} to JSON is not supported");
         }
     }
 }

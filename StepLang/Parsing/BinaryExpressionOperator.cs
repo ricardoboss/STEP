@@ -57,7 +57,7 @@ public static class BinaryExpressionOperatorExtensions
             BinaryExpressionOperator.LogicalAnd => logicalAnd,
             BinaryExpressionOperator.LogicalOr => logicalOr,
             BinaryExpressionOperator.Coalesce => coalesce,
-            _ => throw new NotImplementedException($"Undefined operator precedence for operator: {op}"),
+            _ => throw new NotSupportedException($"Undefined operator precedence for operator: {op}"),
         };
     }
 
@@ -87,7 +87,7 @@ public static class BinaryExpressionOperatorExtensions
             BinaryExpressionOperator.BitwiseRotateLeft => "<<<",
             BinaryExpressionOperator.BitwiseRotateRight => ">>>",
             BinaryExpressionOperator.Coalesce => "??",
-            _ => throw new NotImplementedException($"Undefined operator symbol for operator: {op}"),
+            _ => throw new NotSupportedException($"Undefined operator symbol for operator: {op}"),
         };
     }
 }
