@@ -11,7 +11,7 @@ public class Parser
     {
         this.tokens = new(tokens)
         {
-            IgnoreWhitespace = true,
+            IgnoreMeaningless = true,
         };
     }
 
@@ -501,7 +501,7 @@ public class Parser
     private List<Token> PeekContinuousOperators(TokenType[] allowedOperators)
     {
         // whitespaces have meaning in operators
-        tokens.IgnoreWhitespace = false;
+        tokens.IgnoreMeaningless = false;
 
         var offset = 0;
         var operators = new List<Token>();
@@ -521,7 +521,7 @@ public class Parser
                 break;
         }
 
-        tokens.IgnoreWhitespace = true;
+        tokens.IgnoreMeaningless = true;
 
         return operators;
     }

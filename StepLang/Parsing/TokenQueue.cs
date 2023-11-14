@@ -12,7 +12,7 @@ public class TokenQueue
 
     public TokenQueue(IEnumerable<Token> tokens) => tokenList = new(tokens);
 
-    public bool IgnoreWhitespace { get; set; }
+    public bool IgnoreMeaningless { get; set; }
 
     public Token? LastToken { get; private set; }
 
@@ -27,7 +27,7 @@ public class TokenQueue
         {
             token = tokenList.Skip(skip).FirstOrDefault();
             skip++;
-        } while (IgnoreWhitespace && !(token?.Type.HasMeaning() ?? true));
+        } while (IgnoreMeaningless && !(token?.Type.HasMeaning() ?? true));
 
         if (token is null)
             return false;
@@ -61,7 +61,7 @@ public class TokenQueue
     public Token Peek(int offset = 0)
     {
         var source = tokenList.AsEnumerable();
-        if (IgnoreWhitespace)
+        if (IgnoreMeaningless)
             source = source.Where(t => t.Type.HasMeaning());
 
         return source.Skip(offset).First();
@@ -90,7 +90,7 @@ public class TokenQueue
             };
 
             throw new UnexpectedEndOfTokensException(LastToken?.Location, $"Expected {typeInfo}");
-        } while (!token.Type.HasMeaning() && IgnoreWhitespace);
+        } while (!token.Type.HasMeaning() && IgnoreMeaningless);
 
         if (!allowed.Contains(token.Type))
             throw new UnexpectedTokenException(token, allowed);
