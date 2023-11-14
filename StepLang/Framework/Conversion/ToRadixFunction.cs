@@ -26,7 +26,7 @@ public class ToRadixFunction : GenericFunction<NumberResult, NumberResult>
         {
             return radix.Value switch
             {
-                2 or 8 or 10 or 16 => (StringResult)Convert.ToString((long)number, radix).ToUpperInvariant(),
+                2 or 8 or 10 or 16 => (StringResult)Convert.ToString(number.ToUInt32(), radix).ToUpperInvariant(),
                 _ => NullResult.Instance,
             };
         }
