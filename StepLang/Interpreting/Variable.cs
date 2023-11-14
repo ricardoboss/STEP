@@ -6,9 +6,13 @@ namespace StepLang.Interpreting;
 public class Variable
 {
     public string Identifier { get; }
+
     public IReadOnlyList<ResultType> Types { get; }
-    public string TypeString => string.Join("|", Types.Select(t => t.ToTypeName()));
+
+    public string TypeString => string.Join("|", Types.Except(new[] { ResultType.Null }).Select(t => t.ToTypeName()));
+
     public bool Nullable { get; }
+
     public ExpressionResult Value { get; private set; }
 
     public Variable(string identifier, IReadOnlyList<ResultType> types, bool nullable)
@@ -45,6 +49,6 @@ public class Variable
     /// <inheritdoc />
     public override string ToString()
     {
-        return $"{string.Join("|", Types.Select(t => t.ToTypeName()))}{(Nullable ? "?" : "")} {Identifier} = {Value}";
+        return $"{TypeString}{(Nullable ? "?" : "")} {Identifier} = {Value}";
     }
 }
