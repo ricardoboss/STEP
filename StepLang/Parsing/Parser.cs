@@ -65,38 +65,52 @@ public class Parser
     private StatementNode ParseStatement()
     {
         var token = tokens.Peek();
-        if (token.Type == TokenType.TypeName)
+        switch (token.Type)
         {
-            var declaration = ParseVariableDeclaration();
+            case TokenType.TypeName:
+            {
+                var declaration = ParseVariableDeclaration();
 
-            return new VariableDeclarationStatementNode(declaration);
+                return new VariableDeclarationStatementNode(declaration);
+            }
+            case TokenType.Identifier:
+                return ParseIdentifierUsage();
+            case TokenType.UnderscoreSymbol:
+                return ParseDiscardStatement();
+            case TokenType.IfKeyword:
+                return ParseIfStatement();
+            case TokenType.WhileKeyword:
+                return ParseWhileStatement();
+            case TokenType.ForEachKeyword:
+                return ParseForeachStatement();
+            case TokenType.ReturnKeyword:
+                return ParseReturnStatement();
+            case TokenType.BreakKeyword:
+                return ParseBreakStatement();
+            case TokenType.ContinueKeyword:
+                return ParseContinueStatement();
+            case TokenType.OpeningCurlyBracket:
+                return ParseCodeBlock();
+            default:
+                throw new UnexpectedTokenException(token, TokenType.TypeName, TokenType.Identifier, TokenType.NewLine, TokenType.LineComment);
+        }
+    }
+
+    private StatementNode ParseIdentifierUsage()
+    {
+        var next = tokens.Peek(1);
+        switch (next.Type)
+        {
+            case TokenType.EqualsSymbol:
+                return ParseVariableAssignment();
+            case TokenType.OpeningParentheses:
+                return ParseFunctionCall();
+            case TokenType.OpeningSquareBracket:
+                return ParseIndexAssignment();
         }
 
-        if (token.Type == TokenType.Identifier)
-        {
-            var next = tokens.Peek(1);
-
-            if (next.Type == TokenType.EqualsSymbol)
-                return ParseVariableAssignment();
-
-            if (next.Type == TokenType.OpeningParentheses)
-                return ParseFunctionCall();
-
-            if (next.Type == TokenType.OpeningSquareBracket)
-                return ParseIndexAssignment();
-
-            var nextNext = tokens.Peek(2);
-            if (nextNext is { Type: var nextNextType })
-            {
-                if (next.Type.IsShorthandMathematicalOperation() && nextNextType == next.Type)
-                    return ParseShorthandMathOperation();
-
-                if (next.Type.IsShorthandMathematicalOperationWithAssignment())
-                    return ParseShorthandMathOperationExpression();
-
-                throw new UnexpectedTokenException(nextNext, next.Type, TokenType.EqualsSymbol);
-            }
-
+        var nextNext = tokens.Peek(2);
+        if (nextNext is not { Type: var nextNextType })
             throw new UnexpectedTokenException(next,
                 new[]
                     {
@@ -107,33 +121,14 @@ public class Parser
                     .Concat(TokenTypes.ShorthandMathematicalOperationsWithAssignment)
                     .Distinct()
                     .ToArray());
-        }
 
-        if (token.Type == TokenType.UnderscoreSymbol)
-            return ParseDiscardStatement();
+        if (next.Type.IsShorthandMathematicalOperation() && nextNextType == next.Type)
+            return ParseShorthandMathOperation();
 
-        if (token.Type == TokenType.IfKeyword)
-            return ParseIfStatement();
+        if (next.Type.IsShorthandMathematicalOperationWithAssignment())
+            return ParseShorthandMathOperationExpression();
 
-        if (token.Type == TokenType.WhileKeyword)
-            return ParseWhileStatement();
-
-        if (token.Type == TokenType.ForEachKeyword)
-            return ParseForeachStatement();
-
-        if (token.Type == TokenType.ReturnKeyword)
-            return ParseReturnStatement();
-
-        if (token.Type == TokenType.BreakKeyword)
-            return ParseBreakStatement();
-
-        if (token.Type == TokenType.ContinueKeyword)
-            return ParseContinueStatement();
-
-        if (token.Type == TokenType.OpeningCurlyBracket)
-            return ParseCodeBlock();
-
-        throw new UnexpectedTokenException(token, TokenType.TypeName, TokenType.Identifier, TokenType.NewLine, TokenType.LineComment);
+        throw new UnexpectedTokenException(nextNext, next.Type, TokenType.EqualsSymbol);
     }
 
     private DiscardStatementNode ParseDiscardStatement()
@@ -226,56 +221,85 @@ public class Parser
         Token? valueIdentifier = null;
 
         var next = tokens.Peek();
-        if (next.Type == TokenType.TypeName)
+        switch (next.Type)
         {
-            var firstDeclaration = ParseVariableDeclaration();
-
-            next = tokens.Peek();
-            if (next.Type == TokenType.ColonSymbol)
+            case TokenType.TypeName:
             {
-                keyDeclaration = firstDeclaration;
-
-                _ = tokens.Dequeue(TokenType.ColonSymbol);
+                var firstDeclaration = ParseVariableDeclaration();
 
                 next = tokens.Peek();
-                if (next.Type == TokenType.TypeName)
-                    valueDeclaration = ParseVariableDeclaration();
-                else if (next.Type == TokenType.Identifier)
-                    valueIdentifier = tokens.Dequeue(TokenType.Identifier);
-                else
-                    throw new UnexpectedTokenException(next, TokenType.TypeName, TokenType.Identifier);
+                switch (next.Type)
+                {
+                    case TokenType.ColonSymbol:
+                    {
+                        keyDeclaration = firstDeclaration;
+
+                        _ = tokens.Dequeue(TokenType.ColonSymbol);
+
+                        next = tokens.Peek();
+                        switch (next.Type)
+                        {
+                            case TokenType.TypeName:
+                                valueDeclaration = ParseVariableDeclaration();
+                                break;
+                            case TokenType.Identifier:
+                                valueIdentifier = tokens.Dequeue(TokenType.Identifier);
+                                break;
+                            default:
+                                throw new UnexpectedTokenException(next, TokenType.TypeName, TokenType.Identifier);
+                        }
+
+                        break;
+                    }
+                    case TokenType.InKeyword:
+                        valueDeclaration = firstDeclaration;
+                        break;
+                    default:
+                        throw new UnexpectedTokenException(next, TokenType.ColonSymbol, TokenType.InKeyword);
+                }
+
+                break;
             }
-            else if (next.Type == TokenType.InKeyword)
-                valueDeclaration = firstDeclaration;
-            else
-                throw new UnexpectedTokenException(next, TokenType.ColonSymbol, TokenType.InKeyword);
-        }
-        else if (next.Type == TokenType.Identifier)
-        {
-            var firstIdentifier = tokens.Dequeue(TokenType.Identifier);
-
-            next = tokens.Peek();
-            if (next.Type == TokenType.ColonSymbol)
+            case TokenType.Identifier:
             {
-                keyIdentifier = firstIdentifier;
-
-                _ = tokens.Dequeue(TokenType.ColonSymbol);
+                var firstIdentifier = tokens.Dequeue(TokenType.Identifier);
 
                 next = tokens.Peek();
-                if (next.Type == TokenType.TypeName)
-                    valueDeclaration = ParseVariableDeclaration();
-                else if (next.Type == TokenType.Identifier)
-                    valueIdentifier = tokens.Dequeue(TokenType.Identifier);
-                else
-                    throw new UnexpectedTokenException(next, TokenType.TypeName, TokenType.Identifier);
+                switch (next.Type)
+                {
+                    case TokenType.ColonSymbol:
+                    {
+                        keyIdentifier = firstIdentifier;
+
+                        _ = tokens.Dequeue(TokenType.ColonSymbol);
+
+                        next = tokens.Peek();
+                        switch (next.Type)
+                        {
+                            case TokenType.TypeName:
+                                valueDeclaration = ParseVariableDeclaration();
+                                break;
+                            case TokenType.Identifier:
+                                valueIdentifier = tokens.Dequeue(TokenType.Identifier);
+                                break;
+                            default:
+                                throw new UnexpectedTokenException(next, TokenType.TypeName, TokenType.Identifier);
+                        }
+
+                        break;
+                    }
+                    case TokenType.InKeyword:
+                        valueIdentifier = firstIdentifier;
+                        break;
+                    default:
+                        throw new UnexpectedTokenException(next, TokenType.ColonSymbol, TokenType.InKeyword);
+                }
+
+                break;
             }
-            else if (next.Type == TokenType.InKeyword)
-                valueIdentifier = firstIdentifier;
-            else
-                throw new UnexpectedTokenException(next, TokenType.ColonSymbol, TokenType.InKeyword);
+            default:
+                throw new UnexpectedTokenException(next, TokenType.TypeName, TokenType.Identifier);
         }
-        else
-            throw new UnexpectedTokenException(next, TokenType.TypeName, TokenType.Identifier);
 
         if (valueDeclaration is null && valueIdentifier is null)
             throw new UnexpectedTokenException(tokens.Peek(), "Foreach without value declaration or identifier");
@@ -370,24 +394,22 @@ public class Parser
         _ = tokens.Dequeue(TokenType.ClosingParentheses);
         var codeBlock = ParseCodeBlock();
 
-        if (tokens.PeekType() is TokenType.ElseKeyword)
-        {
-            _ = tokens.Dequeue(TokenType.ElseKeyword);
-            if (tokens.PeekType() is TokenType.IfKeyword)
-            {
-                _ = tokens.Dequeue(TokenType.IfKeyword);
-                _ = tokens.Dequeue(TokenType.OpeningParentheses);
-                var elseCondition = ParseExpression();
-                _ = tokens.Dequeue(TokenType.ClosingParentheses);
-                var elseIfCodeBlock = ParseCodeBlock();
-                return new IfElseIfStatementNode(ifKeyword, condition, codeBlock.Body, elseCondition, elseIfCodeBlock.Body);
-            }
+        if (tokens.PeekType() is not TokenType.ElseKeyword)
+            return new IfStatementNode(ifKeyword, condition, codeBlock.Body);
 
-            var elseCodeBlock = ParseCodeBlock();
-            return new IfElseStatementNode(ifKeyword, condition, codeBlock.Body, elseCodeBlock.Body);
+        _ = tokens.Dequeue(TokenType.ElseKeyword);
+        if (tokens.PeekType() is TokenType.IfKeyword)
+        {
+            _ = tokens.Dequeue(TokenType.IfKeyword);
+            _ = tokens.Dequeue(TokenType.OpeningParentheses);
+            var elseCondition = ParseExpression();
+            _ = tokens.Dequeue(TokenType.ClosingParentheses);
+            var elseIfCodeBlock = ParseCodeBlock();
+            return new IfElseIfStatementNode(ifKeyword, condition, codeBlock.Body, elseCondition, elseIfCodeBlock.Body);
         }
 
-        return new IfStatementNode(ifKeyword, condition, codeBlock.Body);
+        var elseCodeBlock = ParseCodeBlock();
+        return new IfElseStatementNode(ifKeyword, condition, codeBlock.Body, elseCodeBlock.Body);
     }
 
     private CallStatementNode ParseFunctionCall()
@@ -528,116 +550,116 @@ public class Parser
 
     private BinaryExpressionOperator ParseExpressionOperator(IReadOnlyList<Token> operatorTokens)
     {
-        if (operatorTokens.Count == 3)
+        switch (operatorTokens.Count)
         {
-            var (first, second, third) = (operatorTokens[0], operatorTokens[1], operatorTokens[2]);
-
-            return first.Type switch
+            case 3:
             {
-                TokenType.GreaterThanSymbol => second.Type switch
+                var (first, second, third) = (operatorTokens[0], operatorTokens[1], operatorTokens[2]);
+
+                return first.Type switch
                 {
-                    TokenType.GreaterThanSymbol => third.Type switch
+                    TokenType.GreaterThanSymbol => second.Type switch
                     {
-                        TokenType.GreaterThanSymbol => BinaryExpressionOperator.BitwiseRotateRight,
-                        _ => throw new UnexpectedTokenException(third, TokenType.GreaterThanSymbol),
+                        TokenType.GreaterThanSymbol => third.Type switch
+                        {
+                            TokenType.GreaterThanSymbol => BinaryExpressionOperator.BitwiseRotateRight,
+                            _ => throw new UnexpectedTokenException(third, TokenType.GreaterThanSymbol),
+                        },
+                        _ => throw new UnexpectedTokenException(second, TokenType.GreaterThanSymbol),
                     },
-                    _ => throw new UnexpectedTokenException(second, TokenType.GreaterThanSymbol),
-                },
-                TokenType.LessThanSymbol => second.Type switch
-                {
-                    TokenType.LessThanSymbol => third.Type switch
+                    TokenType.LessThanSymbol => second.Type switch
                     {
-                        TokenType.LessThanSymbol => BinaryExpressionOperator.BitwiseRotateLeft,
-                        _ => throw new UnexpectedTokenException(third, TokenType.LessThanSymbol),
+                        TokenType.LessThanSymbol => third.Type switch
+                        {
+                            TokenType.LessThanSymbol => BinaryExpressionOperator.BitwiseRotateLeft,
+                            _ => throw new UnexpectedTokenException(third, TokenType.LessThanSymbol),
+                        },
+                        _ => throw new UnexpectedTokenException(second, TokenType.LessThanSymbol),
                     },
-                    _ => throw new UnexpectedTokenException(second, TokenType.LessThanSymbol),
-                },
-                _ => throw new UnexpectedTokenException(first, TokenType.GreaterThanSymbol, TokenType.LessThanSymbol),
-            };
-        }
-
-        if (operatorTokens.Count == 2)
-        {
-            var (first, second) = (operatorTokens[0], operatorTokens[1]);
-
-            return first.Type switch
+                    _ => throw new UnexpectedTokenException(first, TokenType.GreaterThanSymbol, TokenType.LessThanSymbol),
+                };
+            }
+            case 2:
             {
-                TokenType.AsteriskSymbol => second.Type switch
-                {
-                    TokenType.AsteriskSymbol => BinaryExpressionOperator.Power,
-                    _ => throw new UnexpectedTokenException(second, TokenType.AsteriskSymbol),
-                },
-                TokenType.EqualsSymbol => second.Type switch
-                {
-                    TokenType.EqualsSymbol => BinaryExpressionOperator.Equal,
-                    _ => throw new UnexpectedTokenException(second, TokenType.EqualsSymbol),
-                },
-                TokenType.ExclamationMarkSymbol => second.Type switch
-                {
-                    TokenType.EqualsSymbol => BinaryExpressionOperator.NotEqual,
-                    _ => throw new UnexpectedTokenException(second, TokenType.EqualsSymbol),
-                },
-                TokenType.AmpersandSymbol => second.Type switch
-                {
-                    TokenType.AmpersandSymbol => BinaryExpressionOperator.LogicalAnd,
-                    _ => throw new UnexpectedTokenException(second, TokenType.AmpersandSymbol),
-                },
-                TokenType.PipeSymbol => second.Type switch
-                {
-                    TokenType.PipeSymbol => BinaryExpressionOperator.LogicalOr,
-                    _ => throw new UnexpectedTokenException(second, TokenType.PipeSymbol),
-                },
-                TokenType.LessThanSymbol => second.Type switch
-                {
-                    TokenType.EqualsSymbol => BinaryExpressionOperator.LessThanOrEqual,
-                    TokenType.LessThanSymbol => BinaryExpressionOperator.BitwiseShiftLeft,
-                    _ => throw new UnexpectedTokenException(second, TokenType.EqualsSymbol, TokenType.LessThanSymbol),
-                },
-                TokenType.GreaterThanSymbol => second.Type switch
-                {
-                    TokenType.EqualsSymbol => BinaryExpressionOperator.GreaterThanOrEqual,
-                    TokenType.GreaterThanSymbol => BinaryExpressionOperator.BitwiseShiftRight,
-                    _ => throw new UnexpectedTokenException(second, TokenType.EqualsSymbol,
-                        TokenType.GreaterThanSymbol),
-                },
-                TokenType.QuestionMarkSymbol => second.Type switch
-                {
-                    TokenType.QuestionMarkSymbol => BinaryExpressionOperator.Coalesce,
-                    _ => throw new UnexpectedTokenException(second, TokenType.QuestionMarkSymbol),
-                },
-                _ => throw new UnexpectedTokenException(first, TokenType.AsteriskSymbol, TokenType.EqualsSymbol,
-                    TokenType.ExclamationMarkSymbol, TokenType.AmpersandSymbol, TokenType.PipeSymbol,
-                    TokenType.LessThanSymbol, TokenType.GreaterThanSymbol, TokenType.QuestionMarkSymbol),
-            };
-        }
+                var (first, second) = (operatorTokens[0], operatorTokens[1]);
 
-        if (operatorTokens.Count == 1)
-        {
-            var first = operatorTokens[0];
-
-            return first.Type switch
+                return first.Type switch
+                {
+                    TokenType.AsteriskSymbol => second.Type switch
+                    {
+                        TokenType.AsteriskSymbol => BinaryExpressionOperator.Power,
+                        _ => throw new UnexpectedTokenException(second, TokenType.AsteriskSymbol),
+                    },
+                    TokenType.EqualsSymbol => second.Type switch
+                    {
+                        TokenType.EqualsSymbol => BinaryExpressionOperator.Equal,
+                        _ => throw new UnexpectedTokenException(second, TokenType.EqualsSymbol),
+                    },
+                    TokenType.ExclamationMarkSymbol => second.Type switch
+                    {
+                        TokenType.EqualsSymbol => BinaryExpressionOperator.NotEqual,
+                        _ => throw new UnexpectedTokenException(second, TokenType.EqualsSymbol),
+                    },
+                    TokenType.AmpersandSymbol => second.Type switch
+                    {
+                        TokenType.AmpersandSymbol => BinaryExpressionOperator.LogicalAnd,
+                        _ => throw new UnexpectedTokenException(second, TokenType.AmpersandSymbol),
+                    },
+                    TokenType.PipeSymbol => second.Type switch
+                    {
+                        TokenType.PipeSymbol => BinaryExpressionOperator.LogicalOr,
+                        _ => throw new UnexpectedTokenException(second, TokenType.PipeSymbol),
+                    },
+                    TokenType.LessThanSymbol => second.Type switch
+                    {
+                        TokenType.EqualsSymbol => BinaryExpressionOperator.LessThanOrEqual,
+                        TokenType.LessThanSymbol => BinaryExpressionOperator.BitwiseShiftLeft,
+                        _ => throw new UnexpectedTokenException(second, TokenType.EqualsSymbol, TokenType.LessThanSymbol),
+                    },
+                    TokenType.GreaterThanSymbol => second.Type switch
+                    {
+                        TokenType.EqualsSymbol => BinaryExpressionOperator.GreaterThanOrEqual,
+                        TokenType.GreaterThanSymbol => BinaryExpressionOperator.BitwiseShiftRight,
+                        _ => throw new UnexpectedTokenException(second, TokenType.EqualsSymbol,
+                            TokenType.GreaterThanSymbol),
+                    },
+                    TokenType.QuestionMarkSymbol => second.Type switch
+                    {
+                        TokenType.QuestionMarkSymbol => BinaryExpressionOperator.Coalesce,
+                        _ => throw new UnexpectedTokenException(second, TokenType.QuestionMarkSymbol),
+                    },
+                    _ => throw new UnexpectedTokenException(first, TokenType.AsteriskSymbol, TokenType.EqualsSymbol,
+                        TokenType.ExclamationMarkSymbol, TokenType.AmpersandSymbol, TokenType.PipeSymbol,
+                        TokenType.LessThanSymbol, TokenType.GreaterThanSymbol, TokenType.QuestionMarkSymbol),
+                };
+            }
+            case 1:
             {
-                TokenType.PlusSymbol => BinaryExpressionOperator.Add,
-                TokenType.MinusSymbol => BinaryExpressionOperator.Subtract,
-                TokenType.AsteriskSymbol => BinaryExpressionOperator.Multiply,
-                TokenType.SlashSymbol => BinaryExpressionOperator.Divide,
-                TokenType.PercentSymbol => BinaryExpressionOperator.Modulo,
-                TokenType.GreaterThanSymbol => BinaryExpressionOperator.GreaterThan,
-                TokenType.LessThanSymbol => BinaryExpressionOperator.LessThan,
-                TokenType.PipeSymbol => BinaryExpressionOperator.BitwiseOr,
-                TokenType.AmpersandSymbol => BinaryExpressionOperator.BitwiseAnd,
-                TokenType.HatSymbol => BinaryExpressionOperator.BitwiseXor,
-                _ => throw new UnexpectedTokenException(first, TokenType.PlusSymbol, TokenType.MinusSymbol,
-                    TokenType.AsteriskSymbol, TokenType.SlashSymbol, TokenType.PercentSymbol,
-                    TokenType.GreaterThanSymbol, TokenType.LessThanSymbol, TokenType.PipeSymbol,
-                    TokenType.AmpersandSymbol, TokenType.HatSymbol),
-            };
+                var first = operatorTokens[0];
+
+                return first.Type switch
+                {
+                    TokenType.PlusSymbol => BinaryExpressionOperator.Add,
+                    TokenType.MinusSymbol => BinaryExpressionOperator.Subtract,
+                    TokenType.AsteriskSymbol => BinaryExpressionOperator.Multiply,
+                    TokenType.SlashSymbol => BinaryExpressionOperator.Divide,
+                    TokenType.PercentSymbol => BinaryExpressionOperator.Modulo,
+                    TokenType.GreaterThanSymbol => BinaryExpressionOperator.GreaterThan,
+                    TokenType.LessThanSymbol => BinaryExpressionOperator.LessThan,
+                    TokenType.PipeSymbol => BinaryExpressionOperator.BitwiseOr,
+                    TokenType.AmpersandSymbol => BinaryExpressionOperator.BitwiseAnd,
+                    TokenType.HatSymbol => BinaryExpressionOperator.BitwiseXor,
+                    _ => throw new UnexpectedTokenException(first, TokenType.PlusSymbol, TokenType.MinusSymbol,
+                        TokenType.AsteriskSymbol, TokenType.SlashSymbol, TokenType.PercentSymbol,
+                        TokenType.GreaterThanSymbol, TokenType.LessThanSymbol, TokenType.PipeSymbol,
+                        TokenType.AmpersandSymbol, TokenType.HatSymbol),
+                };
+            }
+            case 0:
+                throw new UnexpectedEndOfTokensException(tokens.LastToken?.Location, "Expected an operator");
+            default:
+                throw new UnexpectedTokenException(operatorTokens[0], "Operators can only be chained up to 3 times");
         }
-
-        if (operatorTokens.Count == 0)
-            throw new UnexpectedEndOfTokensException(tokens.LastToken?.Location, "Expected an operator");
-
-        throw new UnexpectedTokenException(operatorTokens[0], "Operators can only be chained up to 3 times");
     }
 
     private ExpressionNode ParsePrimaryExpression()

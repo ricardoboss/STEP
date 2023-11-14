@@ -17,7 +17,7 @@ public class ClampFunction : GenericFunction<NumberResult, NumberResult, NumberR
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyNumber;
 
-    protected override ExpressionResult Invoke(TokenLocation tokenLocation, Interpreter interpreter,
+    protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
         NumberResult argument1, NumberResult argument2, NumberResult argument3)
     {
         var min = argument1;

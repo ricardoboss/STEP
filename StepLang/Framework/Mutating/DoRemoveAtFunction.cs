@@ -23,7 +23,7 @@ public class DoRemoveAtFunction : GenericFunction<ListResult, NumberResult>
         var index = argument2;
 
         if (list.Count == 0 || index < 0 || index >= list.Count)
-            throw new IndexOutOfBoundsException(index, list.Count);
+            throw new IndexOutOfBoundsException(callLocation, index, list.Count);
 
         var element = list[index];
         list.RemoveAt(index);

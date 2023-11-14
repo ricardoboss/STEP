@@ -15,7 +15,7 @@ public class DoInsertAtFunction : GenericFunction<ListResult, NumberResult, Expr
         new(AnyValueType, "value"),
     };
 
-    protected override ExpressionResult Invoke(TokenLocation tokenLocation, Interpreter interpreter,
+    protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
         ListResult argument1, NumberResult argument2, ExpressionResult argument3)
     {
         var list = argument1.Value;
@@ -23,7 +23,7 @@ public class DoInsertAtFunction : GenericFunction<ListResult, NumberResult, Expr
         var value = argument3;
 
         if (index < 0 || index > list.Count)
-            throw new IndexOutOfBoundsException(index, list.Count);
+            throw new IndexOutOfBoundsException(callLocation, index, list.Count);
 
         list.Insert(index, value);
 

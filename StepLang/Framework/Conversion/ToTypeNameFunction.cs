@@ -24,7 +24,7 @@ public class ToTypeNameFunction : NativeFunction
 
         var exp = arguments.Single();
         if (exp is not IdentifierExpressionNode varExp)
-            throw new InvalidExpressionTypeException("an identifier", exp.GetType().Name);
+            throw new InvalidExpressionTypeException(callLocation, "an identifier", exp.GetType().Name);
 
         var variable = interpreter.CurrentScope.GetVariable(varExp.Identifier);
 

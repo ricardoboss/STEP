@@ -15,7 +15,7 @@ public class InterpolateFunction : GenericFunction<NumberResult, NumberResult, N
         new(OnlyNumber, "t"),
     };
 
-    protected override ExpressionResult Invoke(TokenLocation tokenLocation, Interpreter interpreter,
+    protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
         NumberResult argument1, NumberResult argument2, NumberResult argument3)
     {
         var a = argument1;

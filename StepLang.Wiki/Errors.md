@@ -19,40 +19,42 @@ A diff or patch looks like this:
 
 ### Interpreter Errors (`INTxxx`)
 
-| Code                        | Description                       |
-|-----------------------------|-----------------------------------|
+| Code                 | Description                       |
+|----------------------|-----------------------------------|
 | [`INT001`](./INT001) | Undefined Identifier Exception    |
 | [`INT002`](./INT002) | Invalid Argument Count Exception  |
-| [`INT003`](./INT003) | Invalid Depth Result Exception    |
-| [`INT004`](./INT004) | Invalid Expression Type Exception |
-| [`INT005`](./INT005) | Index Out Of Bounds Exception     |
+| [`INT003`](./INT003) | Invalid Expression Type Exception |
+| [`INT004`](./INT004) | Index Out Of Bounds Exception     |
 
-### Parser Errors (`PARxxx`)
+### Import Errors (`IMPxxx`)
 
-| Code                        | Description                            |
-|-----------------------------|----------------------------------------|
-| [`PAR001`](./PAR001) | Unexpected Token Exception             |
-| [`PAR002`](./PAR002) | Unexpected End Of Tokens Exception     |
-| [`PAR003`](./PAR003) | Missing Value Expression Exception     |
-| [`PAR004`](./PAR004) | Missing Condition Expression Exception |
-| [`PAR005`](./PAR005) | Imported File Does Not Exist Exception |
-| [`PAR006`](./PAR006) | Imported File Is Self Exception        |
-| [`PAR007`](./PAR007) | Imports No Longer Allowed Exception    |
-| [`PAR008`](./PAR008) | Invalid Expression Exception           |
-| [`PAR009`](./PAR009) | Invalid Index Operator Exception       |
-
-### Tokenizer Errors (`TOKxxx`)
-
-| Code                        | Description                   |
-|-----------------------------|-------------------------------|
-| [`TOK001`](./TOK001) | Invalid Identifier Exception  |
-| [`TOK002`](./TOK002) | Unterminated String Exception |
+| Code                 | Description                            |
+|----------------------|----------------------------------------|
+| [`IMP001`](./IMP001) | Imported File Does Not Exist Exception |
+| [`IMP002`](./IMP002) | Imported File Is Self Exception        |
 
 ### Type Errors (`TYPxxx`)
 
-| Code                        | Description                                |
-|-----------------------------|--------------------------------------------|
+| Code                 | Description                                |
+|----------------------|--------------------------------------------|
 | [`TYP001`](./TYP001) | Invalid Variable Assignment Exception      |
 | [`TYP002`](./TYP002) | Incompatible Expression Operands Exception |
 | [`TYP003`](./TYP003) | Invalid Argument Type Exception            |
 | [`TYP004`](./TYP004) | Invalid Result Type Exception              |
+| [`TYP005`](./TYP005) | Variable Already Declared Exception        |
+
+### Parser Errors (`PARxxx`)
+
+| Code                 | Description                        |
+|----------------------|------------------------------------|
+| [`PAR001`](./PAR001) | Unexpected Token Exception         |
+| [`PAR002`](./PAR002) | Unexpected End Of Tokens Exception |
+| [`PAR003`](./PAR003) | Missing Expression Exception       |
+| [`PAR004`](./PAR004) | Invalid Index Operator Exception   |
+
+### Tokenizer Errors (`TOKxxx`)
+
+| Code                 | Description                   |
+|----------------------|-------------------------------|
+| [`TOK001`](./TOK001) | Invalid Identifier Exception  |
+| [`TOK002`](./TOK002) | Unterminated String Exception |
