@@ -61,6 +61,7 @@ public class NumberResult : ComparableValueExpressionResult<double>
     public static implicit operator NumberResult(string value) => double.Parse(value, NumberStyles.Any, CultureInfo.InvariantCulture);
 
     public static implicit operator int(NumberResult result) => (int)Math.Round(result.Value);
+    public static implicit operator uint(NumberResult result) => (uint)Math.Round(result.Value);
 
     public static implicit operator double(NumberResult result) => result.Value;
 
@@ -73,6 +74,8 @@ public class NumberResult : ComparableValueExpressionResult<double>
     public static NumberResult FromString(string value) => value;
 
     public int ToInt32() => this;
+
+    public uint ToUInt32() => this;
 
     public double ToDouble() => this;
 

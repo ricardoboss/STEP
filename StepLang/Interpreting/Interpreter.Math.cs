@@ -1,3 +1,4 @@
+using System.Numerics;
 using StepLang.Expressions.Results;
 using StepLang.Parsing;
 using StepLang.Tokenizing;
@@ -217,37 +218,79 @@ public partial class Interpreter
 
     public ExpressionResult Evaluate(BitwiseXorExpressionNode expressionNode)
     {
-        throw new NotImplementedException();
+        var (left, right, location) = EvaluateBinary(expressionNode);
+
+        return left switch
+        {
+            NumberResult aNumber when right is NumberResult bNumber => (NumberResult)(aNumber ^ bNumber),
+            _ => throw new IncompatibleExpressionOperandsException(location, left, right, "bitwise xor"),
+        };
     }
 
     public ExpressionResult Evaluate(BitwiseAndExpressionNode expressionNode)
     {
-        throw new NotImplementedException();
+        var (left, right, location) = EvaluateBinary(expressionNode);
+
+        return left switch
+        {
+            NumberResult aNumber when right is NumberResult bNumber => (NumberResult)(aNumber & bNumber),
+            _ => throw new IncompatibleExpressionOperandsException(location, left, right, "bitwise and"),
+        };
     }
 
     public ExpressionResult Evaluate(BitwiseOrExpressionNode expressionNode)
     {
-        throw new NotImplementedException();
+        var (left, right, location) = EvaluateBinary(expressionNode);
+
+        return left switch
+        {
+            NumberResult aNumber when right is NumberResult bNumber => (NumberResult)(aNumber | bNumber),
+            _ => throw new IncompatibleExpressionOperandsException(location, left, right, "bitwise or"),
+        };
     }
 
     public ExpressionResult Evaluate(BitwiseShiftLeftExpressionNode expressionNode)
     {
-        throw new NotImplementedException();
+        var (left, right, location) = EvaluateBinary(expressionNode);
+
+        return left switch
+        {
+            NumberResult aNumber when right is NumberResult bNumber => (NumberResult)(aNumber << bNumber),
+            _ => throw new IncompatibleExpressionOperandsException(location, left, right, "bitwise shift left"),
+        };
     }
 
     public ExpressionResult Evaluate(BitwiseShiftRightExpressionNode expressionNode)
     {
-        throw new NotImplementedException();
+        var (left, right, location) = EvaluateBinary(expressionNode);
+
+        return left switch
+        {
+            NumberResult aNumber when right is NumberResult bNumber => (NumberResult)(aNumber >> bNumber),
+            _ => throw new IncompatibleExpressionOperandsException(location, left, right, "bitwise shift right"),
+        };
     }
 
     public ExpressionResult Evaluate(BitwiseRotateLeftExpressionNode expressionNode)
     {
-        throw new NotImplementedException();
+        var (left, right, location) = EvaluateBinary(expressionNode);
+
+        return left switch
+        {
+            NumberResult aNumber when right is NumberResult bNumber => (NumberResult)BitOperations.RotateLeft(aNumber, bNumber),
+            _ => throw new IncompatibleExpressionOperandsException(location, left, right, "bitwise rotate left"),
+        };
     }
 
     public ExpressionResult Evaluate(BitwiseRotateRightExpressionNode expressionNode)
     {
-        throw new NotImplementedException();
+        var (left, right, location) = EvaluateBinary(expressionNode);
+
+        return left switch
+        {
+            NumberResult aNumber when right is NumberResult bNumber => (NumberResult)BitOperations.RotateRight(aNumber, bNumber),
+            _ => throw new IncompatibleExpressionOperandsException(location, left, right, "bitwise rotate right"),
+        };
     }
 
     public ExpressionResult Evaluate(NotExpressionNode expressionNode)
