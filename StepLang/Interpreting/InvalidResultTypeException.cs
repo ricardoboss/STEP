@@ -5,6 +5,8 @@ namespace StepLang.Interpreting;
 
 public class InvalidResultTypeException : IncompatibleTypesException
 {
+    private const string GeneralHelpText = "An expression evaluated to an unexpected type. Check what types of expression results are allowed in the current context.";
+
     private static string ToExpectation(IReadOnlyList<ResultType> expected) => expected.Count switch
     {
         0 => "nothing",
@@ -27,11 +29,7 @@ public class InvalidResultTypeException : IncompatibleTypesException
         return $"Invalid result type: expected {expectation}, got {gotString}";
     }
 
-    public InvalidResultTypeException(TokenLocation evaluationLocation, ExpressionResult got, params ResultType[] expected) : this(evaluationLocation, BuildMessage(got, expected))
-    {
-    }
-
-    private InvalidResultTypeException(TokenLocation evaluationLocation, string message) : base(4, evaluationLocation, message, "An expression evaluated to an unexpected type. Check what types of expression results are allowed in the current context.")
+    public InvalidResultTypeException(TokenLocation evaluationLocation, ExpressionResult got, params ResultType[] expected) : base(4, evaluationLocation, BuildMessage(got, expected), GeneralHelpText)
     {
     }
 }

@@ -21,14 +21,14 @@ public class SortedFunction : ListManipulationFunction
         return base.Invoke(callLocation, interpreter, new[] { arguments[0], new CompareToFunction().ToResult().ToExpressionNode() });
     }
 
-    protected override IEnumerable<ExpressionNode[]> PrepareArgsForCallback(IEnumerable<ExpressionResult> list, FunctionDefinition callback)
+    protected override IEnumerable<ExpressionNode[]> PrepareArgsForCallback(TokenLocation callLocation, IEnumerable<ExpressionResult> list, FunctionDefinition callback)
     {
         var callbackParameters = callback.Parameters.ToList();
         if (callbackParameters.Count != 2)
-            throw new InvalidArgumentTypeException(null, $"Callback function must have 2 parameters, but has {callbackParameters.Count}");
+            throw new InvalidArgumentTypeException(callLocation, $"Callback function must have 2 parameters, but has {callbackParameters.Count}");
 
         if (!callbackParameters[0].GetResultTypes().SequenceEqual(callbackParameters[1].GetResultTypes()))
-            throw new InvalidArgumentTypeException(null, $"Both parameters of callback function must have the same type, but are {callbackParameters[0].ResultTypesToString()} and {callbackParameters[1].ResultTypesToString()}");
+            throw new InvalidArgumentTypeException(callLocation, $"Both parameters of callback function must have the same type, but are {callbackParameters[0].ResultTypesToString()} and {callbackParameters[1].ResultTypesToString()}");
 
         return list.Select(e => new[] { e.ToExpressionNode() });
     }

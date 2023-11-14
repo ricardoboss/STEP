@@ -18,7 +18,7 @@ public class DoSwapFunction : GenericFunction<ExpressionResult, ExpressionResult
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyBool;
 
-    protected override ExpressionResult Invoke(TokenLocation tokenLocation, Interpreter interpreter,
+    protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
         ExpressionResult argument1, ExpressionResult argument2, ExpressionResult argument3)
     {
         return argument1 switch
@@ -30,29 +30,14 @@ public class DoSwapFunction : GenericFunction<ExpressionResult, ExpressionResult
 
         ExpressionResult ThrowForInvalidCombination()
         {
-            if (argument1 is MapResult)
+            throw argument1 switch
             {
-                if (argument2 is not StringResult)
-                    throw new InvalidArgumentTypeException(null, NativeParameters.ElementAt(1).Types, argument2);
-
-                if (argument3 is not StringResult)
-                    throw new InvalidArgumentTypeException(null, NativeParameters.ElementAt(2).Types, argument3);
-
-                throw new InvalidOperationException(); // should never reach this
-            }
-
-            if (argument1 is ListResult)
-            {
-                if (argument2 is not NumberResult)
-                    throw new InvalidArgumentTypeException(null, NativeParameters.ElementAt(1).Types, argument2);
-
-                if (argument3 is not NumberResult)
-                    throw new InvalidArgumentTypeException(null, NativeParameters.ElementAt(2).Types, argument3);
-
-                throw new InvalidOperationException(); // should never reach this
-            }
-
-            throw new InvalidArgumentTypeException(null, NativeParameters.First().Types, argument1);
+                MapResult when argument2 is not StringResult => new(callLocation, NativeParameters.ElementAt(1).Types, argument2),
+                MapResult when argument3 is not StringResult => new(callLocation, NativeParameters.ElementAt(2).Types, argument3),
+                ListResult when argument2 is not NumberResult => new(callLocation, NativeParameters.ElementAt(1).Types, argument2),
+                ListResult when argument3 is not NumberResult => new(callLocation, NativeParameters.ElementAt(2).Types, argument3),
+                _ => new InvalidArgumentTypeException(callLocation, NativeParameters.First().Types, argument1),
+            };
         }
     }
 

@@ -19,13 +19,13 @@ public abstract class ListManipulationFunction : GenericFunction<ListResult, Fun
         var list = argument1.DeepClone().Value;
         var callback = argument2.Value;
 
-        var args = PrepareArgsForCallback(list, callback);
+        var args = PrepareArgsForCallback(callLocation, list, callback);
         var result = EvaluateListManipulation(callLocation, interpreter, args, callback).ToList();
 
         return new ListResult(result);
     }
 
-    protected virtual IEnumerable<ExpressionNode[]> PrepareArgsForCallback(IEnumerable<ExpressionResult> list, FunctionDefinition callback)
+    protected virtual IEnumerable<ExpressionNode[]> PrepareArgsForCallback(TokenLocation callLocation, IEnumerable<ExpressionResult> list, FunctionDefinition callback)
     {
         var callbackParameters = callback.Parameters.ToList();
         Func<ExpressionResult, int, ExpressionNode[]> argsConverter;
@@ -33,10 +33,10 @@ public abstract class ListManipulationFunction : GenericFunction<ListResult, Fun
         switch (callbackParameters.Count)
         {
             case < 1 or > 2:
-                throw new InvalidArgumentTypeException(null, $"Callback function must have 1 or 2 parameters, but has {callbackParameters.Count}");
+                throw new InvalidArgumentTypeException(callLocation, $"Callback function must have 1 or 2 parameters, but has {callbackParameters.Count}");
             case 2:
                 if (!callbackParameters[1].HasResultType(ResultType.Number))
-                    throw new InvalidArgumentTypeException(null, $"Second parameter of callback function must accept numbers, but is {callbackParameters[1].ResultTypesToString()}");
+                    throw new InvalidArgumentTypeException(callLocation, $"Second parameter of callback function must accept numbers, but is {callbackParameters[1].ResultTypesToString()}");
 
                 argsConverter = (element, index) =>
                 {

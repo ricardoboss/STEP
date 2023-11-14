@@ -101,32 +101,15 @@
                         <li><a href="./INT002">INT002</a></li>
                         <li><a href="./INT003">INT003</a></li>
                         <li><a href="./INT004">INT004</a></li>
-                        <li><a href="./INT005">INT005</a></li>
                     </ul>
                 </details>
             </li>
             <li>
                 <details>
-                    <summary>Parser Errors</summary>
+                    <summary>Import Errors</summary>
                     <ul>
-                        <li><a href="./PAR001">PAR001</a></li>
-                        <li><a href="./PAR002">PAR002</a></li>
-                        <li><a href="./PAR003">PAR003</a></li>
-                        <li><a href="./PAR004">PAR004</a></li>
-                        <li><a href="./PAR005">PAR005</a></li>
-                        <li><a href="./PAR006">PAR006</a></li>
-                        <li><a href="./PAR007">PAR007</a></li>
-                        <li><a href="./PAR008">PAR008</a></li>
-                        <li><a href="./PAR009">PAR009</a></li>
-                    </ul>
-                </details>
-            </li>
-            <li>
-                <details>
-                    <summary>Tokenizer Errors</summary>
-                    <ul>
-                        <li><a href="./TOK001">TOK001</a></li>
-                        <li><a href="./TOK002">TOK002</a></li>
+                        <li><a href="./IMP001">IMP001</a></li>
+                        <li><a href="./IMP002">IMP002</a></li>
                     </ul>
                 </details>
             </li>
@@ -138,6 +121,27 @@
                         <li><a href="./TYP002">TYP002</a></li>
                         <li><a href="./TYP003">TYP003</a></li>
                         <li><a href="./TYP004">TYP004</a></li>
+                        <li><a href="./TYP005">TYP005</a></li>
+                    </ul>
+                </details>
+            </li>
+            <li>
+                <details>
+                    <summary>Parser Errors</summary>
+                    <ul>
+                        <li><a href="./PAR001">PAR001</a></li>
+                        <li><a href="./PAR002">PAR002</a></li>
+                        <li><a href="./PAR003">PAR003</a></li>
+                        <li><a href="./PAR004">PAR004</a></li>
+                    </ul>
+                </details>
+            </li>
+            <li>
+                <details>
+                    <summary>Tokenizer Errors</summary>
+                    <ul>
+                        <li><a href="./TOK001">TOK001</a></li>
+                        <li><a href="./TOK002">TOK002</a></li>
                     </ul>
                 </details>
             </li>

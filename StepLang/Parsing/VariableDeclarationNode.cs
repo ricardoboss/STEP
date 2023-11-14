@@ -3,7 +3,7 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Parsing;
 
-public sealed record VariableDeclarationNode(IReadOnlyCollection<Token> Types, Token Identifier) : IVariableDeclarationNode
+public sealed record VariableDeclarationNode(IEnumerable<Token> Types, Token Identifier) : IVariableDeclarationNode
 {
     public Variable EvaluateUsing(IVariableDeclarationEvaluator evaluator)
     {

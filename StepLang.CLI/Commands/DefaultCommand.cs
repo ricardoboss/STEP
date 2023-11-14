@@ -9,6 +9,8 @@ namespace StepLang.CLI.Commands;
 [SuppressMessage("Performance", "CA1812: Avoid uninstantiated internal classes")]
 internal sealed class DefaultCommand : AsyncCommand<DefaultCommand.Settings>
 {
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
     public sealed class Settings : VisibleGlobalCommandSettings
     {
         [CommandArgument(0, "[file]")]

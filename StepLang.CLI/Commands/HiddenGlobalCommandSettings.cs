@@ -1,8 +1,10 @@
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using Spectre.Console.Cli;
 
 namespace StepLang.CLI.Commands;
 
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public class HiddenGlobalCommandSettings : CommandSettings, IGlobalCommandSettings
 {
     [CommandOption(IGlobalCommandSettings.InfoOptionName, IsHidden = true)]

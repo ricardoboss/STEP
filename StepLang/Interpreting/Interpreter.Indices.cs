@@ -30,7 +30,7 @@ public partial class Interpreter
                     _ => indexResult.ToString(),
                 };
 
-                throw new InvalidIndexOperatorException(null, indexRepresentation, variable.Value.ResultType, "assign");
+                throw new InvalidIndexOperatorException(statementNode.Location, indexRepresentation, variable.Value.ResultType, "assign");
         }
     }
 
@@ -44,7 +44,7 @@ public partial class Interpreter
             case ListResult { Value: var values } when indexResult is NumberResult index:
                 {
                     if (index < 0 || index >= values.Count)
-                        throw new IndexOutOfBoundsException(index, values.Count);
+                        throw new IndexOutOfBoundsException(expressionNode.Location, index, values.Count);
 
                     return values[index];
                 }
@@ -54,7 +54,7 @@ public partial class Interpreter
                 {
                     var grapheme = str.GraphemeAt(index);
                     if (grapheme == null)
-                        throw new IndexOutOfBoundsException(index, str.GraphemeLength());
+                        throw new IndexOutOfBoundsException(expressionNode.Location, index, str.GraphemeLength());
 
                     return new StringResult(grapheme);
                 }

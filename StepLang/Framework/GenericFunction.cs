@@ -69,7 +69,7 @@ public abstract class GenericFunction<T1, T2, T3> : GenericThreeParameterFunctio
     where T2 : ExpressionResult
     where T3 : ExpressionResult
 {
-    protected abstract ExpressionResult Invoke(TokenLocation tokenLocation, Interpreter interpreter, T1 argument1,
+    protected abstract ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter, T1 argument1,
         T2 argument2, T3 argument3);
 
     public override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,

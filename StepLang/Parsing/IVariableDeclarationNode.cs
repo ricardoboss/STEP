@@ -6,7 +6,7 @@ namespace StepLang.Parsing;
 
 public interface IVariableDeclarationNode : IEvaluatableNode<IVariableDeclarationEvaluator, Variable>
 {
-    IReadOnlyCollection<Token> Types { get; }
+    IEnumerable<Token> Types { get; }
 
     Token Identifier { get; }
 

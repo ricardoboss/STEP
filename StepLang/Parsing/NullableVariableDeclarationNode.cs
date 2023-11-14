@@ -3,7 +3,7 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Parsing;
 
-public sealed record NullableVariableDeclarationNode(IReadOnlyCollection<Token> Types, Token NullabilityIndicator, Token Identifier) : IVariableDeclarationNode
+public sealed record NullableVariableDeclarationNode(IEnumerable<Token> Types, Token NullabilityIndicator, Token Identifier) : IVariableDeclarationNode
 {
     public Variable EvaluateUsing(IVariableDeclarationEvaluator evaluator)
     {
