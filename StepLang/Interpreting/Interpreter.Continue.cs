@@ -6,6 +6,6 @@ public partial class Interpreter
 {
     public void Execute(ContinueStatementNode statementNode)
     {
-        throw new NotImplementedException();
+        ContinueDepth++;
     }
 }
