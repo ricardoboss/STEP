@@ -69,7 +69,7 @@ public class Parser
         {
             var declaration = ParseVariableDeclaration();
 
-            return new VariableDeclarationStatement(declaration);
+            return new VariableDeclarationStatementNode(declaration);
         }
 
         if (token.Type == TokenType.Identifier)

@@ -348,7 +348,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             _ = node.AddNode("Identifier: " + statementNode.Identifier.ToString().EscapeMarkup());
         }
 
-        public void Execute(VariableDeclarationStatement statementNode)
+        public void Execute(VariableDeclarationStatementNode statementNode)
         {
             var variableDeclarationTreeBuilder = new VariableDeclarationTreeBuilder(root);
             statementNode.Declaration.EvaluateUsing(variableDeclarationTreeBuilder);
