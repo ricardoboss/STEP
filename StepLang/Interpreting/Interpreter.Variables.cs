@@ -5,7 +5,7 @@ namespace StepLang.Interpreting;
 
 public partial class Interpreter : IVariableDeclarationEvaluator
 {
-    public void Execute(VariableDeclarationStatement statementNode)
+    public void Execute(VariableDeclarationStatementNode statementNode)
     {
         _ = statementNode.Declaration.EvaluateUsing(this);
     }

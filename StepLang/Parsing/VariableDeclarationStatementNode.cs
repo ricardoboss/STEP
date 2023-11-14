@@ -2,7 +2,7 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Parsing;
 
-public record VariableDeclarationStatement(IVariableDeclarationNode Declaration) : StatementNode
+public record VariableDeclarationStatementNode(IVariableDeclarationNode Declaration) : StatementNode
 {
     public override void Accept(IStatementVisitor visitor)
     {
