@@ -1,7 +1,16 @@
-# v2.x.0
+# v2.1.0
 
 * Changed "power" operator from `^` to `**` by @ricardoboss in https://github.com/ricardoboss/STEP/pull/107
 * Added support for nullable type declarations by @ricardoboss in https://github.com/ricardoboss/STEP/pull/102
+* Major rewrite of the parser and interpreter to achieve more abstraction and better error reporting by @ricardoboss in https://github.com/ricardoboss/STEP/pull/109
+  * Added "parse" command to show the parsed abstract syntax tree
+  * All variable declarations now support the nullability indicator (`?`)
+  * Function definitions can now specify default parameter values
+  * `break` and `continue` no longer allow expressions to break/continue for multiple loops
+  * Exceptions that were previously printed with the affected code can now also show the causing token
+  * Native functions now support union types to accept more than one value type of parameter
+
+For more info, see https://github.com/ricardoboss/STEP/milestone/4?closed=1
 
 # v2.0.0
 
