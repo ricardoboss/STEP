@@ -33,7 +33,7 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
                     throw new InvalidResultTypeException(callLocation, portResult, ResultType.Number);
 
                 if (portNumber < 0 || portNumber > 65535)
-                    throw new InvalidArgumentValueException(null, "Port must be between 0 and 65535");
+                    throw new InvalidArgumentValueException(callLocation, "Port must be between 0 and 65535");
 
                 port = portNumber;
             }
