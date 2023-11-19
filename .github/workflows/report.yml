@@ -117,5 +117,5 @@ jobs:
 
             Static Analysis:
 
-            - Code Style: ${{ needs.style.result == 'success' && '✅ OK' || '❌ Failed' }}
+            - Code Style: ${{ needs.style.result == 'success' && '✅ OK' || '❌ Please run `dotnet format`' }}
             - Docblocks: `${{ needs.docblocks.outputs.documented }} / ${{ needs.docblocks.outputs.total }}`

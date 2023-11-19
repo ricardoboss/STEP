@@ -4,7 +4,8 @@ namespace StepLang;
 
 public abstract class StepLangException : Exception
 {
-    public string HelpText { get; }
+    public string HelpText {
+        get; }
 
     public TokenLocation? Location { get; }
 
