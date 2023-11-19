@@ -16,9 +16,4 @@ public partial class Interpreter
     {
         CurrentScope.SetResult(statementNode.Location, VoidResult.Instance);
     }
-
-    public void Execute(ReturnStatementNode statementNode)
-    {
-        CurrentScope.SetResult(VoidResult.Instance);
-    }
 }

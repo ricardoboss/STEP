@@ -48,11 +48,4 @@ public partial class Interpreter
 
         return new FunctionResult(definition);
     }
-
-    public ExpressionResult Evaluate(NativeFunctionDefinitionExpressionNode expressionNode)
-    {
-        var definition = expressionNode.Definition;
-
-        return new FunctionResult(definition);
-    }
 }
