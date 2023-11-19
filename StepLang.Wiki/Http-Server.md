@@ -10,7 +10,7 @@ This script will start a server on [localhost:8080](http://localhost:8080) and r
 
 ```step
 httpServer(8080, (Map request) {
-	return stringResponse("Hello World")
+	return "Hello World"
 })
 ```
 
@@ -20,7 +20,7 @@ You can also pass an existing function:
 
 ```step
 function handleRequest = (Map request) {
-	return stringResponse("Hello World")
+	return "Hello World"
 }
 
 httpServer(8080, handleRequest)
