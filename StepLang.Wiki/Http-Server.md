@@ -9,7 +9,7 @@ This script will start a server on [localhost:8080](http://localhost:8080) and r
 "Hello World":
 
 ```step
-httpServer(8080, (Map request) {
+httpServer(8080, (map request) {
 	return "Hello World"
 })
 ```
@@ -19,7 +19,7 @@ The call to `httpServer` is blocking, meaning any code after it is not executed.
 You can also pass an existing function:
 
 ```step
-function handleRequest = (Map request) {
+function handleRequest = (map request) {
 	return "Hello World"
 }
 
@@ -32,7 +32,7 @@ This script will start a server on [localhost:8080](http://localhost:8080) and s
 directory. It will also serve `index.html` when the user requests `/`:
 
 ```step
-httpServer(8080, (Map request) {
+httpServer(8080, (map request) {
 	if (!startsWith(request["path"], "/")) {
 		request["path"] = "/" + request["path"]
 	}
