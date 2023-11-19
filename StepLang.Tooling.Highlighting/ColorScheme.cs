@@ -12,12 +12,11 @@ namespace StepLang.Tooling.Highlighting;
 /// <param name="String">The style for strings.</param>
 /// <param name="Number">The style for numbers.</param>
 /// <param name="Bool">The style for booleans.</param>
+/// <param name="Null">The style for null literals.</param>
 /// <param name="Comment">The style for comments.</param>
 /// <param name="Operator">The style for operators.</param>
 /// <param name="Punctuation">The style for punctuation.</param>
-public record ColorScheme(Style Default, Style Keyword, Style Type, Style Identifier, Style String, Style Number,
-    Style Bool, Style Null, Style Comment,
-    Style Operator, Style Punctuation)
+public record ColorScheme(Style Default, Style Keyword, Style Type, Style Identifier, Style String, Style Number, Style Bool, Style Null, Style Comment, Style Operator, Style Punctuation)
 {
     /// <summary>
     /// The names of the available color schemes.
