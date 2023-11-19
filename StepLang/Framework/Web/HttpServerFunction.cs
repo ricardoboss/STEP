@@ -15,7 +15,7 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
     public const string Identifier = "httpServer";
 
     /// <inheritdoc />
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter []
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
         new(new[] { ResultType.Map, ResultType.Number }, "portOrOptions"),
         new(OnlyFunction, "handler"),
