@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace StepLang.Expressions.Results;
 
 public class MapResult : ValueExpressionResult<IDictionary<string, ExpressionResult>>
@@ -25,4 +27,7 @@ public class MapResult : ValueExpressionResult<IDictionary<string, ExpressionRes
     public override string ToString() => $"{{{string.Join(", ", Value.Select(p => $"{p.Key}: {p.Value}"))}}}";
 
     public static implicit operator MapResult(Dictionary<string, ExpressionResult> value) => new(value);
+
+    [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "To prevent CA2225")]
+    public static MapResult FromDictionary(Dictionary<string, ExpressionResult> value) => value;
 }
