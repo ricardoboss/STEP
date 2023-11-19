@@ -19,10 +19,6 @@ jobs:
 
     outputs:
       badge: ${{ steps.coverage.outputs.badge }}
-      line_rate: ${{ steps.coverage.outputs.line_rate }}
-      branch_rate: ${{ steps.coverage.outputs.branch_rate }}
-      complexity: ${{ steps.coverage.outputs.complexity }}
-      health: ${{ steps.coverage.outputs.health }}
 
     steps:
       - uses: actions/checkout@v4
@@ -60,6 +56,12 @@ jobs:
           fail_below_min: true
           thresholds: '0 85'
           badge: true
+
+      - name: Provide failure badge
+        id: coverage
+        if: failure()
+        run: |
+          echo "badge=https://img.shields.io/badge/Code%20Coverage-failed-red.svg?style=flat" >> "$GITHUB_OUTPUT"
 
   style:
     name: Check Style
