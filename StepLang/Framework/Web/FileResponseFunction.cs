@@ -1,5 +1,6 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
+using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Web;
 
@@ -18,7 +19,7 @@ public class FileResponseFunction : GenericFunction<StringResult, ExpressionResu
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyMap;
 
     /// <inheritdoc />
-    protected override MapResult Invoke(Interpreter interpreter, StringResult argument1, ExpressionResult argument2)
+    protected override MapResult Invoke(TokenLocation callLocation, Interpreter interpreter, StringResult argument1, ExpressionResult argument2)
     {
         var path = argument1.Value;
         if (!File.Exists(path))
