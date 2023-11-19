@@ -192,6 +192,7 @@ public class Scope
     /// <summary>
     /// Sets the result of this scope.
     /// </summary>
+    /// <param name="location">The location of the result setting statement.</param>
     /// <param name="result">The result to set.</param>
     public void SetResult(TokenLocation location, ExpressionResult result)
     {
@@ -205,6 +206,7 @@ public class Scope
     /// Tries to get the result of this scope.
     /// </summary>
     /// <param name="result">The result of this scope.</param>
+    /// <param name="location">The location where the result was set.</param>
     /// <returns><see langword="true"/> if this scope has a result, <see langword="false"/> otherwise.</returns>
     public bool TryGetResult([NotNullWhen(true)] out ExpressionResult? result, [NotNullWhen(true)] out TokenLocation? location)
     {

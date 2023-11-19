@@ -4,7 +4,7 @@ using StepLang.Parsing;
 namespace StepLang.Interpreting;
 
 /// <summary>
-/// This class is responsible for interpreting a series of <see cref="Statement"/>s and handles the main execution loop.
+/// This class is responsible for interpreting a series of <see cref="StatementNode"/>s and handles the main execution loop.
 /// </summary>
 public partial class Interpreter : IRootNodeVisitor, IStatementVisitor, IExpressionEvaluator
 {

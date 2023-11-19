@@ -8,7 +8,7 @@ namespace StepLang.Expressions.Results;
 
 /// <summary>
 /// <para>
-/// This is the base class for all <see cref="Expression"/> results.
+/// This is the base class for all <see cref="ExpressionResult"/> results.
 /// </para>
 /// <para>
 /// An expression result is the result of evaluating an expression using an <see cref="StepLang.Interpreting.Interpreter"/>.
