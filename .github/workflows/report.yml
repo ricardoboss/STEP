@@ -113,9 +113,4 @@ jobs:
         with:
           comment_tag: report
           message: |
-            ![Code Coverage](${{ needs.coverage.outputs.badge }}) ![Documentation Coverage](${{ needs.docblocks.outputs.badge }})
-
-            Static Analysis:
-
-            - Code Style: ${{ needs.style.result == 'success' && '✅ OK' || '❌ Please run `dotnet format`' }}
-            - Docblocks: `${{ needs.docblocks.outputs.documented }} / ${{ needs.docblocks.outputs.total }}`
+            ![Code Coverage](${{ needs.coverage.outputs.badge }}) ![Documentation Coverage](${{ needs.docblocks.outputs.badge }}) ![Code Style](https://img.shields.io/badge/Code%20Style-${{ needs.style.result == 'success' && 'ok' || 'run `dotnet format`' }}-${{ needs.style.result == 'success' && 'brightgreen' || 'red' }}.svg?style=flat)
