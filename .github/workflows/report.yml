@@ -113,8 +113,7 @@ jobs:
         with:
           comment_tag: report
           message: |
-            ![Code Coverage](${{ needs.coverage.outputs.badge }})
-            ![Documentation Coverage](${{ needs.docblocks.outputs.badge }})
+            ![Code Coverage](${{ needs.coverage.outputs.badge }}) ![Documentation Coverage](${{ needs.docblocks.outputs.badge }})
 
             Static Analysis:
 
