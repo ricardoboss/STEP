@@ -84,9 +84,8 @@ jobs:
 
     outputs:
       total: ${{ steps.docblocks.outputs.total }}
-      undocumented: ${{ steps.docblocks.outputs.undocumented }}
       documented: ${{ steps.docblocks.outputs.documented }}
-      percent: ${{ steps.docblocks.outputs.percent }}
+      badge: ${{ steps.docblocks.outputs.badge }}
 
     steps:
       - uses: actions/checkout@v4
@@ -114,11 +113,10 @@ jobs:
         with:
           comment_tag: report
           message: |
-            ## Report
-
             ![Code Coverage](${{ needs.coverage.outputs.badge }})
+            ![Documentation Coverage](${{ needs.docblocks.outputs.badge }})
 
             Static Analysis:
 
             - Code Style: ${{ needs.style.result == 'success' && '✅ OK' || '❌ Failed' }}
-            - Docblocks: `${{ needs.docblocks.outputs.documented }} / ${{ needs.docblocks.outputs.total }}` (`${{ needs.docblocks.outputs.percent }}%`)
+            - Docblocks: `${{ needs.docblocks.outputs.documented }} / ${{ needs.docblocks.outputs.total }}`
