@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      badge: ${{ steps.coverage.outputs.badge }}
+      badge: ${{ steps.coverage.outputs.badge || steps.coverage-failure.outputs.badge }}
 
     steps:
       - uses: actions/checkout@v4
@@ -58,7 +58,7 @@ jobs:
           badge: true
 
       - name: Provide failure badge
-        id: coverage
+        id: coverage-failure
         if: failure()
         run: |
           echo "badge=https://img.shields.io/badge/Code%20Coverage-failed-red.svg?style=flat" >> "$GITHUB_OUTPUT"
