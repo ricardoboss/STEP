@@ -111,11 +111,15 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
             await Parallel.ForEachAsync(
                 handlers,
                 cancellationToken,
-                async (handler, c) => await handler.Loop(callLocation, server, c));
+                (handler, c) => handler.HandleRequestsAsync(callLocation, server, c));
         }
         catch (HttpListenerException e) when (e.ErrorCode == 995)
         {
             // Ignore OPERATION_CANCELLED
+        }
+        catch (OperationCanceledException)
+        {
+            // ignored
         }
         finally
         {
@@ -138,29 +142,30 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
             this.callback = callback;
         }
 
-        public async Task Loop(TokenLocation callLocation, HttpListener server, CancellationToken cancellationToken)
+        public async ValueTask HandleRequestsAsync(TokenLocation callLocation, HttpListener server, CancellationToken cancellationToken)
         {
             while (!cancellationToken.IsCancellationRequested && server.IsListening)
             {
                 var context = await server.GetContextAsync();
 
-                HandleContext(callLocation, context);
+                await HandleContextAsync(callLocation, context, cancellationToken);
             }
         }
 
-        public void HandleContext(TokenLocation callLocation, HttpListenerContext context)
+        private async Task HandleContextAsync(TokenLocation callLocation, HttpListenerContext context, CancellationToken cancellationToken)
         {
-            var responseMap = HandleRequest(callLocation, context);
+            var responseMap = await HandleRequestAsync(callLocation, context, cancellationToken);
 
             HandleResponse(callLocation, context, responseMap);
         }
 
-        private IDictionary<string, ExpressionResult> HandleRequest(TokenLocation callLocation, HttpListenerContext context)
+        private async Task<IDictionary<string, ExpressionResult>> HandleRequestAsync(TokenLocation callLocation, HttpListenerContext context, CancellationToken cancellationToken)
         {
             var request = context.Request;
-            var requestMap = GetRequestMap(request);
+            var requestMap = await GetRequestMapAsync(request, cancellationToken);
 
-            interpreter.StdOut?.WriteLineAsync($"({workerId}) {request.RemoteEndPoint} -> {request.HttpMethod} {request.Url?.AbsolutePath}");
+            if (interpreter.StdOut is { } stdOut)
+                await stdOut.WriteLineAsync($"({workerId}) {request.RemoteEndPoint} -> {request.HttpMethod} {request.Url?.AbsolutePath}");
 
             var responseResult = InvokeCallback(callLocation, requestMap);
 
@@ -235,7 +240,7 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
             };
         }
 
-        private static MapResult GetRequestMap(HttpListenerRequest request)
+        private static async Task<MapResult> GetRequestMapAsync(HttpListenerRequest request, CancellationToken cancellationToken)
         {
             var requestMethod = new StringResult(request.HttpMethod);
             ExpressionResult requestUrl = NullResult.Instance;
@@ -257,7 +262,7 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
 
             string requestBody;
             using (var reader = new StreamReader(request.InputStream))
-                requestBody = reader.ReadToEnd();
+                requestBody = await reader.ReadToEndAsync(cancellationToken);
 
             var requestBodyResult = new StringResult(requestBody);
 
