@@ -6,6 +6,7 @@ using StepLang.Expressions.Results;
 using StepLang.Framework.Conversion;
 using StepLang.Interpreting;
 using StepLang.Parsing;
+using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Web;
 
@@ -21,7 +22,7 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
     };
 
     /// <inheritdoc />
-    protected override ExpressionResult Invoke(Interpreter interpreter, ExpressionResult argument1, FunctionResult argument2)
+    protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter, ExpressionResult argument1, FunctionResult argument2)
     {
         int port;
         if (argument1 is MapResult { Value: var options })
@@ -29,7 +30,7 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
             if (options.TryGetValue("port", out var portResult))
             {
                 if (portResult is not NumberResult portNumber)
-                    throw new InvalidResultTypeException(portResult, ResultType.Number);
+                    throw new InvalidResultTypeException(callLocation, portResult, ResultType.Number);
 
                 if (portNumber < 0 || portNumber > 65535)
                     throw new InvalidArgumentValueException(null, "Port must be between 0 and 65535");
@@ -45,11 +46,11 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
             options = new Dictionary<string, ExpressionResult>();
         }
         else
-            throw new InvalidResultTypeException(argument1, ResultType.Number, ResultType.Map);
+            throw new InvalidResultTypeException(callLocation, argument1, ResultType.Number, ResultType.Map);
 
         using var cts = new CancellationTokenSource();
 
-        var serveTask = Serve(interpreter, port, options, argument2.Value, cts.Token);
+        var serveTask = Serve(callLocation, interpreter, port, options, argument2.Value, cts.Token);
 
         interpreter.StdOut?.WriteLine("Press Ctrl+C to stop the server");
 
@@ -80,7 +81,7 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
         }
     }
 
-    private static async Task Serve(Interpreter interpreter, int port, IDictionary<string, ExpressionResult> options, FunctionDefinition callback, CancellationToken cancellationToken)
+    private static async Task Serve(TokenLocation callLocation, Interpreter interpreter, int port, IDictionary<string, ExpressionResult> options, FunctionDefinition callback, CancellationToken cancellationToken)
     {
         var url = $"http://localhost:{port}/";
 
@@ -94,7 +95,7 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
         if (options.TryGetValue("headers", out var headersResult))
         {
             if (headersResult is not MapResult { Value: var headers })
-                throw new InvalidResultTypeException(headersResult, ResultType.Map);
+                throw new InvalidResultTypeException(callLocation, headersResult, ResultType.Map);
 
             foreach (var (key, value) in headers)
                 defaultResponseHeaders.Add(key, ToStringFunction.Render(value));
@@ -110,7 +111,7 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
             await Parallel.ForEachAsync(
                 handlers,
                 cancellationToken,
-                async (handler, c) => await handler.Loop(server, c));
+                async (handler, c) => await handler.Loop(callLocation, server, c));
         }
         catch (HttpListenerException e) when (e.ErrorCode == 995)
         {
@@ -137,41 +138,41 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
             this.callback = callback;
         }
 
-        public async Task Loop(HttpListener server, CancellationToken cancellationToken)
+        public async Task Loop(TokenLocation callLocation, HttpListener server, CancellationToken cancellationToken)
         {
             while (!cancellationToken.IsCancellationRequested && server.IsListening)
             {
                 var context = await server.GetContextAsync();
 
-                HandleContext(context);
+                HandleContext(callLocation, context);
             }
         }
 
-        public void HandleContext(HttpListenerContext context)
+        public void HandleContext(TokenLocation callLocation, HttpListenerContext context)
         {
-            var responseMap = HandleRequest(context);
+            var responseMap = HandleRequest(callLocation, context);
 
-            HandleResponse(context, responseMap);
+            HandleResponse(callLocation, context, responseMap);
         }
 
-        private IDictionary<string, ExpressionResult> HandleRequest(HttpListenerContext context)
+        private IDictionary<string, ExpressionResult> HandleRequest(TokenLocation callLocation, HttpListenerContext context)
         {
             var request = context.Request;
             var requestMap = GetRequestMap(request);
 
             interpreter.StdOut?.WriteLineAsync($"({workerId}) {request.RemoteEndPoint} -> {request.HttpMethod} {request.Url?.AbsolutePath}");
 
-            var responseResult = InvokeCallback(requestMap);
+            var responseResult = InvokeCallback(callLocation, requestMap);
 
             return GetResponseMap(responseResult);
         }
 
         [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
-        private ExpressionResult InvokeCallback(MapResult requestMap)
+        private ExpressionResult InvokeCallback(TokenLocation callLocation, MapResult requestMap)
         {
             try
             {
-                return callback.Invoke(interpreter, new ExpressionNode[]
+                return callback.Invoke(callLocation, interpreter, new ExpressionNode[]
                 {
                     requestMap,
                 });
@@ -190,7 +191,7 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
             }
         }
 
-        private void HandleResponse(HttpListenerContext context, IDictionary<string, ExpressionResult> responseMap)
+        private void HandleResponse(TokenLocation callLocation, HttpListenerContext context, IDictionary<string, ExpressionResult> responseMap)
         {
             var response = context.Response;
 
@@ -204,7 +205,7 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
             if (responseMap.TryGetValue("headers", out var responseHeaders))
             {
                 if (responseHeaders is not MapResult { Value: var headers })
-                    throw new InvalidResultTypeException(responseHeaders, ResultType.Map);
+                    throw new InvalidResultTypeException(callLocation, responseHeaders, ResultType.Map);
 
                 foreach (var (key, value) in headers)
                     response.Headers.Add(key, ToStringFunction.Render(value));
