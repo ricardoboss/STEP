@@ -61,7 +61,7 @@ jobs:
         id: coverage-failure
         if: failure()
         run: |
-          echo "badge=https://img.shields.io/badge/Code%20Coverage-failed-red.svg?style=flat" >> "$GITHUB_OUTPUT"
+          echo "badge=https://img.shields.io/badge/Test%20Coverage-failed-red.svg?style=flat" >> "$GITHUB_OUTPUT"
 
   style:
     name: Check Style
