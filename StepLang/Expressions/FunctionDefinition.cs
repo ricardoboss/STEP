@@ -63,5 +63,8 @@ public abstract class FunctionDefinition
     /// </summary>
     public abstract IReadOnlyCollection<IVariableDeclarationNode> Parameters { get; }
 
+    /// <summary>
+    /// The function's return types. By default, this is only <see cref="ResultType.Void"/>.
+    /// </summary>
     protected virtual IEnumerable<ResultType> ReturnTypes { get; } = new[] { ResultType.Void };
 }

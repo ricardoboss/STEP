@@ -4,8 +4,20 @@ using StepLang.Expressions.Results;
 
 namespace StepLang.Framework.Conversion;
 
+/// <summary>
+/// Converts <see cref="ExpressionResult"/> to and from JSON.
+/// </summary>
+/// <seealso cref="JsonConversionContext"/>
 public class ExpressionResultJsonConverter : JsonConverter<ExpressionResult>
 {
+    /// <summary>
+    /// Reads a JSON value and converts it to an <see cref="ExpressionResult"/>.
+    /// </summary>
+    /// <param name="reader">The reader to read from.</param>
+    /// <param name="typeToConvert">The type to convert to.</param>
+    /// <param name="options">The options to use.</param>
+    /// <returns>The converted <see cref="ExpressionResult"/>.</returns>
+    /// <exception cref="NotSupportedException">Thrown if <paramref name="typeToConvert"/> is not <see cref="ExpressionResult"/>.</exception>
     public override ExpressionResult Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         if (typeToConvert != typeof(ExpressionResult))
@@ -64,6 +76,13 @@ public class ExpressionResultJsonConverter : JsonConverter<ExpressionResult>
         throw new JsonException("Unexpected end of JSON while reading object.");
     }
 
+    /// <summary>
+    /// Writes an <see cref="ExpressionResult"/> to JSON.
+    /// </summary>
+    /// <param name="writer">The writer to write to.</param>
+    /// <param name="value">The value to write.</param>
+    /// <param name="options">The options to use.</param>
+    /// <exception cref="NotSupportedException">Thrown if <paramref name="value"/> is not a supported type.</exception>
     public override void Write(Utf8JsonWriter writer, ExpressionResult value, JsonSerializerOptions options)
     {
         switch (value)

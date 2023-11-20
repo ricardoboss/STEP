@@ -12,7 +12,7 @@ public class FileResponseFunction : GenericFunction<StringResult, ExpressionResu
     protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
         new(OnlyString, "file"),
-        new(NullableNumber, "status", NullResult.Instance),
+        new(NullableNumber, "status", NullResult.Instance.ToExpressionNode()),
     };
 
     /// <inheritdoc />

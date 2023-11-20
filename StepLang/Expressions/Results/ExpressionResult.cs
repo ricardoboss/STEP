@@ -104,6 +104,22 @@ public abstract class ExpressionResult : IEquatable<ExpressionResult>
     /// <returns>A new <see cref="ExpressionResult"/> with the same <see cref="ResultType"/> (and value for <see cref="ValueExpressionResult{T}"/>s) as this result.</returns>
     public abstract ExpressionResult DeepClone();
 
+    /// <summary>
+    /// <para>
+    /// Determines whether the given <see cref="ExpressionResult"/> is considered <c>true</c> when used in a boolean context.
+    /// </para>
+    /// <para>
+    /// A value is considered <c>true</c> when:
+    /// <list type="bullet">
+    /// <item><description>It is a <see cref="BoolResult"/> with a value of <c>true</c>.</description></item>
+    /// <item><description>It is a <see cref="StringResult"/> with a value of <c>"1"</c>.</description></item>
+    /// <item><description>It is a <see cref="StringResult"/> that can be parsed to a <see cref="bool"/>.</description></item>
+    /// <item><description>It is a <see cref="NumberResult"/> with a value greater than <c>0</c>.</description></item>
+    /// </list>
+    /// All other values are considered <c>false</c>.
+    /// </para>
+    /// </summary>
+    /// <returns><c>true</c> if the given <see cref="ExpressionResult"/> is considered <c>true</c> when used in a boolean context, <c>false</c> otherwise.</returns>
     public bool IsTruthy()
     {
         return this switch
@@ -116,8 +132,11 @@ public abstract class ExpressionResult : IEquatable<ExpressionResult>
         };
     }
 
-    public static implicit operator ExpressionNode(ExpressionResult result) => result.ToExpressionNode();
-
+    /// <summary>
+    /// Converts this <see cref="ExpressionResult"/> to an <see cref="ExpressionNode"/>.
+    /// </summary>
+    /// <returns>An <see cref="ExpressionNode"/> representing this <see cref="ExpressionResult"/>.</returns>
+    /// <exception cref="InvalidOperationException">Thrown if this <see cref="ExpressionResult"/> cannot be converted to an <see cref="ExpressionNode"/>.</exception>
     public ExpressionNode ToExpressionNode()
     {
         return this switch

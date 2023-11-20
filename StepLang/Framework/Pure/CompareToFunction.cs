@@ -4,18 +4,27 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Pure;
 
+/// <summary>
+/// Compares two values.
+/// </summary>
 public class CompareToFunction : GenericFunction<ExpressionResult, ExpressionResult>
 {
+    /// <summary>
+    /// The identifier of the <see cref="CompareToFunction"/> function.
+    /// </summary>
     public const string Identifier = "compareTo";
 
+    /// <inheritdoc />
     protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
         new(AnyType, "a"),
         new(AnyType, "b"),
     };
 
+    /// <inheritdoc />
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyNumber;
 
+    /// <inheritdoc />
     protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
         ExpressionResult argument1, ExpressionResult argument2)
     {

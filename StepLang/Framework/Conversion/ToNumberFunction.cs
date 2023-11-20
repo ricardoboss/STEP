@@ -5,17 +5,26 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Conversion;
 
+/// <summary>
+/// Converts the given <see cref="StringResult"/> value to a <see cref="NumberResult"/>.
+/// </summary>
 public class ToNumberFunction : GenericFunction<StringResult, NumberResult>
 {
+    /// <summary>
+    /// The identifier of the <see cref="ToNumberFunction"/> function.
+    /// </summary>
     public const string Identifier = "toNumber";
 
+    /// <inheritdoc />
     protected override NativeParameter[] NativeParameters { get; } = {
         new(OnlyString, "value"),
         new(OnlyNumber, "radix", DefaultValue: LiteralExpressionNode.FromInt32(10)),
     };
 
+    /// <inheritdoc />
     protected override IEnumerable<ResultType> ReturnTypes { get; } = NullableNumber;
 
+    /// <inheritdoc />
     protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
         StringResult argument1, NumberResult argument2)
     {

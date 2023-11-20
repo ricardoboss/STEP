@@ -15,16 +15,10 @@ public class NullResult : ExpressionResult
     }
 
     /// <inheritdoc />
-    protected override bool EqualsInternal(ExpressionResult other)
-    {
-        return other is NullResult;
-    }
+    protected override bool EqualsInternal(ExpressionResult other) => other is NullResult;
 
     /// <inheritdoc />
-    public override ExpressionResult DeepClone()
-    {
-        return Instance;
-    }
+    public override ExpressionResult DeepClone() => Instance;
 
     /// <inheritdoc />
     public override string ToString() => "{null}";

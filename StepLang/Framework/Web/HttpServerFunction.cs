@@ -177,9 +177,9 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
         {
             try
             {
-                return callback.Invoke(callLocation, interpreter, new ExpressionNode[]
+                return callback.Invoke(callLocation, interpreter, new[]
                 {
-                    requestMap,
+                    requestMap.ToExpressionNode(),
                 });
             }
             catch (Exception e)

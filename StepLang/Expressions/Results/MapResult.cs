@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace StepLang.Expressions.Results;
 
 /// <summary>
@@ -37,8 +35,10 @@ public class MapResult : ValueExpressionResult<Dictionary<string, ExpressionResu
     /// <inheritdoc />
     public override string ToString() => $"{{{string.Join(", ", Value.Select(p => $"{p.Key}: {p.Value}"))}}}";
 
+    /// <summary>
+    /// Creates a new <see cref="MapResult"/> with the given string keys and <see cref="ExpressionResult"/>s.
+    /// </summary>
+    /// <param name="value">The map of string keys and <see cref="ExpressionResult"/>s to use.</param>
+    /// <returns>The created <see cref="MapResult"/>.</returns>
     public static implicit operator MapResult(Dictionary<string, ExpressionResult> value) => new(value);
-
-    [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "To prevent CA2225")]
-    public static MapResult FromDictionary(Dictionary<string, ExpressionResult> value) => value;
 }
