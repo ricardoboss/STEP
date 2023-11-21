@@ -11,7 +11,7 @@ namespace StepLang.Framework.Conversion;
 public class ToJsonFunction : GenericFunction<ExpressionResult>
 {
     /// <summary>
-    ///
+    /// The identifier of the <see cref="ToJsonFunction"/>.
     /// </summary>
     public const string Identifier = "toJson";
 
