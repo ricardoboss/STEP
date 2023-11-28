@@ -14,8 +14,8 @@ function fibonacci = (number n) {
 }
 
 print("Fibonacci of: ")
-string input = readline()
-number n = toNumber(input)
+string? input = readline()
+number? n = toNumber(input)
 if (n == null) {
 	println("Not a number: ", input)
 } else {
