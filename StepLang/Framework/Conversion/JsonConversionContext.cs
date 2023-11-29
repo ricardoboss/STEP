@@ -4,6 +4,4 @@ using StepLang.Expressions.Results;
 namespace StepLang.Framework.Conversion;
 
 [JsonSerializable(typeof(ExpressionResult))]
-public partial class JsonConversionContext : JsonSerializerContext
-{
-}
+public partial class JsonConversionContext : JsonSerializerContext;
