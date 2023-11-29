@@ -8,7 +8,7 @@ public class TokenQueue
 {
     private readonly LinkedList<Token> tokenList;
 
-    public TokenQueue() => tokenList = new();
+    public TokenQueue() => tokenList = [];
 
     public TokenQueue(IEnumerable<Token> tokens) => tokenList = new(tokens);
 

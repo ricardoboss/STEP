@@ -17,7 +17,7 @@ internal sealed class DefinitionList : IRenderable
         public IRenderable Definition { get; }
     }
 
-    public List<Item> Items { get; init; } = new();
+    public List<Item> Items { get; init; } = [];
 
     public int ItemIndent { get; init; } = 4;
 
