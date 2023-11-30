@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        path {
+            fill: none;
+            stroke: white;
+            stroke-linecap: round;
+            stroke-width: 7;
+            stroke-linejoin: round;
+        }
+    </style>
+
+    <rect fill="#222222" width="100" height="100" />
+
+    <!-- S -->
+    <path
+        d="M 45,15
+           A 10,5 0,0,0 5,15
+           C 4,25 25,25 25,25
+           C 25,25 46,25 45,35
+           A 10,5 0,0,1 5,35
+        "
+    />
+
+    <!-- T -->
+    <path
+        d="M 55,5
+           L 95,5
+           M 75,5
+           L 75,45
+        "
+    />
+
+    <!-- E -->
+    <path
+        d="M 5,55
+           L 45,55
+           M 5,55
+           L 5,95
+           M 5,75
+           L 40,75
+           M 5,95
+           L 45,95
+        "
+    />
+
+    <!-- P -->
+    <path
+        d="M 55,55
+           L 55,95
+           M 55,55
+           L 75,55
+           C 95,55 95,75 75,75
+           L 55,75
+        "
+    />
+</svg>
