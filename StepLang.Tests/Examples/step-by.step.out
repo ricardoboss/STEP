@@ -1,0 +1,6 @@
+parsed identifier: println
+parsed left parenthesis
+parsed string: "number: "
+parsed comma
+parsed number: 123
+parsed right parenthesis

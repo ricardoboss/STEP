@@ -21,3 +21,8 @@ reversed("🤷‍♂️"): 🤷‍♂️
 reversed("a🤷‍♂️b"): b🤷‍♂️a
 reversed("a👨‍👩‍👦‍👦b"): b👨‍👩‍👦‍👦a
 reversed("`•.,¸¸,.•´¯   🎀  𝒮𝒯𝐸𝒫  🎀   ¯´•.,¸¸,.•`"): `•.,¸¸,.•´¯   🎀  𝒫𝐸𝒯𝒮  🎀   ¯´•.,¸¸,.•`
+split("foo"): ["f", "o", "o"]
+split("foo bar"): ["f", "o", "o", " ", "b", "a", "r"]
+split("foo bar baz", " "): ["foo", "bar", "baz"]
+split("foo bar baz", "bar"): ["foo bar baz"]
+split("foo\nbar\nbaz\n", "\n"): ["foo", "bar", "baz"]
