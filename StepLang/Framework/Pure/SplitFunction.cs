@@ -1,22 +1,30 @@
-using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
+using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Pure;
 
-public class SplitFunction : NativeFunction
+public class SplitFunction : GenericFunction<StringResult, StringResult>
 {
     public const string Identifier = "split";
 
-    public override IEnumerable<(ResultType[] types, string identifier)> Parameters => new[] { (new[] { ResultType.Str }, "source"), (new[] { ResultType.Str }, "separator") };
-
-    public override async Task<ExpressionResult> EvaluateAsync(Interpreter interpreter, IReadOnlyList<Expression> arguments, CancellationToken cancellationToken = default)
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
-        CheckArgumentCount(arguments, 1, 2);
+        new(OnlyString, "source"),
+        new(OnlyString, "separator", new StringResult("")),
+    };
 
-        var source = await arguments[0].EvaluateAsync(interpreter, r => r.ExpectString().Value, cancellationToken);
-        var separator = arguments.Count == 2 ? await arguments[1].EvaluateAsync(interpreter, r => r.ExpectString().Value, cancellationToken) : "";
+    protected override ListResult Invoke(TokenLocation callLocation, Interpreter interpreter, StringResult argument1, StringResult argument2)
+    {
+        var source = argument1.Value;
+        var separator = argument2.Value;
 
-        return new ListResult(source.GraphemeSplit(separator).Select(s => new StringResult(s)).Cast<ExpressionResult>().ToList());
+        var parts = source
+            .GraphemeSplit(separator)
+            .Select(StringResult.FromString)
+            .Cast<ExpressionResult>()
+            .ToList();
+
+        return new(parts);
     }
 }

@@ -5,7 +5,7 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Other;
 
-public class FileReadFunction : FileFunction
+public class FileReadFunction : GenericFunction<StringResult>
 {
     public const string Identifier = "fileRead";
 
@@ -20,7 +20,7 @@ public class FileReadFunction : FileFunction
         StringResult argument1)
     {
         var path = argument1.Value;
-        var info = GetFileInfoFromPath(path);
+        var info = path.GetFileInfoFromPath();
 
         if (!info.Exists)
             return NullResult.Instance;
