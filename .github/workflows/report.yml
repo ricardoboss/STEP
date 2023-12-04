@@ -92,6 +92,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.x
+
       - name: Check Docblock Coverage
         id: docblocks
         run: dotnet tool update cranky -g && cranky --project ./StepLang/StepLang.csproj --github --set-exit-code --percentages 0,50
