@@ -6,7 +6,7 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Other;
 
-public class FileWriteFunction : FileFunction
+public class FileWriteFunction : GenericFunction<StringResult, StringResult, BoolResult>
 {
     public const string Identifier = "fileWrite";
 
@@ -23,7 +23,7 @@ public class FileWriteFunction : FileFunction
         var content = argument2.Value;
         var append = argument3.Value;
 
-        var info = GetFileInfoFromPath(path);
+        var info = path.GetFileInfoFromPath();
 
         try
         {

@@ -1,8 +1,8 @@
 namespace StepLang.Framework.Other;
 
-public abstract class FileFunction : NativeFunction
+public static class PathExtensions
 {
-    protected static FileInfo GetFileInfoFromPath(string path)
+    public static FileInfo GetFileInfoFromPath(this string path)
     {
         FileInfo fileInfo;
         if (Path.IsPathRooted(path))
