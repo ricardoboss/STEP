@@ -5,7 +5,22 @@ if (sourceCode == null) {
 	return 0
 }
 
+list digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+list lowercaseLetters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+list uppercaseLetters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+
+list letters = []
+
+foreach (string? letter in lowercaseLetters) {
+	doAdd(letters, letter)
+}
+
+foreach (string? letter in uppercaseLetters) {
+	doAdd(letters, letter)
+}
+
 string character
+string? identifier = null
 number index = 0
 while (index < length(sourceCode)) {
 	character = sourceCode[index]
@@ -16,17 +31,16 @@ while (index < length(sourceCode)) {
 		continue
 	}
 
-	if (contains(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], character)) {
+	if (contains(digits, character)) {
 		// parse number
-		number n = 0
-		number digit
-		while (contains(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], character)) {
-			digit = toNumber(character)
-			n = n * 10 + digit
+		string n = ""
+		while (contains(digits, character) || character == ".") {
+			n = n + character
 			index++
 			character = sourceCode[index]
 		}
-		println("parsed number: ", n)
+		number parsedNumber = toNumber(n)
+		println("parsed number: ", parsedNumber)
 		continue
 	}
 
@@ -60,6 +74,21 @@ while (index < length(sourceCode)) {
 	if (character == ",") {
 		println("parsed comma")
 		index++
+		continue
+	}
+
+	if (identifier == null) {
+		// parse identifier
+		identifier = ""
+		while (contains(lowercaseLetters, character) || contains(uppercaseLetters, character) || contains(digits, character) || character == "_") {
+			identifier = identifier + character
+			index++
+			character = sourceCode[index]
+		}
+
+		println("parsed identifier: ", identifier)
+
+		identifier = null
 		continue
 	}
 

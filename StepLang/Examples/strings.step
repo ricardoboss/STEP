@@ -30,3 +30,9 @@ println("reversed(\"a🤷‍♂️b\"): ", reversed("a🤷‍♂️b"))
 println("reversed(\"a👨‍👩‍👦‍👦b\"): ", reversed("a👨‍👩‍👦‍👦b"))
 
 println("reversed(\"`•.,¸¸,.•´¯   🎀  𝒮𝒯𝐸𝒫  🎀   ¯´•.,¸¸,.•`\"): ", reversed("`•.,¸¸,.•´¯   🎀  𝒮𝒯𝐸𝒫  🎀   ¯´•.,¸¸,.•`"))
+
+println("split(\"foo\"): ", split("foo"))
+println("split(\"foo bar\"): ", split("foo bar"))
+println("split(\"foo bar baz\", \" \"): ", split("foo bar baz", " "))
+println("split(\"foo bar baz\", \"bar\"): ", split("foo bar baz", "bar"))
+println("split(\"foo\\nbar\\nbaz\\n\", \"\\n\"): ", split("foo\nbar\nbaz\n", "\n"))
