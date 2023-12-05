@@ -45,7 +45,7 @@ jobs:
         run: dotnet build StepLang/StepLang.csproj -c Release
 
       - name: Generate Homepage
-        run: docfx StepLang.Homepage/docfx.json
+        run: docfx StepLang.Homepage/docfx.json --debug
 
       - name: Fix permissions
         run: |
