@@ -24,7 +24,7 @@ public class ExpressionResultJsonConverter : JsonConverter<ExpressionResult>
         };
     }
 
-    private static IList<ExpressionResult> ReadArray(ref Utf8JsonReader reader)
+    private static List<ExpressionResult> ReadArray(ref Utf8JsonReader reader)
     {
         var results = new List<ExpressionResult>();
         while (reader.Read())
@@ -42,7 +42,7 @@ public class ExpressionResultJsonConverter : JsonConverter<ExpressionResult>
         throw new JsonException("Unexpected end of JSON while reading array.");
     }
 
-    private static IDictionary<string, ExpressionResult> ReadObject(ref Utf8JsonReader reader)
+    private static Dictionary<string, ExpressionResult> ReadObject(ref Utf8JsonReader reader)
     {
         var results = new Dictionary<string, ExpressionResult>();
         while (reader.Read())

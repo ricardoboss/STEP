@@ -696,7 +696,7 @@ public class Parser
                 return ParseNegateExpression();
             case TokenType.ExclamationMarkSymbol:
                 return ParseNotExpression();
-            case TokenType.TypeName when tokens.Peek().Value.ToLowerInvariant() == "null":
+            case TokenType.TypeName when tokens.Peek().Value.Equals("null", StringComparison.OrdinalIgnoreCase):
                 var nullToken = tokens.Dequeue(TokenType.TypeName);
 
                 return new LiteralExpressionNode(new(TokenType.LiteralNull, nullToken.Value, nullToken.Location));
@@ -705,25 +705,25 @@ public class Parser
         }
     }
 
-    private ExpressionNode ParseNotExpression()
+    private NotExpressionNode ParseNotExpression()
     {
         var exclamationMark = tokens.Dequeue(TokenType.ExclamationMarkSymbol);
 
         var expression = ParseExpression();
 
-        return new NotExpressionNode(exclamationMark, expression);
+        return new(exclamationMark, expression);
     }
 
-    private ExpressionNode ParseNegateExpression()
+    private NegateExpressionNode ParseNegateExpression()
     {
         var minus = tokens.Dequeue(TokenType.MinusSymbol);
 
         var expression = ParseExpression();
 
-        return new NegateExpressionNode(minus, expression);
+        return new(minus, expression);
     }
 
-    private ExpressionNode ParseMapExpression()
+    private MapExpressionNode ParseMapExpression()
     {
         var openCurlyBrace = tokens.Dequeue(TokenType.OpeningCurlyBracket);
 
@@ -745,10 +745,10 @@ public class Parser
 
         _ = tokens.Dequeue(TokenType.ClosingCurlyBracket);
 
-        return new MapExpressionNode(openCurlyBrace, map);
+        return new(openCurlyBrace, map);
     }
 
-    private ExpressionNode ParseListExpression()
+    private ListExpressionNode ParseListExpression()
     {
         var openSquareBracket = tokens.Dequeue(TokenType.OpeningSquareBracket);
 
@@ -764,14 +764,14 @@ public class Parser
 
         _ = tokens.Dequeue(TokenType.ClosingSquareBracket);
 
-        return new ListExpressionNode(openSquareBracket, list);
+        return new(openSquareBracket, list);
     }
 
-    private ExpressionNode ParseIdentifierExpression()
+    private IdentifierExpressionNode ParseIdentifierExpression()
     {
         var identifier = tokens.Dequeue(TokenType.Identifier);
 
-        return new IdentifierExpressionNode(identifier);
+        return new(identifier);
     }
 
     private CallExpressionNode ParseFunctionCallExpression()

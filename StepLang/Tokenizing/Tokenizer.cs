@@ -230,7 +230,7 @@ public class Tokenizer
         if (bool.TryParse(tokenValue, out _))
             return FinalizeToken(TokenType.LiteralBoolean);
 
-        if (tokenValue.ToUpperInvariant() == "NULL")
+        if (tokenValue.Equals("null", StringComparison.OrdinalIgnoreCase))
             return FinalizeToken(TokenType.LiteralNull);
 
         if (!allowIdentifier)
