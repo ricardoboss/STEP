@@ -92,6 +92,9 @@ jobs:
   sign-macos:
     name: Sign macOS binary
 
+    # only sign on main branch
+    if: github.ref == 'refs/heads/main'
+
     needs:
       - build
 
