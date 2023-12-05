@@ -43,7 +43,7 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
         else if (argument1 is NumberResult portNumber)
         {
             port = portNumber;
-            options = new Dictionary<string, ExpressionResult>();
+            options = new();
         }
         else
             throw new InvalidResultTypeException(callLocation, argument1, ResultType.Number, ResultType.Map);
@@ -81,7 +81,7 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
         }
     }
 
-    private static async Task Serve(TokenLocation callLocation, Interpreter interpreter, int port, IDictionary<string, ExpressionResult> options, FunctionDefinition callback, CancellationToken cancellationToken)
+    private static async Task Serve(TokenLocation callLocation, Interpreter interpreter, int port, Dictionary<string, ExpressionResult> options, FunctionDefinition callback, CancellationToken cancellationToken)
     {
         var url = $"http://localhost:{port}/";
 
@@ -159,7 +159,7 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
             HandleResponse(callLocation, context, responseMap);
         }
 
-        private async Task<IDictionary<string, ExpressionResult>> HandleRequestAsync(TokenLocation callLocation, HttpListenerContext context, CancellationToken cancellationToken)
+        private async Task<IReadOnlyDictionary<string, ExpressionResult>> HandleRequestAsync(TokenLocation callLocation, HttpListenerContext context, CancellationToken cancellationToken)
         {
             var request = context.Request;
             var requestMap = await GetRequestMapAsync(request, cancellationToken);
@@ -184,7 +184,7 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
             }
             catch (Exception e)
             {
-                return new MapResult(new Dictionary<string, ExpressionResult>
+                return new MapResult(new()
                 {
                     {
                         "status", new NumberResult(500)
@@ -196,7 +196,7 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
             }
         }
 
-        private void HandleResponse(TokenLocation callLocation, HttpListenerContext context, IDictionary<string, ExpressionResult> responseMap)
+        private void HandleResponse(TokenLocation callLocation, HttpListenerContext context, IReadOnlyDictionary<string, ExpressionResult> responseMap)
         {
             var response = context.Response;
 
@@ -229,12 +229,12 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
             response.Close();
         }
 
-        private static IDictionary<string, ExpressionResult> GetResponseMap(ExpressionResult result)
+        private static Dictionary<string, ExpressionResult> GetResponseMap(ExpressionResult result)
         {
             if (result is MapResult map)
                 return map.Value;
 
-            return new Dictionary<string, ExpressionResult>
+            return new()
             {
                 ["body"] = result,
             };

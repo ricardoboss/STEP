@@ -2,12 +2,12 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.Expressions.Results;
 
-public class MapResult : ValueExpressionResult<IDictionary<string, ExpressionResult>>
+public class MapResult : ValueExpressionResult<Dictionary<string, ExpressionResult>>
 {
-    public static MapResult Empty => new(new Dictionary<string, ExpressionResult>());
+    public static MapResult Empty => new(new());
 
     /// <inheritdoc />
-    public MapResult(IDictionary<string, ExpressionResult> value) : base(ResultType.Map, value)
+    public MapResult(Dictionary<string, ExpressionResult> value) : base(ResultType.Map, value)
     {
     }
 

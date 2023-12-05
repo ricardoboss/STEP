@@ -35,7 +35,7 @@ public class FetchFunction : GenericFunction<StringResult, MapResult>
         return new StringResult(body);
     }
 
-    private static HttpResponseMessage Fetch(TokenLocation callLocation, string url, IDictionary<string, ExpressionResult> options)
+    private static HttpResponseMessage Fetch(TokenLocation callLocation, string url, Dictionary<string, ExpressionResult> options)
     {
         using var client = new HttpClient();
 
