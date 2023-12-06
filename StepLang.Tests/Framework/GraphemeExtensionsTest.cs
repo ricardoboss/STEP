@@ -56,6 +56,8 @@ public class GraphemeExtensionsTest
 
     [Theory]
     [InlineData("abc", "", new[] { "a", "b", "c" })]
+    [InlineData("a,b,c", ",", new[] { "a", "b", "c" })]
+    [InlineData("a and b and c", " and ", new[] { "a", "b", "c" })]
     [SuppressMessage("Performance", "CA1861:Avoid constant arrays as arguments", Justification = "Array is only created once")]
     public void TestGraphemeSplit(string str, string separator, IEnumerable<string> expected)
     {

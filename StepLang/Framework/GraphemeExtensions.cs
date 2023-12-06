@@ -13,7 +13,7 @@ internal static class GraphemeExtensions
         return count;
     }
 
-    public static string GraphemeSubstring(this string str, int start, int length)
+    public static string GraphemeSubstring(this string str, int start, int? length = null)
     {
         if (length <= 0)
             return string.Empty;
@@ -26,7 +26,7 @@ internal static class GraphemeExtensions
         if (start < 0 || start >= subjectGraphemeLength)
             return string.Empty;
 
-        length = Math.Min(length, subjectGraphemeLength - start);
+        length = Math.Min(length ?? int.MaxValue, subjectGraphemeLength - start);
 
         var enumerator = StringInfo.GetTextElementEnumerator(str);
         var count = 0;
@@ -55,34 +55,37 @@ internal static class GraphemeExtensions
 
     public static IEnumerable<string> GraphemeSplit(this string str, string separator)
     {
-        var enumerator = StringInfo.GetTextElementEnumerator(str);
-        var separatorLength = separator.GraphemeLength();
+        var strNormalized = str.Normalize(NormalizationForm.FormD);
+        var separatorNormalized = separator.Normalize(NormalizationForm.FormD);
 
-        // yield all text elements one by one if the separator length is 0
-        // otherwise check if the text element is the separator and yield all text elements up to the separator
-        // then repeat until the end of the string
-
-        var buffer = new StringBuilder();
-        while (enumerator.MoveNext())
+        if (string.IsNullOrEmpty(str))
         {
-            var current = enumerator.GetTextElement();
-            if (separatorLength == 0)
-            {
-                yield return current;
-            }
-            else if (current == separator)
-            {
-                yield return buffer.ToString();
-                buffer.Clear();
-            }
-            else
-            {
-                buffer.Append(current);
-            }
+            yield return string.Empty;
+            yield break;
         }
 
-        if (buffer.Length > 0)
-            yield return buffer.ToString();
+        if (string.IsNullOrEmpty(separatorNormalized))
+        {
+            var enumerator = StringInfo.GetTextElementEnumerator(str);
+            while (enumerator.MoveNext())
+                yield return enumerator.GetTextElement();
+
+            yield break;
+        }
+
+        var startIdx = 0;
+        var separatorIdx = strNormalized.GraphemeIndexOf(separatorNormalized);
+        var separatorLength = separatorNormalized.GraphemeLength();
+
+        while (separatorIdx != -1)
+        {
+            yield return strNormalized.GraphemeSubstring(startIdx, separatorIdx - startIdx);
+            startIdx = separatorIdx + separatorLength;
+            separatorIdx = strNormalized.GraphemeIndexOf(separatorNormalized, startIdx);
+        }
+
+        if (startIdx < strNormalized.GraphemeLength())
+            yield return strNormalized.GraphemeSubstring(startIdx);
     }
 
     public static string? GraphemeAt(this string str, int index)

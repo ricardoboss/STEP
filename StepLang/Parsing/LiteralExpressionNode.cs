@@ -21,6 +21,7 @@ public sealed record LiteralExpressionNode(Token Literal) : ExpressionNode
 
     public static implicit operator LiteralExpressionNode(bool literal) => new(new Token(TokenType.LiteralBoolean, literal ? "true" : "false"));
 
+    public static LiteralExpressionNode Null => new(new Token(TokenType.LiteralNull, "null"));
     public static LiteralExpressionNode FromString(string value) => value;
     public static LiteralExpressionNode FromDouble(double value) => value;
     public static LiteralExpressionNode FromInt32(int value) => value;
