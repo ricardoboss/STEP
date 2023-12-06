@@ -28,11 +28,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="Examples\*.step.*">
+      <None Update="Examples\**\*.step.*">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
 
-      <None Update="Failures\*.step*">
+      <None Update="Failures\**\*.step*">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>

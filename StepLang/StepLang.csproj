@@ -34,7 +34,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="Examples\*.step">
+        <None Update="Examples\**\*.step">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Examples\**\*.txt">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
     </ItemGroup>
