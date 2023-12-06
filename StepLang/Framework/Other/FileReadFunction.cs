@@ -20,7 +20,7 @@ public class FileReadFunction : GenericFunction<StringResult>
         StringResult argument1)
     {
         var path = argument1.Value;
-        var info = path.GetFileInfoFromPath();
+        var info = callLocation.GetFileInfoFromPath(path);
 
         if (!info.Exists)
             return NullResult.Instance;

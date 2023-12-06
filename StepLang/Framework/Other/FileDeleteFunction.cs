@@ -18,7 +18,7 @@ public class FileDeleteFunction : GenericFunction<StringResult>
     protected override BoolResult Invoke(TokenLocation callLocation, Interpreter interpreter, StringResult argument1)
     {
         var path = argument1.Value;
-        var info = path.GetFileInfoFromPath();
+        var info = callLocation.GetFileInfoFromPath(path);
 
         try
         {

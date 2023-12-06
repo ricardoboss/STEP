@@ -23,7 +23,7 @@ public class FileWriteFunction : GenericFunction<StringResult, StringResult, Boo
         var content = argument2.Value;
         var append = argument3.Value;
 
-        var info = path.GetFileInfoFromPath();
+        var info = callLocation.GetFileInfoFromPath(path);
 
         try
         {
