@@ -37,3 +37,16 @@ number v3
 foreach (k3: v3 in m) {
 	print(k3, ": ", v3, EOL)
 }
+
+// call a function with another foreach loop
+list nums = [1, 2, 3, 4, 5]
+function f = (number x) {
+	foreach (number n in [x]) {
+		println(n)
+	}
+}
+
+foreach (number x in nums) {
+	f(x)
+	println(x)
+}

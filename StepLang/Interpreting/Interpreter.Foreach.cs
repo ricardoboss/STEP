@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using StepLang.Expressions.Results;
 using StepLang.Parsing;
 using StepLang.Tokenizing;
@@ -7,38 +6,56 @@ namespace StepLang.Interpreting;
 
 public partial class Interpreter
 {
+    private void InitializeVariable(IVariableDeclarationNode declaration, ExpressionResult value)
+    {
+        var variable = declaration.EvaluateUsing(this);
+        var location = declaration.Types.First().Location;
+
+        variable.Assign(location, value);
+    }
+
     public void Execute(ForeachDeclareKeyDeclareValueStatementNode statementNode)
     {
-        var keyVariable = statementNode.KeyDeclaration.EvaluateUsing(this);
-        var keyLocation = statementNode.KeyDeclaration.Types.First().Location;
-        var valueVariable = statementNode.ValueDeclaration.EvaluateUsing(this);
-        var valueLocation = statementNode.ValueDeclaration.Types.First().Location;
         var collection = statementNode.Collection.EvaluateUsing(this);
         var collectionLocation = statementNode.Collection.Location;
 
-        RunForeachLoop(keyLocation, keyVariable, valueLocation, valueVariable, collectionLocation, collection, statementNode.Body);
+        RunForeachLoop(
+            e => InitializeVariable(statementNode.KeyDeclaration, e),
+            e => InitializeVariable(statementNode.ValueDeclaration, e),
+            collectionLocation,
+            collection,
+            statementNode.Body
+        );
     }
 
     public void Execute(ForeachDeclareKeyValueStatementNode statementNode)
     {
-        var keyVariable = statementNode.KeyDeclaration.EvaluateUsing(this);
-        var keyLocation = statementNode.KeyDeclaration.Types.First().Location;
         var valueVariable = CurrentScope.GetVariable(statementNode.ValueIdentifier);
         var valueLocation = statementNode.ValueIdentifier.Location;
         var collection = statementNode.Collection.EvaluateUsing(this);
         var collectionLocation = statementNode.Collection.Location;
 
-        RunForeachLoop(keyLocation, keyVariable, valueLocation, valueVariable, collectionLocation, collection, statementNode.Body);
+        RunForeachLoop(
+            e => InitializeVariable(statementNode.KeyDeclaration, e),
+            e => valueVariable.Assign(valueLocation, e),
+            collectionLocation,
+            collection,
+            statementNode.Body
+        );
     }
 
     public void Execute(ForeachDeclareValueStatementNode statementNode)
     {
-        var valueVariable = statementNode.ValueDeclaration.EvaluateUsing(this);
-        var valueLocation = statementNode.ValueDeclaration.Types.First().Location;
         var collection = statementNode.Collection.EvaluateUsing(this);
         var collectionLocation = statementNode.Collection.Location;
 
-        RunForeachLoop(null, null, valueLocation, valueVariable, collectionLocation, collection, statementNode.Body);
+        RunForeachLoop(
+            null,
+            e => InitializeVariable(statementNode.ValueDeclaration, e),
+            collectionLocation,
+            collection,
+            statementNode.Body
+        );
     }
 
     public void Execute(ForeachKeyValueStatementNode statementNode)
@@ -50,19 +67,27 @@ public partial class Interpreter
         var collection = statementNode.Collection.EvaluateUsing(this);
         var collectionLocation = statementNode.Collection.Location;
 
-        RunForeachLoop(keyLocation, keyVariable, valueLocation, valueVariable, collectionLocation, collection, statementNode.Body);
+        RunForeachLoop(
+            e => keyVariable.Assign(keyLocation, e),
+            e => valueVariable.Assign(valueLocation, e),
+            collectionLocation,
+            collection,
+            statementNode.Body
+        );
     }
 
     public void Execute(ForeachKeyDeclareValueStatementNode statementNode)
     {
-        var keyVariable = CurrentScope.GetVariable(statementNode.KeyIdentifier);
-        var keyLocation = statementNode.KeyIdentifier.Location;
-        var valueVariable = statementNode.ValueDeclaration.EvaluateUsing(this);
-        var valueLocation = statementNode.ValueDeclaration.Types.First().Location;
         var collection = statementNode.Collection.EvaluateUsing(this);
         var collectionLocation = statementNode.Collection.Location;
 
-        RunForeachLoop(keyLocation, keyVariable, valueLocation, valueVariable, collectionLocation, collection, statementNode.Body);
+        RunForeachLoop(
+            null,
+            e => InitializeVariable(statementNode.ValueDeclaration, e),
+            collectionLocation,
+            collection,
+            statementNode.Body
+        );
     }
 
     public void Execute(ForeachValueStatementNode statementNode)
@@ -72,7 +97,13 @@ public partial class Interpreter
         var collection = statementNode.Collection.EvaluateUsing(this);
         var collectionLocation = statementNode.Collection.Location;
 
-        RunForeachLoop(null, null, valueLocation, valueVariable, collectionLocation, collection, statementNode.Body);
+        RunForeachLoop(
+            null,
+            e => valueVariable.Assign(valueLocation, e),
+            collectionLocation,
+            collection,
+            statementNode.Body
+        );
     }
 
     private static IEnumerable<(ExpressionResult, ExpressionResult)> ConvertToForeachEnumerable(TokenLocation evaluationLocation, ExpressionResult collection)
@@ -103,18 +134,16 @@ public partial class Interpreter
         }
     }
 
-    private void RunForeachLoop(TokenLocation? keyAssignmentLocation, Variable? key, TokenLocation valueAssignmentLocation, Variable value, TokenLocation collectionLocation, ExpressionResult collection, IReadOnlyCollection<StatementNode> body)
+    private void RunForeachLoop(Action<ExpressionResult>? updateKey, Action<ExpressionResult> updateValue, TokenLocation collectionLocation, ExpressionResult collection, IReadOnlyCollection<StatementNode> body)
     {
-        Debug.Assert(keyAssignmentLocation is null || key is not null);
-
         var pairs = ConvertToForeachEnumerable(collectionLocation, collection);
 
         foreach (var (keyValue, valueValue) in pairs)
         {
             PushScope();
 
-            key?.Assign(keyAssignmentLocation!, keyValue);
-            value.Assign(valueAssignmentLocation, valueValue);
+            updateKey?.Invoke(keyValue);
+            updateValue(valueValue);
 
             Execute(body);
 
