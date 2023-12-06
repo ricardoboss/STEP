@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using StepLang.Framework;
 
 namespace StepLang.Tests.Framework;
@@ -55,6 +56,7 @@ public class GraphemeExtensionsTest
 
     [Theory]
     [InlineData("abc", "", new[] { "a", "b", "c" })]
+    [SuppressMessage("Performance", "CA1861:Avoid constant arrays as arguments", Justification = "Array is only created once")]
     public void TestGraphemeSplit(string str, string separator, IEnumerable<string> expected)
     {
         var actual = str.GraphemeSplit(separator);
