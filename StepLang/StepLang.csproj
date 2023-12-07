@@ -33,7 +33,7 @@
         </PackageReference>
     </ItemGroup>
 
-    <ItemGroup>
+    <ItemGroup Condition="'$(Configuration)' != 'Release'">
         <None Update="Examples\**\*.step">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
