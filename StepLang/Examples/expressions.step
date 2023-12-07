@@ -30,3 +30,8 @@ function f = (bool val) {
 
 println(f(true) || f(false))
 println(f(false) && f(true))
+
+println(true && "it's true")
+println(false && "it's false")
+println(true || "it's true")
+println(false || "it's false")
