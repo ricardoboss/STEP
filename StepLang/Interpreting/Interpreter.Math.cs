@@ -196,24 +196,26 @@ public partial class Interpreter
 
     public ExpressionResult Evaluate(LogicalAndExpressionNode expressionNode)
     {
-        var (left, right, location) = EvaluateBinary(expressionNode);
+        var left = expressionNode.Left.EvaluateUsing(this);
+        if (left is not BoolResult aBool)
+            throw new IncompatibleExpressionOperandsException(expressionNode.Location, left, "logical and");
 
-        return left switch
-        {
-            BoolResult aBool when right is BoolResult bBool => (BoolResult)(aBool && bBool),
-            _ => throw new IncompatibleExpressionOperandsException(location, left, right, "logical and"),
-        };
+        if (aBool)
+            return expressionNode.Right.EvaluateUsing(this);
+
+        return BoolResult.False;
     }
 
     public ExpressionResult Evaluate(LogicalOrExpressionNode expressionNode)
     {
-        var (left, right, location) = EvaluateBinary(expressionNode);
+        var left = expressionNode.Left.EvaluateUsing(this);
+        if (left is not BoolResult aBool)
+            throw new IncompatibleExpressionOperandsException(expressionNode.Location, left, "logical or");
 
-        return left switch
-        {
-            BoolResult aBool when right is BoolResult bBool => (BoolResult)(aBool || bBool),
-            _ => throw new IncompatibleExpressionOperandsException(location, left, right, "logical or"),
-        };
+        if (aBool)
+            return BoolResult.True;
+
+        return expressionNode.Right.EvaluateUsing(this);
     }
 
     public ExpressionResult Evaluate(BitwiseXorExpressionNode expressionNode)

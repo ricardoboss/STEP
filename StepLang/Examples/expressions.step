@@ -21,3 +21,12 @@ println(!(true && !false))
 
 // discard:
 _ = 1
+
+// short circuit:
+function f = (bool val) {
+	println("f invoked")
+	return val
+}
+
+println(f(true) || f(false))
+println(f(false) && f(true))
