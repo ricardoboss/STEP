@@ -47,7 +47,7 @@ jobs:
       - name: Fix permissions
         run: |
           chmod -c -R +rX "StepLang.Homepage/_site/" | while read line; do
-            echo "::warning title=Invalid file permissions automatically fixed::$line"
+            echo "::debug title=Invalid file permissions automatically fixed::$line"
           done
 
       - name: Upload Site artifact
