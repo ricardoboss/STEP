@@ -15,7 +15,7 @@ on:
       - 'StepLang.Homepage/**'
 
 jobs:
-  job:
+  build:
     name: Build Homepage
 
     runs-on: ubuntu-latest
@@ -62,6 +62,8 @@ jobs:
     runs-on: ubuntu-latest
 
     if: github.ref == 'refs/heads/main'
+
+    needs: [ build ]
 
     permissions:
       pages: write      # to deploy to Pages
