@@ -52,7 +52,16 @@ public class StringResult : ComparableValueExpressionResult<string>
     /// </summary>
     /// <param name="value">The value to convert.</param>
     /// <returns>The converted value.</returns>
+    /// <seealso cref="FromString"/>
     public static implicit operator StringResult(string value) => new(value);
+
+    /// <summary>
+    /// Converts a <see cref="string"/> to a <see cref="StringResult"/>.
+    /// </summary>
+    /// <param name="value">The value to convert.</param>
+    /// <returns>The converted value.</returns>
+    /// <seealso cref="op_Implicit"/>
+    public static StringResult FromString(string value) => value;
 
     /// <summary>
     /// Concatenates two <see cref="StringResult"/>s to a new <see cref="StringResult"/>.
