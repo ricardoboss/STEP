@@ -7,11 +7,13 @@ public partial class Interpreter
 {
     public void Execute(WhileStatementNode statementNode)
     {
-        PushScope();
-
         while (ShouldLoop())
         {
+            PushScope();
+
             Execute(statementNode.Body);
+
+            var loopScope = PopScope();
 
             if (BreakDepth > 0)
             {
@@ -20,17 +22,13 @@ public partial class Interpreter
                 break;
             }
 
-            if (CurrentScope.TryGetResult(out var resultValue, out var resultLocation))
+            if (loopScope.TryGetResult(out var resultValue, out var resultLocation))
             {
-                PopScope();
-
                 CurrentScope.SetResult(resultLocation, resultValue);
 
                 return;
             }
         }
-
-        PopScope();
 
         return;
 

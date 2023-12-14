@@ -7,6 +7,17 @@ while (i != 10) {
 
 print("done", EOL)
 
+// declare a variable inside the scope a loop
+while (i > 0) {
+	number j = i
+	while (j > 0) {
+		number k = j ** 2
+		print(k, EOL)
+		j--
+	}
+	i--
+}
+
 list l = [1, 2, 3, 4]
 
 // iterate over the list values
