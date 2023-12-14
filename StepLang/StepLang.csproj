@@ -11,10 +11,6 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
-    <PropertyGroup Condition=" '$(Configuration)' != 'Debug' ">
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    </PropertyGroup>
-
     <PropertyGroup Condition=" '$(Configuration)' == 'Test' ">
       <DefineConstants>TRACE;RELEASE</DefineConstants>
       <Optimize>true</Optimize>
