@@ -54,7 +54,8 @@
     "fileMetadataFiles": [],
     "template": [
       "default",
-      "modern"
+      "modern",
+      "templates/step"
     ],
     "postProcessors": [],
     "keepFileLink": false,
