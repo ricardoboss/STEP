@@ -7,14 +7,21 @@
         <LangVersion>default</LangVersion>
         <AnalysisMode>All</AnalysisMode>
         <AssemblyName>step</AssemblyName>
+        <Configurations>Debug;Release;Test</Configurations>
+        <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <PropertyGroup Condition=" '$(Configuration)' != 'Debug' ">
         <DebugType>embedded</DebugType>
 
         <!-- TODO: Treat errors as warnings and remove partial trimming as soon as https://github.com/spectreconsole/spectre.console/issues/955 is resolved -->
         <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
         <TrimMode>partial</TrimMode>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Test' ">
+      <DefineConstants>TRACE;RELEASE</DefineConstants>
+      <Optimize>true</Optimize>
     </PropertyGroup>
 
     <ItemGroup>

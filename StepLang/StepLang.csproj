@@ -6,10 +6,17 @@
         <Nullable>enable</Nullable>
         <LangVersion>default</LangVersion>
         <AnalysisMode>All</AnalysisMode>
+        <Configurations>Debug;Release;Test</Configurations>
+        <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <PropertyGroup Condition=" '$(Configuration)' != 'Debug' ">
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Test' ">
+      <DefineConstants>TRACE;RELEASE</DefineConstants>
+      <Optimize>true</Optimize>
     </PropertyGroup>
 
     <ItemGroup>
