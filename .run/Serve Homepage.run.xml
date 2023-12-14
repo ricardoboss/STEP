@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Serve Homepage" type="CompoundRunConfigurationType">
+    <toRun name="_browser-livereload" type="js.build_tools.npm" />
+    <toRun name="build:watch" type="js.build_tools.npm" />
+    <method v="2" />
+  </configuration>
+</component>
