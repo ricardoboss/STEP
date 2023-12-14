@@ -63,7 +63,7 @@ jobs:
 
     if: github.ref == 'refs/heads/main'
 
-    needs: [ build ]
+    needs: build
 
     permissions:
       pages: write      # to deploy to Pages
@@ -75,11 +75,8 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Download Site Artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: site
-
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v3
+        with:
+          artifact_name: site
