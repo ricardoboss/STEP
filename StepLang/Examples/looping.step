@@ -18,6 +18,15 @@ while (i > 0) {
 	i--
 }
 
+// use truthy value as condition
+i = 3
+while (i) {
+	print(i, EOL)
+	i--
+}
+
+println(i, " is falsey")
+
 list l = [1, 2, 3, 4]
 
 // iterate over the list values

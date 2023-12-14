@@ -1,4 +1,3 @@
-using StepLang.Expressions.Results;
 using StepLang.Parsing;
 
 namespace StepLang.Interpreting;
@@ -36,7 +35,7 @@ public partial class Interpreter
         {
             var result = statementNode.Condition.EvaluateUsing(this);
 
-            return result is BoolResult { Value: true };
+            return result.IsTruthy();
         }
     }
 }
