@@ -88,9 +88,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      total: ${{ steps.docblocks.outputs.total }}
-      documented: ${{ steps.docblocks.outputs.documented }}
-      badge: ${{ steps.docblocks.outputs.badge }}
+      badge: ${{ steps.docblocks.outputs.badge || steps.doc-failure.outputs.badge }}
 
     steps:
       - uses: actions/checkout@v4
@@ -105,6 +103,12 @@ jobs:
       - name: Check Docblock Coverage
         id: docblocks
         run: dotnet tool update cranky -g && cranky --project ./StepLang/StepLang.csproj --github --set-exit-code --percentages 0,50
+
+      - name: Provide failure badge
+        id: doc-failure
+        if: failure()
+        run: |
+          echo "badge=https://img.shields.io/badge/Documentation%20Coverage-failed-red.svg?style=flat" >> "$GITHUB_OUTPUT"
 
   report:
     name: Report
