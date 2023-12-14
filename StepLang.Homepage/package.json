@@ -1,8 +1,9 @@
 {
   "scripts": {
-    "browser-livereload": "browser-sync start --server _site/ --port 8080 --files='_site/*'",
-    "watch": "start /min npm run browser-livereload & npm-watch build",
-    "build": "docfx build"
+    "_browser-livereload": "browser-sync start --server _site/ --port 8080 --files='_site/*'",
+    "serve": "start /min npm run _browser-livereload & npm-watch build",
+    "build": "docfx build --debug",
+    "build:watch": "npm-watch build"
   },
   "watch": {
     "build": {
