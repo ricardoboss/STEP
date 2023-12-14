@@ -15,19 +15,10 @@ on:
       - 'StepLang.Homepage/**'
 
 jobs:
-  deploy:
-    name: Deploy Homepage
+  job:
+    name: Build Homepage
 
     runs-on: ubuntu-latest
-
-    permissions:
-      pages: write      # to deploy to Pages
-      id-token: write   # to verify the deployment originates from an appropriate source
-
-    # Deploy to the github-pages environment
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Checkout
@@ -51,7 +42,7 @@ jobs:
         run: dotnet build StepLang/StepLang.csproj -c Release
 
       - name: Generate Homepage
-        run: docfx StepLang.Homepage/docfx.json --debug
+        run: docfx StepLang.Homepage/docfx.json
 
       - name: Fix permissions
         run: |
@@ -59,12 +50,34 @@ jobs:
             echo "::warning title=Invalid file permissions automatically fixed::$line"
           done
 
-      - name: Upload Pages artifact
+      - name: Upload Site artifact
         uses: actions/upload-pages-artifact@v2
         with:
+          name: site
           path: StepLang.Homepage/_site
 
+  deploy:
+    name: Deploy Homepage
+
+    runs-on: ubuntu-latest
+
+    if: github.ref == 'refs/heads/main'
+
+    permissions:
+      pages: write      # to deploy to Pages
+      id-token: write   # to verify the deployment originates from an appropriate source
+
+    # Deploy to the github-pages environment
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Download Site Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: site
+
       - name: Deploy to GitHub Pages
-        if: github.ref == 'refs/heads/main'
         id: deployment
         uses: actions/deploy-pages@v2
