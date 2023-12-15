@@ -27,6 +27,7 @@ public class PrintFunction : NativeFunction
             .ToList();
 
         Print(stdOut, string.Join("", stringArgs));
+        stdOut.Flush();
 
         return VoidResult.Instance;
     }
