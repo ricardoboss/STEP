@@ -71,7 +71,9 @@ all contributors.
    - Create small commits and put the idea behind each change in the commit message
 
 3. Write tests
-   - To add integration tests, create a new file in the `StepLang/Examples` folder, then add a file with the same name and the extension `.out` with the expected output
+   - To add integration tests:
+     - create a new file in the `StepLang/Examples` folder
+     - Add a file with the same name and the extension `.step.out` with the expected output in the `StepLang.Tests/Examples` folder
    - To add unit tests, create new Xunit tests in the appropriate `StepLang.Tests` folder
 
 ### Coding Guidelines
