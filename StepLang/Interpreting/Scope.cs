@@ -39,6 +39,7 @@ public class Scope
         CreateVariable(SubstringFunction.Identifier, new SubstringFunction().ToResult());
         CreateVariable(IndexOfFunction.Identifier, new IndexOfFunction().ToResult());
         CreateVariable(ContainsFunction.Identifier, new ContainsFunction().ToResult());
+        CreateVariable(ContainsKeyFunction.Identifier, new ContainsKeyFunction().ToResult());
         CreateVariable(StartsWithFunction.Identifier, new StartsWithFunction().ToResult());
         CreateVariable(EndsWithFunction.Identifier, new EndsWithFunction().ToResult());
         CreateVariable(PrintFunction.Identifier, new PrintFunction().ToResult());
