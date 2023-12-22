@@ -70,3 +70,63 @@ foreach (number x in nums) {
 	f(x)
 	println(x)
 }
+
+// break out of a loop
+while (true) {
+	break
+
+	println("should not get printed")
+}
+
+// continue to the next iteration
+foreach (number n in [1, 2, 3, 4, 5]) {
+	if (n == 3) {
+		continue
+
+		println("should not get printed")
+	}
+
+	println(n)
+}
+
+// nested continue
+foreach (number n in [1, 2, 3, 4, 5]) {
+	foreach (number n2 in [1, 2, 3, 4, 5]) {
+		if (n2 >= 3) {
+			continue
+
+			println("should not get printed")
+		}
+
+		println(n2)
+	}
+
+	if (n >= 3) {
+		continue
+
+		println("should not get printed")
+	}
+
+	println(n)
+}
+
+// nested break
+foreach (number n in [1, 2, 3, 4, 5]) {
+	foreach (number n2 in [1, 2, 3, 4, 5]) {
+		if (n2 == 3) {
+			break
+
+			println("should not get printed")
+		}
+
+		println(n2)
+	}
+
+	if (n == 3) {
+		break
+
+		println("should not get printed")
+	}
+
+	println(n)
+}
