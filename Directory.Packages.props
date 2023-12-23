@@ -9,6 +9,7 @@
     <PackageVersion Include="cmdwtf.BuildTimestampGenerator" Version="1.0.1" />
     <PackageVersion Include="GitVersion.MsBuild" Version="5.12.0" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+    <PackageVersion Include="SmartAnalyzers.CSharpExtensions.Annotations" Version="4.2.9" />
     <PackageVersion Include="Spectre.Console.Cli" Version="0.47.0" />
     <PackageVersion Include="Spectre.Console.Testing" Version="0.47.0" />
     <PackageVersion Include="System.Linq.Async" Version="6.0.1" />

@@ -9,11 +9,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="System.Linq.Async" />
+      <ProjectReference Include="..\StepLang\StepLang.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\StepLang\StepLang.csproj" />
+        <AdditionalFiles Include="../CSharpExtensions.json" />
     </ItemGroup>
 
 </Project>
