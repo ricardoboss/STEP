@@ -5,6 +5,12 @@
     <InvariantGlobalization>true</InvariantGlobalization>
     <IsTrimmable>true</IsTrimmable>
   </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' != 'Debug' ">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsNotAsErrors>CS1591</WarningsNotAsErrors>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageVersion Include="cmdwtf.BuildTimestampGenerator" Version="1.0.1" />
     <PackageVersion Include="GitVersion.MsBuild" Version="5.12.0" />

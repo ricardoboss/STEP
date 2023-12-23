@@ -2,53 +2,229 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.Tokenizing;
 
+/// <summary>
+/// The token type determines how the token is interpreted by the parser.
+/// Tokens are the building blocks of a program and their type determines their behaviour.
+/// </summary>
 public enum TokenType
 {
+    /// <summary>
+    /// A type name is a string of characters that can be used for types.
+    /// </summary>
     TypeName,
+
+    /// <summary>
+    /// An identifier is a string of characters that can be used for variable names.
+    /// </summary>
     Identifier,
+
+    /// <summary>
+    /// The equals symbol <c>=</c>
+    /// </summary>
     EqualsSymbol,
+
+    /// <summary>
+    /// A literal string is a string of characters surrounded by double quotes.
+    /// </summary>
     LiteralString,
+
+    /// <summary>
+    /// A literal number is a string of characters that represent a number.
+    /// </summary>
     LiteralNumber,
+
+    /// <summary>
+    /// A literal boolean is either <c>true</c> or <c>false</c>.
+    /// </summary>
     LiteralBoolean,
+
+    /// <summary>
+    /// A literal <c>null</c> value.
+    /// </summary>
     LiteralNull,
+
+    /// <summary>
+    /// Whitespace is a string of spaces or tabs.
+    /// </summary>
     Whitespace,
+
+    /// <summary>
+    /// A new line is a string of characters that represent a new line (<c>\n</c> or <c>\r\n</c>).
+    /// </summary>
     NewLine,
+
+    /// <summary>
+    /// The <c>if</c> keyword.
+    /// </summary>
     IfKeyword,
+
+    /// <summary>
+    /// The <c>else</c> keyword.
+    /// </summary>
     ElseKeyword,
+
+    /// <summary>
+    /// The <c>while</c> keyword.
+    /// </summary>
     WhileKeyword,
+
+    /// <summary>
+    /// The <c>break</c> keyword.
+    /// </summary>
     BreakKeyword,
+
+    /// <summary>
+    /// The <c>continue</c> keyword.
+    /// </summary>
     ContinueKeyword,
+
+    /// <summary>
+    /// The <c>{</c> symbol.
+    /// </summary>
     OpeningCurlyBracket,
+
+    /// <summary>
+    /// The <c>}</c> symbol.
+    /// </summary>
     ClosingCurlyBracket,
+
+    /// <summary>
+    /// The <c>(</c> symbol.
+    /// </summary>
     OpeningParentheses,
+
+    /// <summary>
+    /// The <c>)</c> symbol.
+    /// </summary>
     ClosingParentheses,
+
+    /// <summary>
+    /// The <c>,</c> symbol.
+    /// </summary>
     CommaSymbol,
+
+    /// <summary>
+    /// The <c>&gt;</c> symbol.
+    /// </summary>
     GreaterThanSymbol,
+
+    /// <summary>
+    /// The <c>&lt;</c> symbol.
+    /// </summary>
     LessThanSymbol,
+
+    /// <summary>
+    /// The <c>+</c> symbol.
+    /// </summary>
     PlusSymbol,
+
+    /// <summary>
+    /// The <c>-</c> symbol.
+    /// </summary>
     MinusSymbol,
+
+    /// <summary>
+    /// The <c>*</c> symbol.
+    /// </summary>
     AsteriskSymbol,
+
+    /// <summary>
+    /// The <c>/</c> symbol.
+    /// </summary>
     SlashSymbol,
+
+    /// <summary>
+    /// The <c>%</c> symbol.
+    /// </summary>
     PercentSymbol,
+
+    /// <summary>
+    /// The <c>|</c> symbol.
+    /// </summary>
     PipeSymbol,
+
+    /// <summary>
+    /// The <c>&amp;</c> symbol.
+    /// </summary>
     AmpersandSymbol,
+
+    /// <summary>
+    /// The <c>!</c> symbol.
+    /// </summary>
     ExclamationMarkSymbol,
+
+    /// <summary>
+    /// The <c>^</c> symbol.
+    /// </summary>
     HatSymbol,
+
+    /// <summary>
+    /// The <c>?</c> symbol.
+    /// </summary>
     QuestionMarkSymbol,
+
+    /// <summary>
+    /// The <c>return</c> keyword.
+    /// </summary>
     ReturnKeyword,
+
+    /// <summary>
+    /// The <c>_</c> symbol.
+    /// </summary>
     UnderscoreSymbol,
+
+    /// <summary>
+    /// A line comment is a string of characters that represent a comment.
+    /// </summary>
     LineComment,
+
+    /// <summary>
+    /// The <c>[</c> symbol.
+    /// </summary>
     OpeningSquareBracket,
+
+    /// <summary>
+    /// The <c>]</c> symbol.
+    /// </summary>
     ClosingSquareBracket,
+
+    /// <summary>
+    /// The <c>:</c> symbol.
+    /// </summary>
     ColonSymbol,
+
+    /// <summary>
+    /// The <c>import</c> keyword.
+    /// </summary>
     ImportKeyword,
+
+    /// <summary>
+    /// The <c>foreach</c> keyword.
+    /// </summary>
     ForEachKeyword,
+
+    /// <summary>
+    /// The <c>in</c> keyword.
+    /// </summary>
     InKeyword,
+
+    /// <summary>
+    /// Represents the end of a file.
+    /// </summary>
     EndOfFile,
 }
 
+/// <summary>
+/// Extension methods for <see cref="TokenType"/>.
+/// </summary>
 public static class TokenTypes
 {
+    /// <summary>
+    /// Returns a string that can be used to display the token type for development purposes or for user feedback.
+    /// </summary>
+    /// <param name="type">The token type.</param>
+    /// <returns>A string that can be used to display the token type for development purposes or for user feedback.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the token type is unknown.</exception>
     [ExcludeFromCodeCoverage]
     public static string ToDisplay(this TokenType type)
     {
@@ -99,6 +275,12 @@ public static class TokenTypes
         };
     }
 
+    /// <summary>
+    /// Returns a string that represents the same token in source code.
+    /// </summary>
+    /// <param name="type">The token type.</param>
+    /// <returns>A string that represents the same token in source code.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the token type does not have a static code representation.</exception>
     public static string ToCode(this TokenType? type)
     {
         return type switch
@@ -139,11 +321,22 @@ public static class TokenTypes
         };
     }
 
+    /// <summary>
+    /// Checks if the given string is a known type name. Case insensitive.
+    /// </summary>
+    /// <param name="name">The string to check.</param>
+    /// <returns><c>true</c> if the given string is a known type name; otherwise, <c>false</c>.</returns>
     public static bool IsKnownTypeName(this string name)
     {
         return name.ToUpperInvariant() is "STRING" or "NUMBER" or "BOOL" or "FUNCTION" or "LIST" or "MAP";
     }
 
+    /// <summary>
+    /// Checks if the given string is a known keyword. Case insensitive.
+    /// </summary>
+    /// <param name="name">The string to check.</param>
+    /// <param name="type">The token type of the keyword.</param>
+    /// <returns><c>true</c> if the given string is a known keyword; otherwise, <c>false</c>.</returns>
     public static bool TryParseKeyword(this string name, [NotNullWhen(true)] out TokenType? type)
     {
         switch (name.ToUpperInvariant())
@@ -181,6 +374,12 @@ public static class TokenTypes
         return false;
     }
 
+    /// <summary>
+    /// Checks if the given character is a known symbol.
+    /// </summary>
+    /// <param name="symbol">The character to check.</param>
+    /// <param name="type">The token type of the symbol.</param>
+    /// <returns><c>true</c> if the given character is a known symbol; otherwise, <c>false</c>.</returns>
     public static bool TryParseSymbol(this char symbol, [NotNullWhen(true)] out TokenType? type)
     {
         switch (symbol)
@@ -308,6 +507,11 @@ public static class TokenTypes
         TokenType.PercentSymbol,
     };
 
+    /// <summary>
+    /// Checks if the token type is a mathematical operation.
+    /// </summary>
+    /// <param name="type">The token type.</param>
+    /// <returns><c>true</c> if the token type is a mathematical operation; otherwise, <c>false</c>.</returns>
     public static bool IsMathematicalOperation(this TokenType type)
     {
         return type switch

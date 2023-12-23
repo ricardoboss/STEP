@@ -4,7 +4,7 @@
       "src": [
         {
           "files": [
-            "bin/**/*.dll"
+            "bin/**/*.*"
           ]
         }
       ],
@@ -13,8 +13,8 @@
       "disableGitFeatures": false,
       "disableDefaultFilter": false,
       "noRestore": false,
-      "namespaceLayout": "flattened",
-      "memberLayout": "samePage",
+      "namespaceLayout": "nested",
+      "memberLayout": "separatePages",
       "EnumSortOrder": "alphabetic",
       "allowCompilationErrors": false
     }
@@ -46,8 +46,8 @@
     "globalMetadata": {
       "_appTitle": "STEP Programming Language",
       "_appName": "STEP",
-      "_appLogoPath": "images/logo.svg",
-      "_appFaviconPath": "images/logo.svg",
+      "_appLogoPath": "images/icon-logo.svg",
+      "_appFaviconPath": "images/icon-logo.svg",
       "_enableSearch": true
     },
     "globalMetadataFiles": [],

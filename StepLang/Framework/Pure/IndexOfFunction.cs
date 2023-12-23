@@ -4,27 +4,42 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Pure;
 
+/// <summary>
+/// Returns the index of the given value in the given subject.
+/// </summary>
 public class IndexOfFunction : GenericFunction<ExpressionResult, ExpressionResult>
 {
+    /// <summary>
+    /// The identifier of the <see cref="IndexOfFunction"/> function.
+    /// </summary>
     public const string Identifier = "indexOf";
 
+    /// <inheritdoc />
     protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
         new(new[] { ResultType.List, ResultType.Map, ResultType.Str }, "subject"),
         new(AnyValueType, "value"),
     };
 
+    /// <inheritdoc />
     protected override IEnumerable<ResultType> ReturnTypes { get; } = new[]
     {
         ResultType.Null, ResultType.Number, ResultType.Str,
     };
 
+    /// <inheritdoc />
     protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
         ExpressionResult argument1, ExpressionResult argument2)
     {
         return GetResult(argument1, argument2);
     }
 
+    /// <summary>
+    /// Returns the index of the given value in the given subject.
+    /// </summary>
+    /// <param name="subject">A list, map, or string to look through.</param>
+    /// <param name="value">The value to search for.</param>
+    /// <returns>The index/key of the given value in the given subject.</returns>
     internal static ExpressionResult GetResult(ExpressionResult subject, ExpressionResult value)
     {
         return subject switch

@@ -8,10 +8,7 @@
         <AnalysisMode>All</AnalysisMode>
         <Configurations>Debug;Release;Test</Configurations>
         <Platforms>AnyCPU</Platforms>
-    </PropertyGroup>
-
-    <PropertyGroup Condition=" '$(Configuration)' != 'Debug' ">
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Test' ">
@@ -55,7 +52,7 @@
         </PropertyGroup>
 
         <ItemGroup>
-            <BuiltDlls Include="bin/**/*.dll" />
+            <BuiltDlls Include="bin/**/*.*" />
         </ItemGroup>
 
         <Copy SourceFiles="@(BuiltDlls)" DestinationFolder="$(HomepageBinDir)\%(RecursiveDir)" SkipUnchangedFiles="false" />

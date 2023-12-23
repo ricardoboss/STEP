@@ -5,13 +5,18 @@ using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Framework.Conversion;
 using StepLang.Interpreting;
-using StepLang.Parsing;
 using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Web;
 
+/// <summary>
+/// Starts an HTTP server.
+/// </summary>
 public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResult>
 {
+    /// <summary>
+    /// The identifier of the <see cref="HttpServerFunction"/> function.
+    /// </summary>
     public const string Identifier = "httpServer";
 
     /// <inheritdoc />
@@ -177,9 +182,9 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
         {
             try
             {
-                return callback.Invoke(callLocation, interpreter, new ExpressionNode[]
+                return callback.Invoke(callLocation, interpreter, new[]
                 {
-                    requestMap,
+                    requestMap.ToExpressionNode(),
                 });
             }
             catch (Exception e)

@@ -3,8 +3,12 @@ using StepLang.Tooling.Formatting.Analyzers.Results;
 
 namespace StepLang.Tooling.Formatting.Analyzers;
 
+/// <summary>
+/// Checks the indentation of code blocks and provides a fix if it is not correct.
+/// </summary>
 public class IndentationAnalyzer : IStringAnalyzer
 {
+    /// <inheritdoc />
     public Task<StringAnalysisResult> AnalyzeAsync(string input, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();

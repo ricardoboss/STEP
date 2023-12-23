@@ -2,6 +2,15 @@ using StepLang.Tooling.Formatting.Analyzers;
 
 namespace StepLang.Tooling.Formatting.AnalyzerSet;
 
+/// <summary>
+/// A set of default analyzers.
+/// </summary>
+/// <seealso cref="FileEncodingAnalyzer"/>
+/// <seealso cref="LineEndingAnalyzer"/>
+/// <seealso cref="TrailingWhitespaceAnalyzer"/>
+/// <seealso cref="IndentationAnalyzer"/>
+/// <seealso cref="KeywordCasingAnalyzer"/>
+/// <seealso cref="TypeNameCasingAnalyzer"/>
 public class DefaultAnalyzerSet : BaseAnalyzerSet
 {
     /// <inheritdoc />

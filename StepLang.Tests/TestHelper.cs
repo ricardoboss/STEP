@@ -1,3 +1,4 @@
+using StepLang.Expressions.Results;
 using StepLang.Interpreting;
 using StepLang.Parsing;
 using StepLang.Tokenizing;
@@ -28,4 +29,6 @@ public static class TestHelper
 
         root.Accept(interpreter);
     }
+
+    public static ListResult ListFrom(params ExpressionResult[] results) => new(results.ToList());
 }
