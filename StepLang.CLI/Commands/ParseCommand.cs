@@ -79,7 +79,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
         public void Visit(ImportNode importNode)
         {
-            parent.AddNode("Import: " + importNode.PathToken.StringValue);
+            _ = parent.AddNode("Import: " + importNode.PathToken.StringValue);
         }
     }
 
@@ -119,15 +119,15 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var keyDeclarationNode = node.AddNode("KeyDeclaration:");
             var keyExpressionBuilder = new VariableDeclarationTreeBuilder(keyDeclarationNode);
-            statementNode.KeyDeclaration.EvaluateUsing(keyExpressionBuilder);
+            _ = statementNode.KeyDeclaration.EvaluateUsing(keyExpressionBuilder);
 
             var valueDeclarationNode = node.AddNode("ValueDeclaration:");
             var valueExpressionBuilder = new VariableDeclarationTreeBuilder(valueDeclarationNode);
-            statementNode.ValueDeclaration.EvaluateUsing(valueExpressionBuilder);
+            _ = statementNode.ValueDeclaration.EvaluateUsing(valueExpressionBuilder);
 
             var expressionNode = node.AddNode("Expression:");
             var expressionBuilder = new ExpressionTreeBuilder(expressionNode);
-            statementNode.Collection.EvaluateUsing(expressionBuilder);
+            _ = statementNode.Collection.EvaluateUsing(expressionBuilder);
 
             var bodyNode = node.AddNode("Body:");
             var statementTreeBuilder = new StatementTreeBuilder(bodyNode);
@@ -146,13 +146,13 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var keyDeclarationNode = node.AddNode("KeyDeclaration:");
             var keyExpressionBuilder = new VariableDeclarationTreeBuilder(keyDeclarationNode);
-            statementNode.KeyDeclaration.EvaluateUsing(keyExpressionBuilder);
+            _ = statementNode.KeyDeclaration.EvaluateUsing(keyExpressionBuilder);
 
             node.AddNode("ValueIdentifier: " + statementNode.ValueIdentifier.ToString().EscapeMarkup());
 
             var expressionNode = node.AddNode("Expression:");
             var expressionBuilder = new ExpressionTreeBuilder(expressionNode);
-            statementNode.Collection.EvaluateUsing(expressionBuilder);
+            _ = statementNode.Collection.EvaluateUsing(expressionBuilder);
 
             var bodyNode = node.AddNode("Body:");
             var statementTreeBuilder = new StatementTreeBuilder(bodyNode);
@@ -166,11 +166,11 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var valueDeclarationNode = node.AddNode("ValueDeclaration:");
             var valueExpressionBuilder = new VariableDeclarationTreeBuilder(valueDeclarationNode);
-            statementNode.ValueDeclaration.EvaluateUsing(valueExpressionBuilder);
+            _ = statementNode.ValueDeclaration.EvaluateUsing(valueExpressionBuilder);
 
             var expressionNode = node.AddNode("Expression:");
             var expressionBuilder = new ExpressionTreeBuilder(expressionNode);
-            statementNode.Collection.EvaluateUsing(expressionBuilder);
+            _ = statementNode.Collection.EvaluateUsing(expressionBuilder);
 
             var bodyNode = node.AddNode("Body:");
             var statementTreeBuilder = new StatementTreeBuilder(bodyNode);
@@ -187,7 +187,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var expressionNode = node.AddNode("Expression:");
             var expressionBuilder = new ExpressionTreeBuilder(expressionNode);
-            statementNode.Collection.EvaluateUsing(expressionBuilder);
+            _ = statementNode.Collection.EvaluateUsing(expressionBuilder);
 
             var bodyNode = node.AddNode("Body:");
             var statementTreeBuilder = new StatementTreeBuilder(bodyNode);
@@ -203,11 +203,11 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var valueDeclarationNode = node.AddNode("ValueDeclaration:");
             var valueExpressionBuilder = new VariableDeclarationTreeBuilder(valueDeclarationNode);
-            statementNode.ValueDeclaration.EvaluateUsing(valueExpressionBuilder);
+            _ = statementNode.ValueDeclaration.EvaluateUsing(valueExpressionBuilder);
 
             var expressionNode = node.AddNode("Expression:");
             var expressionBuilder = new ExpressionTreeBuilder(expressionNode);
-            statementNode.Collection.EvaluateUsing(expressionBuilder);
+            _ = statementNode.Collection.EvaluateUsing(expressionBuilder);
 
             var bodyNode = node.AddNode("Body:");
             var statementTreeBuilder = new StatementTreeBuilder(bodyNode);
@@ -223,7 +223,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var expressionNode = node.AddNode("Expression:");
             var expressionBuilder = new ExpressionTreeBuilder(expressionNode);
-            statementNode.Collection.EvaluateUsing(expressionBuilder);
+            _ = statementNode.Collection.EvaluateUsing(expressionBuilder);
 
             var bodyNode = node.AddNode("Body:");
             var statementTreeBuilder = new StatementTreeBuilder(bodyNode);
@@ -238,11 +238,11 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var indexNode = node.AddNode("Index:");
             var indexTreeBuilder = new ExpressionTreeBuilder(indexNode);
-            statementNode.IndexExpression.EvaluateUsing(indexTreeBuilder);
+            _ = statementNode.IndexExpression.EvaluateUsing(indexTreeBuilder);
 
             var expressionNode = node.AddNode("Expression:");
             var expressionTreeBuilder = new ExpressionTreeBuilder(expressionNode);
-            statementNode.ValueExpression.EvaluateUsing(expressionTreeBuilder);
+            _ = statementNode.ValueExpression.EvaluateUsing(expressionTreeBuilder);
         }
 
         public void Execute(IfElseIfStatementNode statementNode)
@@ -251,7 +251,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var conditionNode = node.AddNode("Condition:");
             var expressionTreeBuilder = new ExpressionTreeBuilder(conditionNode);
-            statementNode.Condition.EvaluateUsing(expressionTreeBuilder);
+            _ = statementNode.Condition.EvaluateUsing(expressionTreeBuilder);
 
             var body = node.AddNode("Body:");
             var statementTreeBuilder = new StatementTreeBuilder(body);
@@ -260,7 +260,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var elseIfConditionNode = node.AddNode("ElseIfCondition:");
             var elseIfExpressionTreeBuilder = new ExpressionTreeBuilder(elseIfConditionNode);
-            statementNode.ElseCondition.EvaluateUsing(elseIfExpressionTreeBuilder);
+            _ = statementNode.ElseCondition.EvaluateUsing(elseIfExpressionTreeBuilder);
 
             var elseIfBody = node.AddNode("ElseBody:");
             var elseIfStatementTreeBuilder = new StatementTreeBuilder(elseIfBody);
@@ -274,7 +274,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var conditionNode = node.AddNode("Condition:");
             var expressionTreeBuilder = new ExpressionTreeBuilder(conditionNode);
-            statementNode.Condition.EvaluateUsing(expressionTreeBuilder);
+            _ = statementNode.Condition.EvaluateUsing(expressionTreeBuilder);
 
             var body = node.AddNode("Body:");
             var statementTreeBuilder = new StatementTreeBuilder(body);
@@ -293,7 +293,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var conditionNode = node.AddNode("Condition:");
             var expressionTreeBuilder = new ExpressionTreeBuilder(conditionNode);
-            statementNode.Condition.EvaluateUsing(expressionTreeBuilder);
+            _ = statementNode.Condition.EvaluateUsing(expressionTreeBuilder);
 
             var body = node.AddNode("Body:");
             var statementTreeBuilder = new StatementTreeBuilder(body);
@@ -305,7 +305,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
         {
             var node = root.AddNode("ReturnExpressionStatement:");
             var expressionTreeBuilder = new ExpressionTreeBuilder(node);
-            statementNode.Expression.EvaluateUsing(expressionTreeBuilder);
+            _ = statementNode.Expression.EvaluateUsing(expressionTreeBuilder);
         }
 
         public void Execute(VariableAssignmentNode statementNode)
@@ -315,7 +315,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var expressionNode = node.AddNode("Expression:");
             var expressionTreeBuilder = new ExpressionTreeBuilder(expressionNode);
-            statementNode.Expression.EvaluateUsing(expressionTreeBuilder);
+            _ = statementNode.Expression.EvaluateUsing(expressionTreeBuilder);
         }
 
         public void Execute(WhileStatementNode statementNode)
@@ -324,7 +324,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var conditionNode = node.AddNode("Condition:");
             var expressionTreeBuilder = new ExpressionTreeBuilder(conditionNode);
-            statementNode.Condition.EvaluateUsing(expressionTreeBuilder);
+            _ = statementNode.Condition.EvaluateUsing(expressionTreeBuilder);
 
             var body = node.AddNode("Body:");
             var statementTreeBuilder = new StatementTreeBuilder(body);
@@ -351,7 +351,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
         public void Execute(VariableDeclarationStatementNode statementNode)
         {
             var variableDeclarationTreeBuilder = new VariableDeclarationTreeBuilder(root);
-            statementNode.Declaration.EvaluateUsing(variableDeclarationTreeBuilder);
+            _ = statementNode.Declaration.EvaluateUsing(variableDeclarationTreeBuilder);
         }
 
         public void Execute(ReturnStatementNode statementNode)
@@ -365,7 +365,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var expressionNode = node.AddNode("Expression:");
             var expressionTreeBuilder = new ExpressionTreeBuilder(expressionNode);
-            discardStatementNode.Expression.EvaluateUsing(expressionTreeBuilder);
+            _ = discardStatementNode.Expression.EvaluateUsing(expressionTreeBuilder);
         }
     }
 
@@ -405,7 +405,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var expressionNode = node.AddNode("Expression:");
             var expressionTreeBuilder = new ExpressionTreeBuilder(expressionNode);
-            variableDeclarationNode.Expression.EvaluateUsing(expressionTreeBuilder);
+            _ = variableDeclarationNode.Expression.EvaluateUsing(expressionTreeBuilder);
 
             return DummyVariable;
         }
@@ -419,7 +419,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var expressionNode = node.AddNode("Expression:");
             var expressionTreeBuilder = new ExpressionTreeBuilder(expressionNode);
-            variableDeclarationNode.Expression.EvaluateUsing(expressionTreeBuilder);
+            _ = variableDeclarationNode.Expression.EvaluateUsing(expressionTreeBuilder);
 
             return DummyVariable;
         }
@@ -445,7 +445,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
                 var argumentsNode = node.AddNode("Arguments:");
                 var evaluator = new ExpressionTreeBuilder(argumentsNode);
                 foreach (var argument in expressionNode.Arguments)
-                    argument.EvaluateUsing(evaluator);
+                    _ = argument.EvaluateUsing(evaluator);
             }
             else
                 node.AddNode("No arguments");
@@ -460,7 +460,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             var argumentsNode = node.AddNode("Parameters:");
             var variableDeclarationTreeBuilder = new VariableDeclarationTreeBuilder(argumentsNode);
             foreach (var argument in expressionNode.Parameters)
-                argument.EvaluateUsing(variableDeclarationTreeBuilder);
+                _ = argument.EvaluateUsing(variableDeclarationTreeBuilder);
 
             var bodyNode = node.AddNode("Body:");
             var statementTreeBuilder = new StatementTreeBuilder(bodyNode);
@@ -485,7 +485,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             var entryTreeBuilder = new ExpressionTreeBuilder(entriesNode);
             foreach (var entry in expressionNode.Expressions)
             {
-                entry.EvaluateUsing(entryTreeBuilder);
+                _ = entry.EvaluateUsing(entryTreeBuilder);
             }
 
             return VoidResult.Instance;
@@ -507,7 +507,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             {
                 var entryNode = entriesNode.AddNode(kvp.Key.ToString().EscapeMarkup());
                 var entriesTreeBuilder = new ExpressionTreeBuilder(entryNode);
-                kvp.Value.EvaluateUsing(entriesTreeBuilder);
+                _ = kvp.Value.EvaluateUsing(entriesTreeBuilder);
             }
 
             return VoidResult.Instance;
@@ -556,7 +556,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             _ = node.AddNode("Operator: -");
 
             var expressionNodeTreeBuilder = new ExpressionTreeBuilder(node);
-            expressionNode.Expression.EvaluateUsing(expressionNodeTreeBuilder);
+            _ = expressionNode.Expression.EvaluateUsing(expressionNodeTreeBuilder);
 
             return VoidResult.Instance;
         }
@@ -730,7 +730,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             _ = node.AddNode("Operator: !");
 
             var expressionNodeTreeBuilder = new ExpressionTreeBuilder(node);
-            expressionNode.Expression.EvaluateUsing(expressionNodeTreeBuilder);
+            _ = expressionNode.Expression.EvaluateUsing(expressionNodeTreeBuilder);
 
             return VoidResult.Instance;
         }
@@ -743,7 +743,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             var definitionParameters = definitionNode.AddNode("Parameters:");
             var definitionParametersTreeBuilder = new VariableDeclarationTreeBuilder(definitionParameters);
             foreach (var parameter in expressionNode.Parameters)
-                parameter.EvaluateUsing(definitionParametersTreeBuilder);
+                _ = parameter.EvaluateUsing(definitionParametersTreeBuilder);
 
             var definitionBody = definitionNode.AddNode("Body:");
             var definitionBodyTreeBuilder = new StatementTreeBuilder(definitionBody);
@@ -753,7 +753,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             var argumentsNode = node.AddNode("Arguments:");
             var argumentsTreeBuilder = new ExpressionTreeBuilder(argumentsNode);
             foreach (var argument in expressionNode.CallArguments)
-                argument.EvaluateUsing(argumentsTreeBuilder);
+                _ = argument.EvaluateUsing(argumentsTreeBuilder);
 
             return VoidResult.Instance;
         }
@@ -765,7 +765,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             var argumentsNode = node.AddNode("Parameters:");
             var variableDeclarationTreeBuilder = new VariableDeclarationTreeBuilder(argumentsNode);
             foreach (var argument in expressionNode.Definition.Parameters)
-                argument.EvaluateUsing(variableDeclarationTreeBuilder);
+                _ = argument.EvaluateUsing(variableDeclarationTreeBuilder);
 
             return VoidResult.Instance;
         }
@@ -776,11 +776,11 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var expression = node.AddNode("Expression:");
             var expressionNodeTreeBuilder = new ExpressionTreeBuilder(expression);
-            expressionNode.Left.EvaluateUsing(expressionNodeTreeBuilder);
+            _ = expressionNode.Left.EvaluateUsing(expressionNodeTreeBuilder);
 
             var index = node.AddNode("Index:");
             var indexNodeTreeBuilder = new ExpressionTreeBuilder(index);
-            expressionNode.Index.EvaluateUsing(indexNodeTreeBuilder);
+            _ = expressionNode.Index.EvaluateUsing(indexNodeTreeBuilder);
 
             return VoidResult.Instance;
         }
@@ -791,11 +791,11 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var leftNode = parent.AddNode("Left:");
             var leftExpressionTreeBuilder = new ExpressionTreeBuilder(leftNode);
-            node.Left.EvaluateUsing(leftExpressionTreeBuilder);
+            _ = node.Left.EvaluateUsing(leftExpressionTreeBuilder);
 
             var rightNode = parent.AddNode("Right:");
             var rightExpressionTreeBuilder = new ExpressionTreeBuilder(rightNode);
-            node.Right.EvaluateUsing(rightExpressionTreeBuilder);
+            _ = node.Right.EvaluateUsing(rightExpressionTreeBuilder);
         }
     }
 }

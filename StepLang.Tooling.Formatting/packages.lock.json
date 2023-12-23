@@ -8,15 +8,6 @@
         "resolved": "8.0.0",
         "contentHash": "B3etT5XQ2nlWkZGO2m/ytDYrOmSsQG1XNBaM6ZYlX5Ch/tDrMFadr0/mK6gjZwaQc55g+5+WZMw4Cz3m8VEF7g=="
       },
-      "System.Linq.Async": {
-        "type": "Direct",
-        "requested": "[6.0.1, )",
-        "resolved": "6.0.1",
-        "contentHash": "0YhHcaroWpQ9UCot3Pizah7ryAzQhNvobLMSxeDIGmnXfkQn8u5owvpOH0K6EVB+z9L7u6Cc4W17Br/+jyttEQ==",
-        "dependencies": {
-          "Microsoft.Bcl.AsyncInterfaces": "6.0.0"
-        }
-      },
       "Microsoft.Bcl.AsyncInterfaces": {
         "type": "Transitive",
         "resolved": "6.0.0",
@@ -25,6 +16,7 @@
       "steplang": {
         "type": "Project",
         "dependencies": {
+          "SmartAnalyzers.CSharpExtensions.Annotations": "[4.2.9, )",
           "System.Linq.Async": "[6.0.1, )",
           "cmdwtf.BuildTimestampGenerator": "[1.0.1, )"
         }
@@ -34,6 +26,21 @@
         "requested": "[1.0.1, )",
         "resolved": "1.0.1",
         "contentHash": "2XZIjeMNLYzeUyuxxn1IrWm04J4MiP4NnTyJHU3ToLXIBltAObpp3r3WIS6xHzwqGsex3YEZSXYxxpn2J1/o1Q=="
+      },
+      "SmartAnalyzers.CSharpExtensions.Annotations": {
+        "type": "CentralTransitive",
+        "requested": "[4.2.9, )",
+        "resolved": "4.2.9",
+        "contentHash": "L1N4gILMCYsMVzrWQWHjEzJ8mjQEhZXaG2769ZrP+er6kh9DwHmoFSynmCmlocUQ6fEjAIFwpRv12Hce4O+r5w=="
+      },
+      "System.Linq.Async": {
+        "type": "CentralTransitive",
+        "requested": "[6.0.1, )",
+        "resolved": "6.0.1",
+        "contentHash": "0YhHcaroWpQ9UCot3Pizah7ryAzQhNvobLMSxeDIGmnXfkQn8u5owvpOH0K6EVB+z9L7u6Cc4W17Br/+jyttEQ==",
+        "dependencies": {
+          "Microsoft.Bcl.AsyncInterfaces": "6.0.0"
+        }
       }
     }
   }

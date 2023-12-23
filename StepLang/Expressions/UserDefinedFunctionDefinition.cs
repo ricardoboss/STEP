@@ -39,7 +39,7 @@ public class UserDefinedFunctionDefinition : FunctionDefinition
         // evaluate args _before_ pushing scope
         var evaldArgs = EvaluateArguments(interpreter, arguments).ToList();
 
-        interpreter.PushScope();
+        _ = interpreter.PushScope();
 
         // create the parameter variables in the new scope
         CreateArgumentVariables(interpreter, evaldArgs);
