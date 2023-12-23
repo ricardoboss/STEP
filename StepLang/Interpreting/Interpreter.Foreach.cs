@@ -140,30 +140,35 @@ public partial class Interpreter
 
         foreach (var (keyValue, valueValue) in pairs)
         {
-            PushScope();
+            var loopScope = PushScope();
 
+            // update/initialize key and value in loop scope
             updateKey?.Invoke(keyValue);
             updateValue(valueValue);
 
-            Execute(body);
-
-            if (BreakDepth > 0)
+            foreach (var statement in body)
             {
-                BreakDepth--;
+                Execute(statement);
 
-                PopScope();
-
-                break;
+                if (loopScope.ShouldReturn() || loopScope.ShouldBreak() || loopScope.ShouldContinue())
+                    break;
             }
 
-            if (CurrentScope.TryGetResult(out var resultValue, out var resultLocation))
-            {
-                PopScope();
+            _ = PopScope();
 
+            // handle returns to parent scope
+            if (loopScope.TryGetResult(out var resultValue, out var resultLocation))
+            {
                 CurrentScope.SetResult(resultLocation, resultValue);
 
-                break;
+                return;
             }
+
+            // break out of loop
+            if (loopScope.ShouldBreak())
+                return;
+
+            // continue is implicitly handled
         }
     }
 }

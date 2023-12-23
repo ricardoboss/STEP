@@ -8,25 +8,31 @@ public partial class Interpreter
     {
         while (ShouldLoop())
         {
-            PushScope();
+            var loopScope = PushScope();
 
-            Execute(statementNode.Body);
-
-            var loopScope = PopScope();
-
-            if (BreakDepth > 0)
+            foreach (var statement in statementNode.Body)
             {
-                BreakDepth--;
+                Execute(statement);
 
-                break;
+                if (loopScope.ShouldReturn() || loopScope.ShouldBreak() || loopScope.ShouldContinue())
+                    break;
             }
 
+            _ = PopScope();
+
+            // handle returns to parent scope
             if (loopScope.TryGetResult(out var resultValue, out var resultLocation))
             {
                 CurrentScope.SetResult(resultLocation, resultValue);
 
                 return;
             }
+
+            // break out of loop
+            if (loopScope.ShouldBreak())
+                return;
+
+            // continue is implicitly handled
         }
 
         return;

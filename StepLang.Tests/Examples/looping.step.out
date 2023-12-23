@@ -95,15 +95,35 @@ c: 3
 4
 5
 5
+break out of a loop
+continue to the next iteration
 1
 2
 4
 5
-1
-2
-1
-2
-1
-2
-1
-2
+nested continue
+inner: 1
+inner: 2
+outer: 1
+inner: 1
+inner: 2
+outer: 2
+inner: 1
+inner: 2
+outer (skipped): 3
+inner: 1
+inner: 2
+outer (skipped): 4
+inner: 1
+inner: 2
+outer (skipped): 5
+nested break
+inner: 1
+inner: 2
+outer: 1
+inner: 1
+inner: 2
+outer: 2
+inner: 1
+inner: 2
+outer (skipped): 3

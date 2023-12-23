@@ -20,6 +20,9 @@ public class Scope
     private TokenLocation? scopeResultLocation;
     private ExpressionResult? scopeResult;
 
+    private bool shouldContinue;
+    private bool shouldBreak;
+
     public Scope(Scope parent) => parentScope = parent;
 
     private Scope()
@@ -150,6 +153,8 @@ public class Scope
         scopeResult = result;
     }
 
+    public bool ShouldReturn() => scopeResult is not null;
+
     public bool TryGetResult([NotNullWhen(true)] out ExpressionResult? result, [NotNullWhen(true)] out TokenLocation? location)
     {
         location = scopeResultLocation;
@@ -157,6 +162,14 @@ public class Scope
 
         return result is not null;
     }
+
+    public void SetContinue() => shouldContinue = true;
+
+    public void SetBreak() => shouldBreak = true;
+
+    public bool ShouldContinue() => shouldContinue;
+
+    public bool ShouldBreak() => shouldBreak;
 
     public override string ToString()
     {

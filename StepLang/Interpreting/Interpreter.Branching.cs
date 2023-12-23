@@ -33,4 +33,14 @@ public partial class Interpreter
         if (elseResult.IsTruthy())
             Execute(statementNode.ElseBody);
     }
+
+    public void Execute(ContinueStatementNode statementNode)
+    {
+        CurrentScope.SetContinue();
+    }
+
+    public void Execute(BreakStatementNode statementNode)
+    {
+        CurrentScope.SetBreak();
+    }
 }

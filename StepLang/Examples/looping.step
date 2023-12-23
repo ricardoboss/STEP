@@ -71,14 +71,14 @@ foreach (number x in nums) {
 	println(x)
 }
 
-// break out of a loop
+println("break out of a loop")
 while (true) {
 	break
 
 	println("should not get printed")
 }
 
-// continue to the next iteration
+println("continue to the next iteration")
 foreach (number n in [1, 2, 3, 4, 5]) {
 	if (n == 3) {
 		continue
@@ -89,7 +89,7 @@ foreach (number n in [1, 2, 3, 4, 5]) {
 	println(n)
 }
 
-// nested continue
+println("nested continue")
 foreach (number n in [1, 2, 3, 4, 5]) {
 	foreach (number n2 in [1, 2, 3, 4, 5]) {
 		if (n2 >= 3) {
@@ -98,19 +98,21 @@ foreach (number n in [1, 2, 3, 4, 5]) {
 			println("should not get printed")
 		}
 
-		println(n2)
+		println("inner: ", n2)
 	}
 
 	if (n >= 3) {
+		println("outer (skipped): ", n)
+
 		continue
 
 		println("should not get printed")
 	}
 
-	println(n)
+	println("outer: ", n)
 }
 
-// nested break
+println("nested break")
 foreach (number n in [1, 2, 3, 4, 5]) {
 	foreach (number n2 in [1, 2, 3, 4, 5]) {
 		if (n2 == 3) {
@@ -119,14 +121,16 @@ foreach (number n in [1, 2, 3, 4, 5]) {
 			println("should not get printed")
 		}
 
-		println(n2)
+		println("inner: ", n2)
 	}
 
 	if (n == 3) {
+		println("outer (skipped): ", n)
+
 		break
 
 		println("should not get printed")
 	}
 
-	println(n)
+	println("outer: ", n)
 }

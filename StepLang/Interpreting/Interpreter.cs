@@ -11,10 +11,6 @@ public partial class Interpreter : IRootNodeVisitor, IStatementVisitor, IExpress
     public TextWriter? DebugOut { get; }
     public int ExitCode { get; set; }
 
-    public int BreakDepth { get; set; }
-
-    public int ContinueDepth { get; set; }
-
     private readonly Stack<Scope> scopes = new();
 
     private Lazy<Random> random = new(() => new());
@@ -58,23 +54,28 @@ public partial class Interpreter : IRootNodeVisitor, IStatementVisitor, IExpress
     {
         foreach (var statement in statements)
         {
-            if (ContinueDepth > 0)
-            {
-                ContinueDepth--;
-
-                DebugOut?.WriteLine("Continuing");
-
-                break;
-            }
-
             Execute(statement);
 
-            if (!CurrentScope.TryGetResult(out _, out _))
-                continue;
+            if (CurrentScope.TryGetResult(out _, out _))
+            {
+                DebugOut?.WriteLine("Result found, continuing");
 
-            DebugOut?.WriteLine("Result found, continuing");
+                return;
+            }
 
-            break;
+            if (CurrentScope.ShouldBreak())
+            {
+                DebugOut?.WriteLine("Break found, breaking");
+
+                return;
+            }
+
+            if (CurrentScope.ShouldContinue())
+            {
+                DebugOut?.WriteLine("Continue found, continuing");
+
+                return;
+            }
         }
     }
 
