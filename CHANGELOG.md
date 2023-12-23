@@ -1,4 +1,4 @@
-# v2.x.0
+# v2.1.0
 
 * Changed "power" operator from `^` to `**` by @ricardoboss in https://github.com/ricardoboss/STEP/pull/107
 * Added support for nullable type declarations by @ricardoboss in https://github.com/ricardoboss/STEP/pull/102
@@ -11,6 +11,23 @@
   * Native functions now support union types to accept more than one value type of parameter
 * Added `httpServer` and `fileResponse` functions by @ricardoboss in https://github.com/ricardoboss/STEP/pull/112
   * Also classify `fetch` as a web function together with `httpServer` and `fileResponse`
+* New functions:
+  * `indexOf`
+  * `containsKey` by @ricardoboss in https://github.com/ricardoboss/STEP/commit/d64468b6ce9e8b2efb3dffddc73bc12ddb9c3dec
+  * `split` by @ricardoboss in https://github.com/ricardoboss/STEP/pull/115
+* `print` and `println` now flush to the output directly after being called
+* loop constructs allow truthy values to continue looping (as opposed to only boolean values)
+* Many bug fixes, including:
+  * Loops new properly handle `break` and `continue` statements
+  * Loop bodies now better keep track of their own scope
+  * Fix conversion of map result to expression node by wrapping keys in quotes before passing them as values to LiteralString tokens by @ricardoboss in https://github.com/ricardoboss/STEP/commit/1ec33101df2f5b26cd402e5bc3e0e06f87c9a7cf
+* Logical operators now short-circuit
+  * This also enables "bash-style" expressions like `true && "it's true"` evaluating to `"it's true"`
+* Added support for variable length separators in split function and made length parameter of substring optional by @ricardoboss in https://github.com/ricardoboss/STEP/commit/d56458eee4919d65ff4ed410d0a3edfe4d3b509d
+* Fixed issue with paths relative to call location instead of relative to execution location by @ricardoboss in https://github.com/ricardoboss/STEP/commit/027bbf04b494501280015d6dba881071ee309cfa
+* Updated to .NET 8 by @ricardoboss in https://github.com/ricardoboss/STEP/pull/116
+* Now using Spectre.Console for CLI
+* Added new `highlight` command
 
 For more info, see https://github.com/ricardoboss/STEP/milestone/4?closed=1
 
