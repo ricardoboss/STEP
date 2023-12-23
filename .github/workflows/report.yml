@@ -5,8 +5,9 @@ on:
     paths-ignore:
       - "StepLang.Wiki/**"
       - "StepLang.Homepage/**"
-    branches: [ "main" ]
-
+    types: [assigned, opened, synchronize, reopened, labeled, unlabeled]
+    branches:
+      - main
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
@@ -110,11 +111,35 @@ jobs:
         run: |
           echo "badge=https://img.shields.io/badge/Documentation%20Coverage-failed-red.svg?style=flat" >> "$GITHUB_OUTPUT"
 
+  changelog:
+    name: Check CHANGELOG was updated
+
+    runs-on: ubuntu-latest
+
+    outputs:
+      badge: ${{ steps.changelog.outputs.badge || steps.changelog-failure.outputs.badge }}
+
+    steps:
+      - uses: tarides/changelog-check-action@v2
+        with:
+          changelog: CHANGELOG.md
+
+      - name: Provide success badge
+        id: changelog
+        run: |
+          echo "badge=https://img.shields.io/badge/CHANGELOG-updated-brightgreen.svg?style=flat" >> "$GITHUB_OUTPUT"
+
+      - name: Provide failure badge
+        id: changelog-failure
+        if: failure()
+        run: |
+          echo "badge=https://img.shields.io/badge/CHANGELOG-not%20updated-red.svg?style=flat" >> "$GITHUB_OUTPUT"
+
   report:
     name: Report
 
     if: always()
-    needs: [ coverage, style, docblocks ]
+    needs: [ coverage, style, docblocks, changelog ]
 
     runs-on: ubuntu-latest
 
@@ -127,4 +152,7 @@ jobs:
         with:
           comment_tag: report
           message: |
-            ![Code Coverage](${{ needs.coverage.outputs.badge }}) ![Documentation Coverage](${{ needs.docblocks.outputs.badge }}) ![Code Style](https://img.shields.io/badge/Code%20Style-${{ needs.style.result == 'success' && 'ok' || 'run `dotnet format`' }}-${{ needs.style.result == 'success' && 'brightgreen' || 'red' }}.svg?style=flat)
+            ![Code Coverage](${{ needs.coverage.outputs.badge }}) \
+            ![Documentation Coverage](${{ needs.docblocks.outputs.badge }}) \
+            ![Code Style](https://img.shields.io/badge/Code%20Style-${{ needs.style.result == 'success' && 'ok' || 'run `dotnet format`' }}-${{ needs.style.result == 'success' && 'brightgreen' || 'red' }}.svg?style=flat) \
+            ![CHANGELOG](${{ needs.changelog.outputs.badge }})
