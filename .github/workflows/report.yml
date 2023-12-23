@@ -127,7 +127,7 @@ jobs:
       - name: Provide success badge
         id: changelog
         run: |
-          echo "badge=https://img.shields.io/badge/CHANGELOG-updated-brightgreen.svg?style=flat" >> "$GITHUB_OUTPUT"
+          echo "badge=https://img.shields.io/badge/CHANGELOG-ok-brightgreen.svg?style=flat" >> "$GITHUB_OUTPUT"
 
       - name: Provide failure badge
         id: changelog-failure
