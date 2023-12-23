@@ -28,6 +28,7 @@
 * Updated to .NET 8 by @ricardoboss in https://github.com/ricardoboss/STEP/pull/116
 * Now using Spectre.Console for CLI
 * Added new `highlight` command
+* Added lots of documentation to all methods and classes (mainly for the homepage) by @ricardoboss in https://github.com/ricardoboss/STEP/pull/105
 
 For more info, see https://github.com/ricardoboss/STEP/milestone/4?closed=1
 
