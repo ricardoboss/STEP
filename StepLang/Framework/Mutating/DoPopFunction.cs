@@ -4,17 +4,26 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Mutating;
 
+/// <summary>
+/// Pops a value from the end of a list by mutating it.
+/// </summary>
 public class DoPopFunction : GenericFunction<ListResult>
 {
+    /// <summary>
+    /// The identifier of the <see cref="DoPopFunction"/> function.
+    /// </summary>
     public const string Identifier = "doPop";
 
+    /// <inheritdoc />
     protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
         new(OnlyList, "subject"),
     };
 
+    /// <inheritdoc />
     protected override IEnumerable<ResultType> ReturnTypes { get; } = AnyValueType;
 
+    /// <inheritdoc />
     protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
         ListResult argument1)
     {

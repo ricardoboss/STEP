@@ -4,10 +4,17 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Pure;
 
+/// <summary>
+/// Returns the number, clamped between the minimum and maximum values (inclusive).
+/// </summary>
 public class ClampFunction : GenericFunction<NumberResult, NumberResult, NumberResult>
 {
+    /// <summary>
+    /// The identifier of the <see cref="ClampFunction"/> function.
+    /// </summary>
     public const string Identifier = "clamp";
 
+    /// <inheritdoc />
     protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
         new(OnlyNumber, "min"),
@@ -15,8 +22,10 @@ public class ClampFunction : GenericFunction<NumberResult, NumberResult, NumberR
         new(OnlyNumber, "x"),
     };
 
+    /// <inheritdoc />
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyNumber;
 
+    /// <inheritdoc />
     protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
         NumberResult argument1, NumberResult argument2, NumberResult argument3)
     {

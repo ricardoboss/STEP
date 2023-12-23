@@ -6,10 +6,17 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Pure;
 
+/// <summary>
+/// Sorts a list using a given callback function.
+/// </summary>
 public class SortedFunction : ListManipulationFunction
 {
+    /// <summary>
+    /// The identifier of the <see cref="SortedFunction"/> function.
+    /// </summary>
     public const string Identifier = "sorted";
 
+    /// <inheritdoc />
     public override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
         IReadOnlyList<ExpressionNode> arguments)
     {
@@ -21,6 +28,7 @@ public class SortedFunction : ListManipulationFunction
         return base.Invoke(callLocation, interpreter, new[] { arguments[0], new CompareToFunction().ToResult().ToExpressionNode() });
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<ExpressionNode[]> PrepareArgsForCallback(TokenLocation callLocation, IEnumerable<ExpressionResult> list, FunctionDefinition callback)
     {
         var callbackParameters = callback.Parameters.ToList();
@@ -33,6 +41,7 @@ public class SortedFunction : ListManipulationFunction
         return list.Select(e => new[] { e.ToExpressionNode() });
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<ExpressionResult> EvaluateListManipulation(TokenLocation callLocation, Interpreter interpreter, IEnumerable<ExpressionNode[]> arguments, FunctionDefinition callback)
     {
         var arr = arguments.ToArray();

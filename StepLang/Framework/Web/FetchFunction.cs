@@ -8,18 +8,27 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Web;
 
+/// <summary>
+/// Fetches a resource from the web.
+/// </summary>
 public class FetchFunction : GenericFunction<StringResult, MapResult>
 {
+    /// <summary>
+    /// The identifier of the <see cref="FetchFunction"/> function.
+    /// </summary>
     public const string Identifier = "fetch";
 
+    /// <inheritdoc />
     protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
         new(OnlyString, "url"),
         new(OnlyMap, "options", new MapExpressionNode(new(TokenType.OpeningCurlyBracket, "{"), new Dictionary<Token, ExpressionNode>())),
     };
 
+    /// <inheritdoc />
     protected override IEnumerable<ResultType> ReturnTypes { get; } = NullableString;
 
+    /// <inheritdoc />
     protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
         StringResult argument1, MapResult argument2)
     {
@@ -35,6 +44,14 @@ public class FetchFunction : GenericFunction<StringResult, MapResult>
         return new StringResult(body);
     }
 
+    /// <summary>
+    /// Fetches a resource from the web.
+    /// </summary>
+    /// <param name="callLocation">The location of the call.</param>
+    /// <param name="url">The URL to fetch.</param>
+    /// <param name="options">The options for the fetch.</param>
+    /// <returns>The response from the fetch.</returns>
+    /// <exception cref="InvalidResultTypeException">Thrown when the <paramref name="options"/> contains an invalid type.</exception>
     private static HttpResponseMessage Fetch(TokenLocation callLocation, string url, Dictionary<string, ExpressionResult> options)
     {
         using var client = new HttpClient();

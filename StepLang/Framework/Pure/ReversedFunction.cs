@@ -4,17 +4,26 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Pure;
 
+/// <summary>
+/// Reverses a list or string.
+/// </summary>
 public class ReversedFunction : GenericFunction<ExpressionResult>
 {
+    /// <summary>
+    /// The identifier of the <see cref="ReversedFunction"/> function.
+    /// </summary>
     public const string Identifier = "reversed";
 
+    /// <inheritdoc />
     protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
         new(new[] { ResultType.List, ResultType.Str }, "subject"),
     };
 
+    /// <inheritdoc />
     protected override IEnumerable<ResultType> ReturnTypes { get; } = new[] { ResultType.List, ResultType.Str };
 
+    /// <inheritdoc />
     protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
         ExpressionResult argument1)
     {

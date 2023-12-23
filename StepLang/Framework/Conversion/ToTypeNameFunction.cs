@@ -5,15 +5,23 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Conversion;
 
+/// <summary>
+/// Converts the type of a given variable to a string.
+/// </summary>
 public class ToTypeNameFunction : NativeFunction
 {
+    /// <summary>
+    /// The identifier of the <see cref="ToTypeNameFunction"/> function.
+    /// </summary>
     public const string Identifier = "toTypeName";
 
+    /// <inheritdoc />
     protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
         new(AnyType, "value"),
     };
 
+    /// <inheritdoc />
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyString;
 
     /// <inheritdoc />

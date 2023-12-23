@@ -4,10 +4,17 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Pure;
 
+/// <summary>
+/// Returns the linear interpolation between two numbers.
+/// </summary>
 public class InterpolateFunction : GenericFunction<NumberResult, NumberResult, NumberResult>
 {
+    /// <summary>
+    /// The identifier for the <see cref="InterpolateFunction"/> function.
+    /// </summary>
     public const string Identifier = "interpolate";
 
+    /// <inheritdoc />
     protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
         new(OnlyNumber, "a"),
@@ -15,6 +22,7 @@ public class InterpolateFunction : GenericFunction<NumberResult, NumberResult, N
         new(OnlyNumber, "t"),
     };
 
+    /// <inheritdoc />
     protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
         NumberResult argument1, NumberResult argument2, NumberResult argument3)
     {

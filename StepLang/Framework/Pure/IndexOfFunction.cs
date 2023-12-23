@@ -34,6 +34,12 @@ public class IndexOfFunction : GenericFunction<ExpressionResult, ExpressionResul
         return GetResult(argument1, argument2);
     }
 
+    /// <summary>
+    /// Returns the index of the given value in the given subject.
+    /// </summary>
+    /// <param name="subject">A list, map, or string to look through.</param>
+    /// <param name="value">The value to search for.</param>
+    /// <returns>The index/key of the given value in the given subject.</returns>
     internal static ExpressionResult GetResult(ExpressionResult subject, ExpressionResult value)
     {
         return subject switch

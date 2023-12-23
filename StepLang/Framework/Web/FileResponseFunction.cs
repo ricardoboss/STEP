@@ -4,8 +4,14 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Web;
 
+/// <summary>
+/// Returns the contents of a file for use by the <see cref="HttpServerFunction"/> function.
+/// </summary>
 public class FileResponseFunction : GenericFunction<StringResult, ExpressionResult>
 {
+    /// <summary>
+    /// The identifier of the <see cref="FileResponseFunction"/> function.
+    /// </summary>
     public const string Identifier = "fileResponse";
 
     /// <inheritdoc />

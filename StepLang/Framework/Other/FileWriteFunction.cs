@@ -6,10 +6,17 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Other;
 
+/// <summary>
+/// Writes or appends to a file.
+/// </summary>
 public class FileWriteFunction : GenericFunction<StringResult, StringResult, BoolResult>
 {
+    /// <summary>
+    /// The identifier of the <see cref="FileWriteFunction"/>.
+    /// </summary>
     public const string Identifier = "fileWrite";
 
+    /// <inheritdoc />
     protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
         new(OnlyString, "path"),
@@ -17,6 +24,7 @@ public class FileWriteFunction : GenericFunction<StringResult, StringResult, Boo
         new(OnlyBool, "append", DefaultValue: LiteralExpressionNode.FromBoolean(false)),
     };
 
+    /// <inheritdoc />
     protected override BoolResult Invoke(TokenLocation callLocation, Interpreter interpreter, StringResult argument1, StringResult argument2, BoolResult argument3)
     {
         var path = argument1.Value;

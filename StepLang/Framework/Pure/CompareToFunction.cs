@@ -5,7 +5,7 @@ using StepLang.Tokenizing;
 namespace StepLang.Framework.Pure;
 
 /// <summary>
-/// Compares two values.
+/// Compares two values and returns a number indicating whether one is less than, equal to, or greater than the other.
 /// </summary>
 public class CompareToFunction : GenericFunction<ExpressionResult, ExpressionResult>
 {
