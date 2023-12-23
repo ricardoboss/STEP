@@ -39,7 +39,7 @@ public class LengthFunctionTest
         var interpreter = new Interpreter();
         var function = new LengthFunction();
 
-        Assert.Throws<InvalidArgumentTypeException>(() => function.Invoke(new(), interpreter, new[] { LiteralExpressionNode.FromInt32(0) }));
+        _ = Assert.Throws<InvalidArgumentTypeException>(() => function.Invoke(new(), interpreter, new[] { LiteralExpressionNode.FromInt32(0) }));
     }
 
     [SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Used by xUnit")]

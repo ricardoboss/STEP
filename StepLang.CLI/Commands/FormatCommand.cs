@@ -47,9 +47,9 @@ internal sealed class FormatCommand : AsyncCommand<FormatCommand.Settings>
 
         fixer.OnCheck += (_, f) => checkedFiles.Add(f.File);
 
-        fixer.OnFixed += (_, f) =>
+        fixer.OnFixed += (__, f) =>
         {
-            fixedFiles.Add(f.File);
+            _ = fixedFiles.Add(f.File);
 
             AnsiConsole.MarkupLineInterpolated(
                 $"Applied analyzer [darkmagenta]'{f.Analyzer.Name}'[/] to [cyan]'{f.File.Name}'[/]");

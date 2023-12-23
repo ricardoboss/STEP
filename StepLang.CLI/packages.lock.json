@@ -79,6 +79,7 @@
       "steplang": {
         "type": "Project",
         "dependencies": {
+          "SmartAnalyzers.CSharpExtensions.Annotations": "[4.2.9, )",
           "System.Linq.Async": "[6.0.1, )",
           "cmdwtf.BuildTimestampGenerator": "[1.0.1, )"
         }
@@ -86,8 +87,7 @@
       "steplang.tooling.formatting": {
         "type": "Project",
         "dependencies": {
-          "StepLang": "[1.0.0, )",
-          "System.Linq.Async": "[6.0.1, )"
+          "StepLang": "[1.0.0, )"
         }
       },
       "steplang.tooling.highlighting": {
@@ -101,6 +101,12 @@
         "requested": "[1.0.1, )",
         "resolved": "1.0.1",
         "contentHash": "2XZIjeMNLYzeUyuxxn1IrWm04J4MiP4NnTyJHU3ToLXIBltAObpp3r3WIS6xHzwqGsex3YEZSXYxxpn2J1/o1Q=="
+      },
+      "SmartAnalyzers.CSharpExtensions.Annotations": {
+        "type": "CentralTransitive",
+        "requested": "[4.2.9, )",
+        "resolved": "4.2.9",
+        "contentHash": "L1N4gILMCYsMVzrWQWHjEzJ8mjQEhZXaG2769ZrP+er6kh9DwHmoFSynmCmlocUQ6fEjAIFwpRv12Hce4O+r5w=="
       }
     }
   }

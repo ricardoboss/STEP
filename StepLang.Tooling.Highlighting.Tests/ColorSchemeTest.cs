@@ -28,9 +28,11 @@ public class ColorSchemeTest
     [Fact]
     public void TestThrowsForUnknownNames()
     {
-        Assert.Throws<NotSupportedException>(() =>
+        var e = Assert.Throws<NotSupportedException>(() =>
         {
             _ = ColorScheme.ByName("unknown");
         });
+
+        Assert.Equal("The color scheme 'unknown' is not supported.", e.Message);
     }
 }

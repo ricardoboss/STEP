@@ -121,7 +121,7 @@ internal sealed class Code : IRenderable
 
                 yield return new(enumerator.Current.Text.Replace("\t", "    "), enumerator.Current.Style.ToSpectreStyle());
 
-                enumerator.MoveNext();
+                _ = enumerator.MoveNext();
             }
 
             if (markedLineNumber == currentLineNumber && markedColumnNumber is not null)

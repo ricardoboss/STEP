@@ -1,0 +1,13 @@
+{
+  "CSE005": {
+    "IgnoredReturnTypes": [
+      "Microsoft.Extensions.DependencyInjection.IServiceCollection",
+      "Microsoft.Extensions.Configuration.IConfigurationBuilder",
+      "Microsoft.Extensions.Logging.ILoggingBuilder",
+      "System.Text.StringBuilder",
+      "Spectre.Console.TreeNode",
+      "Spectre.Console.Cli.IConfigurator",
+      "Spectre.Console.Cli.ICommandConfigurator"
+    ]
+  }
+}

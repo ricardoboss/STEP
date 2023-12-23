@@ -41,7 +41,7 @@ internal sealed class OptionInterceptor : ICommandInterceptor
         var headerStyle = new Style(decoration: Decoration.Bold);
 
         foreach (var (name, value) in data)
-            infoGrid.AddRow(new Text(name, headerStyle).RightJustified(), new Text(value));
+            _ = infoGrid.AddRow(new Text(name, headerStyle).RightJustified(), new Text(value));
 
         AnsiConsole.Write(infoGrid);
     }

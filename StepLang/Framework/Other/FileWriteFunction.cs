@@ -33,7 +33,7 @@ public class FileWriteFunction : GenericFunction<StringResult, StringResult, Boo
             {
                 var directory = info.DirectoryName;
                 if (!string.IsNullOrEmpty(directory))
-                    Directory.CreateDirectory(directory);
+                    _ = Directory.CreateDirectory(directory);
 
                 File.WriteAllText(info.FullName, content, Encoding.ASCII);
             }
