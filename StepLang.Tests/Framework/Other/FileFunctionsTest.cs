@@ -27,37 +27,39 @@ public class FileFunctionsTest
 
         var preWriteExistsResult = fileExistsFunction.Invoke(new(), interpreter, new List<ExpressionNode> { LiteralExpressionNode.FromString(filename) });
 
-        Assert.IsType<BoolResult>(preWriteExistsResult);
-        Assert.False(((BoolResult)preWriteExistsResult).Value);
+        var preWriteExistsBoolResult = Assert.IsType<BoolResult>(preWriteExistsResult);
+        Assert.False(preWriteExistsBoolResult.Value);
 
-        var writeResult = fileWriteFunction.Invoke(new(), interpreter, new List<ExpressionNode> { LiteralExpressionNode.FromString(filename), LiteralExpressionNode.FromString(content) });
+        var writeArguments = new List<ExpressionNode> { LiteralExpressionNode.FromString(filename), LiteralExpressionNode.FromString(content) };
+        var writeResult = fileWriteFunction.Invoke(new(), interpreter, writeArguments);
 
-        Assert.IsType<BoolResult>(writeResult);
-        Assert.True(((BoolResult)writeResult).Value);
+        var writeBoolResult = Assert.IsType<BoolResult>(writeResult);
+        Assert.True(writeBoolResult.Value);
 
         var postWriteExistsResult = fileExistsFunction.Invoke(new(), interpreter, new List<ExpressionNode> { LiteralExpressionNode.FromString(filename) });
 
-        Assert.IsType<BoolResult>(postWriteExistsResult);
-        Assert.True(((BoolResult)postWriteExistsResult).Value);
+        var postWriteExistsBoolResult = Assert.IsType<BoolResult>(postWriteExistsResult);
+        Assert.True(postWriteExistsBoolResult.Value);
 
         var firstReadResult = fileReadFunction.Invoke(new(), interpreter, new List<ExpressionNode> { LiteralExpressionNode.FromString(filename) });
 
-        Assert.IsType<StringResult>(firstReadResult);
-        Assert.Equal(content, ((StringResult)firstReadResult).Value);
+        var firstReadStringResult = Assert.IsType<StringResult>(firstReadResult);
+        Assert.Equal(content, firstReadStringResult.Value);
 
-        var appendResult = fileWriteFunction.Invoke(new(), interpreter, new List<ExpressionNode> { LiteralExpressionNode.FromString(filename), LiteralExpressionNode.FromString(content), LiteralExpressionNode.FromBoolean(true) });
+        var appendArguments = new List<ExpressionNode> { LiteralExpressionNode.FromString(filename), LiteralExpressionNode.FromString(content), LiteralExpressionNode.FromBoolean(true) };
+        var appendResult = fileWriteFunction.Invoke(new(), interpreter, appendArguments);
 
-        Assert.IsType<BoolResult>(appendResult);
-        Assert.True(((BoolResult)appendResult).Value);
+        var appendBoolResult = Assert.IsType<BoolResult>(appendResult);
+        Assert.True(appendBoolResult.Value);
 
         var secondReadResult = fileReadFunction.Invoke(new(), interpreter, new List<ExpressionNode> { LiteralExpressionNode.FromString(filename) });
 
-        Assert.IsType<StringResult>(secondReadResult);
-        Assert.Equal(content + content, ((StringResult)secondReadResult).Value);
+        var secondReadStringResult = Assert.IsType<StringResult>(secondReadResult);
+        Assert.Equal(content + content, secondReadStringResult.Value);
 
         var deleteResult = fileDeleteFunction.Invoke(new(), interpreter, new List<ExpressionNode> { LiteralExpressionNode.FromString(filename) });
 
-        Assert.IsType<BoolResult>(deleteResult);
-        Assert.True(((BoolResult)deleteResult).Value);
+        var deleteBoolResult = Assert.IsType<BoolResult>(deleteResult);
+        Assert.True(deleteBoolResult.Value);
     }
 }

@@ -27,7 +27,7 @@ public partial class Interpreter : IRootNodeVisitor, IStatementVisitor, IExpress
         StdIn = stdIn;
         DebugOut = debugOut;
 
-        PushScope(Scope.GlobalScope);
+        _ = PushScope(Scope.GlobalScope);
     }
 
     public Scope CurrentScope => scopes.Peek();
@@ -96,7 +96,7 @@ public partial class Interpreter : IRootNodeVisitor, IStatementVisitor, IExpress
 
     public void Execute(CodeBlockStatementNode statementNode)
     {
-        PushScope();
+        _ = PushScope();
 
         Execute(statementNode.Body);
 

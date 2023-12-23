@@ -20,7 +20,7 @@ public class IndexOfFunctionTest
     {
         var result = IndexOfFunction.GetResult(new StringResult(subject), new StringResult(value));
 
-        Assert.IsType<NumberResult>(result);
-        Assert.Equal(expected, ((NumberResult)result).Value);
+        var numResult = Assert.IsType<NumberResult>(result);
+        Assert.Equal(expected, numResult.Value);
     }
 }
