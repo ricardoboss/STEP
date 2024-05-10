@@ -46,7 +46,7 @@ body:
       description: Add any other context about the problem here.
   - type: textarea
     attributes:
-      label: `step --info` Output
+      label: step --info Output
       description: Run `step --info` in your terminal paste the output here.
       placeholder: |
         STEP - Simple Transition to Elevated Programming
