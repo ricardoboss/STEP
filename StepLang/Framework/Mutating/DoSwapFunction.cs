@@ -5,10 +5,17 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Mutating;
 
+/// <summary>
+/// Swaps two values in a list or map by mutating it.
+/// </summary>
 public class DoSwapFunction : GenericFunction<ExpressionResult, ExpressionResult, ExpressionResult>
 {
+    /// <summary>
+    /// The identifier of the <see cref="DoSwapFunction"/> function.
+    /// </summary>
     public const string Identifier = "doSwap";
 
+    /// <inheritdoc />
     protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
         new(new[] { ResultType.List, ResultType.Map }, "subject"),
@@ -16,8 +23,10 @@ public class DoSwapFunction : GenericFunction<ExpressionResult, ExpressionResult
         new(new[] { ResultType.Number, ResultType.Str }, "b"),
     };
 
+    /// <inheritdoc />
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyBool;
 
+    /// <inheritdoc />
     protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
         ExpressionResult argument1, ExpressionResult argument2, ExpressionResult argument3)
     {

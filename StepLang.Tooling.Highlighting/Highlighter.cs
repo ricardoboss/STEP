@@ -2,15 +2,27 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Tooling.Highlighting;
 
+/// <summary>
+/// Highlights source code using a <see cref="ColorScheme"/>.
+/// </summary>
 public class Highlighter
 {
     private readonly ColorScheme scheme;
 
+    /// <summary>
+    /// Creates a new <see cref="Highlighter"/> with the given <see cref="ColorScheme"/>.
+    /// </summary>
+    /// <param name="scheme"></param>
     public Highlighter(ColorScheme scheme)
     {
         this.scheme = scheme;
     }
 
+    /// <summary>
+    /// Highlights the given source code.
+    /// </summary>
+    /// <param name="sourceCode">The source code to highlight.</param>
+    /// <returns>A sequence of <see cref="StyledToken"/>s.</returns>
     public IEnumerable<StyledToken> Highlight(string sourceCode)
     {
         var tokenizer = new Tokenizer(sourceCode, false);

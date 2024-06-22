@@ -5,23 +5,38 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Conversion;
 
+/// <summary>
+/// Converts any value to a string using the <see cref="Render"/> method.
+/// </summary>
 public class ToStringFunction : GenericFunction<ExpressionResult>
 {
+    /// <summary>
+    /// The identifier of the <see cref="ToStringFunction"/> function.
+    /// </summary>
     public const string Identifier = "toString";
 
+    /// <inheritdoc />
     protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
         new(AnyValueType, "value"),
     };
 
+    /// <inheritdoc />
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyString;
 
+    /// <inheritdoc />
     protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
         ExpressionResult argument1)
     {
         return new StringResult(Render(argument1));
     }
 
+    /// <summary>
+    /// Takes an <see cref="ExpressionResult"/> and renders it as a string.
+    /// </summary>
+    /// <param name="result">The result to render.</param>
+    /// <returns>The rendered string.</returns>
+    /// <exception cref="NotSupportedException">Thrown when the given result type is not supported.</exception>
     internal static string Render(ExpressionResult result)
     {
         return result switch

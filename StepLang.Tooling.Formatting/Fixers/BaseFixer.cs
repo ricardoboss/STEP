@@ -4,28 +4,37 @@ using StepLang.Tooling.Formatting.Analyzers.Results;
 
 namespace StepLang.Tooling.Formatting.Fixers;
 
+/// <summary>
+/// Base class for implementations of <see cref="IFixer"/>.
+/// </summary>
 public abstract class BaseFixer : IFixer
 {
     private const string DefaultSearchPattern = "*.step";
 
+    /// <inheritdoc/>
     public virtual bool ThrowOnFailure { get; init; } = true;
 
+    /// <inheritdoc/>
     public Task<FixerResult> FixAsync(IAnalyzer analyzer, DirectoryInfo directory,
         CancellationToken cancellationToken = default) =>
         FixAsync(new[] { analyzer }, new[] { directory }, cancellationToken);
 
+    /// <inheritdoc/>
     public Task<FixerResult> FixAsync(IEnumerable<IAnalyzer> analyzers, DirectoryInfo directory,
         CancellationToken cancellationToken = default) =>
         FixAsync(analyzers, new[] { directory }, cancellationToken);
 
+    /// <inheritdoc/>
     public Task<FixerResult> FixAsync(IAnalyzer analyzer, IEnumerable<FileInfo> files,
         CancellationToken cancellationToken = default) =>
         FixAsync(new[] { analyzer }, files, cancellationToken);
 
+    /// <inheritdoc/>
     public Task<FixerResult> FixAsync(IAnalyzer analyzer, IEnumerable<DirectoryInfo> directories,
         CancellationToken cancellationToken = default) =>
         FixAsync(new[] { analyzer }, directories, cancellationToken);
 
+    /// <inheritdoc/>
     public Task<FixerResult> FixAsync(IEnumerable<IAnalyzer> analyzers,
         IEnumerable<DirectoryInfo> directories, CancellationToken cancellationToken = default)
     {
@@ -37,6 +46,7 @@ public abstract class BaseFixer : IFixer
         return FixAsync(analyzers, files, cancellationToken);
     }
 
+    /// <inheritdoc/>
     public async Task<FixerResult> FixAsync(IEnumerable<IAnalyzer> analyzers, IEnumerable<FileInfo> files,
         CancellationToken cancellationToken = default)
     {
@@ -48,6 +58,7 @@ public abstract class BaseFixer : IFixer
         );
     }
 
+    /// <inheritdoc/>
     public async Task<FixerResult> FixAsync(IEnumerable<IAnalyzer> analyzers, FileInfo file,
         CancellationToken cancellationToken = default)
     {
@@ -57,10 +68,13 @@ public abstract class BaseFixer : IFixer
         );
     }
 
+    /// <inheritdoc/>
     public event EventHandler<BeforeFixerRanEventArgs>? OnCheck;
 
+    /// <inheritdoc/>
     public event EventHandler<AfterFixerRanEventArgs>? OnFixed;
 
+    /// <inheritdoc/>
     public virtual async Task<FixerResult> FixAsync(IAnalyzer analyzer, FileInfo file,
         CancellationToken cancellationToken = default)
     {
@@ -116,5 +130,12 @@ public abstract class BaseFixer : IFixer
         return await analyzer.AnalyzeAsync(contents, cancellationToken);
     }
 
+    /// <summary>
+    /// Applies the result of an analysis to a file.
+    /// </summary>
+    /// <param name="result">The result of the analysis.</param>
+    /// <param name="file">The file to apply the result to.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The result of the fixer.</returns>
     protected abstract Task<FixerResult> ApplyResult(AnalysisResult result, FileInfo file, CancellationToken cancellationToken);
 }

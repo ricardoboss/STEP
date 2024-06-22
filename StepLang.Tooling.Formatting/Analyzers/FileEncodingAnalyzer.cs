@@ -3,10 +3,14 @@ using StepLang.Tooling.Formatting.Analyzers.Results;
 
 namespace StepLang.Tooling.Formatting.Analyzers;
 
+/// <summary>
+/// Check if the file is encoded in UTF-8 and provides a fix if it is not.
+/// </summary>
 public class FileEncodingAnalyzer : IFileAnalyzer
 {
     private static readonly Encoding DefaultEncoding = Encoding.UTF8;
 
+    /// <inheritdoc />
     public async Task<FileAnalysisResult> AnalyzeAsync(FileInfo original, CancellationToken cancellationToken = default)
     {
         await using var stream = new FileStream(original.FullName, FileMode.Open, FileAccess.Read);

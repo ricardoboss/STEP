@@ -4,10 +4,17 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Mutating;
 
+/// <summary>
+/// Inserts a value into a list at a given index by mutating it.
+/// </summary>
 public class DoInsertAtFunction : GenericFunction<ListResult, NumberResult, ExpressionResult>
 {
+    /// <summary>
+    /// The identifier of the <see cref="DoInsertAtFunction"/> function.
+    /// </summary>
     public const string Identifier = "doInsertAt";
 
+    /// <inheritdoc />
     protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
     {
         new(OnlyList, "list"),
@@ -15,6 +22,7 @@ public class DoInsertAtFunction : GenericFunction<ListResult, NumberResult, Expr
         new(AnyValueType, "value"),
     };
 
+    /// <inheritdoc />
     protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
         ListResult argument1, NumberResult argument2, ExpressionResult argument3)
     {

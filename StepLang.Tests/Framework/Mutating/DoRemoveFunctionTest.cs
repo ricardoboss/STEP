@@ -35,8 +35,8 @@ public class DoRemoveFunctionTest
             Add(ListResult.Empty, LiteralExpressionNode.FromInt32(1), ListResult.Empty);
             Add(ListResult.Empty, LiteralExpressionNode.FromBoolean(true), ListResult.Empty);
             Add(ListResult.Empty, new AddExpressionNode(new(), LiteralExpressionNode.FromInt32(1), LiteralExpressionNode.FromInt32(2)), ListResult.Empty);
-            Add(ListResult.From(BoolResult.True), LiteralExpressionNode.FromBoolean(false), ListResult.From(BoolResult.True));
-            Add(ListResult.From(BoolResult.False), LiteralExpressionNode.FromBoolean(false), ListResult.Empty);
+            Add(TestHelper.ListFrom(BoolResult.True), LiteralExpressionNode.FromBoolean(false), TestHelper.ListFrom(BoolResult.True));
+            Add(TestHelper.ListFrom(BoolResult.False), LiteralExpressionNode.FromBoolean(false), ListResult.Empty);
         }
     }
 }
