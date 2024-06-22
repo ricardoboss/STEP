@@ -21,6 +21,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <AdditionalFiles Include="../CSharpExtensions.json" />
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="cmdwtf.BuildTimestampGenerator" />
         <PackageReference Include="GitVersion.MsBuild">
             <PrivateAssets>all</PrivateAssets>
@@ -30,6 +34,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="SmartAnalyzers.CSharpExtensions.Annotations" />
         <PackageReference Include="System.Linq.Async"/>
         <PackageReference Include="ToStringWithoutOverrideAnalyzer">
             <PrivateAssets>all</PrivateAssets>

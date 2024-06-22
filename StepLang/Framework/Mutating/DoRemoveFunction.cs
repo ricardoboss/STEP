@@ -28,7 +28,7 @@ public class DoRemoveFunction : GenericFunction<ListResult, ExpressionResult>
         var list = argument1.Value;
         var element = argument2;
 
-        list.Remove(element);
+        _ = list.Remove(element);
 
         return VoidResult.Instance;
     }

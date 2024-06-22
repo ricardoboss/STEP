@@ -34,7 +34,7 @@ public class FileEncodingAnalyzer : IFileAnalyzer
         using var reader = new StreamReader(stream, fallback, true);
 
         // Detect byte order mark if any - otherwise assume default
-        reader.Peek();
+        _ = reader.Peek();
 
         return reader.CurrentEncoding;
     }

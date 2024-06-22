@@ -10,6 +10,8 @@ public class ScopeTest
     {
         var scope = Scope.GlobalScope;
 
-        Assert.Throws<UndefinedIdentifierException>(() => scope.GetVariable(new(TokenType.Identifier, "undefined")));
+        var e = Assert.Throws<UndefinedIdentifierException>(() => scope.GetVariable(new(TokenType.Identifier, "undefined")));
+
+        Assert.Equal("Variable 'undefined' was not declared", e.Message);
     }
 }
