@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <AnalysisMode>All</AnalysisMode>
         <IsTrimmable>false</IsTrimmable>
     </PropertyGroup>
 
