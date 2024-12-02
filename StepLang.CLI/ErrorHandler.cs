@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Spectre.Console;
+using Spectre.Console.Cli;
 using StepLang.CLI.Widgets;
 using StepLang.Tooling.Formatting;
 using StepLang.Tooling.Highlighting;
@@ -9,7 +10,7 @@ namespace StepLang.CLI;
 [ExcludeFromCodeCoverage]
 internal static class ErrorHandler
 {
-    public static void HandleException(Exception e)
+    public static void HandleException(Exception e, ITypeResolver? typeResolver)
     {
         if (e is StepLangException sle)
         {

@@ -16,9 +16,9 @@
       },
       "IDisposableAnalyzers": {
         "type": "Direct",
-        "requested": "[4.0.6, )",
-        "resolved": "4.0.6",
-        "contentHash": "yKprG5WzImj+POCEACoHLi7CgYb8aMqPN/XU2qclARe9SIn73EoY7BItHg+p4DufWNFYxgJiPuqndW5D/OmswA=="
+        "requested": "[4.0.8, )",
+        "resolved": "4.0.8",
+        "contentHash": "vNi4NMG0CcJyjXxiNDcQ21FwV/whM9o9OEZKD+oP7tuxAqFEzX/x5OhC3OZJqW/w+8GOtCmJPBquYgMWgz0rfQ=="
       },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
@@ -28,9 +28,9 @@
       },
       "SmartAnalyzers.CSharpExtensions.Annotations": {
         "type": "Direct",
-        "requested": "[4.2.9, )",
-        "resolved": "4.2.9",
-        "contentHash": "L1N4gILMCYsMVzrWQWHjEzJ8mjQEhZXaG2769ZrP+er6kh9DwHmoFSynmCmlocUQ6fEjAIFwpRv12Hce4O+r5w=="
+        "requested": "[4.2.11, )",
+        "resolved": "4.2.11",
+        "contentHash": "01zSK7s9KHR8g2KpvaPMvoejeEQklac1psroAimb0Gb8mO11+3dPl4yEEtNBOF9zjWmKliODMjNKpT9DHE+EYg=="
       },
       "System.Linq.Async": {
         "type": "Direct",
