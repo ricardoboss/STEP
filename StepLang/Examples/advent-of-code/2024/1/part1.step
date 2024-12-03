@@ -1,0 +1,32 @@
+string? input = fileRead("example1.txt")
+if (input == null) {
+	println("Could not read file")
+	return
+}
+
+list lines = split(input, "\n")
+list left = []
+list right = []
+
+foreach (string line in lines) {
+	if (length(line) == 0) {
+		continue
+	}
+
+	list lineParts = split(line, "   ")
+	doAdd(left, toNumber(lineParts[0]))
+	doAdd(right, toNumber(lineParts[1]))
+}
+
+function zipper = (number a, number b) {
+	return abs(a - b)
+}
+
+list distances = zipped(sorted(left), sorted(right), zipper)
+
+number sum = 0
+foreach (number distance in distances) {
+	sum += distance
+}
+
+println(sum)
