@@ -26,7 +26,7 @@ jobs:
       matrix:
         os: [linux, win, osx]
         arch: [x64, arm64]
-        dotnet: ["8.0"]
+        dotnet: ["9.0"]
 
     env:
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
