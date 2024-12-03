@@ -91,6 +91,20 @@ function isSafe = (list levels) {
 number safeReports = 0
 foreach (list levels in reports) {
 	if (!isSafe(levels)) {
+		number i = 0
+		while (i < length(levels)) {
+			list dampenedLevels = clone(levels)
+
+			_ = doRemoveAt(dampenedLevels, i)
+
+			if (isSafe(dampenedLevels)) {
+				safeReports++
+				break
+			}
+
+			i++
+		}
+
 		continue
 	}
 
