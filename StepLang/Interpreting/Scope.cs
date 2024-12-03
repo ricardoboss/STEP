@@ -39,6 +39,7 @@ public class Scope
         CreateVariable(DoSwapFunction.Identifier, new DoSwapFunction().ToResult());
 
         // pure functions
+        CreateVariable(AggregateFunction.Identifier, new AggregateFunction().ToResult());
         CreateVariable(SubstringFunction.Identifier, new SubstringFunction().ToResult());
         CreateVariable(IndexOfFunction.Identifier, new IndexOfFunction().ToResult());
         CreateVariable(ContainsFunction.Identifier, new ContainsFunction().ToResult());
@@ -47,6 +48,7 @@ public class Scope
         CreateVariable(EndsWithFunction.Identifier, new EndsWithFunction().ToResult());
         CreateVariable(PrintFunction.Identifier, new PrintFunction().ToResult());
         CreateVariable(PrintlnFunction.Identifier, new PrintlnFunction().ToResult());
+        CreateVariable(PrintlnPrettyFunction.Identifier, new PrintlnPrettyFunction().ToResult());
         CreateVariable(ReadlineFunction.Identifier, new ReadlineFunction().ToResult());
         CreateVariable(ReadFunction.Identifier, new ReadFunction().ToResult());
         CreateVariable(AbsFunction.Identifier, new AbsFunction().ToResult());
@@ -89,6 +91,7 @@ public class Scope
         CreateVariable(FileDeleteFunction.Identifier, new FileDeleteFunction().ToResult());
         CreateVariable(SeedFunction.Identifier, new SeedFunction().ToResult());
         CreateVariable(RandomFunction.Identifier, new RandomFunction().ToResult());
+        CreateVariable(RegexMatchFunction.Identifier, new RegexMatchFunction().ToResult());
 
         // web functions
         CreateVariable(FetchFunction.Identifier, new FetchFunction().ToResult());

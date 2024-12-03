@@ -27,7 +27,7 @@ public class FunctionResult : ValueExpressionResult<FunctionDefinition>
         public override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
             IReadOnlyList<ExpressionNode> arguments) => VoidResult.Instance;
 
-        public override IReadOnlyCollection<IVariableDeclarationNode> Parameters => Array.Empty<IVariableDeclarationNode>();
+        public override IReadOnlyList<IVariableDeclarationNode> Parameters => Array.Empty<IVariableDeclarationNode>();
 
         protected override IEnumerable<ResultType> ReturnTypes => new[] { ResultType.Void };
     }

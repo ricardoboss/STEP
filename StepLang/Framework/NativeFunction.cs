@@ -21,6 +21,7 @@ public abstract class NativeFunction : FunctionDefinition
     protected static IReadOnlyList<ResultType> NullableString => new[] { ResultType.Null, ResultType.Str };
     protected static IReadOnlyList<ResultType> OnlyList => new[] { ResultType.List };
     protected static IReadOnlyList<ResultType> OnlyBool => new[] { ResultType.Bool };
+    protected static IReadOnlyList<ResultType> NullableBool => new[] { ResultType.Null, ResultType.Bool };
     protected static IReadOnlyList<ResultType> OnlyMap => new[] { ResultType.Map };
     protected static IReadOnlyList<ResultType> OnlyFunction => new[] { ResultType.Function };
 
@@ -37,7 +38,7 @@ public abstract class NativeFunction : FunctionDefinition
             throw new InvalidArgumentCountException(location, minCount, arguments.Count, maxCount);
     }
 
-    public override IReadOnlyCollection<IVariableDeclarationNode> Parameters => NativeParameters
+    public override IReadOnlyList<IVariableDeclarationNode> Parameters => NativeParameters
         .Select<NativeParameter, IVariableDeclarationNode>(p =>
         {
             var types = p.Types.Select(t => new Token(TokenType.TypeName, t.ToTypeName())).ToList();

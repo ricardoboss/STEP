@@ -38,7 +38,7 @@ public abstract class FunctionDefinition
 
     public abstract ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments);
 
-    public abstract IReadOnlyCollection<IVariableDeclarationNode> Parameters { get; }
+    public abstract IReadOnlyList<IVariableDeclarationNode> Parameters { get; }
 
     protected virtual IEnumerable<ResultType> ReturnTypes { get; } = new[] { ResultType.Void };
 }

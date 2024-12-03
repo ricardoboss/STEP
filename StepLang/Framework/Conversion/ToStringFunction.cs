@@ -1,74 +1,158 @@
+using System.CodeDom.Compiler;
 using System.Globalization;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
+using StepLang.Parsing;
 using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Conversion;
 
-public class ToStringFunction : GenericFunction<ExpressionResult>
+public class ToStringFunction : GenericFunction<ExpressionResult, ExpressionResult>
 {
     public const string Identifier = "toString";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
+    protected override IEnumerable<NativeParameter> NativeParameters =>
+    [
         new(AnyValueType, "value"),
-    };
+        new(NullableBool, "pretty", LiteralExpressionNode.Null),
+    ];
 
-    protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyString;
+    protected override IEnumerable<ResultType> ReturnTypes => OnlyString;
 
-    protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
-        ExpressionResult argument1)
+    protected override StringResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+        ExpressionResult argument1, ExpressionResult argument2)
     {
-        return new StringResult(Render(argument1));
+        return Render(argument1, argument2.IsTruthy());
     }
 
-    internal static string Render(ExpressionResult result)
+    internal static string Render(ExpressionResult result, bool pretty = false)
     {
-        return result switch
+        using var writer = new StringWriter();
+
+        if (pretty)
         {
-            StringResult { Value: var stringValue } => stringValue,
-            NumberResult { Value: var numberValue } => numberValue.ToString(CultureInfo.InvariantCulture),
-            BoolResult { Value: var boolValue } => boolValue.ToString(),
-            NullResult => "null",
-            VoidResult => "void",
-            FunctionResult => "function",
-            ListResult list => RenderList(list),
-            MapResult map => RenderMap(map),
-            _ => throw new NotSupportedException("Unknown expression result type"),
-        };
+            using var indentWriter = new IndentedTextWriter(writer, "  ");
+
+            Render(indentWriter, result);
+        }
+        else
+            Render(writer, result);
+
+        return writer.ToString();
     }
 
-    private static string RenderList(ListResult result)
+    private static void Render(TextWriter writer, ExpressionResult result)
     {
-        var renderedValues = result.Value.Select(v =>
+        switch (result)
         {
-            string renderedValue;
-            if (v is StringResult stringValue)
-                renderedValue = $"\"{stringValue.Value}\"";
+            case StringResult { Value: var stringValue }:
+                writer.Write(stringValue);
+                break;
+            case NumberResult { Value: var numberValue }:
+                writer.Write(numberValue.ToString(CultureInfo.InvariantCulture));
+                break;
+            case BoolResult { Value: var boolValue }:
+                writer.Write(boolValue.ToString());
+                break;
+            case NullResult:
+                writer.Write("null");
+                break;
+            case VoidResult:
+                writer.Write("void");
+                break;
+            case FunctionResult:
+                writer.Write("function");
+                break;
+            case ListResult list:
+                RenderList(writer, list);
+                break;
+            case MapResult map:
+                RenderMap(writer, map);
+                break;
+            default:
+                throw new NotSupportedException("Unknown expression result type");
+        }
+    }
+
+    private static void RenderList(TextWriter writer, ListResult result)
+    {
+        writer.Write("[");
+
+        if (writer is IndentedTextWriter openingWriter)
+        {
+            openingWriter.WriteLine();
+            openingWriter.Indent++;
+        }
+
+        for (var index = 0; index < result.Value.Count; index++)
+        {
+            var value = result.Value[index];
+            var isLast = index == result.Value.Count - 1;
+
+            if (value is StringResult { Value: { } stringValue })
+                RenderQuoted(writer, stringValue);
             else
-                renderedValue = Render(v);
+                Render(writer, value);
 
-            return renderedValue;
-        });
+            if (!isLast)
+                writer.Write(',');
 
-        return $"[{string.Join(", ", renderedValues)}]";
+            if (writer is IndentedTextWriter)
+                writer.WriteLine();
+            else if (!isLast)
+                writer.Write(' ');
+        }
+
+        if (writer is IndentedTextWriter closingWriter)
+            closingWriter.Indent--;
+
+        writer.Write("]");
     }
 
-    private static string RenderMap(MapResult result)
+    private static void RenderMap(TextWriter writer, MapResult result)
     {
-        var renderedPairs = result.Value.Select(pair =>
+        writer.Write("{");
+
+        if (writer is IndentedTextWriter openingWriter)
         {
-            string renderedValue;
-            if (pair.Value is StringResult stringValue)
-                renderedValue = $"\"{stringValue.Value}\"";
+            openingWriter.WriteLine();
+            openingWriter.Indent++;
+        }
+
+        var keysArray = result.Value.Keys.ToArray();
+        for (var index = 0; index < keysArray.Length; index++)
+        {
+            var key = keysArray[index];
+            var value = result.Value[key];
+            var isLast = index == keysArray.Length - 1;
+
+            RenderQuoted(writer, key);
+            writer.Write(": ");
+
+            if (value is StringResult { Value: { } stringValue })
+                RenderQuoted(writer, stringValue);
             else
-                renderedValue = Render(pair.Value);
+                Render(writer, value);
 
-            return $"\"{pair.Key}\": {renderedValue}";
-        });
+            if (!isLast)
+                writer.Write(",");
 
-        var mapContents = string.Join(", ", renderedPairs);
+            if (writer is IndentedTextWriter)
+                writer.WriteLine();
+            else if (!isLast)
+                writer.Write(' ');
+        }
 
-        return $"{{{mapContents}}}";
+        if (writer is IndentedTextWriter closingWriter)
+            closingWriter.Indent--;
+
+        writer.Write("}");
+    }
+
+    private static void RenderQuoted(TextWriter writer, string value)
+    {
+        writer.Write('\"');
+        writer.Write(value);
+        writer.Write('\"');
     }
 }

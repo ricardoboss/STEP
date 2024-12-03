@@ -10,9 +10,15 @@ public class PrintFunction : NativeFunction
 {
     public const string Identifier = "print";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] { new(Enum.GetValues<ResultType>(), "...values") };
+    protected override IEnumerable<NativeParameter> NativeParameters =>
+    [
+        new(Enum.GetValues<ResultType>(), "...values"),
+    ];
 
-    protected override IEnumerable<ResultType> ReturnTypes => new[] { ResultType.Void };
+    protected override IEnumerable<ResultType> ReturnTypes =>
+    [
+        ResultType.Void,
+    ];
 
     /// <inheritdoc />
     public override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
@@ -23,7 +29,7 @@ public class PrintFunction : NativeFunction
 
         var stringArgs = arguments
             .EvaluateUsing(interpreter)
-            .Select(ToStringFunction.Render)
+            .Select(Render)
             .ToList();
 
         Print(stdOut, string.Join("", stringArgs));
@@ -31,6 +37,8 @@ public class PrintFunction : NativeFunction
 
         return VoidResult.Instance;
     }
+
+    protected virtual string Render(ExpressionResult result) => ToStringFunction.Render(result);
 
     protected virtual void Print(TextWriter output, string value)
         => output.Write(value.AsMemory());
