@@ -1,0 +1,22 @@
+string? input = fileRead("example2.txt")
+if (input == null) {
+	println("Could not read file")
+	return
+}
+
+list matches = regexMatch("mul\\((?<left>\\d+),(?<right>\\d+)\\)", input)
+list toggles = regexMatch("do(?:n't)?\\(\\)", input)
+
+printlnPretty(toggles)
+return
+
+list left = []
+list right = []
+
+foreach (map match in matches) {
+	// TODO: implement toggles based on index
+	doAdd(left, toNumber(match["groups"]["left"]["value"]))
+	doAdd(right, toNumber(match["groups"]["right"]["value"]))
+}
+
+println(aggregate(0, zipped(left, right, (number a, number b) { return a * b }), (number a, number b) { return a + b }))
