@@ -11,6 +11,7 @@ They are categorized by how they interact with the given values and what they re
 | [Mutating](#Mutating)     | These functions mutate the given value (`list` or `map`) and usually return nothing (i.e. `void`). |
 | [Pure](#Pure)             | These functions do not modify the value given to them and return a new value.                      |
 | [Converting](#Converting) | These functions convert the given value to a different type.                                       |
+| [Files](#Files)           | For working with files and filesystems.                                                            |
 | [Other](#Other)           | These functions do not fit into any of the other categories.                                       |
 
 ## Mutating
@@ -81,6 +82,17 @@ Functions for working with the web and web technologies.
 | [`fetch(string url, map options)`](./Fetch)                                                                              | `string` | Makes a request to a URL and returns the response as a string or `null` if the request failed.                          |
 | [`httpServer(number port, function requestHandler)`<br>`httpServer(map options, function requestHandler)`](./HttpServer) | `void`   | Starts a HTTP server on the specified port/with the specified options and calls the callback for each incoming request. |
 | [`fileResponse(string path)`](./FileResponse)                                                                            | `map`    | Reads the file contents and returns a map that can be returned from a `httpServer` request handler.                     |
+
+## Files
+
+Functions for working with files and filesystems.
+
+| Function                                                                     | Returns  | Description                                         |
+|------------------------------------------------------------------------------|----------|-----------------------------------------------------|
+| [`fileRead(string path)`](./FileRead)                                        | `string` | Reads the file contents and returns it as a string. |
+| [`fileExists(string path)`](./FileExists)                                    | `bool`   | Returns `true` if the file exists.                  |
+| [`fileWrite(string path, string content, bool append = false)`](./FileWrite) | `void`   | Writes the given contents to the file.              |
+| [`fileDelete(string path)`](./FileDelete)                                    | `void`   | Deletes the file.                                   |
 
 ## Other
 

@@ -87,6 +87,17 @@
             </li>
             <li>
                 <details>
+                    <summary>Files</summary>
+                    <ul>
+                        <li><a href="./FileRead">fileRead</a></li>
+                        <li><a href="./FileExists">fileExists</a></li>
+                        <li><a href="./FileWrite">fileWrite</a></li>
+                        <li><a href="./FileDelete">fileDelete</a></li>
+                    </ul>
+                </details>
+            </li>
+            <li>
+                <details>
                     <summary>Other</summary>
                     <ul>
                         <li><a href="./Random">random</a></li>
