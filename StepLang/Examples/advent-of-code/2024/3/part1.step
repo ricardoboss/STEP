@@ -1,0 +1,17 @@
+string? input = fileRead("example.txt")
+if (input == null) {
+	println("Could not read file")
+	return
+}
+
+list matches = regexMatch("mul\\((?<left>\\d+),(?<right>\\d+)\\)", input)
+
+list left = []
+list right = []
+
+foreach (map match in matches) {
+	doAdd(left, toNumber(match["groups"]["left"]["value"]))
+	doAdd(right, toNumber(match["groups"]["right"]["value"]))
+}
+
+println(aggregate(0, zipped(left, right, (number a, number b) { return a * b }), (number a, number b) { return a + b }))
