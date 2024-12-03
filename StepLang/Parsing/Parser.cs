@@ -548,7 +548,7 @@ public class Parser
         return operators;
     }
 
-    private BinaryExpressionOperator ParseExpressionOperator(IReadOnlyList<Token> operatorTokens)
+    private BinaryExpressionOperator ParseExpressionOperator(List<Token> operatorTokens)
     {
         switch (operatorTokens.Count)
         {

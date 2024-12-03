@@ -92,7 +92,7 @@ public class UserDefinedFunctionDefinition : FunctionDefinition
         Debug.Assert(suppliedArgs == TotalParametersCount);
     }
 
-    private void CreateArgumentVariables(IVariableDeclarationEvaluator evaluator, IReadOnlyList<(TokenLocation, ExpressionResult)> arguments)
+    private void CreateArgumentVariables(IVariableDeclarationEvaluator evaluator, List<(TokenLocation, ExpressionResult)> arguments)
     {
         for (var i = 0; i < parameters.Count; i++)
         {
