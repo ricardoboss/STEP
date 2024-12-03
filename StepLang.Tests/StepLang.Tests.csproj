@@ -30,6 +30,10 @@
       <None Update="Failures\**\*.step*">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+
+      <None Update="Examples\advent-of-code\2024\1\part2.step.out">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

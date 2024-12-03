@@ -1,4 +1,4 @@
-string? input = fileRead("example.txt")
+string? input = fileRead("input.txt")
 if (input == null) {
 	println("Could not read file")
 	return
@@ -18,15 +18,22 @@ foreach (string line in lines) {
 	doAdd(right, toNumber(lineParts[1]))
 }
 
-function zipper = (number a, number b) {
-	return abs(a - b)
+function countOccurrences = (list l, number value) {
+	number c = 0
+	foreach (number item in l) {
+		if (item == value) {
+			c++
+		}
+	}
+
+	return c
 }
 
-list distances = zipped(sorted(left), sorted(right), zipper)
+number similarity = 0
+foreach (number l in left) {
+	number s = countOccurrences(right, l)
 
-number sum = 0
-foreach (number distance in distances) {
-	sum += distance
+	similarity += l * s
 }
 
-println(sum)
+println(similarity)

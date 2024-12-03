@@ -42,6 +42,9 @@
         <None Update="Examples\**\*.txt">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Update="Examples\advent-of-code\2024\1\part2.step">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <Target Name="Copy DLLs to Homepage" AfterTargets="Build">
