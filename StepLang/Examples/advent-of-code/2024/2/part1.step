@@ -1,0 +1,92 @@
+string? input = fileRead("input.txt")
+if (input == null) {
+	println("Could not read file")
+	return
+}
+
+list lines = split(input, "\n")
+list reports = []
+foreach (string line in lines) {
+	if (length(line) == 0) {
+		continue
+	}
+
+	list levelStrs = split(line, " ")
+	list levels = []
+	foreach (string levelStr in levelStrs) {
+		doAdd(levels, toNumber(levelStr))
+	}
+	doAdd(reports, levels)
+}
+
+function sequenceEquals = (list a, list b) {
+	if (length(a) != length(b)) {
+		return false
+	}
+
+	number i = 0
+	foreach (number item in a) {
+		if (item != b[i]) {
+			return false
+		}
+
+		i++
+	}
+
+	return true
+}
+
+function maxDifference = (list l) {
+	number i = 1
+	number max = 0
+	while (i < length(l)) {
+		number diff = abs(l[i] - l[i - 1])
+		if (diff > max) {
+			max = diff
+		}
+
+		i++
+	}
+
+	return max
+}
+
+function minDifference = (list l) {
+	number i = 1
+	number min = l[0]
+	while (i < length(l)) {
+		number diff = abs(l[i] - l[i - 1])
+		if (diff < min) {
+			min = diff
+		}
+
+		i++
+	}
+
+	return min
+}
+
+number safeReports = 0
+foreach (list levels in reports) {
+	if (levels[0] < levels[1]) {
+		if (!sequenceEquals(sorted(levels), levels)) {
+			continue
+		}
+	} else {
+		if (!sequenceEquals(sorted(levels), reversed(levels))) {
+			continue
+		}
+	}
+
+	if (maxDifference(levels) > 3) {
+		continue
+	}
+
+	if (minDifference(levels) < 1) {
+		continue
+	}
+
+	safeReports++
+}
+
+println(safeReports)
