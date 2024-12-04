@@ -4,19 +4,31 @@ if (input == null) {
 	return
 }
 
-list matches = regexMatch("mul\\((?<left>\\d+),(?<right>\\d+)\\)", input)
-list toggles = regexMatch("do(?:n't)?\\(\\)", input)
-
-printlnPretty(toggles)
-return
+list matches = regexMatch("(?:mul\\((?<left>\\d+),(?<right>\\d+)\\)|(?<toggle>do(?:n't)?)\\(\\))", input)
 
 list left = []
 list right = []
 
+bool shouldAdd = true
 foreach (map match in matches) {
-	// TODO: implement toggles based on index
-	doAdd(left, toNumber(match["groups"]["left"]["value"]))
-	doAdd(right, toNumber(match["groups"]["right"]["value"]))
+	string value = match["value"]
+
+	if (startsWith(value, "mul(")) {
+		if (!shouldAdd) {
+			continue
+		}
+
+		doAdd(left, toNumber(match["groups"]["left"]["value"]))
+		doAdd(right, toNumber(match["groups"]["right"]["value"]))
+
+		continue
+	}
+
+	if (startsWith(value, "don't")) {
+		shouldAdd = false
+	} else {
+		shouldAdd = true
+	}
 }
 
 println(aggregate(0, zipped(left, right, (number a, number b) { return a * b }), (number a, number b) { return a + b }))
