@@ -1,0 +1,109 @@
+string? input = fileRead("example.txt")
+if (input == null) {
+	println("Could not read file")
+	return
+}
+
+list lines = split(input, "\n")
+
+function countXmasAt = (number line, number column) {
+	if (!checkFor(line, column, "X")) {
+		return 0
+	}
+
+	list directions = getDirections(line, column, "M")
+	if (length(directions) == 0) {
+		return 0
+	}
+
+	//println("Found \"XM\" at ", line, ":", column, " in ", length(directions), " directions: ", directions)
+
+	// TODO check for "MAS" in direction
+	//println("@", line, ":", column)
+	//println(directions)
+
+	number count = 0
+	foreach (map direction in directions) {
+		bool found = true
+		number nextLine = line + direction["dl"]
+		number nextColumn = column + direction["dc"]
+		foreach (string c in ["A", "S"]) {
+			nextLine += direction["dl"]
+			nextColumn += direction["dc"]
+
+			if (!checkFor(nextLine, nextColumn, c)) {
+				found = false
+
+				break
+			}
+		}
+
+		if (found) {
+			//println("Found at ", line, ":", column)
+
+			count++
+		}
+	}
+
+	return count
+}
+
+function checkFor = (number line, number column, string char) {
+	//print("Checking ", line, ":", column, " for ", char)
+	if (line < 0 || line >= length(lines) || column < 0 || column >= length(lines[line])) {
+		//println(" - out of bounds")
+
+		return false
+	}
+
+	if (lines[line][column] != char) {
+		//println(" - different char: ", lines[line][column])
+
+		return false
+	}
+
+	//println(" - found")
+
+	return true
+}
+
+function getDirections = (number line, number column, string char) {
+	list directions = []
+	number x = -1
+	while (x < 2) {
+		number y = -1
+		while (y < 2) {
+			if (x == 0 && y == 0) {
+				y++
+
+				continue
+			}
+
+			if (checkFor(line + x, column + y, char)) {
+				doAdd(directions, {"dl": x, "dc": y})
+			}
+
+			y++
+		}
+
+		x++
+	}
+
+	return directions
+}
+
+number line = 0
+number column = 0
+number count = 0
+while (line < length(lines)) {
+	while (column < length(lines[line])) {
+		count += countXmasAt(line, column)
+
+		column++
+	}
+
+	line++
+	column = 0
+}
+
+println(count)
