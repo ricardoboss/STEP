@@ -2,7 +2,7 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Parsing;
 
-public sealed record IfElseIfStatementNode(Token IfKeywordToken, ExpressionNode Condition, IReadOnlyCollection<StatementNode> Body, ExpressionNode ElseCondition, IReadOnlyCollection<StatementNode> ElseBody) : StatementNode
+public sealed record IfElseIfStatementNode(Token IfKeywordToken, ExpressionNode Condition, CodeBlockStatementNode Body, ExpressionNode ElseCondition, CodeBlockStatementNode ElseBody) : StatementNode
 {
     public override void Accept(IStatementVisitor visitor)
     {

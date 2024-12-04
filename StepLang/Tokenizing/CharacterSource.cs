@@ -7,7 +7,7 @@ public class CharacterSource(IEnumerable<char> chars)
 {
     private readonly Queue<char> charQueue = new(chars);
 
-    public FileSystemInfo? File { get; init; }
+    public Uri? DocumentUri { get; init; }
 
     public int Column { get; private set; } = 1;
 
@@ -19,16 +19,16 @@ public class CharacterSource(IEnumerable<char> chars)
 
     public static CharacterSource FromFile(FileSystemInfo file)
     {
-        var text = System.IO.File.ReadAllText(file.FullName);
+        var text = File.ReadAllText(file.FullName);
 
-        return new CharacterSource(text) { File = file };
+        return new CharacterSource(text) { DocumentUri = new Uri(file.FullName) };
     }
 
     public static async Task<CharacterSource> FromFileAsync(FileSystemInfo file, CancellationToken cancellationToken = default)
     {
-        var text = await System.IO.File.ReadAllTextAsync(file.FullName, cancellationToken);
+        var text = await File.ReadAllTextAsync(file.FullName, cancellationToken);
 
-        return new CharacterSource(text) { File = file };
+        return new CharacterSource(text) { DocumentUri = new Uri(file.FullName) };
     }
 
     public bool TryConsume(out char character)

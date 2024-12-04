@@ -319,7 +319,7 @@ public class Parser(IEnumerable<Token> tokens)
 
         _ = tokens.Dequeue(TokenType.ClosingParentheses);
 
-        var body = ParseCodeBlock().Body;
+        var body = ParseCodeBlock();
 
         if (keyDeclaration is not null)
         {
@@ -349,9 +349,9 @@ public class Parser(IEnumerable<Token> tokens)
 
         var statements = ParseStatements(TokenType.ClosingCurlyBracket);
 
-        _ = tokens.Dequeue(TokenType.ClosingCurlyBracket);
+        var closeCurlyBrace = tokens.Dequeue(TokenType.ClosingCurlyBracket);
 
-        return new CodeBlockStatementNode(openCurlyBrace, statements);
+        return new CodeBlockStatementNode(openCurlyBrace, statements, closeCurlyBrace);
     }
 
     private ContinueStatementNode ParseContinueStatement()
@@ -392,7 +392,7 @@ public class Parser(IEnumerable<Token> tokens)
 
         var codeBlock = ParseCodeBlock();
 
-        return new WhileStatementNode(whileKeyword, condition, codeBlock.Body);
+        return new WhileStatementNode(whileKeyword, condition, codeBlock);
     }
 
     private StatementNode ParseIfStatement()
@@ -404,7 +404,7 @@ public class Parser(IEnumerable<Token> tokens)
         var codeBlock = ParseCodeBlock();
 
         if (tokens.PeekType() is not TokenType.ElseKeyword)
-            return new IfStatementNode(ifKeyword, condition, codeBlock.Body);
+            return new IfStatementNode(ifKeyword, condition, codeBlock);
 
         _ = tokens.Dequeue(TokenType.ElseKeyword);
         if (tokens.PeekType() is TokenType.IfKeyword)
@@ -414,11 +414,11 @@ public class Parser(IEnumerable<Token> tokens)
             var elseCondition = ParseExpression();
             _ = tokens.Dequeue(TokenType.ClosingParentheses);
             var elseIfCodeBlock = ParseCodeBlock();
-            return new IfElseIfStatementNode(ifKeyword, condition, codeBlock.Body, elseCondition, elseIfCodeBlock.Body);
+            return new IfElseIfStatementNode(ifKeyword, condition, codeBlock, elseCondition, elseIfCodeBlock);
         }
 
         var elseCodeBlock = ParseCodeBlock();
-        return new IfElseStatementNode(ifKeyword, condition, codeBlock.Body, elseCodeBlock.Body);
+        return new IfElseStatementNode(ifKeyword, condition, codeBlock, elseCodeBlock);
     }
 
     private CallStatementNode ParseFunctionCall()
@@ -824,7 +824,7 @@ public class Parser(IEnumerable<Token> tokens)
 
         _ = tokens.Dequeue(TokenType.ClosingParentheses);
 
-        var body = ParseCodeBlock().Body;
+        var body = ParseCodeBlock();
 
         if (tokens.PeekType() is not TokenType.OpeningParentheses)
             return new FunctionDefinitionExpressionNode(openParenthesis, parameters, body);

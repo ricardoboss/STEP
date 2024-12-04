@@ -10,7 +10,7 @@ public partial class Interpreter
         {
             var loopScope = PushScope();
 
-            foreach (var statement in statementNode.Body)
+            foreach (var statement in statementNode.Body.Statements)
             {
                 Execute(statement);
 

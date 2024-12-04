@@ -76,13 +76,23 @@ public abstract class ExpressionResult : IEquatable<ExpressionResult>
         return this switch
         {
             NullResult => new LiteralExpressionNode(new Token(TokenType.LiteralNull, "null")),
-            BoolResult boolResult => new LiteralExpressionNode(new Token(TokenType.LiteralBoolean, boolResult ? "true" : "false")),
+            BoolResult boolResult => new LiteralExpressionNode(new Token(TokenType.LiteralBoolean,
+                boolResult ? "true" : "false")),
             NumberResult numberResult => new LiteralExpressionNode(new Token(TokenType.LiteralNumber, numberResult)),
-            StringResult stringResult => new LiteralExpressionNode(new Token(TokenType.LiteralString, stringResult.ToString())),
-            ListResult listResult => new ListExpressionNode(new Token(TokenType.OpeningSquareBracket, "["), listResult.Value.Select(result => result.ToExpressionNode()).ToList()),
-            MapResult mapResult => new MapExpressionNode(new Token(TokenType.OpeningCurlyBracket, "{"), mapResult.Value.ToDictionary(kvp => new Token(TokenType.LiteralString, $"\"{kvp.Key}\""), kvp => kvp.Value.ToExpressionNode())),
-            FunctionResult { Value: UserDefinedFunctionDefinition userDefinedFunctionDefinition } => new FunctionDefinitionExpressionNode(new Token(TokenType.OpeningParentheses, "("), userDefinedFunctionDefinition.Parameters, userDefinedFunctionDefinition.Body),
-            FunctionResult { Value: NativeFunction nativeFunctionDefinition } => new NativeFunctionDefinitionExpressionNode(nativeFunctionDefinition),
+            StringResult stringResult => new LiteralExpressionNode(new Token(TokenType.LiteralString,
+                stringResult.ToString())),
+            ListResult listResult => new ListExpressionNode(new Token(TokenType.OpeningSquareBracket, "["),
+                listResult.Value.Select(result => result.ToExpressionNode()).ToList()),
+            MapResult mapResult => new MapExpressionNode(new Token(TokenType.OpeningCurlyBracket, "{"),
+                mapResult.Value.ToDictionary(kvp => new Token(TokenType.LiteralString, $"\"{kvp.Key}\""),
+                    kvp => kvp.Value.ToExpressionNode())),
+            FunctionResult { Value: UserDefinedFunctionDefinition userDefinedFunctionDefinition } => new
+                FunctionDefinitionExpressionNode(new Token(TokenType.OpeningParentheses, "("),
+                    userDefinedFunctionDefinition.Parameters,
+                    new CodeBlockStatementNode(new Token(TokenType.OpeningCurlyBracket, "{"),
+                        userDefinedFunctionDefinition.Body, new Token(TokenType.ClosingCurlyBracket, "}"))),
+            FunctionResult { Value: NativeFunction nativeFunctionDefinition } =>
+                new NativeFunctionDefinitionExpressionNode(nativeFunctionDefinition),
             VoidResult => throw new InvalidOperationException("Cannot convert void result to expression node"),
             _ => throw new InvalidOperationException("Cannot convert unknown result type to expression node"),
         };

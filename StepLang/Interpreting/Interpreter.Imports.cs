@@ -10,12 +10,12 @@ public partial class Interpreter : IImportNodeVisitor
         var pathToken = importNode.PathToken;
 
         FileInfo importedFile;
-        if (pathToken.Location.File is null || Path.IsPathRooted(pathToken.StringValue))
+        if (pathToken.Location.DocumentUri is null || Path.IsPathRooted(pathToken.StringValue))
             importedFile = new FileInfo(pathToken.StringValue);
         else
         {
-            var baseFile = pathToken.Location.File;
-            var currentDirectory = Path.GetDirectoryName(baseFile.FullName);
+            var file = pathToken.Location.File;
+            var currentDirectory = file is not null ? Path.GetDirectoryName(file.FullName) : null;
             if (currentDirectory is null)
                 throw new IOException("Could not get current directory.");
 

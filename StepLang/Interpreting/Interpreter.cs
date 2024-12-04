@@ -98,7 +98,7 @@ public partial class Interpreter : IRootNodeVisitor, IStatementVisitor, IExpress
     {
         _ = PushScope();
 
-        Execute(statementNode.Body);
+        Execute(statementNode.Statements);
 
         if (PopScope().TryGetResult(out var resultValue, out var resultLocation))
             CurrentScope.SetResult(resultLocation, resultValue);

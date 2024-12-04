@@ -6,23 +6,17 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Expressions;
 
-public class UserDefinedFunctionDefinition : FunctionDefinition
+public class UserDefinedFunctionDefinition(
+    TokenLocation location,
+    IReadOnlyList<IVariableDeclarationNode> parameters,
+    IReadOnlyList<StatementNode> body)
+    : FunctionDefinition
 {
-    private readonly TokenLocation location;
-    private readonly IReadOnlyList<IVariableDeclarationNode> parameters;
-
-    public UserDefinedFunctionDefinition(TokenLocation location, IReadOnlyList<IVariableDeclarationNode> parameters, IReadOnlyList<StatementNode> body)
-    {
-        this.location = location;
-        this.parameters = parameters;
-        Body = body;
-    }
-
     protected override string DebugBodyString => $"[{Body.Count} statements]";
 
     public override IReadOnlyList<IVariableDeclarationNode> Parameters => parameters;
 
-    public IReadOnlyList<StatementNode> Body { get; }
+    public IReadOnlyList<StatementNode> Body { get; } = body;
 
     // TODO: implement return type declarations on user defined functions
     protected override IEnumerable<ResultType> ReturnTypes => Enum.GetValues<ResultType>();

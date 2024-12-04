@@ -104,7 +104,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
         {
             var node = root.AddNode("CodeBlockStatement:");
             var statementTreeBuilder = new StatementTreeBuilder(node);
-            foreach (var statement in statementNode.Body)
+            foreach (var statement in statementNode.Statements)
                 statement.Accept(statementTreeBuilder);
         }
 
@@ -131,7 +131,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var bodyNode = node.AddNode("Body:");
             var statementTreeBuilder = new StatementTreeBuilder(bodyNode);
-            foreach (var statement in statementNode.Body)
+            foreach (var statement in statementNode.Body.Statements)
                 statement.Accept(statementTreeBuilder);
         }
 
@@ -156,7 +156,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var bodyNode = node.AddNode("Body:");
             var statementTreeBuilder = new StatementTreeBuilder(bodyNode);
-            foreach (var statement in statementNode.Body)
+            foreach (var statement in statementNode.Body.Statements)
                 statement.Accept(statementTreeBuilder);
         }
 
@@ -174,7 +174,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var bodyNode = node.AddNode("Body:");
             var statementTreeBuilder = new StatementTreeBuilder(bodyNode);
-            foreach (var statement in statementNode.Body)
+            foreach (var statement in statementNode.Body.Statements)
                 statement.Accept(statementTreeBuilder);
         }
 
@@ -191,7 +191,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var bodyNode = node.AddNode("Body:");
             var statementTreeBuilder = new StatementTreeBuilder(bodyNode);
-            foreach (var statement in statementNode.Body)
+            foreach (var statement in statementNode.Body.Statements)
                 statement.Accept(statementTreeBuilder);
         }
 
@@ -211,7 +211,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var bodyNode = node.AddNode("Body:");
             var statementTreeBuilder = new StatementTreeBuilder(bodyNode);
-            foreach (var statement in statementNode.Body)
+            foreach (var statement in statementNode.Body.Statements)
                 statement.Accept(statementTreeBuilder);
         }
 
@@ -227,7 +227,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var bodyNode = node.AddNode("Body:");
             var statementTreeBuilder = new StatementTreeBuilder(bodyNode);
-            foreach (var statement in statementNode.Body)
+            foreach (var statement in statementNode.Body.Statements)
                 statement.Accept(statementTreeBuilder);
         }
 
@@ -255,7 +255,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var body = node.AddNode("Body:");
             var statementTreeBuilder = new StatementTreeBuilder(body);
-            foreach (var statement in statementNode.Body)
+            foreach (var statement in statementNode.Body.Statements)
                 statement.Accept(statementTreeBuilder);
 
             var elseIfConditionNode = node.AddNode("ElseIfCondition:");
@@ -264,7 +264,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var elseIfBody = node.AddNode("ElseBody:");
             var elseIfStatementTreeBuilder = new StatementTreeBuilder(elseIfBody);
-            foreach (var statement in statementNode.ElseBody)
+            foreach (var statement in statementNode.ElseBody.Statements)
                 statement.Accept(elseIfStatementTreeBuilder);
         }
 
@@ -278,12 +278,12 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var body = node.AddNode("Body:");
             var statementTreeBuilder = new StatementTreeBuilder(body);
-            foreach (var statement in statementNode.Body)
+            foreach (var statement in statementNode.Body.Statements)
                 statement.Accept(statementTreeBuilder);
 
             var elseBody = node.AddNode("ElseBody:");
             var elseStatementTreeBuilder = new StatementTreeBuilder(elseBody);
-            foreach (var statement in statementNode.ElseBody)
+            foreach (var statement in statementNode.ElseBody.Statements)
                 statement.Accept(elseStatementTreeBuilder);
         }
 
@@ -297,7 +297,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var body = node.AddNode("Body:");
             var statementTreeBuilder = new StatementTreeBuilder(body);
-            foreach (var statement in statementNode.Body)
+            foreach (var statement in statementNode.Body.Statements)
                 statement.Accept(statementTreeBuilder);
         }
 
@@ -328,7 +328,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var body = node.AddNode("Body:");
             var statementTreeBuilder = new StatementTreeBuilder(body);
-            foreach (var statement in statementNode.Body)
+            foreach (var statement in statementNode.Body.Statements)
                 statement.Accept(statementTreeBuilder);
         }
 
@@ -464,7 +464,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var bodyNode = node.AddNode("Body:");
             var statementTreeBuilder = new StatementTreeBuilder(bodyNode);
-            foreach (var statement in expressionNode.Body)
+            foreach (var statement in expressionNode.Body.Statements)
                 statement.Accept(statementTreeBuilder);
 
             return VoidResult.Instance;
@@ -747,7 +747,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var definitionBody = definitionNode.AddNode("Body:");
             var definitionBodyTreeBuilder = new StatementTreeBuilder(definitionBody);
-            foreach (var statement in expressionNode.Body)
+            foreach (var statement in expressionNode.Body.Statements)
                 statement.Accept(definitionBodyTreeBuilder);
 
             var argumentsNode = node.AddNode("Arguments:");

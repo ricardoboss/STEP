@@ -24,7 +24,7 @@ public partial class Interpreter
             e => InitializeVariable(statementNode.ValueDeclaration, e),
             collectionLocation,
             collection,
-            statementNode.Body
+            statementNode.Body.Statements
         );
     }
 
@@ -40,7 +40,7 @@ public partial class Interpreter
             e => valueVariable.Assign(valueLocation, e),
             collectionLocation,
             collection,
-            statementNode.Body
+            statementNode.Body.Statements
         );
     }
 
@@ -54,7 +54,7 @@ public partial class Interpreter
             e => InitializeVariable(statementNode.ValueDeclaration, e),
             collectionLocation,
             collection,
-            statementNode.Body
+            statementNode.Body.Statements
         );
     }
 
@@ -72,7 +72,7 @@ public partial class Interpreter
             e => valueVariable.Assign(valueLocation, e),
             collectionLocation,
             collection,
-            statementNode.Body
+            statementNode.Body.Statements
         );
     }
 
@@ -86,7 +86,7 @@ public partial class Interpreter
             e => InitializeVariable(statementNode.ValueDeclaration, e),
             collectionLocation,
             collection,
-            statementNode.Body
+            statementNode.Body.Statements
         );
     }
 
@@ -102,7 +102,7 @@ public partial class Interpreter
             e => valueVariable.Assign(valueLocation, e),
             collectionLocation,
             collection,
-            statementNode.Body
+            statementNode.Body.Statements
         );
     }
 
