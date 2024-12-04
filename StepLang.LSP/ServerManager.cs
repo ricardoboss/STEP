@@ -6,7 +6,6 @@ using Lunet.Extensions.Logging.SpectreConsole;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nerdbank.Streams;
-using OmniSharp.Extensions.LanguageServer.Protocol.Document;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Server;
 using StepLang.LSP.Handlers;
@@ -57,18 +56,25 @@ public class ServerManager
 
     private async Task HandleClientAsync(Socket clientSocket, CancellationToken cancellationToken)
     {
-        await using var ioStream = new NetworkStream(clientSocket);
+        try
+        {
+            await using var ioStream = new NetworkStream(clientSocket);
 
-        using var server = CreateServer(ioStream, ioStream);
+            using var server = CreateServer(ioStream, ioStream);
 
-        server.Exit.Subscribe(code =>
+            await HandleServerShutdownAsync(server, cancellationToken);
+        }
+        catch (Exception e)
+        {
+            await Console.Error.WriteLineAsync("Client task failed");
+            await Console.Error.WriteLineAsync(e.ToString());
+        }
+        finally
         {
             _ = clientTasks.TryRemove(clientSocket, out _);
 
             clientSocket.Dispose();
-        });
-
-        await HandleServerShutdownAsync(server, cancellationToken);
+        }
     }
 
     private static async Task<int> HandleStandardIoAsync(CancellationToken cancellationToken)
@@ -98,38 +104,35 @@ public class ServerManager
     [MustDisposeResource]
     private static LanguageServer CreateServer(Stream input, Stream output)
     {
-        return LanguageServer.Create(o =>
+        var server = LanguageServer.Create(o =>
         {
             o.ServerInfo = new ServerInfo
             {
-                Name = "STEP LSP",
+                Name = "STEP",
                 Version = GitVersionInformation.FullSemVer,
             };
 
             o.Input = input.UsePipeReader();
             o.Output = output.UsePipeWriter();
 
-            o.WithServices(ConfigureServices);
-
-            o.OnInitialized((server, _, _, _) =>
-            {
-                var logger = server.Services.GetRequiredService<ILogger<ServerManager>>();
-
-                logger.LogInformation("Server initialized");
-
-                return Task.CompletedTask;
-            });
+            o.WithServices(s =>
+                s.AddLogging(b =>
+                    b
+                        .ClearProviders()
+                        .AddSpectreConsole(new SpectreConsoleLoggerOptions
+                        {
+                            SingleLine = true,
+                        })
+                        .AddLanguageProtocolLogging()
+                        .SetMinimumLevel(LogLevel.Trace)
+                )
+            );
 
             o.WithHandler<SemanticTokensHandler>();
+            o.WithHandler<DefinitionHandler>();
+            o.WithHandler<DidOpenTextDocumentHandler>();
         });
-    }
 
-    private static void ConfigureServices(IServiceCollection services)
-    {
-        services.AddLogging(b => b
-            .AddLanguageProtocolLogging()
-            .AddSpectreConsole()
-            .SetMinimumLevel(LogLevel.Trace)
-        );
+        return server;
     }
 }
