@@ -47,7 +47,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             this.root = root;
         }
 
-        public void Run(RootNode node)
+        public void Visit(RootNode node)
         {
             IHasTreeNodes statementsRoot;
             if (node.Imports.Count > 0)
@@ -378,7 +378,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             this.root = root;
         }
 
-        public Variable Execute(VariableDeclarationNode variableDeclarationNode)
+        public Variable Evaluate(VariableDeclarationNode variableDeclarationNode)
         {
             var node = root.AddNode("VariableDeclaration:");
             node.AddNode("Types: " + string.Join("|", variableDeclarationNode.Types).EscapeMarkup());
@@ -387,7 +387,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             return DummyVariable;
         }
 
-        public Variable Execute(NullableVariableDeclarationNode variableDeclarationNode)
+        public Variable Evaluate(NullableVariableDeclarationNode variableDeclarationNode)
         {
             var node = root.AddNode("NullableVariableDeclaration:");
             node.AddNode("Types: " + string.Join("|", variableDeclarationNode.Types).EscapeMarkup());
@@ -397,7 +397,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             return DummyVariable;
         }
 
-        public Variable Execute(VariableInitializationNode variableDeclarationNode)
+        public Variable Evaluate(VariableInitializationNode variableDeclarationNode)
         {
             var node = root.AddNode("VariableInitialization:");
             node.AddNode("Types: " + string.Join("|", variableDeclarationNode.Types).EscapeMarkup());
@@ -410,7 +410,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             return DummyVariable;
         }
 
-        public Variable Execute(NullableVariableInitializationNode variableDeclarationNode)
+        public Variable Evaluate(NullableVariableInitializationNode variableDeclarationNode)
         {
             var node = root.AddNode("NullableVariableInitialization:");
             node.AddNode("Types: " + string.Join("|", variableDeclarationNode.Types).EscapeMarkup());

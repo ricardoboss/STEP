@@ -86,7 +86,7 @@ public partial class Interpreter : IRootNodeVisitor, IStatementVisitor, IExpress
         statement.Accept(this);
     }
 
-    public void Run(RootNode node)
+    public void Visit(RootNode node)
     {
         foreach (var importNode in node.Imports)
             importNode.Accept(this);

@@ -7,7 +7,7 @@ public sealed record VariableInitializationNode(TokenLocation AssignmentLocation
 {
     public Variable EvaluateUsing(IVariableDeclarationEvaluator evaluator)
     {
-        return evaluator.Execute(this);
+        return evaluator.Evaluate(this);
     }
 
     public TokenLocation Location => AssignmentLocation;

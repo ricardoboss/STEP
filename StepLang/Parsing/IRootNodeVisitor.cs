@@ -2,5 +2,5 @@ namespace StepLang.Parsing;
 
 public interface IRootNodeVisitor
 {
-    void Run(RootNode node);
+    void Visit(RootNode node);
 }
