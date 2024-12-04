@@ -8,11 +8,11 @@ public class DoRemoveAtFunction : GenericFunction<ListResult, NumberResult>
 {
     public const string Identifier = "doRemoveAt";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
         new(OnlyList, "subject"),
         new(OnlyNumber, "index"),
-    };
+    ];
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = AnyValueType;
 

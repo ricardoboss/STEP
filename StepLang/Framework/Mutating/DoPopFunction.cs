@@ -8,10 +8,10 @@ public class DoPopFunction : GenericFunction<ListResult>
 {
     public const string Identifier = "doPop";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
         new(OnlyList, "subject"),
-    };
+    ];
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = AnyValueType;
 

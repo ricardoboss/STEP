@@ -27,7 +27,7 @@ public class StringResult : ComparableValueExpressionResult<string>
 
     public override StringResult DeepClone()
     {
-        return new(Value);
+        return new StringResult(Value);
     }
 
     /// <inheritdoc />

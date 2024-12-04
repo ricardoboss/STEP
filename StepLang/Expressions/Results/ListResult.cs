@@ -20,7 +20,7 @@ public class ListResult : ValueExpressionResult<IList<ExpressionResult>>
     {
         var clone = Value.Select(result => result.DeepClone()).ToList();
 
-        return new(clone);
+        return new ListResult(clone);
     }
 
     /// <inheritdoc />

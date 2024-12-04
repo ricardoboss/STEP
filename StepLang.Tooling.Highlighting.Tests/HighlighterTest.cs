@@ -28,12 +28,11 @@ public class HighlighterTest
     public static IEnumerable<object[]> ExplicitlyStyledTokenTypes()
     {
         return Enum.GetValues<TokenType>()
-            .Except(new[]
-            {
+            .Except([
                 TokenType.Whitespace,
                 TokenType.NewLine,
                 TokenType.EndOfFile,
-            })
+            ])
             .Select(t => new object[] { t });
     }
 }

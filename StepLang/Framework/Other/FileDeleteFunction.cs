@@ -8,10 +8,10 @@ public class FileDeleteFunction : GenericFunction<StringResult>
 {
     public const string Identifier = "fileDelete";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
         new(OnlyString, "path"),
-    };
+    ];
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyBool;
 

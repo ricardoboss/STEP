@@ -3,9 +3,9 @@ using System.Diagnostics.CodeAnalysis;
 namespace StepLang.Tokenizing;
 
 [SuppressMessage("Usage", "CA2225:Operator overloads have named alternates")]
-public class CharacterSource
+public class CharacterSource(IEnumerable<char> chars)
 {
-    private readonly Queue<char> charQueue;
+    private readonly Queue<char> charQueue = new(chars);
 
     public FileSystemInfo? File { get; init; }
 
@@ -21,19 +21,14 @@ public class CharacterSource
     {
         var text = System.IO.File.ReadAllText(file.FullName);
 
-        return new(text) { File = file };
+        return new CharacterSource(text) { File = file };
     }
 
     public static async Task<CharacterSource> FromFileAsync(FileSystemInfo file, CancellationToken cancellationToken = default)
     {
         var text = await System.IO.File.ReadAllTextAsync(file.FullName, cancellationToken);
 
-        return new(text) { File = file };
-    }
-
-    public CharacterSource(IEnumerable<char> chars)
-    {
-        charQueue = new(chars);
+        return new CharacterSource(text) { File = file };
     }
 
     public bool TryConsume(out char character)
@@ -59,7 +54,7 @@ public class CharacterSource
     {
         character = charQueue.Skip(offset).FirstOrDefault();
 
-        return character != default;
+        return character != 0;
     }
 
     public bool TryPeek(out char character) => TryPeek(0, out character);

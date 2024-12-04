@@ -8,10 +8,10 @@ public class ToValuesFunction : GenericFunction<MapResult>
 {
     public const string Identifier = "toValues";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
         new(OnlyMap, "source"),
-    };
+    ];
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyList;
 

@@ -6,7 +6,7 @@ public sealed record BreakStatementNode(Token Token) : StatementNode
 {
     public override void Accept(IStatementVisitor visitor)
     {
-        visitor.Execute(this);
+        visitor.Visit(this);
     }
 
     public override TokenLocation Location => Token.Location;

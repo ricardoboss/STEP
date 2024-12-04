@@ -34,7 +34,7 @@ public class Tokenizer
 
         var column = source.Column - length;
 
-        return new(source.File, source.Line, column, length);
+        return new TokenLocation(source.File, source.Line, column, length);
     }
 
     public IEnumerable<Token> Tokenize(CancellationToken cancellationToken = default)

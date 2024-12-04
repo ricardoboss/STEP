@@ -33,6 +33,6 @@ internal sealed class DefaultCommand : AsyncCommand<DefaultCommand.Settings>
 
         var runCommand = new RunCommand();
 
-        return await runCommand.ExecuteAsync(context, new() { File = settings.File });
+        return await runCommand.ExecuteAsync(context, new RunCommand.Settings { File = settings.File });
     }
 }

@@ -8,11 +8,11 @@ public class StartsWithFunction : GenericFunction<StringResult, StringResult>
 {
     public const string Identifier = "startsWith";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
         new(OnlyString, "subject"),
         new(OnlyString, "prefix"),
-    };
+    ];
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyBool;
 

@@ -8,10 +8,10 @@ public class SeedFunction : GenericFunction<ExpressionResult>
 {
     public const string Identifier = "seed";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
         new(NullableNumber, "seed"),
-    };
+    ];
 
     protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
         ExpressionResult argument1)

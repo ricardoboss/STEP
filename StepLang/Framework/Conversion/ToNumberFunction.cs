@@ -9,10 +9,11 @@ public class ToNumberFunction : GenericFunction<StringResult, NumberResult>
 {
     public const string Identifier = "toNumber";
 
-    protected override NativeParameter[] NativeParameters { get; } = {
+    protected override NativeParameter[] NativeParameters { get; } =
+    [
         new(OnlyString, "value"),
         new(OnlyNumber, "radix", DefaultValue: LiteralExpressionNode.FromInt32(10)),
-    };
+    ];
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = NullableNumber;
 

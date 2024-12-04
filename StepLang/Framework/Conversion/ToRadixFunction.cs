@@ -8,11 +8,11 @@ public class ToRadixFunction : GenericFunction<NumberResult, NumberResult>
 {
     public const string Identifier = "toRadix";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
         new(OnlyNumber, "value"),
         new(OnlyNumber, "radix"),
-    };
+    ];
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = NullableString;
 

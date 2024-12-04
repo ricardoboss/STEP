@@ -10,12 +10,12 @@ public class FileWriteFunction : GenericFunction<StringResult, StringResult, Boo
 {
     public const string Identifier = "fileWrite";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
         new(OnlyString, "path"),
         new(OnlyString, "content"),
         new(OnlyBool, "append", DefaultValue: LiteralExpressionNode.FromBoolean(false)),
-    };
+    ];
 
     protected override BoolResult Invoke(TokenLocation callLocation, Interpreter interpreter, StringResult argument1, StringResult argument2, BoolResult argument3)
     {

@@ -6,7 +6,7 @@ public sealed record ForeachDeclareValueStatementNode(Token ForeachKeywordToken,
 {
     public override void Accept(IStatementVisitor visitor)
     {
-        visitor.Execute(this);
+        visitor.Visit(this);
     }
 
     public override TokenLocation Location => ForeachKeywordToken.Location;

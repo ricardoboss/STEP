@@ -8,10 +8,10 @@ public class CloneFunction : GenericFunction<ExpressionResult>
 {
     public const string Identifier = "clone";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
         new(AnyValueType, "subject"),
-    };
+    ];
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = AnyValueType;
 

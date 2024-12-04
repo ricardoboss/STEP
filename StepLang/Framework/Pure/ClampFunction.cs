@@ -8,12 +8,12 @@ public class ClampFunction : GenericFunction<NumberResult, NumberResult, NumberR
 {
     public const string Identifier = "clamp";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
         new(OnlyNumber, "min"),
         new(OnlyNumber, "max"),
         new(OnlyNumber, "x"),
-    };
+    ];
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyNumber;
 

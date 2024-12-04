@@ -12,19 +12,19 @@ public abstract class BaseFixer : IFixer
 
     public Task<FixerResult> FixAsync(IAnalyzer analyzer, DirectoryInfo directory,
         CancellationToken cancellationToken = default) =>
-        FixAsync(new[] { analyzer }, new[] { directory }, cancellationToken);
+        FixAsync([analyzer], [directory], cancellationToken);
 
     public Task<FixerResult> FixAsync(IEnumerable<IAnalyzer> analyzers, DirectoryInfo directory,
         CancellationToken cancellationToken = default) =>
-        FixAsync(analyzers, new[] { directory }, cancellationToken);
+        FixAsync(analyzers, [directory], cancellationToken);
 
     public Task<FixerResult> FixAsync(IAnalyzer analyzer, IEnumerable<FileInfo> files,
         CancellationToken cancellationToken = default) =>
-        FixAsync(new[] { analyzer }, files, cancellationToken);
+        FixAsync([analyzer], files, cancellationToken);
 
     public Task<FixerResult> FixAsync(IAnalyzer analyzer, IEnumerable<DirectoryInfo> directories,
         CancellationToken cancellationToken = default) =>
-        FixAsync(new[] { analyzer }, directories, cancellationToken);
+        FixAsync([analyzer], directories, cancellationToken);
 
     public Task<FixerResult> FixAsync(IEnumerable<IAnalyzer> analyzers,
         IEnumerable<DirectoryInfo> directories, CancellationToken cancellationToken = default)
@@ -64,7 +64,7 @@ public abstract class BaseFixer : IFixer
     public virtual async Task<FixerResult> FixAsync(IAnalyzer analyzer, FileInfo file,
         CancellationToken cancellationToken = default)
     {
-        OnCheck?.Invoke(this, new(file, analyzer));
+        OnCheck?.Invoke(this, new BeforeFixerRanEventArgs(file, analyzer));
 
         Stopwatch sw = new();
 
@@ -99,7 +99,7 @@ public abstract class BaseFixer : IFixer
 
         var fixApplicatorResult = await ApplyResult(analysisResult, file, cancellationToken);
 
-        OnFixed?.Invoke(this, new(file, analyzer));
+        OnFixed?.Invoke(this, new AfterFixerRanEventArgs(file, analyzer));
 
         return fixApplicatorResult with { Elapsed = fixApplicatorResult.Elapsed + runDuration };
     }

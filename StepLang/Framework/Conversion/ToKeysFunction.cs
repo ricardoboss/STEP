@@ -8,10 +8,10 @@ public class ToKeysFunction : GenericFunction<MapResult>
 {
     public const string Identifier = "toKeys";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
         new(OnlyMap, "source"),
-    };
+    ];
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyList;
 
@@ -22,6 +22,6 @@ public class ToKeysFunction : GenericFunction<MapResult>
             .Cast<ExpressionResult>()
             .ToList();
 
-        return new(keys);
+        return new ListResult(keys);
     }
 }

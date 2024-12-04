@@ -9,12 +9,12 @@ public class MinFunction : NativeFunction
 {
     public const string Identifier = "min";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new[]
-    {
-        new NativeParameter(new[] { ResultType.Number }, "...values"),
-    };
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
+        new NativeParameter([ResultType.Number], "...values"),
+    ];
 
-    protected override IEnumerable<ResultType> ReturnTypes { get; } = new[] { ResultType.Number };
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = [ResultType.Number];
 
     public override NumberResult Invoke(TokenLocation callLocation, Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
     {

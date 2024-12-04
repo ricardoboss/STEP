@@ -8,12 +8,12 @@ public class InterpolateFunction : GenericFunction<NumberResult, NumberResult, N
 {
     public const string Identifier = "interpolate";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
         new(OnlyNumber, "a"),
         new(OnlyNumber, "b"),
         new(OnlyNumber, "t"),
-    };
+    ];
 
     protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
         NumberResult argument1, NumberResult argument2, NumberResult argument3)

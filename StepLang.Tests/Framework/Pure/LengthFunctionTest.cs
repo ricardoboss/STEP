@@ -16,7 +16,7 @@ public class LengthFunctionTest
     {
         var interpreter = new Interpreter();
         var function = new LengthFunction();
-        var result = function.Invoke(new(), interpreter, new[] { value });
+        var result = function.Invoke(new TokenLocation(), interpreter, [value]);
 
         Assert.Equal(expected.Value, result.Value);
     }
@@ -28,7 +28,8 @@ public class LengthFunctionTest
         interpreter.CurrentScope.CreateVariable("foo", new StringResult("Hello"));
 
         var function = new LengthFunction();
-        var result = function.Invoke(new(), interpreter, new[] { new IdentifierExpressionNode(new(TokenType.Identifier, "foo")) });
+        var result = function.Invoke(new TokenLocation(), interpreter, [new IdentifierExpressionNode(new Token(TokenType.Identifier, "foo")),
+        ]);
 
         Assert.Equal(5, result.Value);
     }
@@ -39,7 +40,8 @@ public class LengthFunctionTest
         var interpreter = new Interpreter();
         var function = new LengthFunction();
 
-        _ = Assert.Throws<InvalidArgumentTypeException>(() => function.Invoke(new(), interpreter, new[] { LiteralExpressionNode.FromInt32(0) }));
+        _ = Assert.Throws<InvalidArgumentTypeException>(() => function.Invoke(new TokenLocation(), interpreter,
+            [LiteralExpressionNode.FromInt32(0)]));
     }
 
     [SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Used by xUnit")]
@@ -50,7 +52,7 @@ public class LengthFunctionTest
             Add(LiteralExpressionNode.FromString(""), 0);
             Add(LiteralExpressionNode.FromString("Hello"), 5);
 
-            var list = new ListExpressionNode(new(TokenType.OpeningSquareBracket, "["), new List<ExpressionNode>
+            var list = new ListExpressionNode(new Token(TokenType.OpeningSquareBracket, "["), new List<ExpressionNode>
             {
                 LiteralExpressionNode.FromString("A"),
                 LiteralExpressionNode.FromInt32(1),
@@ -59,26 +61,26 @@ public class LengthFunctionTest
 
             Add(list, 3);
 
-            var constantList = new ListExpressionNode(new(TokenType.OpeningSquareBracket, "["), new List<ExpressionNode>(new[]
-            {
+            var constantList = new ListExpressionNode(new Token(TokenType.OpeningSquareBracket, "["), new List<ExpressionNode>(
+            [
                 LiteralExpressionNode.FromInt32(123),
-            }));
+            ]));
 
             Add(constantList, 1);
 
-            var map = new MapExpressionNode(new(TokenType.OpeningCurlyBracket, "{"), new Dictionary<Token, ExpressionNode>
+            var map = new MapExpressionNode(new Token(TokenType.OpeningCurlyBracket, "{"), new Dictionary<Token, ExpressionNode>
             {
                 {
-                    new(TokenType.LiteralString, "\"Foo\""), LiteralExpressionNode.FromString("A")
+                    new Token(TokenType.LiteralString, "\"Foo\""), LiteralExpressionNode.FromString("A")
                 },
                 {
-                    new(TokenType.LiteralString, "\"Bar\""), LiteralExpressionNode.FromInt32(1)
+                    new Token(TokenType.LiteralString, "\"Bar\""), LiteralExpressionNode.FromInt32(1)
                 },
                 {
-                    new(TokenType.LiteralString, "\"Baz\""), LiteralExpressionNode.FromBoolean(true)
+                    new Token(TokenType.LiteralString, "\"Baz\""), LiteralExpressionNode.FromBoolean(true)
                 },
                 {
-                    new(TokenType.LiteralString, "\"Bum\""), LiteralExpressionNode.FromString("lol")
+                    new Token(TokenType.LiteralString, "\"Bum\""), LiteralExpressionNode.FromString("lol")
                 },
             });
 

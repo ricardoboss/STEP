@@ -17,7 +17,7 @@ public record FixerResult
 
     public static FixerResult operator +(FixerResult a, FixerResult b)
     {
-        return new(
+        return new FixerResult(
             a.AppliedFixes + b.AppliedFixes,
             a.Elapsed + b.Elapsed
         );

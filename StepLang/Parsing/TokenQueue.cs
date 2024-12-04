@@ -10,7 +10,7 @@ public class TokenQueue
 
     public TokenQueue() => tokenList = [];
 
-    public TokenQueue(IEnumerable<Token> tokens) => tokenList = new(tokens);
+    public TokenQueue(IEnumerable<Token> tokens) => tokenList = new LinkedList<Token>(tokens);
 
     public bool IgnoreMeaningless { get; set; }
 

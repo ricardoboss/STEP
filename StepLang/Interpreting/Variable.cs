@@ -9,7 +9,7 @@ public class Variable
 
     public IReadOnlyList<ResultType> Types { get; }
 
-    public string TypeString => string.Join("|", Types.Except(new[] { ResultType.Null }).Select(t => t.ToTypeName()));
+    public string TypeString => string.Join("|", Types.Except([ResultType.Null]).Select(t => t.ToTypeName()));
 
     public bool Nullable { get; }
 

@@ -4,14 +4,14 @@ namespace StepLang.Interpreting;
 
 public partial class Interpreter
 {
-    public void Execute(IfStatementNode statementNode)
+    public void Visit(IfStatementNode statementNode)
     {
         var result = statementNode.Condition.EvaluateUsing(this);
         if (result.IsTruthy())
             Execute(statementNode.Body);
     }
 
-    public void Execute(IfElseStatementNode statementNode)
+    public void Visit(IfElseStatementNode statementNode)
     {
         var result = statementNode.Condition.EvaluateUsing(this);
         if (result.IsTruthy())
@@ -20,7 +20,7 @@ public partial class Interpreter
             Execute(statementNode.ElseBody);
     }
 
-    public void Execute(IfElseIfStatementNode statementNode)
+    public void Visit(IfElseIfStatementNode statementNode)
     {
         var result = statementNode.Condition.EvaluateUsing(this);
         if (result.IsTruthy())
@@ -34,12 +34,12 @@ public partial class Interpreter
             Execute(statementNode.ElseBody);
     }
 
-    public void Execute(ContinueStatementNode statementNode)
+    public void Visit(ContinueStatementNode statementNode)
     {
         CurrentScope.SetContinue();
     }
 
-    public void Execute(BreakStatementNode statementNode)
+    public void Visit(BreakStatementNode statementNode)
     {
         CurrentScope.SetBreak();
     }

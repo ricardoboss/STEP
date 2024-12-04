@@ -8,11 +8,11 @@ public class DoRemoveFunction : GenericFunction<ListResult, ExpressionResult>
 {
     public const string Identifier = "doRemove";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
         new(OnlyList, "subject"),
         new(AnyValueType, "element"),
-    };
+    ];
 
     protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
         ListResult argument1, ExpressionResult argument2)

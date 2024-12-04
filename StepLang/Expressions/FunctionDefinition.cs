@@ -40,5 +40,5 @@ public abstract class FunctionDefinition
 
     public abstract IReadOnlyList<IVariableDeclarationNode> Parameters { get; }
 
-    protected virtual IEnumerable<ResultType> ReturnTypes { get; } = new[] { ResultType.Void };
+    protected virtual IEnumerable<ResultType> ReturnTypes { get; } = [ResultType.Void];
 }

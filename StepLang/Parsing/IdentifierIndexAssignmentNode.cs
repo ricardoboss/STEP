@@ -6,7 +6,7 @@ public sealed record IdentifierIndexAssignmentNode(Token Identifier, ExpressionN
 {
     public override void Accept(IStatementVisitor visitor)
     {
-        visitor.Execute(this);
+        visitor.Visit(this);
     }
 
     public override TokenLocation Location => Identifier.Location;

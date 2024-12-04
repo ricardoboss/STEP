@@ -18,7 +18,8 @@ public class SortedFunction : ListManipulationFunction
         if (arguments.Count == 2)
             return base.Invoke(callLocation, interpreter, arguments);
 
-        return base.Invoke(callLocation, interpreter, new[] { arguments[0], new CompareToFunction().ToResult().ToExpressionNode() });
+        return base.Invoke(callLocation, interpreter, [arguments[0], new CompareToFunction().ToResult().ToExpressionNode(),
+        ]);
     }
 
     protected override IEnumerable<ExpressionNode[]> PrepareArgsForCallback(TokenLocation callLocation, IEnumerable<ExpressionResult> list, FunctionDefinition callback)

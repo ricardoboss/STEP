@@ -8,11 +8,11 @@ public class SplitFunction : GenericFunction<StringResult, StringResult>
 {
     public const string Identifier = "split";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
         new(OnlyString, "source"),
         new(OnlyString, "separator", new StringResult("")),
-    };
+    ];
 
     protected override ListResult Invoke(TokenLocation callLocation, Interpreter interpreter, StringResult argument1, StringResult argument2)
     {
@@ -25,6 +25,6 @@ public class SplitFunction : GenericFunction<StringResult, StringResult>
             .Cast<ExpressionResult>()
             .ToList();
 
-        return new(parts);
+        return new ListResult(parts);
     }
 }

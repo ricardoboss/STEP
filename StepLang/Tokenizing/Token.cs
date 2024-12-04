@@ -14,7 +14,7 @@ public class Token
     {
         Type = type;
         Value = value;
-        Location = location ?? new();
+        Location = location ?? new TokenLocation();
     }
 
     public string StringValue => Type switch

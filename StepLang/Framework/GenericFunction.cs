@@ -10,7 +10,7 @@ public abstract class GenericFunction : GenericParameterlessFunction
 {
     protected abstract ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter);
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = Enumerable.Empty<NativeParameter>();
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = [];
 
     public override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
         IReadOnlyList<ExpressionNode> arguments)

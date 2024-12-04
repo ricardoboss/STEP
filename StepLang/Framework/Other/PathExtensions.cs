@@ -8,7 +8,7 @@ public static class PathExtensions
     {
         FileInfo fileInfo;
         if (Path.IsPathRooted(path))
-            fileInfo = new(path);
+            fileInfo = new FileInfo(path);
         else
         {
             string? currentDirectory;
@@ -22,7 +22,7 @@ public static class PathExtensions
 
             var resolvedPath = Path.Combine(currentDirectory, path);
 
-            fileInfo = new(resolvedPath);
+            fileInfo = new FileInfo(resolvedPath);
         }
 
         return fileInfo;

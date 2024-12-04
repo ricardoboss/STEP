@@ -8,10 +8,11 @@ public class ContainsFunction : GenericFunction<ExpressionResult, ExpressionResu
 {
     public const string Identifier = "contains";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] {
-        new(new[] { ResultType.List, ResultType.Map, ResultType.Str }, "subject"),
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
+        new([ResultType.List, ResultType.Map, ResultType.Str], "subject"),
         new(AnyValueType, "value"),
-    };
+    ];
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyBool;
 

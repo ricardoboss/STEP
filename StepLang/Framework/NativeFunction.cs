@@ -14,16 +14,16 @@ public abstract class NativeFunction : FunctionDefinition
     protected override string DebugBodyString => "[native code]";
 
     protected static IReadOnlyList<ResultType> AnyType => Enum.GetValues<ResultType>();
-    protected static IReadOnlyList<ResultType> AnyValueType => Enum.GetValues<ResultType>().Except(new[] { ResultType.Void }).ToList();
-    protected static IReadOnlyList<ResultType> OnlyNumber => new[] { ResultType.Number };
-    protected static IReadOnlyList<ResultType> NullableNumber => new[] { ResultType.Null, ResultType.Number };
-    protected static IReadOnlyList<ResultType> OnlyString => new[] { ResultType.Str };
-    protected static IReadOnlyList<ResultType> NullableString => new[] { ResultType.Null, ResultType.Str };
-    protected static IReadOnlyList<ResultType> OnlyList => new[] { ResultType.List };
-    protected static IReadOnlyList<ResultType> OnlyBool => new[] { ResultType.Bool };
-    protected static IReadOnlyList<ResultType> NullableBool => new[] { ResultType.Null, ResultType.Bool };
-    protected static IReadOnlyList<ResultType> OnlyMap => new[] { ResultType.Map };
-    protected static IReadOnlyList<ResultType> OnlyFunction => new[] { ResultType.Function };
+    protected static IReadOnlyList<ResultType> AnyValueType => Enum.GetValues<ResultType>().Except([ResultType.Void]).ToList();
+    protected static IReadOnlyList<ResultType> OnlyNumber => [ResultType.Number];
+    protected static IReadOnlyList<ResultType> NullableNumber => [ResultType.Null, ResultType.Number];
+    protected static IReadOnlyList<ResultType> OnlyString => [ResultType.Str];
+    protected static IReadOnlyList<ResultType> NullableString => [ResultType.Null, ResultType.Str];
+    protected static IReadOnlyList<ResultType> OnlyList => [ResultType.List];
+    protected static IReadOnlyList<ResultType> OnlyBool => [ResultType.Bool];
+    protected static IReadOnlyList<ResultType> NullableBool => [ResultType.Null, ResultType.Bool];
+    protected static IReadOnlyList<ResultType> OnlyMap => [ResultType.Map];
+    protected static IReadOnlyList<ResultType> OnlyFunction => [ResultType.Function];
 
     protected void CheckArgumentCount(TokenLocation location, IReadOnlyList<ExpressionNode> arguments)
     {
@@ -50,14 +50,14 @@ public abstract class NativeFunction : FunctionDefinition
                 if (!nullable)
                     return new VariableDeclarationNode(types, identifier);
 
-                return new NullableVariableDeclarationNode(types, new(TokenType.QuestionMarkSymbol, "?"), identifier);
+                return new NullableVariableDeclarationNode(types, new Token(TokenType.QuestionMarkSymbol, "?"), identifier);
 
             }
 
             if (!nullable)
-                return new VariableInitializationNode(new(), types, identifier, p.DefaultValue);
+                return new VariableInitializationNode(new TokenLocation(), types, identifier, p.DefaultValue);
 
-            return new NullableVariableInitializationNode(new(), types, new(TokenType.QuestionMarkSymbol, "?"), identifier, p.DefaultValue);
+            return new NullableVariableInitializationNode(new TokenLocation(), types, new Token(TokenType.QuestionMarkSymbol, "?"), identifier, p.DefaultValue);
         })
         .ToList();
 

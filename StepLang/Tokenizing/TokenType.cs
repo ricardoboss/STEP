@@ -265,10 +265,11 @@ public static class TokenTypes
         return false;
     }
 
-    public static readonly TokenType[] ShorthandMathematicalOperations = {
+    public static readonly TokenType[] ShorthandMathematicalOperations =
+    [
         TokenType.PlusSymbol,
         TokenType.MinusSymbol,
-    };
+    ];
 
     public static bool IsShorthandMathematicalOperation(this TokenType type)
     {
@@ -279,7 +280,8 @@ public static class TokenTypes
         };
     }
 
-    public static readonly TokenType[] ShorthandMathematicalOperationsWithAssignment = {
+    public static readonly TokenType[] ShorthandMathematicalOperationsWithAssignment =
+    [
         TokenType.PlusSymbol,
         TokenType.MinusSymbol,
         TokenType.AsteriskSymbol,
@@ -289,7 +291,7 @@ public static class TokenTypes
         TokenType.AmpersandSymbol,
         TokenType.HatSymbol,
         TokenType.QuestionMarkSymbol,
-    };
+    ];
 
     public static bool IsShorthandMathematicalOperationWithAssignment(this TokenType type)
     {
@@ -300,13 +302,14 @@ public static class TokenTypes
         };
     }
 
-    public static readonly TokenType[] MathematicalOperations = {
+    public static readonly TokenType[] MathematicalOperations =
+    [
         TokenType.PlusSymbol,
         TokenType.MinusSymbol,
         TokenType.AsteriskSymbol,
         TokenType.SlashSymbol,
         TokenType.PercentSymbol,
-    };
+    ];
 
     public static bool IsMathematicalOperation(this TokenType type)
     {
@@ -326,7 +329,8 @@ public static class TokenTypes
         };
     }
 
-    public static readonly TokenType[] Operators = {
+    public static readonly TokenType[] Operators =
+    [
         TokenType.PlusSymbol,
         TokenType.MinusSymbol,
         TokenType.AsteriskSymbol,
@@ -340,7 +344,7 @@ public static class TokenTypes
         TokenType.EqualsSymbol,
         TokenType.GreaterThanSymbol,
         TokenType.LessThanSymbol,
-    };
+    ];
 
     public static bool IsOperator(this TokenType type)
     {

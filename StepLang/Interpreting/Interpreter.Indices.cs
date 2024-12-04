@@ -8,7 +8,7 @@ namespace StepLang.Interpreting;
 
 public partial class Interpreter
 {
-    public void Execute(IdentifierIndexAssignmentNode statementNode)
+    public void Visit(IdentifierIndexAssignmentNode statementNode)
     {
         var variable = CurrentScope.GetVariable(statementNode.Identifier);
         var indexResult = statementNode.IndexExpression.EvaluateUsing(this);

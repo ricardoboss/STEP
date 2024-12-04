@@ -8,16 +8,16 @@ public class IndexOfFunction : GenericFunction<ExpressionResult, ExpressionResul
 {
     public const string Identifier = "indexOf";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
-        new(new[] { ResultType.List, ResultType.Map, ResultType.Str }, "subject"),
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
+        new([ResultType.List, ResultType.Map, ResultType.Str], "subject"),
         new(AnyValueType, "value"),
-    };
+    ];
 
-    protected override IEnumerable<ResultType> ReturnTypes { get; } = new[]
-    {
+    protected override IEnumerable<ResultType> ReturnTypes { get; } =
+    [
         ResultType.Null, ResultType.Number, ResultType.Str,
-    };
+    ];
 
     protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
         ExpressionResult argument1, ExpressionResult argument2)

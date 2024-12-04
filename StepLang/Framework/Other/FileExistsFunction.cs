@@ -8,10 +8,10 @@ public class FileExistsFunction : GenericFunction<StringResult>
 {
     public const string Identifier = "fileExists";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
         new(OnlyString, "path"),
-    };
+    ];
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyBool;
 

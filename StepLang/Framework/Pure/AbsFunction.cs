@@ -7,7 +7,7 @@ namespace StepLang.Framework.Pure;
 public class AbsFunction : GenericFunction<NumberResult>
 {
     public const string Identifier = "abs";
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] { new(OnlyNumber, "x") };
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = [new(OnlyNumber, "x")];
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyNumber;
 

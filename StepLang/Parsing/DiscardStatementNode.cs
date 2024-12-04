@@ -6,7 +6,7 @@ public sealed record DiscardStatementNode(TokenLocation UnderscoreTokenLocation,
 {
     public override void Accept(IStatementVisitor visitor)
     {
-        visitor.Execute(this);
+        visitor.Visit(this);
     }
 
     public override TokenLocation Location { get; } = UnderscoreTokenLocation;

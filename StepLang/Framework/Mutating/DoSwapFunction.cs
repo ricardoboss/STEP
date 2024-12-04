@@ -9,12 +9,12 @@ public class DoSwapFunction : GenericFunction<ExpressionResult, ExpressionResult
 {
     public const string Identifier = "doSwap";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
-        new(new[] { ResultType.List, ResultType.Map }, "subject"),
-        new(new[] { ResultType.Number, ResultType.Str }, "a"),
-        new(new[] { ResultType.Number, ResultType.Str }, "b"),
-    };
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
+        new([ResultType.List, ResultType.Map], "subject"),
+        new([ResultType.Number, ResultType.Str], "a"),
+        new([ResultType.Number, ResultType.Str], "b"),
+    ];
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyBool;
 
@@ -32,10 +32,10 @@ public class DoSwapFunction : GenericFunction<ExpressionResult, ExpressionResult
         {
             throw argument1 switch
             {
-                MapResult when argument2 is not StringResult => new(callLocation, NativeParameters.ElementAt(1).Types, argument2),
-                MapResult when argument3 is not StringResult => new(callLocation, NativeParameters.ElementAt(2).Types, argument3),
-                ListResult when argument2 is not NumberResult => new(callLocation, NativeParameters.ElementAt(1).Types, argument2),
-                ListResult when argument3 is not NumberResult => new(callLocation, NativeParameters.ElementAt(2).Types, argument3),
+                MapResult when argument2 is not StringResult => new InvalidArgumentTypeException(callLocation, NativeParameters.ElementAt(1).Types, argument2),
+                MapResult when argument3 is not StringResult => new InvalidArgumentTypeException(callLocation, NativeParameters.ElementAt(2).Types, argument3),
+                ListResult when argument2 is not NumberResult => new InvalidArgumentTypeException(callLocation, NativeParameters.ElementAt(1).Types, argument2),
+                ListResult when argument3 is not NumberResult => new InvalidArgumentTypeException(callLocation, NativeParameters.ElementAt(2).Types, argument3),
                 _ => new InvalidArgumentTypeException(callLocation, NativeParameters.First().Types, argument1),
             };
         }

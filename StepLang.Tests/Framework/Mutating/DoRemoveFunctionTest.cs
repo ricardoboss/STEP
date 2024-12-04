@@ -17,10 +17,10 @@ public class DoRemoveFunctionTest
 
         var interpreter = new Interpreter();
         interpreter.CurrentScope.CreateVariable(listIdentifier, list);
-        var listVarExpression = new IdentifierExpressionNode(new(TokenType.Identifier, listIdentifier));
+        var listVarExpression = new IdentifierExpressionNode(new Token(TokenType.Identifier, listIdentifier));
         var function = new DoRemoveFunction();
 
-        var result = function.Invoke(new(), interpreter, new[] { listVarExpression, elementExpression });
+        var result = function.Invoke(new TokenLocation(), interpreter, [listVarExpression, elementExpression]);
 
         Assert.Equal(VoidResult.Instance, result);
         Assert.Equal(resultingList.Value.Count, list.Value.Count);
@@ -34,7 +34,7 @@ public class DoRemoveFunctionTest
             Add(ListResult.Empty, LiteralExpressionNode.FromString("test"), ListResult.Empty);
             Add(ListResult.Empty, LiteralExpressionNode.FromInt32(1), ListResult.Empty);
             Add(ListResult.Empty, LiteralExpressionNode.FromBoolean(true), ListResult.Empty);
-            Add(ListResult.Empty, new AddExpressionNode(new(), LiteralExpressionNode.FromInt32(1), LiteralExpressionNode.FromInt32(2)), ListResult.Empty);
+            Add(ListResult.Empty, new AddExpressionNode(new TokenLocation(), LiteralExpressionNode.FromInt32(1), LiteralExpressionNode.FromInt32(2)), ListResult.Empty);
             Add(ListResult.From(BoolResult.True), LiteralExpressionNode.FromBoolean(false), ListResult.From(BoolResult.True));
             Add(ListResult.From(BoolResult.False), LiteralExpressionNode.FromBoolean(false), ListResult.Empty);
         }

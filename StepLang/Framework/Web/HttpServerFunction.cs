@@ -15,11 +15,11 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
     public const string Identifier = "httpServer";
 
     /// <inheritdoc />
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
-        new(new[] { ResultType.Map, ResultType.Number }, "portOrOptions"),
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
+        new([ResultType.Map, ResultType.Number], "portOrOptions"),
         new(OnlyFunction, "handler"),
-    };
+    ];
 
     /// <inheritdoc />
     protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter, ExpressionResult argument1, FunctionResult argument2)
@@ -43,7 +43,7 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
         else if (argument1 is NumberResult portNumber)
         {
             port = portNumber;
-            options = new();
+            options = new Dictionary<string, ExpressionResult>();
         }
         else
             throw new InvalidResultTypeException(callLocation, argument1, ResultType.Number, ResultType.Map);
@@ -177,14 +177,13 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
         {
             try
             {
-                return callback.Invoke(callLocation, interpreter, new ExpressionNode[]
-                {
+                return callback.Invoke(callLocation, interpreter, [
                     requestMap,
-                });
+                ]);
             }
             catch (Exception e)
             {
-                return new MapResult(new()
+                return new MapResult(new Dictionary<string, ExpressionResult>
                 {
                     {
                         "status", new NumberResult(500)
@@ -234,7 +233,7 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
             if (result is MapResult map)
                 return map.Value;
 
-            return new()
+            return new Dictionary<string, ExpressionResult>
             {
                 ["body"] = result,
             };
@@ -266,7 +265,7 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
 
             var requestBodyResult = new StringResult(requestBody);
 
-            return new(new Dictionary<string, ExpressionResult>
+            return new MapResult(new Dictionary<string, ExpressionResult>
             {
                 ["method"] = requestMethod,
                 ["url"] = requestUrl,

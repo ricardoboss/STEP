@@ -11,7 +11,7 @@ public partial class Interpreter : IImportNodeVisitor
 
         FileInfo importedFile;
         if (pathToken.Location.File is null || Path.IsPathRooted(pathToken.StringValue))
-            importedFile = new(pathToken.StringValue);
+            importedFile = new FileInfo(pathToken.StringValue);
         else
         {
             var baseFile = pathToken.Location.File;
@@ -21,7 +21,7 @@ public partial class Interpreter : IImportNodeVisitor
 
             var resolvedPath = Path.Combine(currentDirectory, pathToken.StringValue);
 
-            importedFile = new(resolvedPath);
+            importedFile = new FileInfo(resolvedPath);
         }
 
         if (!importedFile.Exists)

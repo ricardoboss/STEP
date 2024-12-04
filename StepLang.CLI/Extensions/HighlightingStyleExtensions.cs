@@ -10,7 +10,7 @@ internal static class HighlightingStyleExtensions
         if (style.Italic)
             decoration |= Decoration.Italic;
 
-        return new(style.Foreground.ToSpectreColor(), decoration: decoration);
+        return new Style(style.Foreground.ToSpectreColor(), decoration: decoration);
     }
 
     public static Color ToSpectreColor(this System.Drawing.Color? color)
@@ -18,6 +18,6 @@ internal static class HighlightingStyleExtensions
         if (color is null or { A: 0 })
             return Color.Default;
 
-        return new(color.Value.R, color.Value.G, color.Value.B);
+        return new Color(color.Value.R, color.Value.G, color.Value.B);
     }
 }

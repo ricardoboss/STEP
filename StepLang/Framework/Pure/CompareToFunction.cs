@@ -8,11 +8,11 @@ public class CompareToFunction : GenericFunction<ExpressionResult, ExpressionRes
 {
     public const string Identifier = "compareTo";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
         new(AnyType, "a"),
         new(AnyType, "b"),
-    };
+    ];
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyNumber;
 

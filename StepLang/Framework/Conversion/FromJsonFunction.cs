@@ -9,10 +9,10 @@ public class FromJsonFunction : GenericFunction<StringResult>
 {
     public const string Identifier = "fromJson";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
         new(OnlyString, "source"),
-    };
+    ];
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = AnyValueType;
 

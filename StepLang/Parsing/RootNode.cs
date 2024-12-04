@@ -9,5 +9,5 @@ public sealed record RootNode(IReadOnlyCollection<ImportNode> Imports, IReadOnly
         visitor.Run(this);
     }
 
-    public TokenLocation Location => Imports.FirstOrDefault()?.Location ?? Body.FirstOrDefault()?.Location ?? new();
+    public TokenLocation Location => Imports.FirstOrDefault()?.Location ?? Body.FirstOrDefault()?.Location ?? new TokenLocation();
 }

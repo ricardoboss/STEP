@@ -4,7 +4,7 @@ namespace StepLang.Expressions.Results;
 
 public class MapResult : ValueExpressionResult<Dictionary<string, ExpressionResult>>
 {
-    public static MapResult Empty => new(new());
+    public static MapResult Empty => new(new Dictionary<string, ExpressionResult>());
 
     /// <inheritdoc />
     public MapResult(Dictionary<string, ExpressionResult> value) : base(ResultType.Map, value)
@@ -20,7 +20,7 @@ public class MapResult : ValueExpressionResult<Dictionary<string, ExpressionResu
     {
         var clone = Value.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.DeepClone());
 
-        return new(clone);
+        return new MapResult(clone);
     }
 
     /// <inheritdoc />

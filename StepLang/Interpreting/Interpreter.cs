@@ -13,9 +13,9 @@ public partial class Interpreter : IRootNodeVisitor, IStatementVisitor, IExpress
 
     private readonly Stack<Scope> scopes = new();
 
-    private Lazy<Random> random = new(() => new());
+    private Lazy<Random> random = new(() => new Random());
 
-    public void SetRandomSeed(int value) => random = new(() => new Random(value));
+    public void SetRandomSeed(int value) => random = new Lazy<Random>(() => new Random(value));
 
     public Random Random => random.Value;
 
@@ -94,7 +94,7 @@ public partial class Interpreter : IRootNodeVisitor, IStatementVisitor, IExpress
         Execute(node.Body);
     }
 
-    public void Execute(CodeBlockStatementNode statementNode)
+    public void Visit(CodeBlockStatementNode statementNode)
     {
         _ = PushScope();
 

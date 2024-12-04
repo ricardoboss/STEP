@@ -8,12 +8,12 @@ public class DoInsertAtFunction : GenericFunction<ListResult, NumberResult, Expr
 {
     public const string Identifier = "doInsertAt";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
         new(OnlyList, "list"),
         new(OnlyNumber, "index"),
         new(AnyValueType, "value"),
-    };
+    ];
 
     protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
         ListResult argument1, NumberResult argument2, ExpressionResult argument3)

@@ -36,13 +36,13 @@ internal static class ErrorHandler
 
             if (location.File?.Exists ?? false)
             {
-                details.Items.Add(new(
+                details.Items.Add(new DefinitionList.Item(
                     new Markup("[bold]File[/]"),
                     new TextPath(location.File.FullName)
                 ));
             }
 
-            details.Items.Add(new(
+            details.Items.Add(new DefinitionList.Item(
                 new Markup("[bold]Location[/]"),
                 new Text($"line {location.Line}, column {location.Column}")
             ));
@@ -73,10 +73,10 @@ internal static class ErrorHandler
         }
 
         if (e.HelpText is { } helpText)
-            AnsiConsole.Write(new Padder(new Markup($"[aqua]Tip[/]: {helpText}"), new(0, 1, 0, 0)));
+            AnsiConsole.Write(new Padder(new Markup($"[aqua]Tip[/]: {helpText}"), new Padding(0, 1, 0, 0)));
 
         if (e.HelpLink is { } helpLink)
-            AnsiConsole.Write(new Padder(new Markup($"[aqua]See also[/]: [link]{helpLink}[/]"), new(0, 1, 0, 0)));
+            AnsiConsole.Write(new Padder(new Markup($"[aqua]See also[/]: [link]{helpLink}[/]"), new Padding(0, 1, 0, 0)));
 
         AnsiConsole.WriteLine();
     }

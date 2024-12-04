@@ -6,7 +6,7 @@ public sealed record IfStatementNode(Token IfKeywordToken, ExpressionNode Condit
 {
     public override void Accept(IStatementVisitor visitor)
     {
-        visitor.Execute(this);
+        visitor.Visit(this);
     }
 
     public override TokenLocation Location => IfKeywordToken.Location;

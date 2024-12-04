@@ -8,10 +8,10 @@ public class DoShiftFunction : GenericFunction<ListResult>
 {
     public const string Identifier = "doShift";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
         new(OnlyList, "subject"),
-    };
+    ];
 
     protected override IEnumerable<ResultType> ReturnTypes => AnyValueType;
 

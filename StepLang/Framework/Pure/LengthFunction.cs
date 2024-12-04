@@ -10,12 +10,12 @@ public class LengthFunction : NativeFunction
 {
     public const string Identifier = "length";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new[]
-    {
-        new NativeParameter(new[] { ResultType.Str, ResultType.List, ResultType.Map }, "subject"),
-    };
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
+        new NativeParameter([ResultType.Str, ResultType.List, ResultType.Map], "subject"),
+    ];
 
-    protected override IEnumerable<ResultType> ReturnTypes { get; } = new[] { ResultType.Number };
+    protected override IEnumerable<ResultType> ReturnTypes { get; } = [ResultType.Number];
 
     public override NumberResult Invoke(TokenLocation callLocation, Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
     {

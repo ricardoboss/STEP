@@ -8,11 +8,11 @@ public class EndsWithFunction : GenericFunction<StringResult, StringResult>
 {
     public const string Identifier = "endsWith";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
         new(OnlyString, "subject"),
         new(OnlyString, "suffix"),
-    };
+    ];
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyBool;
 

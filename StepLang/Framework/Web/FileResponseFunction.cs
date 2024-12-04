@@ -9,11 +9,11 @@ public class FileResponseFunction : GenericFunction<StringResult, ExpressionResu
     public const string Identifier = "fileResponse";
 
     /// <inheritdoc />
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
         new(OnlyString, "file"),
         new(NullableNumber, "status", NullResult.Instance),
-    };
+    ];
 
     /// <inheritdoc />
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyMap;

@@ -9,10 +9,10 @@ public class ToJsonFunction : GenericFunction<ExpressionResult>
 {
     public const string Identifier = "toJson";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
         new(AnyValueType, "value"),
-    };
+    ];
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyString;
 

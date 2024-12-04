@@ -12,11 +12,11 @@ public class FetchFunction : GenericFunction<StringResult, MapResult>
 {
     public const string Identifier = "fetch";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
         new(OnlyString, "url"),
-        new(OnlyMap, "options", new MapExpressionNode(new(TokenType.OpeningCurlyBracket, "{"), new Dictionary<Token, ExpressionNode>())),
-    };
+        new(OnlyMap, "options", new MapExpressionNode(new Token(TokenType.OpeningCurlyBracket, "{"), new Dictionary<Token, ExpressionNode>())),
+    ];
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = NullableString;
 
@@ -43,7 +43,7 @@ public class FetchFunction : GenericFunction<StringResult, MapResult>
         if (options.TryGetValue("method", out var methodResult) && methodResult is StringResult { Value: var methodValue })
             method = methodValue;
 
-        using var request = new HttpRequestMessage(new(method), url);
+        using var request = new HttpRequestMessage(new HttpMethod(method), url);
 
         if (options.TryGetValue("headers", out var headersResult) && headersResult is MapResult { Value: var headers })
         {

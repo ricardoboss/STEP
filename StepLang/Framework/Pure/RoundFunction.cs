@@ -8,7 +8,7 @@ public class RoundFunction : GenericFunction<NumberResult>
 {
     public const string Identifier = "round";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] { new(OnlyNumber, "x") };
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } = [new(OnlyNumber, "x")];
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyNumber;
 

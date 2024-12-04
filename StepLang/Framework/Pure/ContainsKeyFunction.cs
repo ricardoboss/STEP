@@ -8,10 +8,11 @@ public class ContainsKeyFunction : GenericFunction<MapResult, StringResult>
 {
     public const string Identifier = "containsKey";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[] {
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
         new(OnlyMap, "subject"),
         new(OnlyString, "key"),
-    };
+    ];
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyBool;
 

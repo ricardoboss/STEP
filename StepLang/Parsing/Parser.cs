@@ -3,24 +3,19 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Parsing;
 
-public class Parser
+public class Parser(IEnumerable<Token> tokens)
 {
-    private readonly TokenQueue tokens;
-
-    public Parser(IEnumerable<Token> tokens)
+    private readonly TokenQueue tokens = new(tokens)
     {
-        this.tokens = new(tokens)
-        {
-            IgnoreMeaningless = true,
-        };
-    }
+        IgnoreMeaningless = true,
+    };
 
     public RootNode ParseRoot()
     {
         var imports = ParseImports();
         var statements = ParseStatements(TokenType.EndOfFile);
 
-        return new(imports, statements);
+        return new RootNode(imports, statements);
     }
 
     private List<ImportNode> ParseImports()
@@ -40,7 +35,7 @@ public class Parser
         if (tokens.PeekType() is TokenType.NewLine)
             _ = tokens.Dequeue(TokenType.NewLine);
 
-        return new(path);
+        return new ImportNode(path);
     }
 
     private List<StatementNode> ParseStatements(TokenType stopTokenType)
@@ -92,7 +87,21 @@ public class Parser
             case TokenType.OpeningCurlyBracket:
                 return ParseCodeBlock();
             default:
-                throw new UnexpectedTokenException(token, TokenType.TypeName, TokenType.Identifier, TokenType.NewLine, TokenType.LineComment);
+                throw new UnexpectedTokenException(
+                    token,
+                    TokenType.TypeName,
+                    TokenType.Identifier,
+                    TokenType.UnderscoreSymbol,
+                    TokenType.IfKeyword,
+                    TokenType.WhileKeyword,
+                    TokenType.ForEachKeyword,
+                    TokenType.ReturnKeyword,
+                    TokenType.BreakKeyword,
+                    TokenType.ContinueKeyword,
+                    TokenType.OpeningCurlyBracket,
+                    TokenType.NewLine,
+                    TokenType.LineComment
+                );
         }
     }
 
@@ -139,7 +148,7 @@ public class Parser
 
         var expression = ParseExpression();
 
-        return new(underscore.Location, expression);
+        return new DiscardStatementNode(underscore.Location, expression);
     }
 
     private IdentifierIndexAssignmentNode ParseIndexAssignment()
@@ -155,7 +164,7 @@ public class Parser
 
         var expression = ParseExpression();
 
-        return new(identifier, index, expression);
+        return new IdentifierIndexAssignmentNode(identifier, index, expression);
     }
 
     private StatementNode ParseShorthandMathOperation()
@@ -188,24 +197,24 @@ public class Parser
 
         return firstOperator.Type switch
         {
-            TokenType.PlusSymbol => new(assignmentToken.Location, identifier, new AddExpressionNode(firstOperator.Location, identifierExpression, expression)),
-            TokenType.MinusSymbol => new(assignmentToken.Location, identifier, new SubtractExpressionNode(firstOperator.Location, identifierExpression, expression)),
+            TokenType.PlusSymbol => new VariableAssignmentNode(assignmentToken.Location, identifier, new AddExpressionNode(firstOperator.Location, identifierExpression, expression)),
+            TokenType.MinusSymbol => new VariableAssignmentNode(assignmentToken.Location, identifier, new SubtractExpressionNode(firstOperator.Location, identifierExpression, expression)),
             TokenType.AsteriskSymbol => operatorTokens.Count switch
             {
-                1 => new(assignmentToken.Location, identifier, new MultiplyExpressionNode(firstOperator.Location, identifierExpression, expression)),
+                1 => new VariableAssignmentNode(assignmentToken.Location, identifier, new MultiplyExpressionNode(firstOperator.Location, identifierExpression, expression)),
                 2 => operatorTokens[1].Type switch
                 {
-                    TokenType.AsteriskSymbol => new(assignmentToken.Location, identifier, new PowerExpressionNode(firstOperator.Location, identifierExpression, expression)),
+                    TokenType.AsteriskSymbol => new VariableAssignmentNode(assignmentToken.Location, identifier, new PowerExpressionNode(firstOperator.Location, identifierExpression, expression)),
                     _ => throw new UnexpectedTokenException(operatorTokens[1], TokenType.AsteriskSymbol),
                 },
                 _ => throw new UnexpectedEndOfTokensException(firstOperator.Location, "Expected an operator"),
             },
-            TokenType.SlashSymbol => new(assignmentToken.Location, identifier, new DivideExpressionNode(firstOperator.Location, identifierExpression, expression)),
-            TokenType.PercentSymbol => new(assignmentToken.Location, identifier, new ModuloExpressionNode(firstOperator.Location, identifierExpression, expression)),
-            TokenType.PipeSymbol => new(assignmentToken.Location, identifier, new BitwiseOrExpressionNode(firstOperator.Location, identifierExpression, expression)),
-            TokenType.AmpersandSymbol => new(assignmentToken.Location, identifier, new BitwiseAndExpressionNode(firstOperator.Location, identifierExpression, expression)),
-            TokenType.HatSymbol => new(assignmentToken.Location, identifier, new BitwiseXorExpressionNode(firstOperator.Location, identifierExpression, expression)),
-            TokenType.QuestionMarkSymbol => new(assignmentToken.Location, identifier, new CoalesceExpressionNode(firstOperator.Location, identifierExpression, expression)),
+            TokenType.SlashSymbol => new VariableAssignmentNode(assignmentToken.Location, identifier, new DivideExpressionNode(firstOperator.Location, identifierExpression, expression)),
+            TokenType.PercentSymbol => new VariableAssignmentNode(assignmentToken.Location, identifier, new ModuloExpressionNode(firstOperator.Location, identifierExpression, expression)),
+            TokenType.PipeSymbol => new VariableAssignmentNode(assignmentToken.Location, identifier, new BitwiseOrExpressionNode(firstOperator.Location, identifierExpression, expression)),
+            TokenType.AmpersandSymbol => new VariableAssignmentNode(assignmentToken.Location, identifier, new BitwiseAndExpressionNode(firstOperator.Location, identifierExpression, expression)),
+            TokenType.HatSymbol => new VariableAssignmentNode(assignmentToken.Location, identifier, new BitwiseXorExpressionNode(firstOperator.Location, identifierExpression, expression)),
+            TokenType.QuestionMarkSymbol => new VariableAssignmentNode(assignmentToken.Location, identifier, new CoalesceExpressionNode(firstOperator.Location, identifierExpression, expression)),
             _ => throw new UnexpectedTokenException(firstOperator, TokenType.PlusSymbol, TokenType.MinusSymbol, TokenType.AsteriskSymbol, TokenType.SlashSymbol, TokenType.PercentSymbol, TokenType.PipeSymbol, TokenType.AmpersandSymbol, TokenType.HatSymbol, TokenType.QuestionMarkSymbol),
         };
     }
@@ -342,21 +351,21 @@ public class Parser
 
         _ = tokens.Dequeue(TokenType.ClosingCurlyBracket);
 
-        return new(openCurlyBrace, statements);
+        return new CodeBlockStatementNode(openCurlyBrace, statements);
     }
 
     private ContinueStatementNode ParseContinueStatement()
     {
         var continueToken = tokens.Dequeue(TokenType.ContinueKeyword);
 
-        return new(continueToken);
+        return new ContinueStatementNode(continueToken);
     }
 
     private BreakStatementNode ParseBreakStatement()
     {
         var breakToken = tokens.Dequeue(TokenType.BreakKeyword);
 
-        return new(breakToken);
+        return new BreakStatementNode(breakToken);
     }
 
     private StatementNode ParseReturnStatement()
@@ -383,7 +392,7 @@ public class Parser
 
         var codeBlock = ParseCodeBlock();
 
-        return new(whileKeyword, condition, codeBlock.Body);
+        return new WhileStatementNode(whileKeyword, condition, codeBlock.Body);
     }
 
     private StatementNode ParseIfStatement()
@@ -416,7 +425,7 @@ public class Parser
     {
         var callExpression = ParseFunctionCallExpression();
 
-        return new(callExpression);
+        return new CallStatementNode(callExpression);
     }
 
     private IVariableDeclarationNode ParseVariableDeclaration()
@@ -432,9 +441,9 @@ public class Parser
         if (tokens.PeekType() is not TokenType.EqualsSymbol)
         {
             if (nullabilityIndicator is not null)
-                return new NullableVariableDeclarationNode(new[] { type }, nullabilityIndicator, identifier);
+                return new NullableVariableDeclarationNode([type], nullabilityIndicator, identifier);
 
-            return new VariableDeclarationNode(new[] { type }, identifier);
+            return new VariableDeclarationNode([type], identifier);
         }
 
         var assignmentToken = tokens.Dequeue(TokenType.EqualsSymbol);
@@ -442,9 +451,9 @@ public class Parser
         var expression = ParseExpression();
 
         if (nullabilityIndicator is not null)
-            return new NullableVariableInitializationNode(assignmentToken.Location, new[] { type }, nullabilityIndicator, identifier, expression);
+            return new NullableVariableInitializationNode(assignmentToken.Location, [type], nullabilityIndicator, identifier, expression);
 
-        return new VariableInitializationNode(assignmentToken.Location, new[] { type }, identifier, expression);
+        return new VariableInitializationNode(assignmentToken.Location, [type], identifier, expression);
     }
 
     private VariableAssignmentNode ParseVariableAssignment()
@@ -452,7 +461,7 @@ public class Parser
         var identifier = tokens.Dequeue(TokenType.Identifier);
         var assignmentToken = tokens.Dequeue(TokenType.EqualsSymbol);
         var expression = ParseExpression();
-        return new(assignmentToken.Location, identifier, expression);
+        return new VariableAssignmentNode(assignmentToken.Location, identifier, expression);
     }
 
     private ExpressionNode ParseExpression(int parentPrecedence = 0)
@@ -699,7 +708,7 @@ public class Parser
             case TokenType.TypeName when tokens.Peek().Value.Equals("null", StringComparison.OrdinalIgnoreCase):
                 var nullToken = tokens.Dequeue(TokenType.TypeName);
 
-                return new LiteralExpressionNode(new(TokenType.LiteralNull, nullToken.Value, nullToken.Location));
+                return new LiteralExpressionNode(new Token(TokenType.LiteralNull, nullToken.Value, nullToken.Location));
             default:
                 throw new MissingExpressionException(tokens.LastToken ?? tokens.Peek());
         }
@@ -711,7 +720,7 @@ public class Parser
 
         var expression = ParseExpression();
 
-        return new(exclamationMark, expression);
+        return new NotExpressionNode(exclamationMark, expression);
     }
 
     private NegateExpressionNode ParseNegateExpression()
@@ -720,7 +729,7 @@ public class Parser
 
         var expression = ParseExpression();
 
-        return new(minus, expression);
+        return new NegateExpressionNode(minus, expression);
     }
 
     private MapExpressionNode ParseMapExpression()
@@ -745,7 +754,7 @@ public class Parser
 
         _ = tokens.Dequeue(TokenType.ClosingCurlyBracket);
 
-        return new(openCurlyBrace, map);
+        return new MapExpressionNode(openCurlyBrace, map);
     }
 
     private ListExpressionNode ParseListExpression()
@@ -764,14 +773,14 @@ public class Parser
 
         _ = tokens.Dequeue(TokenType.ClosingSquareBracket);
 
-        return new(openSquareBracket, list);
+        return new ListExpressionNode(openSquareBracket, list);
     }
 
     private IdentifierExpressionNode ParseIdentifierExpression()
     {
         var identifier = tokens.Dequeue(TokenType.Identifier);
 
-        return new(identifier);
+        return new IdentifierExpressionNode(identifier);
     }
 
     private CallExpressionNode ParseFunctionCallExpression()
@@ -784,7 +793,7 @@ public class Parser
 
         _ = tokens.Dequeue(TokenType.ClosingParentheses);
 
-        return new(identifier, arguments);
+        return new CallExpressionNode(identifier, arguments);
     }
 
     private ExpressionNode ParseNestedExpression()

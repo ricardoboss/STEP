@@ -8,11 +8,11 @@ namespace StepLang.Framework.Pure;
 
 public abstract class ListManipulationFunction : GenericFunction<ListResult, FunctionResult>
 {
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
         new(OnlyList, "subject"),
         new(OnlyFunction, "callback"),
-    };
+    ];
 
     protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter, ListResult argument1, FunctionResult argument2)
     {
@@ -43,14 +43,14 @@ public abstract class ListManipulationFunction : GenericFunction<ListResult, Fun
                     var elementExpression = element.ToExpressionNode();
                     var indexExpression = (LiteralExpressionNode)index;
 
-                    return new[] { elementExpression, indexExpression };
+                    return [elementExpression, indexExpression];
                 };
 
                 break;
             default:
                 argsConverter = (element, _) =>
                 {
-                    return new[] { element.ToExpressionNode() };
+                    return [element.ToExpressionNode()];
                 };
 
                 break;

@@ -9,10 +9,10 @@ public class FileReadFunction : GenericFunction<StringResult>
 {
     public const string Identifier = "fileRead";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
         new(OnlyString, "path"),
-    };
+    ];
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = NullableString;
 

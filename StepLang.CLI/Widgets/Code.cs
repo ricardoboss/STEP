@@ -69,7 +69,7 @@ internal sealed class Code : IRenderable
             max += LineMarkerWidth + PaddingWidth;
         }
 
-        return new(max, max);
+        return new Measurement(max, max);
     }
 
     public IEnumerable<Segment> Render(RenderOptions options, int maxWidth)
@@ -97,21 +97,21 @@ internal sealed class Code : IRenderable
             if (markedLineNumber is not null)
             {
                 if (markedLineNumber == currentLineNumber)
-                    yield return new(lineMarker, markerStyle);
+                    yield return new Segment(lineMarker, markerStyle);
                 else
-                    yield return new(new(' ', LineMarkerWidth), defaultStyle);
+                    yield return new Segment(new string(' ', LineMarkerWidth), defaultStyle);
 
-                yield return new(new(' ', PaddingWidth), defaultStyle);
+                yield return new Segment(new string(' ', PaddingWidth), defaultStyle);
             }
 
             if (showLineNumbers)
             {
-                yield return new(currentLineNumber.ToString(CultureInfo.InvariantCulture).PadLeft(lastLineNumberWidth),
+                yield return new Segment(currentLineNumber.ToString(CultureInfo.InvariantCulture).PadLeft(lastLineNumberWidth),
                     defaultStyle);
 
-                yield return new(new(' ', PaddingWidth), defaultStyle);
-                yield return new(lineNumberSeparator, defaultStyle);
-                yield return new(new(' ', PaddingWidth), defaultStyle);
+                yield return new Segment(new string(' ', PaddingWidth), defaultStyle);
+                yield return new Segment(lineNumberSeparator, defaultStyle);
+                yield return new Segment(new string(' ', PaddingWidth), defaultStyle);
             }
 
             var currentLineTabCount = 0;
@@ -119,7 +119,7 @@ internal sealed class Code : IRenderable
             {
                 currentLineTabCount += enumerator.Current.Text.Count(c => c == '\t');
 
-                yield return new(enumerator.Current.Text.Replace("\t", "    "), enumerator.Current.Style.ToSpectreStyle());
+                yield return new Segment(enumerator.Current.Text.Replace("\t", "    "), enumerator.Current.Style.ToSpectreStyle());
 
                 _ = enumerator.MoveNext();
             }
@@ -133,22 +133,22 @@ internal sealed class Code : IRenderable
                 for (var i = 0; i < currentLineTabCount; i++)
                     markerOffset += 3;
 
-                yield return new(new(' ', LineMarkerWidth + PaddingWidth), defaultStyle);
+                yield return new Segment(new string(' ', LineMarkerWidth + PaddingWidth), defaultStyle);
 
                 if (showLineNumbers)
                 {
-                    yield return new(new(' ', lastLineNumberWidth + PaddingWidth), defaultStyle);
-                    yield return new(lineNumberSeparator, defaultStyle);
-                    yield return new(new(' ', PaddingWidth), defaultStyle);
+                    yield return new Segment(new string(' ', lastLineNumberWidth + PaddingWidth), defaultStyle);
+                    yield return new Segment(lineNumberSeparator, defaultStyle);
+                    yield return new Segment(new string(' ', PaddingWidth), defaultStyle);
                 }
 
-                yield return new(new(' ', markerOffset), markerStyle);
-                yield return new(columnMarker, markerStyle);
+                yield return new Segment(new string(' ', markerOffset), markerStyle);
+                yield return new Segment(columnMarker, markerStyle);
 
                 if (markedColumnCount is > 1)
                 {
                     for (var i = 0; i < markedColumnCount - 1; i++)
-                        yield return new(underline, markerStyle);
+                        yield return new Segment(underline, markerStyle);
                 }
             }
 

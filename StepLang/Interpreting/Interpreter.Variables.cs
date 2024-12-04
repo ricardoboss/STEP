@@ -5,7 +5,7 @@ namespace StepLang.Interpreting;
 
 public partial class Interpreter : IVariableDeclarationEvaluator
 {
-    public void Execute(VariableDeclarationStatementNode statementNode)
+    public void Visit(VariableDeclarationStatementNode statementNode)
     {
         _ = statementNode.Declaration.EvaluateUsing(this);
     }
@@ -38,7 +38,7 @@ public partial class Interpreter : IVariableDeclarationEvaluator
         return CurrentScope.CreateVariable(statementNode.Location, statementNode.Identifier, validResults, statementNode.Expression.EvaluateUsing(this), nullable: true);
     }
 
-    public void Execute(VariableAssignmentNode statementNode)
+    public void Visit(VariableAssignmentNode statementNode)
     {
         var variable = CurrentScope.GetVariable(statementNode.Identifier);
 

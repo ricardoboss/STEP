@@ -8,11 +8,11 @@ public class DoAddFunction : GenericFunction<ListResult, ExpressionResult>
 {
     public const string Identifier = "doAdd";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
         new(OnlyList, "list"),
         new(AnyValueType, "value"),
-    };
+    ];
 
     protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
         ListResult argument1, ExpressionResult argument2)

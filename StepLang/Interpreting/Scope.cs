@@ -107,7 +107,7 @@ public class Scope
     }
 
     public void CreateVariable(string identifier, ExpressionResult initialValue, bool nullable = false) =>
-        CreateVariable(new(), new(TokenType.Identifier, identifier), new[] { initialValue.ResultType }, initialValue, nullable);
+        CreateVariable(new TokenLocation(), new Token(TokenType.Identifier, identifier), [initialValue.ResultType], initialValue, nullable);
 
     public Variable CreateVariable(TokenLocation assignmentLocation, Token identifierToken, IReadOnlyList<ResultType> types, ExpressionResult initialValue, bool nullable = false)
     {

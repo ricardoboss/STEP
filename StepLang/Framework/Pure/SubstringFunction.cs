@@ -10,12 +10,12 @@ public class SubstringFunction : GenericFunction<StringResult, NumberResult, Exp
 {
     public const string Identifier = "substring";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
+    protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+    [
         new(OnlyString, "subject"),
         new(OnlyNumber, "start"),
         new(NullableNumber, "length", LiteralExpressionNode.Null),
-    };
+    ];
 
     protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyString;
 
