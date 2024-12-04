@@ -4,28 +4,19 @@ using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Progress;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server.WorkDone;
 using OmniSharp.Extensions.LanguageServer.Protocol.Workspace;
+using Range = OmniSharp.Extensions.LanguageServer.Protocol.Models.Range;
 
 namespace StepLang.LSP.Server;
 
-internal class MyWorkspaceSymbolsHandler : IWorkspaceSymbolsHandler
+internal class MyWorkspaceSymbolsHandler(
+    IServerWorkDoneManager serverWorkDoneManager,
+    IProgressManager progressManager,
+    ILogger<MyWorkspaceSymbolsHandler> logger)
+    : IWorkspaceSymbolsHandler
 {
-    private readonly IServerWorkDoneManager _serverWorkDoneManager;
-    private readonly IProgressManager _progressManager;
-    private readonly ILogger<MyWorkspaceSymbolsHandler> _logger;
-
-    public MyWorkspaceSymbolsHandler(IServerWorkDoneManager serverWorkDoneManager, IProgressManager progressManager, ILogger<MyWorkspaceSymbolsHandler> logger)
+    public async Task<Container<WorkspaceSymbol>?> Handle(WorkspaceSymbolParams request, CancellationToken cancellationToken)
     {
-        _serverWorkDoneManager = serverWorkDoneManager;
-        _progressManager = progressManager;
-        _logger = logger;
-    }
-
-    public async Task<Container<SymbolInformation>?> Handle(
-        WorkspaceSymbolParams request,
-        CancellationToken cancellationToken
-    )
-    {
-        using var reporter = _serverWorkDoneManager.For(
+        using var reporter = serverWorkDoneManager.For(
             request, new()
             {
                 Cancellable = true,
@@ -35,7 +26,7 @@ internal class MyWorkspaceSymbolsHandler : IWorkspaceSymbolsHandler
             }
         );
 
-        using var partialResults = _progressManager.For(request, cancellationToken);
+        using var partialResults = progressManager.For(request, cancellationToken);
         // await Task.Delay(200, cancellationToken).ConfigureAwait(false);
 
         reporter.OnNext(
@@ -71,18 +62,27 @@ internal class MyWorkspaceSymbolsHandler : IWorkspaceSymbolsHandler
         partialResults.OnNext(
             new []
             {
-                new SymbolInformation
+                new WorkspaceSymbol()
                 {
                     ContainerName = "Partial Container",
-                    Deprecated = true,
                     Kind = SymbolKind.Constant,
-                    Location = new()
+                    Location = new LocationOrFileLocation(new Location()
                     {
-                        Range = new(
-                            new(2, 1),
-                            new(2, 10)
-                        ),
-                    },
+                        Uri = new Uri("file:///c:/users/me/file.txt"),
+                        Range = new Range
+                        {
+                            Start = new Position
+                            {
+                                Line = 1,
+                                Character = 2,
+                            },
+                            End = new Position
+                            {
+                                Line = 3,
+                                Character = 4,
+                            },
+                        },
+                    }),
                     Name = "Partial name",
                 },
             }
@@ -107,7 +107,8 @@ internal class MyWorkspaceSymbolsHandler : IWorkspaceSymbolsHandler
         );
 
         partialResults.OnCompleted();
-        return Array.Empty<SymbolInformation>();
+
+        return Array.Empty<WorkspaceSymbol>();
     }
 
     public WorkspaceSymbolRegistrationOptions GetRegistrationOptions(WorkspaceSymbolCapability capability, ClientCapabilities clientCapabilities) => new();
