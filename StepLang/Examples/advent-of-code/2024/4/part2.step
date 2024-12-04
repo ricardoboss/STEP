@@ -1,0 +1,108 @@
+string? input = fileRead("example.txt")
+if (input == null) {
+	println("Could not read file")
+	return
+}
+
+list lines = split(input, "\n")
+
+function countCrossMasAt = (number line, number column) {
+	if (!checkFor(line, column, "A")) {
+		return 0
+	}
+
+	function onlyCross = (map direction) {
+		return direction["dl"] != 0 && direction["dc"] != 0
+	}
+
+	list mDirections = filtered(getDirections(line, column, "M"), onlyCross)
+	if (length(mDirections) < 2) {
+		//println("M directions: ", mDirections)
+
+		return 0
+	}
+
+	list sDirections = filtered(getDirections(line, column, "S"), onlyCross)
+	if (length(sDirections) < 2) {
+		//println("S directions: ", sDirections)
+
+		return 0
+	}
+
+	// ensure top left and bottom right are not the same
+	string topLeft = lines[line-1][column-1]
+	string bottomRight = lines[line+1][column+1]
+	if (topLeft == bottomRight) {
+		//println("Top left and bottom right are the same: ", topLeft)
+
+		return 0
+	}
+
+	println("X-MAS at ", line, ":", column)
+	println(lines[line-1][column-1], ".", lines[line-1][column+1])
+	println(".", lines[line][column], ".")
+	println(lines[line+1][column-1], ".", lines[line+1][column+1])
+	println()
+
+	return 1
+}
+
+function checkFor = (number line, number column, string char) {
+	//print("Checking ", line, ":", column, " for ", char)
+	if (line < 0 || line >= length(lines) || column < 0 || column >= length(lines[line])) {
+		//println(" - out of bounds")
+
+		return false
+	}
+
+	if (lines[line][column] != char) {
+		//println(" - different char: ", lines[line][column])
+
+		return false
+	}
+
+	//println(" - found")
+
+	return true
+}
+
+function getDirections = (number line, number column, string char) {
+	list directions = []
+	number x = -1
+	while (x < 2) {
+		number y = -1
+		while (y < 2) {
+			if (x == 0 && y == 0) {
+				y++
+
+				continue
+			}
+
+			if (checkFor(line + x, column + y, char)) {
+				doAdd(directions, {"dl": x, "dc": y})
+			}
+
+			y++
+		}
+
+		x++
+	}
+
+	return directions
+}
+
+number line = 0
+number column = 0
+number count = 0
+while (line < length(lines)) {
+	while (column < length(lines[line])) {
+		count += countCrossMasAt(line, column)
+
+		column++
+	}
+
+	line++
+	column = 0
+}
+
+println(count)
