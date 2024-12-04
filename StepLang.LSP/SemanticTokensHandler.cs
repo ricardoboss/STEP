@@ -4,7 +4,7 @@ using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Document;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 
-namespace StepLang.LSP.Server;
+namespace StepLang.LSP;
 
 public class SemanticTokensHandler : SemanticTokensHandlerBase
 {
@@ -84,7 +84,7 @@ public class SemanticTokensHandler : SemanticTokensHandlerBase
         SemanticTokensCapability? capability, ClientCapabilities clientCapabilities
     )
     {
-        var selector = DocumentSelector.ForLanguage("HILFE");
+        var selector = TextDocumentSelector.ForLanguage("STEP");
         var legend = new SemanticTokensLegend
         {
             TokenModifiers = Container.From(SemanticTokenModifier.Defaults),

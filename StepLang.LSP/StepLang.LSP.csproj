@@ -1,15 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
-      <ProjectReference Include="..\StepLang\StepLang.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="GitVersion.MsBuild">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-      <PackageReference Include="StreamJsonRpc" />
+      <PackageReference Include="OmniSharp.Extensions.LanguageServer" />
     </ItemGroup>
 
 </Project>

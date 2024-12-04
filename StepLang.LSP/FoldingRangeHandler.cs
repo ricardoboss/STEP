@@ -2,14 +2,14 @@ using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Document;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 
-namespace StepLang.LSP.Server;
+namespace StepLang.LSP;
 
 internal class FoldingRangeHandler : IFoldingRangeHandler
 {
     public FoldingRangeRegistrationOptions GetRegistrationOptions() =>
         new()
         {
-            DocumentSelector = DocumentSelector.ForLanguage("HILFE"),
+            DocumentSelector = TextDocumentSelector.ForLanguage("STEP"),
         };
 
     public Task<Container<FoldingRange>?> Handle(
@@ -30,6 +30,6 @@ internal class FoldingRangeHandler : IFoldingRangeHandler
 
     public FoldingRangeRegistrationOptions GetRegistrationOptions(FoldingRangeCapability capability, ClientCapabilities clientCapabilities) => new()
     {
-        DocumentSelector = DocumentSelector.ForLanguage("HILFE"),
+        DocumentSelector = TextDocumentSelector.ForLanguage("STEP"),
     };
 }

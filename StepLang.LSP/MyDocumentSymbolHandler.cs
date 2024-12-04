@@ -3,7 +3,7 @@ using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Document;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 
-namespace StepLang.LSP.Server;
+namespace StepLang.LSP;
 
 internal class MyDocumentSymbolHandler : IDocumentSymbolHandler
 {
@@ -62,6 +62,6 @@ internal class MyDocumentSymbolHandler : IDocumentSymbolHandler
 
     public DocumentSymbolRegistrationOptions GetRegistrationOptions(DocumentSymbolCapability capability, ClientCapabilities clientCapabilities) => new()
     {
-        DocumentSelector = DocumentSelector.ForLanguage("HILFE"),
+        DocumentSelector = TextDocumentSelector.ForLanguage("STEP"),
     };
 }

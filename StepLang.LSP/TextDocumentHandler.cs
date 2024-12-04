@@ -7,19 +7,14 @@ using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 using OmniSharp.Extensions.LanguageServer.Protocol.Server.Capabilities;
 
-namespace StepLang.LSP.Server;
+namespace StepLang.LSP;
 
 public class TextDocumentHandler : TextDocumentSyncHandlerBase
 {
     private readonly ILogger<TextDocumentHandler> _logger;
     private readonly ILanguageServerConfiguration _configuration;
 
-    private readonly DocumentSelector _documentSelector = new(
-        new DocumentFilter
-        {
-            Pattern = "**/*.hil",
-        }
-    );
+    private readonly TextDocumentSelector _documentSelector = TextDocumentSelector.ForLanguage("STEP");
 
     /// <inheritdoc />
     public TextDocumentHandler(ILogger<TextDocumentHandler> logger, ILanguageServerConfiguration configuration)
@@ -59,7 +54,7 @@ public class TextDocumentHandler : TextDocumentSyncHandlerBase
 
     public override Task<Unit> Handle(DidSaveTextDocumentParams notification, CancellationToken token) => Unit.Task;
 
-    protected override TextDocumentSyncRegistrationOptions CreateRegistrationOptions(SynchronizationCapability? capability, ClientCapabilities? clientCapabilities)
+    protected override TextDocumentSyncRegistrationOptions CreateRegistrationOptions(TextSynchronizationCapability? capability, ClientCapabilities? clientCapabilities)
     {
         return new()
         {
@@ -72,5 +67,5 @@ public class TextDocumentHandler : TextDocumentSyncHandlerBase
         };
     }
 
-    public override TextDocumentAttributes GetTextDocumentAttributes(DocumentUri uri) => new(uri, "HILFE");
+    public override TextDocumentAttributes GetTextDocumentAttributes(DocumentUri uri) => new(uri, "STEP");
 }

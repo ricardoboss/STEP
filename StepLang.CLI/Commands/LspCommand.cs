@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using Spectre.Console;
 using Spectre.Console.Cli;
 using StepLang.LSP;
 
@@ -36,7 +35,7 @@ internal sealed class LspCommand : AsyncCommand<LspCommand.Settings>
             UseStandardIO = settings.Stdio,
         };
 
-        await using var server = new LanguageServerConnectionManager();
+        var server = new ServerManager();
 
         await server.RunAsync(options, default);
 

@@ -6,7 +6,7 @@ using OmniSharp.Extensions.LanguageServer.Protocol.Server.WorkDone;
 using OmniSharp.Extensions.LanguageServer.Protocol.Workspace;
 using Range = OmniSharp.Extensions.LanguageServer.Protocol.Models.Range;
 
-namespace StepLang.LSP.Server;
+namespace StepLang.LSP;
 
 internal class MyWorkspaceSymbolsHandler(
     IServerWorkDoneManager serverWorkDoneManager,
