@@ -3,7 +3,7 @@ using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Document;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 
-namespace StepLang.LSP;
+namespace StepLang.LSP.Handlers;
 
 internal class MyDocumentSymbolHandler : IDocumentSymbolHandler
 {
