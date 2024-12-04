@@ -121,7 +121,6 @@
       "steplang": {
         "type": "Project",
         "dependencies": {
-          "SmartAnalyzers.CSharpExtensions.Annotations": "[4.2.11, )",
           "System.Linq.Async": "[6.0.1, )",
           "cmdwtf.BuildTimestampGenerator": "[1.0.1, )"
         }
@@ -137,12 +136,6 @@
         "requested": "[1.0.1, )",
         "resolved": "1.0.1",
         "contentHash": "2XZIjeMNLYzeUyuxxn1IrWm04J4MiP4NnTyJHU3ToLXIBltAObpp3r3WIS6xHzwqGsex3YEZSXYxxpn2J1/o1Q=="
-      },
-      "SmartAnalyzers.CSharpExtensions.Annotations": {
-        "type": "CentralTransitive",
-        "requested": "[4.2.11, )",
-        "resolved": "4.2.11",
-        "contentHash": "01zSK7s9KHR8g2KpvaPMvoejeEQklac1psroAimb0Gb8mO11+3dPl4yEEtNBOF9zjWmKliODMjNKpT9DHE+EYg=="
       },
       "System.Linq.Async": {
         "type": "CentralTransitive",

@@ -16,7 +16,7 @@ public class Highlighter
         var tokenizer = new Tokenizer(sourceCode, false);
 
         foreach (var token in tokenizer.Tokenize())
-            yield return new(token.Type, token.Value, GetStyle(token.Type, scheme));
+            yield return new(token.Location, token.Type, token.Value, GetStyle(token.Type, scheme));
     }
 
     public static Style GetStyle(TokenType tokenType, ColorScheme scheme) => tokenType switch

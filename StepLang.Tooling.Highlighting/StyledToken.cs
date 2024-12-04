@@ -2,4 +2,4 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Tooling.Highlighting;
 
-public record StyledToken(TokenType Type, string Text, Style Style);
+public record StyledToken(TokenLocation Location, TokenType Type, string Text, Style Style);

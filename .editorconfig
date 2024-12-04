@@ -10,3 +10,10 @@ trim_trailing_whitespace = false
 
 [{*.step,*.plist}]
 indent_style = tab
+
+[*.cs]
+# CA2007: Consider calling ConfigureAwait on the awaited task
+dotnet_diagnostic.CA2007.severity = none
+
+# CA1848: Use the LoggerMessage delegates
+dotnet_diagnostic.CA1848.severity = none

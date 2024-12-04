@@ -1,99 +1,59 @@
-using Microsoft.Extensions.Logging;
 using OmniSharp.Extensions.LanguageServer.Protocol;
 using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Document;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
+using StepLang.Tokenizing;
 
 namespace StepLang.LSP.Handlers;
 
 public class SemanticTokensHandler : SemanticTokensHandlerBase
 {
-    private readonly ILogger _logger;
-
-    public SemanticTokensHandler(ILogger<SemanticTokensHandler> logger)
-    {
-        _logger = logger;
-    }
-
-    public override async Task<SemanticTokens?> Handle(
-        SemanticTokensParams request, CancellationToken cancellationToken
-    )
-    {
-        var result = await base.Handle(request, cancellationToken).ConfigureAwait(false);
-        return result;
-    }
-
-    public override async Task<SemanticTokens?> Handle(
-        SemanticTokensRangeParams request, CancellationToken cancellationToken
-    )
-    {
-        var result = await base.Handle(request, cancellationToken).ConfigureAwait(false);
-        return result;
-    }
-
-    public override async Task<SemanticTokensFullOrDelta?> Handle(
-        SemanticTokensDeltaParams request,
-        CancellationToken cancellationToken
-    )
-    {
-        var result = await base.Handle(request, cancellationToken).ConfigureAwait(false);
-        return result;
-    }
-
     protected override async Task Tokenize(
-        SemanticTokensBuilder builder, ITextDocumentIdentifierParams identifier,
+        SemanticTokensBuilder builder,
+        ITextDocumentIdentifierParams identifier,
         CancellationToken cancellationToken
     )
     {
-        using var typesEnumerator = RotateEnum(SemanticTokenType.Defaults).GetEnumerator();
-        using var modifiersEnumerator = RotateEnum(SemanticTokenModifier.Defaults).GetEnumerator();
-        // you would normally get this from a common source that is managed by current open editor, current active editor, etc.
-        var content = await File.ReadAllTextAsync(DocumentUri.GetFileSystemPath(identifier) ?? throw new InvalidOperationException(), cancellationToken).ConfigureAwait(false);
-        await Task.Yield();
+        ArgumentNullException.ThrowIfNull(builder);
 
-        foreach (var (line, text) in content.Split('\n').Select((text, line) => ( line, text )))
+        var text = await File.ReadAllTextAsync(
+            DocumentUri.GetFileSystemPath(identifier) ?? throw new InvalidOperationException(), cancellationToken);
+
+        var tokens = new Tokenizer(text).Tokenize(cancellationToken).ToList();
+
+        foreach (var token in tokens.Where(t =>
+                     t.Type is not TokenType.Whitespace and not TokenType.NewLine and not TokenType.EndOfFile))
         {
-            var parts = text.TrimEnd().Split(';', ' ', '.', '"', '(', ')');
-            var index = 0;
-            foreach (var part in parts)
-            {
-                typesEnumerator.MoveNext();
-                modifiersEnumerator.MoveNext();
-                if (string.IsNullOrWhiteSpace(part)) continue;
-                index = text.IndexOf(part, index, StringComparison.Ordinal);
-                builder.Push(line, index, part.Length, typesEnumerator.Current, modifiersEnumerator.Current);
-            }
+            builder.Push(
+                token.Location.Line,
+                token.Location.Column,
+                token.Location.Length,
+                new SemanticTokenType(token.Type.ToString()),
+                Array.Empty<SemanticTokenModifier>()
+            );
         }
+
+        builder.Commit();
     }
 
-    protected override Task<SemanticTokensDocument>
-        GetSemanticTokensDocument(ITextDocumentIdentifierParams @params, CancellationToken cancellationToken)
+    protected override Task<SemanticTokensDocument> GetSemanticTokensDocument(ITextDocumentIdentifierParams @params,
+        CancellationToken cancellationToken)
     {
         return Task.FromResult(new SemanticTokensDocument(RegistrationOptions.Legend));
     }
 
-
-    private IEnumerable<T> RotateEnum<T>(IEnumerable<T> values)
+    protected override SemanticTokensRegistrationOptions CreateRegistrationOptions(SemanticTokensCapability? capability,
+        ClientCapabilities clientCapabilities)
     {
-        var enumerable = values.ToList();
-        foreach (var item in enumerable)
-            yield return item;
-    }
-
-    protected override SemanticTokensRegistrationOptions CreateRegistrationOptions(
-        SemanticTokensCapability? capability, ClientCapabilities clientCapabilities
-    )
-    {
-        var selector = TextDocumentSelector.ForLanguage("STEP");
         var legend = new SemanticTokensLegend
         {
-            TokenModifiers = Container.From(SemanticTokenModifier.Defaults),
-            TokenTypes = Container.From(SemanticTokenType.Defaults),
+            TokenModifiers = Container.From(Array.Empty<SemanticTokenModifier>()),
+            TokenTypes = Container.From(Enum.GetValues<TokenType>().Select(c => new SemanticTokenType(c.ToString())).ToArray()),
         };
 
-        return new()
+        return new SemanticTokensRegistrationOptions
         {
-            DocumentSelector = selector,
+            DocumentSelector = StepTextDocumentSelector.Instance,
             Legend = legend,
             Full = true,
             Range = true,

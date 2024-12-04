@@ -28,7 +28,7 @@ internal sealed class LspCommand : AsyncCommand<LspCommand.Settings>
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        var options = new LanguageServerOptions
+        var options = new ServerOptions
         {
             Host = settings.Host ?? "127.0.0.1",
             Port = settings.Port ?? 50051,
@@ -37,8 +37,8 @@ internal sealed class LspCommand : AsyncCommand<LspCommand.Settings>
 
         var server = new ServerManager();
 
-        await server.RunAsync(options, default);
+        var exitCode = await server.RunAsync(options);
 
-        return 0;
+        return exitCode;
     }
 }

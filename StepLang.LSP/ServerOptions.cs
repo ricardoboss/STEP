@@ -1,6 +1,6 @@
 namespace StepLang.LSP;
 
-public class LanguageServerOptions
+public class ServerOptions
 {
     public string Host { get; set; } = "127.0.0.1";
 

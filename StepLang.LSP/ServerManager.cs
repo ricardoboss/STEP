@@ -1,8 +1,12 @@
-using System.Reflection;
-using Microsoft.Extensions.Configuration;
+using System.Collections.Concurrent;
+using System.Net;
+using System.Net.Sockets;
+using JetBrains.Annotations;
+using Lunet.Extensions.Logging.SpectreConsole;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
+using Nerdbank.Streams;
+using OmniSharp.Extensions.LanguageServer.Protocol.Document;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Server;
 using StepLang.LSP.Handlers;
@@ -11,133 +15,121 @@ namespace StepLang.LSP;
 
 public class ServerManager
 {
-    public async Task RunAsync(LanguageServerOptions options, CancellationToken cancellationToken)
+    public async Task<int> RunAsync(ServerOptions options, CancellationToken cancellationToken = default)
     {
-        IObserver<WorkDoneProgressReport> workDone = null!;
+        ArgumentNullException.ThrowIfNull(options);
 
-        var server = await LanguageServer.From(o => o
-                .ConfigureLogging(builder => builder
-                    .AddLanguageProtocolLogging()
-                    .SetMinimumLevel(LogLevel.Trace))
-                .WithInput(Console.OpenStandardInput())
-                .WithOutput(Console.OpenStandardOutput())
-                .WithServices(x => x.AddLogging(b => b.SetMinimumLevel(LogLevel.Trace)))
-                .WithHandler<TextDocumentHandler>()
-                .WithHandler<DidChangeWatchedFilesHandler>()
-                .WithHandler<FoldingRangeHandler>()
-                .WithHandler<MyWorkspaceSymbolsHandler>()
-                .WithHandler<MyDocumentSymbolHandler>()
-                .WithHandler<SemanticTokensHandler>()
-                .WithServerInfo(new()
-                {
-                    Name = "HILFE LSP Server",
-                    Version = Assembly.GetExecutingAssembly().GetName().Version?.ToString(),
-                })
-                .OnInitialize((server, request, _) =>
-                    {
-                        var manager = server.WorkDoneManager.For(
-                            request, new()
-                            {
-                                Title = "Server is starting...",
-                                Percentage = 10,
-                            }
-                        );
+        if (options.UseStandardIO)
+        {
+            return await HandleStandardIoAsync(cancellationToken);
+        }
 
-                        workDone = manager;
+        await HandleSocketAsync(options, cancellationToken);
 
-                        // await Task.Delay(200, cancellationToken).ConfigureAwait(false);
+        return 0;
+    }
 
-                        manager.OnNext(
-                            new WorkDoneProgressReport
-                            {
-                                Percentage = 20,
-                                Message = "loading in progress",
-                            }
-                        );
+    private async Task HandleSocketAsync(ServerOptions options, CancellationToken cancellationToken)
+    {
+        using var socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
 
-                        return Task.CompletedTask;
-                    }
-                )
-                .OnInitialized((_, _, _, _) =>
-                    {
-                        workDone.OnNext(
-                            new()
-                            {
-                                Percentage = 40,
-                                Message = "loading almost done",
-                            }
-                        );
+        var endpoint = new IPEndPoint(IPAddress.Parse(options.Host), options.Port);
 
-                        // await Task.Delay(200, cancellationToken).ConfigureAwait(false);
+        socket.Bind(endpoint);
 
-                        workDone.OnNext(
-                            new()
-                            {
-                                Message = "loading done",
-                                Percentage = 100,
-                            }
-                        );
+        await ListenAsync(socket, cancellationToken);
+    }
 
-                        workDone.OnCompleted();
-                        return Task.CompletedTask;
-                    }
-                )
-                .OnStarted(
-                    async (languageServer, ct) =>
-                    {
-                        using var manager = await languageServer.WorkDoneManager.Create(new()
-                            {
-                                Title = "Doing some work...",
-                            }, cancellationToken: ct)
-                            .ConfigureAwait(false);
+    private readonly ConcurrentDictionary<Socket, Task> clientTasks = new();
 
-                        manager.OnNext(new WorkDoneProgressReport
-                        {
-                            Message = "doing things...",
-                        });
+    private async Task ListenAsync(Socket serverSocket, CancellationToken cancellationToken)
+    {
+        serverSocket.Listen();
 
-                        // await Task.Delay(100).ConfigureAwait(false);
-                        manager.OnNext(new WorkDoneProgressReport
-                        {
-                            Message = "doing things... 1234",
-                        });
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            var clientSocket = await serverSocket.AcceptAsync(cancellationToken);
+            var clientTask = HandleClientAsync(clientSocket, cancellationToken);
 
-                        // await Task.Delay(100, cancellationToken).ConfigureAwait(false);
-                        manager.OnNext(new WorkDoneProgressReport
-                        {
-                            Message = "doing things... 56789",
-                        });
+            clientTasks[clientSocket] = clientTask;
+        }
+    }
 
-                        var logger = languageServer.Services.GetRequiredService<ILogger<ServerManager>>();
-                        var configuration = await languageServer.Configuration.GetConfiguration(
-                            new ConfigurationItem
-                            {
-                                Section = "typescript",
-                            }, new ConfigurationItem
-                            {
-                                Section = "terminal",
-                            }
-                        ).ConfigureAwait(false);
+    private async Task HandleClientAsync(Socket clientSocket, CancellationToken cancellationToken)
+    {
+        await using var ioStream = new NetworkStream(clientSocket);
 
-                        var baseConfig = new JObject();
-                        foreach (var config in languageServer.Configuration.AsEnumerable())
-                        {
-                            baseConfig.Add(config.Key, config.Value);
-                        }
+        using var server = CreateServer(ioStream, ioStream);
 
-                        logger.LogInformation("Base Config: {@Config}", baseConfig);
+        server.Exit.Subscribe(code =>
+        {
+            _ = clientTasks.TryRemove(clientSocket, out _);
 
-                        var scopedConfig = new JObject();
-                        foreach (var config in configuration.AsEnumerable())
-                        {
-                            scopedConfig.Add(config.Key, config.Value);
-                        }
+            clientSocket.Dispose();
+        });
 
-                        logger.LogInformation("Scoped Config: {@Config}", scopedConfig);
-                    }
-                )
-            , cancellationToken).ConfigureAwait(false);
+        await HandleServerShutdownAsync(server, cancellationToken);
+    }
 
-        await server.WaitForExit.ConfigureAwait(false);
+    private static async Task<int> HandleStandardIoAsync(CancellationToken cancellationToken)
+    {
+        await using var input = Console.OpenStandardInput();
+        await using var output = Console.OpenStandardOutput();
+
+        using var server = CreateServer(input, output);
+
+        int? code = null;
+        server.Exit.Subscribe(c => code = c);
+
+        await HandleServerShutdownAsync(server, cancellationToken);
+
+        return code ?? 0;
+    }
+
+    private static async Task HandleServerShutdownAsync(LanguageServer server, CancellationToken cancellationToken)
+    {
+        await server.Initialize(cancellationToken);
+
+        await using var shutdownRegistration = cancellationToken.Register(server.ForcefulShutdown);
+
+        await server.WaitForExit;
+    }
+
+    [MustDisposeResource]
+    private static LanguageServer CreateServer(Stream input, Stream output)
+    {
+        return LanguageServer.Create(o =>
+        {
+            o.ServerInfo = new ServerInfo
+            {
+                Name = "STEP LSP",
+                Version = GitVersionInformation.FullSemVer,
+            };
+
+            o.Input = input.UsePipeReader();
+            o.Output = output.UsePipeWriter();
+
+            o.WithServices(ConfigureServices);
+
+            o.OnInitialized((server, _, _, _) =>
+            {
+                var logger = server.Services.GetRequiredService<ILogger<ServerManager>>();
+
+                logger.LogInformation("Server initialized");
+
+                return Task.CompletedTask;
+            });
+
+            o.WithHandler<SemanticTokensHandler>();
+        });
+    }
+
+    private static void ConfigureServices(IServiceCollection services)
+    {
+        services.AddLogging(b => b
+            .AddLanguageProtocolLogging()
+            .AddSpectreConsole()
+            .SetMinimumLevel(LogLevel.Trace)
+        );
     }
 }

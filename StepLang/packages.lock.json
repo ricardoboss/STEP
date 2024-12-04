@@ -26,12 +26,6 @@
         "resolved": "9.0.0",
         "contentHash": "zAwp213evC3UkimtVXRb+Dlgc/40QG145nmZDtp2LO9zJJMfrp+i/87BnXN7tRXEA4liyzdFkjqG1HE8/RPb4A=="
       },
-      "SmartAnalyzers.CSharpExtensions.Annotations": {
-        "type": "Direct",
-        "requested": "[4.2.11, )",
-        "resolved": "4.2.11",
-        "contentHash": "01zSK7s9KHR8g2KpvaPMvoejeEQklac1psroAimb0Gb8mO11+3dPl4yEEtNBOF9zjWmKliODMjNKpT9DHE+EYg=="
-      },
       "System.Linq.Async": {
         "type": "Direct",
         "requested": "[6.0.1, )",
