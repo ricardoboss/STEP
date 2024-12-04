@@ -18,7 +18,7 @@ internal sealed class LspCommand : AsyncCommand<LspCommand.Settings>
 
         [CommandOption("-p|--port")]
         [Description("The port to bind to.")]
-        [DefaultValue(50051)]
+        [DefaultValue(14246)]
         public int? Port { get; init; }
 
         [CommandOption("-s|--stdio")]
@@ -31,7 +31,7 @@ internal sealed class LspCommand : AsyncCommand<LspCommand.Settings>
         var options = new ServerOptions
         {
             Host = settings.Host ?? "127.0.0.1",
-            Port = settings.Port ?? 50051,
+            Port = settings.Port ?? 14246,
             UseStandardIO = settings.Stdio,
         };
 
