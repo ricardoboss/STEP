@@ -1,0 +1,68 @@
+string? input = fileRead("example.txt")
+if (input == null) {
+	println("Could not read file")
+	return
+}
+
+list lines = split(input, "\n")
+list rules = []
+list updates = []
+bool inUpdates = false
+foreach (string line in lines) {
+	if (line == "") {
+		inUpdates = true
+
+		continue
+	}
+
+	if (inUpdates) {
+		doAdd(updates, converted(split(line, ","), (string x) { return toNumber(x) }))
+	} else {
+		list parts = split(line, "|")
+		doAdd(rules, {"before": toNumber(parts[0]), "after": toNumber(parts[1])})
+	}
+}
+
+function isRuleViolated = (map rule, list update) {
+	number before = rule["before"]
+	number after = rule["after"]
+
+	if (contains(update, before)) {
+		bool beforeSeen = false
+		foreach (number x in update) {
+			if (x == before) {
+				beforeSeen = true
+				continue
+			}
+
+			if (x == after && !beforeSeen) {
+				return true
+			}
+		}
+	}
+}
+
+function isInCorrectOrder = (list update) {
+	foreach (map rule in rules) {
+		if (isRuleViolated(rule, update)) {
+			return false
+		}
+	}
+
+	return true
+}
+
+function getMiddleNumber = (list update) {
+	number midIndex = floor(length(update) / 2)
+
+	return update[midIndex]
+}
+
+number sum = 0
+foreach (list update in updates) {
+	if (isInCorrectOrder(update)) {
+		sum += getMiddleNumber(update)
+	}
+}
+
+println(sum)
