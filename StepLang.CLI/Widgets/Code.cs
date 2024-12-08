@@ -27,6 +27,8 @@ internal sealed class Code : IRenderable
     private const string AsciiUnderline = "-";
     private const string UnicodeUnderline = "\u2500";
 
+    private const string TabReplacement = "    ";
+
     private readonly string code;
     private readonly bool showLineNumbers;
     private readonly int lineNumberOffset;
@@ -55,11 +57,11 @@ internal sealed class Code : IRenderable
 
     public Measurement Measure(RenderOptions options, int maxWidth)
     {
-        var max = Lines.Max(l => l.Length);
+        var max = Lines.Select(l => l.Replace("\t", TabReplacement)).Max(l => l.Length);
 
         if (showLineNumbers)
         {
-            var lineNumberWidth = Lines.Count.ToString(CultureInfo.InvariantCulture).Length;
+            var lineNumberWidth = (lineNumberOffset + Lines.Count).ToString(CultureInfo.InvariantCulture).Length;
 
             max += lineNumberWidth + LineNumberPaddingWidth + LineNumberSeparatorWidth + LineNumberPaddingWidth;
         }
@@ -119,7 +121,7 @@ internal sealed class Code : IRenderable
             {
                 currentLineTabCount += enumerator.Current.Text.Count(c => c == '\t');
 
-                yield return new(enumerator.Current.Text.Replace("\t", "    "), enumerator.Current.Style.ToSpectreStyle());
+                yield return new(enumerator.Current.Text.Replace("\t", TabReplacement), enumerator.Current.Style.ToSpectreStyle());
 
                 _ = enumerator.MoveNext();
             }

@@ -3,7 +3,7 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Interpreting;
 
-public class Variable
+public class Variable : BaseVariable
 {
     public string Identifier { get; }
 
@@ -13,17 +13,19 @@ public class Variable
 
     public bool Nullable { get; }
 
-    public ExpressionResult Value { get; private set; }
+    private ExpressionResult value;
+
+    public override ExpressionResult Value => value;
 
     public Variable(string identifier, IReadOnlyList<ResultType> types, bool nullable)
     {
         Identifier = identifier;
         Types = types;
         Nullable = nullable;
-        Value = VoidResult.Instance;
+        value = VoidResult.Instance;
     }
 
-    public void Assign(TokenLocation assignmentLocation, ExpressionResult newValue)
+    public override void Assign(TokenLocation assignmentLocation, ExpressionResult newValue)
     {
         if (!Accepts(newValue))
         {
@@ -33,7 +35,7 @@ public class Variable
             throw new NonNullableVariableAssignmentException(assignmentLocation, this, newValue);
         }
 
-        Value = newValue;
+        value = newValue;
     }
 
     public bool Accepts(ExpressionResult value)

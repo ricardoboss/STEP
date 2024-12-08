@@ -148,14 +148,27 @@ public class Parser
 
         _ = tokens.Dequeue(TokenType.OpeningSquareBracket);
 
-        var index = ParseExpression();
+        var initialIndex = ParseExpression();
+        var indexExpressions = new List<ExpressionNode>([initialIndex]);
 
         _ = tokens.Dequeue(TokenType.ClosingSquareBracket);
-        _ = tokens.Dequeue(TokenType.EqualsSymbol);
+
+        var postIndexToken = tokens.Dequeue(TokenType.EqualsSymbol, TokenType.OpeningSquareBracket);
+        while (postIndexToken.Type == TokenType.OpeningSquareBracket)
+        {
+            var indexExpression = ParseExpression();
+            indexExpressions.Add(indexExpression);
+
+            _ = tokens.Dequeue(TokenType.ClosingSquareBracket);
+
+            postIndexToken = tokens.Dequeue(TokenType.EqualsSymbol, TokenType.OpeningSquareBracket);
+        }
+
+        Debug.Assert(postIndexToken.Type == TokenType.EqualsSymbol);
 
         var expression = ParseExpression();
 
-        return new(identifier, index, expression);
+        return new(identifier, indexExpressions, postIndexToken, expression);
     }
 
     private StatementNode ParseShorthandMathOperation()

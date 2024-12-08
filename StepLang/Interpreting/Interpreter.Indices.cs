@@ -10,28 +10,42 @@ public partial class Interpreter
 {
     public void Execute(IdentifierIndexAssignmentNode statementNode)
     {
-        var variable = CurrentScope.GetVariable(statementNode.Identifier);
-        var indexResult = statementNode.IndexExpression.EvaluateUsing(this);
+        BaseVariable variable = CurrentScope.GetVariable(statementNode.Identifier);
+
+        foreach (var indexExpression in statementNode.IndexExpressions)
+        {
+            var indexResult = indexExpression.EvaluateUsing(this);
+            switch (variable.Value)
+            {
+                case ListResult { Value: var list } when indexResult is NumberResult index:
+                    variable = new DelegateVariable
+                    {
+                        Evaluator = () => list[index],
+                        Assigner = (_, value) => list[index] = value,
+                    };
+                    break;
+                case MapResult { Value: var map } when indexResult is StringResult { Value: var key }:
+                    variable = new DelegateVariable
+                    {
+                        Evaluator = () => map[key],
+                        Assigner = (_, value) => map[key] = value,
+                    };
+                    break;
+                default:
+                    var indexRepresentation = indexResult switch
+                    {
+                        StringResult stringResult => stringResult.Value,
+                        NumberResult numberResult => numberResult.Value.ToString(CultureInfo.InvariantCulture),
+                        _ => indexResult.ToString(),
+                    };
+
+                    throw new InvalidIndexOperatorException(statementNode.Location, indexRepresentation, variable.Value.ResultType, "assign");
+            }
+        }
+
         var valueResult = statementNode.ValueExpression.EvaluateUsing(this);
 
-        switch (variable.Value)
-        {
-            case ListResult { Value: var list } when indexResult is NumberResult index:
-                list[index] = valueResult;
-                break;
-            case MapResult { Value: var map } when indexResult is StringResult { Value: var key }:
-                map[key] = valueResult;
-                break;
-            default:
-                var indexRepresentation = indexResult switch
-                {
-                    StringResult stringResult => stringResult.Value,
-                    NumberResult numberResult => numberResult.Value.ToString(CultureInfo.InvariantCulture),
-                    _ => indexResult.ToString(),
-                };
-
-                throw new InvalidIndexOperatorException(statementNode.Location, indexRepresentation, variable.Value.ResultType, "assign");
-        }
+        variable.Assign(statementNode.AssignmentToken.Location, valueResult);
     }
 
     public ExpressionResult Evaluate(IndexAccessExpressionNode expressionNode)

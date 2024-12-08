@@ -238,7 +238,9 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
             var indexNode = node.AddNode("Index:");
             var indexTreeBuilder = new ExpressionTreeBuilder(indexNode);
-            _ = statementNode.IndexExpression.EvaluateUsing(indexTreeBuilder);
+
+            // TODO: add support for multiple index expressions
+            _ = statementNode.IndexExpressions[0].EvaluateUsing(indexTreeBuilder);
 
             var expressionNode = node.AddNode("Expression:");
             var expressionTreeBuilder = new ExpressionTreeBuilder(expressionNode);
