@@ -1,0 +1,187 @@
+string? input = fileRead("input.txt")
+if (input == null) {
+	println("Could not read file")
+	return
+}
+
+function nonEmpty = (string row) {
+	return row != null && length(row) > 0
+}
+
+list tiles = converted(split(input, "\n"), (string x) { return filtered(split(x, ""), nonEmpty) })
+
+function getGuardPosition = (list tiles) {
+	number y = 0
+	while (y < length(tiles)) {
+		number x = 0
+		while (x < length(tiles[y])) {
+			if (tiles[y][x] == "^") {
+				return {"x": x, "y": y, "dir": "up"}
+			}
+
+			if (tiles[y][x] == ">") {
+				return {"x": x, "y": y, "dir": "right"}
+			}
+
+			if (tiles[y][x] == "<") {
+				return {"x": x, "y": y, "dir": "left"}
+			}
+
+			if (tiles[y][x] == "V") {
+				return {"x": x, "y": y, "dir": "down"}
+			}
+
+			x++
+		}
+
+		y++
+	}
+
+	return null
+}
+
+function getNextPosition = (map guardPosition) {
+	string dir = guardPosition["dir"]
+	number x = guardPosition["x"]
+	number y = guardPosition["y"]
+
+	if (dir == "up") {
+		if (y == 0) {
+			return null
+		}
+
+		return {"x": x, "y": y - 1, "dir": "up"}
+	}
+
+	if (dir == "right") {
+		if (x == length(tiles[y]) - 1) {
+			return null
+		}
+
+		return {"x": x + 1, "y": y, "dir": "right"}
+	}
+
+	if (dir == "left") {
+		if (x == 0) {
+			return null
+		}
+
+		return {"x": x - 1, "y": y, "dir": "left"}
+	}
+
+	if (dir == "down") {
+		if (y == length(tiles) - 1) {
+			return null
+		}
+
+		return {"x": x, "y": y + 1, "dir": "down"}
+	}
+
+	return null
+}
+
+function rotateGuard = (map guardPosition) {
+	string dir = guardPosition["dir"]
+	number x = guardPosition["x"]
+	number y = guardPosition["y"]
+
+	if (dir == "up") {
+		return {"x": x, "y": y, "dir": "right"}
+	}
+
+	if (dir == "right") {
+		return {"x": x, "y": y, "dir": "down"}
+	}
+
+	if (dir == "left") {
+		return {"x": x, "y": y, "dir": "up"}
+	}
+
+	if (dir == "down") {
+		return {"x": x, "y": y, "dir": "left"}
+	}
+}
+
+function advancePosition = (map position, list tiles) {
+	map? next = getNextPosition(position)
+	if (next == null) {
+		return null
+	}
+
+	string nextTile = tiles[next["y"]][next["x"]]
+	if (nextTile == "#") {
+		map rotatedAndMoved = getNextPosition(rotateGuard(position))
+
+		return rotatedAndMoved
+	}
+
+	if (nextTile == "." || nextTile == "X") {
+		return next
+	}
+
+	return null
+}
+
+function printTiles = (list tiles) {
+	println("==========================")
+
+	foreach (list row in tiles) {
+		foreach (string tile in row) {
+			print(tile, " ")
+		}
+
+		println()
+	}
+}
+
+function countVisited = (list tiles) {
+	number count = 0
+	foreach (list row in tiles) {
+		foreach (string tile in row) {
+			if (tile == "X" || tile == "^" || tile == ">" || tile == "<" || tile == "V") {
+				count++
+			}
+		}
+	}
+
+	return count
+}
+
+function getGuardOrientation = (map guardPosition) {
+	if (guardPosition["dir"] == "up") {
+		return "^"
+	}
+
+	if (guardPosition["dir"] == "right") {
+		return ">"
+	}
+
+	if (guardPosition["dir"] == "left") {
+		return "<"
+	}
+
+	if (guardPosition["dir"] == "down") {
+		return "V"
+	}
+
+	return null
+}
+
+//printTiles(tiles)
+
+map guard = getGuardPosition(tiles)
+while (guard != null) {
+	map? next = advancePosition(guard, tiles)
+	if (next == null) {
+		break
+	}
+
+	tiles[guard["y"]][guard["x"]] = "X"
+	tiles[next["y"]][next["x"]] = getGuardOrientation(next)
+
+	guard = next
+
+	//printTiles(tiles)
+}
+
+println(countVisited(tiles))
