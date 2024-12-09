@@ -6,23 +6,23 @@ namespace StepLang.Framework.Pure;
 
 public class ReversedFunction : GenericFunction<ExpressionResult>
 {
-    public const string Identifier = "reversed";
+	public const string Identifier = "reversed";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
-        new(new[] { ResultType.List, ResultType.Str }, "subject"),
-    };
+	protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+	[
+		new([ResultType.List, ResultType.Str], "subject"),
+	];
 
-    protected override IEnumerable<ResultType> ReturnTypes { get; } = new[] { ResultType.List, ResultType.Str };
+	protected override IEnumerable<ResultType> ReturnTypes { get; } = [ResultType.List, ResultType.Str];
 
-    protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
-        ExpressionResult argument1)
-    {
-        return argument1 switch
-        {
-            ListResult list => new ListResult(list.DeepClone().Value.Reverse().ToList()),
-            StringResult str => new StringResult(str.Value.ReverseGraphemes()),
-            _ => throw new InvalidResultTypeException(callLocation, argument1, ResultType.List, ResultType.Str),
-        };
-    }
+	protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+		ExpressionResult argument1)
+	{
+		return argument1 switch
+		{
+			ListResult list => new ListResult(list.DeepClone().Value.Reverse().ToList()),
+			StringResult str => new StringResult(str.Value.ReverseGraphemes()),
+			_ => throw new InvalidResultTypeException(callLocation, argument1, ResultType.List, ResultType.Str),
+		};
+	}
 }

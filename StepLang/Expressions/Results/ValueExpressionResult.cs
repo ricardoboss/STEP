@@ -1,14 +1,18 @@
 namespace StepLang.Expressions.Results;
 
-public abstract class ValueExpressionResult<T> : ExpressionResult
-    where T : notnull
+public abstract class ValueExpressionResult<T>(ResultType resultType, T value) : ExpressionResult(resultType)
+	where T : notnull
 {
-    protected ValueExpressionResult(ResultType resultType, T value) : base(resultType) => Value = value;
+	public T Value { get; } = value;
 
-    public T Value { get; }
+	public override bool Equals(object? obj)
+	{
+		return obj is ValueExpressionResult<T> other && Equals(other);
+	}
 
-    public override bool Equals(object? obj) => obj is ValueExpressionResult<T> other && Equals(other);
-
-    /// <inheritdoc />
-    public override int GetHashCode() => HashCode.Combine(ResultType, Value);
+	/// <inheritdoc />
+	public override int GetHashCode()
+	{
+		return HashCode.Combine(ResultType, Value);
+	}
 }

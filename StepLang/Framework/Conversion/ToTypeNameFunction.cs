@@ -7,27 +7,29 @@ namespace StepLang.Framework.Conversion;
 
 public class ToTypeNameFunction : NativeFunction
 {
-    public const string Identifier = "toTypeName";
+	public const string Identifier = "toTypeName";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
-        new(AnyType, "value"),
-    };
+	protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+	[
+		new(AnyType, "value"),
+	];
 
-    protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyString;
+	protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyString;
 
-    /// <inheritdoc />
-    public override StringResult Invoke(TokenLocation callLocation, Interpreter interpreter,
-        IReadOnlyList<ExpressionNode> arguments)
-    {
-        CheckArgumentCount(callLocation, arguments);
+	/// <inheritdoc />
+	public override StringResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+		IReadOnlyList<ExpressionNode> arguments)
+	{
+		CheckArgumentCount(callLocation, arguments);
 
-        var exp = arguments.Single();
-        if (exp is not IdentifierExpressionNode varExp)
-            throw new InvalidExpressionTypeException(callLocation, "an identifier", exp.GetType().Name);
+		var exp = arguments.Single();
+		if (exp is not IdentifierExpressionNode varExp)
+		{
+			throw new InvalidExpressionTypeException(callLocation, "an identifier", exp.GetType().Name);
+		}
 
-        var variable = interpreter.CurrentScope.GetVariable(varExp.Identifier);
+		var variable = interpreter.CurrentScope.GetVariable(varExp.Identifier);
 
-        return variable.TypeString;
-    }
+		return variable.TypeString;
+	}
 }

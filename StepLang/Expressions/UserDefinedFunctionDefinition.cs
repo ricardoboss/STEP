@@ -6,108 +6,110 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Expressions;
 
-public class UserDefinedFunctionDefinition : FunctionDefinition
+public class UserDefinedFunctionDefinition(
+	TokenLocation location,
+	IReadOnlyList<IVariableDeclarationNode> parameters,
+	IReadOnlyList<StatementNode> body,
+	Scope capturedScope)
+	: FunctionDefinition
 {
-    private readonly TokenLocation location;
-    private readonly IReadOnlyList<IVariableDeclarationNode> parameters;
-    private readonly Scope capturedScope;
+	protected override string DebugBodyString => $"[{Body.Count} statements]";
 
-    public UserDefinedFunctionDefinition(TokenLocation location, IReadOnlyList<IVariableDeclarationNode> parameters, IReadOnlyList<StatementNode> body, Scope capturedScope)
-    {
-        this.location = location;
-        this.parameters = parameters;
-        this.capturedScope = capturedScope;
-        Body = body;
-    }
+	public override IReadOnlyList<IVariableDeclarationNode> Parameters => parameters;
 
-    protected override string DebugBodyString => $"[{Body.Count} statements]";
+	public IReadOnlyList<StatementNode> Body { get; } = body;
 
-    public override IReadOnlyList<IVariableDeclarationNode> Parameters => parameters;
+	// TODO: implement return type declarations on user defined functions
+	protected override IEnumerable<ResultType> ReturnTypes => Enum.GetValues<ResultType>();
 
-    public IReadOnlyList<StatementNode> Body { get; }
+	private int RequiredParametersCount => parameters.TakeWhile(n => !n.HasValue).Count();
 
-    // TODO: implement return type declarations on user defined functions
-    protected override IEnumerable<ResultType> ReturnTypes => Enum.GetValues<ResultType>();
+	private int TotalParametersCount => parameters.Count;
 
-    private int RequiredParametersCount => parameters.TakeWhile(n => !n.HasValue).Count();
+	public override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+		IReadOnlyList<ExpressionNode> arguments)
+	{
+		if (arguments.Count < RequiredParametersCount || arguments.Count > TotalParametersCount)
+		{
+			throw new InvalidArgumentCountException(callLocation, parameters.Count, arguments.Count);
+		}
 
-    private int TotalParametersCount => parameters.Count;
+		_ = interpreter.PushScope(capturedScope);
 
-    public override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter, IReadOnlyList<ExpressionNode> arguments)
-    {
-        if (arguments.Count < RequiredParametersCount || arguments.Count > TotalParametersCount)
-            throw new InvalidArgumentCountException(callLocation, parameters.Count, arguments.Count);
+		// evaluate args _before_ pushing function body scope
+		var evaldArgs = EvaluateArguments(interpreter, arguments).ToList();
 
-        _ = interpreter.PushScope(capturedScope);
+		_ = interpreter.PushScope();
 
-        // evaluate args _before_ pushing function body scope
-        var evaldArgs = EvaluateArguments(interpreter, arguments).ToList();
+		// create the parameter variables in the new scope
+		CreateArgumentVariables(interpreter, evaldArgs);
 
-        _ = interpreter.PushScope();
+		interpreter.Execute(Body);
 
-        // create the parameter variables in the new scope
-        CreateArgumentVariables(interpreter, evaldArgs);
+		if (interpreter.PopScope().TryGetResult(out var resultValue, out var resultLocation))
+		{
+			return CheckResult(resultLocation, resultValue);
+		}
 
-        interpreter.Execute(Body);
+		return CheckResult(location, VoidResult.Instance);
+	}
 
-        if (interpreter.PopScope().TryGetResult(out var resultValue, out var resultLocation))
-            return CheckResult(resultLocation, resultValue);
+	private ExpressionResult CheckResult(TokenLocation resultLocation, ExpressionResult resultValue)
+	{
+		if (!ReturnTypes.Contains(resultValue.ResultType))
+		{
+			throw new InvalidReturnTypeException(resultLocation, resultValue.ResultType, ReturnTypes);
+		}
 
-        return CheckResult(location, VoidResult.Instance);
-    }
+		return resultValue;
+	}
 
-    private ExpressionResult CheckResult(TokenLocation resultLocation, ExpressionResult resultValue)
-    {
-        if (!ReturnTypes.Contains(resultValue.ResultType))
-            throw new InvalidReturnTypeException(resultLocation, resultValue.ResultType, ReturnTypes);
+	private IEnumerable<(TokenLocation, ExpressionResult)> EvaluateArguments(IExpressionEvaluator evaluator,
+		IEnumerable<ExpressionNode> arguments)
+	{
+		var suppliedArgs = 0;
+		foreach (var argExpression in arguments)
+		{
+			var argLocation = argExpression.Location;
+			var argValue = argExpression.EvaluateUsing(evaluator);
 
-        return resultValue;
-    }
+			suppliedArgs++;
 
-    private IEnumerable<(TokenLocation, ExpressionResult)> EvaluateArguments(IExpressionEvaluator evaluator, IEnumerable<ExpressionNode> arguments)
-    {
-        var suppliedArgs = 0;
-        foreach (var argExpression in arguments)
-        {
-            var argLocation = argExpression.Location;
-            var argValue = argExpression.EvaluateUsing(evaluator);
+			yield return (argLocation, argValue);
+		}
 
-            suppliedArgs++;
+		Debug.Assert(suppliedArgs <= TotalParametersCount);
 
-            yield return (argLocation, argValue);
-        }
+		for (; suppliedArgs < TotalParametersCount; suppliedArgs++)
+		{
+			var parameter = parameters[suppliedArgs];
+			var parameterLocation = parameter.Location;
+			var defaultValue = parameter switch
+			{
+				NullableVariableInitializationNode nullable => nullable.Expression.EvaluateUsing(evaluator),
+				VariableInitializationNode initialization => initialization.Expression.EvaluateUsing(evaluator),
+				_ => throw new InvalidOperationException("Invalid parameter type"),
+			};
 
-        Debug.Assert(suppliedArgs <= TotalParametersCount);
+			yield return (parameterLocation, defaultValue);
+		}
 
-        for (; suppliedArgs < TotalParametersCount; suppliedArgs++)
-        {
-            var parameter = parameters[suppliedArgs];
-            var parameterLocation = parameter.Location;
-            var defaultValue = parameter switch
-            {
-                NullableVariableInitializationNode nullable => nullable.Expression.EvaluateUsing(evaluator),
-                VariableInitializationNode initialization => initialization.Expression.EvaluateUsing(evaluator),
-                _ => throw new InvalidOperationException("Invalid parameter type"),
-            };
+		Debug.Assert(suppliedArgs == TotalParametersCount);
+	}
 
-            yield return (parameterLocation, defaultValue);
-        }
+	private void CreateArgumentVariables(IVariableDeclarationEvaluator evaluator,
+		List<(TokenLocation, ExpressionResult)> arguments)
+	{
+		for (var i = 0; i < parameters.Count; i++)
+		{
+			var parameter = parameters[i];
+			var (assignmentLocation, argumentValue) = arguments[i];
 
-        Debug.Assert(suppliedArgs == TotalParametersCount);
-    }
+			// this will create the variable in the current scope
+			var argument = parameter.EvaluateUsing(evaluator);
 
-    private void CreateArgumentVariables(IVariableDeclarationEvaluator evaluator, List<(TokenLocation, ExpressionResult)> arguments)
-    {
-        for (var i = 0; i < parameters.Count; i++)
-        {
-            var parameter = parameters[i];
-            var (assignmentLocation, argumentValue) = arguments[i];
-
-            // this will create the variable in the current scope
-            var argument = parameter.EvaluateUsing(evaluator);
-
-            // and set the value
-            argument.Assign(assignmentLocation, argumentValue);
-        }
-    }
+			// and set the value
+			argument.Assign(assignmentLocation, argumentValue);
+		}
+	}
 }

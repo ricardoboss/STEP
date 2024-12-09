@@ -14,7 +14,8 @@ sorted(list list, function compare = compareTo)
 # Remarks
 
 - the `compareTo` function will throw if the list contains elements of different types (e.g. `[1, "a"]`)
-- if specifying a custom compare function, it needs to take two arguments of the same type and return a number indicating whether the first argument is less than, equal to, or greater than compared to the second argument:
+- if specifying a custom compare function, it needs to take two arguments of the same type and return a number
+  indicating whether the first argument is less than, equal to, or greater than compared to the second argument:
   ```step
   function cmp = (number a, number b) {
   	return a - b

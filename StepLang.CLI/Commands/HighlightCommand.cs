@@ -12,60 +12,60 @@ namespace StepLang.CLI.Commands;
 [SuppressMessage("Performance", "CA1812: Avoid uninstantiated internal classes")]
 internal sealed class HighlightCommand : AsyncCommand<HighlightCommand.Settings>
 {
-    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-    [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
-    public sealed class Settings : HiddenGlobalCommandSettings
-    {
-        [CommandArgument(0, "[file]")]
-        [Description("The path to a .step-file to highlight and print to the console.")]
-        public string? File { get; init; } = null;
+	[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+	[SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
+	public sealed class Settings : HiddenGlobalCommandSettings
+	{
+		[CommandArgument(0, "[file]")]
+		[Description("The path to a .step-file to highlight and print to the console.")]
+		public string? File { get; init; } = null;
 
-        [CommandOption("-t|--theme <theme>")]
-        [DefaultValue("pale")]
-        [Description("The color scheme to use.")]
-        [TypeConverter(typeof(ColorSchemeConverter))]
-        public ColorScheme Theme { get; init; } = null!;
+		[CommandOption("-t|--theme <theme>")]
+		[DefaultValue("pale")]
+		[Description("The color scheme to use.")]
+		[TypeConverter(typeof(ColorSchemeConverter))]
+		public ColorScheme Theme { get; init; } = null!;
 
-        [CommandOption("-l|--list-themes")]
-        [DefaultValue(false)]
-        [Description("List all available themes.")]
-        public bool ListThemes { get; init; }
+		[CommandOption("-l|--list-themes")]
+		[DefaultValue(false)]
+		[Description("List all available themes.")]
+		public bool ListThemes { get; init; }
 
-        [CommandOption("-n|--no-line-numbers")]
-        [DefaultValue(false)]
-        [Description("Hide line numbers.")]
-        public bool HideLineNumbers { get; init; }
-    }
+		[CommandOption("-n|--no-line-numbers")]
+		[DefaultValue(false)]
+		[Description("Hide line numbers.")]
+		public bool HideLineNumbers { get; init; }
+	}
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
-    {
-        if (settings.ListThemes)
-        {
-            AnsiConsole.MarkupLine("Available themes:");
+	public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+	{
+		if (settings.ListThemes)
+		{
+			AnsiConsole.MarkupLine("Available themes:");
 
-            foreach (var name in ColorScheme.Names)
-            {
-                AnsiConsole.MarkupLine($" - {name}");
-            }
+			foreach (var name in ColorScheme.Names)
+			{
+				AnsiConsole.MarkupLine($" - {name}");
+			}
 
-            return 0;
-        }
+			return 0;
+		}
 
-        if (settings.File is null)
-        {
-            AnsiConsole.MarkupLine("[red]No file specified.[/]");
+		if (settings.File is null)
+		{
+			AnsiConsole.MarkupLine("[red]No file specified.[/]");
 
-            return 1;
-        }
+			return 1;
+		}
 
-        var scriptFile = new FileInfo(settings.File);
+		var scriptFile = new FileInfo(settings.File);
 
-        var source = await File.ReadAllTextAsync(scriptFile.FullName);
+		var source = await File.ReadAllTextAsync(scriptFile.FullName);
 
-        var code = new Code(source, settings.Theme, !settings.HideLineNumbers);
+		var code = new Code(source, settings.Theme, !settings.HideLineNumbers);
 
-        AnsiConsole.Write(code);
+		AnsiConsole.Write(code);
 
-        return 0;
-    }
+		return 0;
+	}
 }

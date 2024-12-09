@@ -8,10 +8,11 @@ namespace StepLang.Framework.Pure;
 
 public class ConvertedFunction : ListManipulationFunction
 {
-    public const string Identifier = "converted";
+	public const string Identifier = "converted";
 
-    protected override IEnumerable<ExpressionResult> EvaluateListManipulation(TokenLocation callLocation, Interpreter interpreter, IEnumerable<ExpressionNode[]> arguments, FunctionDefinition callback)
-    {
-        return arguments.Select(args => callback.Invoke(callLocation, interpreter, args));
-    }
+	protected override IEnumerable<ExpressionResult> EvaluateListManipulation(TokenLocation callLocation,
+		Interpreter interpreter, IEnumerable<ExpressionNode[]> arguments, FunctionDefinition callback)
+	{
+		return arguments.Select(args => callback.Invoke(callLocation, interpreter, args));
+	}
 }

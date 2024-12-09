@@ -2,11 +2,14 @@
 
 A code style is commonly referred to as the way code is written in the literal sense.
 It specifies where and how certain tokens should be placed and dictates use of punctuation and white spaces.
-As many programming languages support different styles of writing code, there also exist many different opinions on what is "the correct" or "the best" way.
-This code style guide is intended to reduce cognitive friction when reading code from different authors (with different preferences for code style) and to establish a "one-true-way" to write STEP code.
+As many programming languages support different styles of writing code, there also exist many different opinions on what
+is "the correct" or "the best" way.
+This code style guide is intended to reduce cognitive friction when reading code from different authors (with different
+preferences for code style) and to establish a "one-true-way" to write STEP code.
 It was inspired by PHPs [PSR-12](https://www.php-fig.org/psr/psr-12/).
 
-Keeping a consistent code style among a projects source code helps understand the code at a glance and ensures a high level of technical interoperability between shared code.
+Keeping a consistent code style among a projects source code helps understand the code at a glance and ensures a high
+level of technical interoperability between shared code.
 
 # 1. General
 
@@ -30,7 +33,8 @@ Keeping a consistent code style among a projects source code helps understand th
 
 ## 1.4 Indenting
 
-- Code MUST be indented using tabs (for accessibility; [ref1](https://adamtuttle.codes/blog/2021/tabs-vs-spaces-its-an-accessibility-issue/); [ref2](https://alexandersandberg.com/articles/default-to-tabs-instead-of-spaces-for-an-accessible-first-environment/))
+- Code MUST be indented using tabs (for
+  accessibility; [ref1](https://adamtuttle.codes/blog/2021/tabs-vs-spaces-its-an-accessibility-issue/); [ref2](https://alexandersandberg.com/articles/default-to-tabs-instead-of-spaces-for-an-accessible-first-environment/))
 - Code MUST use one tab for every level of indentation
 
 # 2. Statements

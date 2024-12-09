@@ -4,137 +4,146 @@ namespace StepLang.Tooling.Formatting;
 
 public static class StringExtensions
 {
-    public static IEnumerable<string> SplitLines(this string input)
-    {
-        return input.Split("\r\n").SelectMany(l => l.Split("\n"));
-    }
+	public static IEnumerable<string> SplitLines(this string input)
+	{
+		return input.Split("\r\n").SelectMany(l => l.Split("\n"));
+	}
 
-    public static IEnumerable<(string lineEnding, string line)> SplitLinesPreserveNewLines(this string input)
-    {
-        var line = new StringBuilder();
-        using var enumerator = input.GetEnumerator();
-        while (enumerator.MoveNext())
-        {
-            if (enumerator.Current is '\r')
-            {
-                if (enumerator.MoveNext())
-                {
-                    if (enumerator.Current is '\n')
-                    {
-                        yield return ("\r\n", line.ToString());
-                        line.Clear();
-                    }
-                    else
-                    {
-                        line.Append('\r');
-                    }
-                }
-                else
-                {
-                    yield return ("", line + "\r");
+	public static IEnumerable<(string lineEnding, string line)> SplitLinesPreserveNewLines(this string input)
+	{
+		var line = new StringBuilder();
+		using var enumerator = input.GetEnumerator();
+		while (enumerator.MoveNext())
+		{
+			if (enumerator.Current is '\r')
+			{
+				if (enumerator.MoveNext())
+				{
+					if (enumerator.Current is '\n')
+					{
+						yield return ("\r\n", line.ToString());
 
-                    yield break;
-                }
-            }
-            else if (enumerator.Current is '\n')
-            {
-                yield return ("\n", line.ToString());
-                line.Clear();
-            }
-            else
-            {
-                line.Append(enumerator.Current);
-            }
-        }
+						line.Clear();
+					}
+					else
+					{
+						line.Append('\r');
+					}
+				}
+				else
+				{
+					yield return ("", line + "\r");
 
-        if (line.Length > 0)
-            yield return ("", line.ToString());
-    }
+					yield break;
+				}
+			}
+			else if (enumerator.Current is '\n')
+			{
+				yield return ("\n", line.ToString());
 
-    public static string WithoutTrailingWhitespace(this string input)
-    {
-        var sb = new StringBuilder();
-        var consecutiveWhitespace = new List<char>();
+				line.Clear();
+			}
+			else
+			{
+				line.Append(enumerator.Current);
+			}
+		}
 
-        foreach (var character in input)
-        {
-            switch (character)
-            {
-                case '\n':
-                    sb.Append('\n');
-                    consecutiveWhitespace.Clear();
-                    continue;
-                case ' ' or '\t':
-                    consecutiveWhitespace.Add(character);
-                    continue;
-                default:
-                    foreach (var whitespace in consecutiveWhitespace)
-                        sb.Append(whitespace);
+		if (line.Length > 0)
+		{
+			yield return ("", line.ToString());
+		}
+	}
 
-                    consecutiveWhitespace.Clear();
+	public static string WithoutTrailingWhitespace(this string input)
+	{
+		var sb = new StringBuilder();
+		var consecutiveWhitespace = new List<char>();
 
-                    sb.Append(character);
-                    break;
-            }
-        }
+		foreach (var character in input)
+		{
+			switch (character)
+			{
+				case '\n':
+					sb.Append('\n');
+					consecutiveWhitespace.Clear();
+					continue;
+				case ' ' or '\t':
+					consecutiveWhitespace.Add(character);
+					continue;
+				default:
+					foreach (var whitespace in consecutiveWhitespace)
+					{
+						sb.Append(whitespace);
+					}
 
-        return sb.ToString();
-    }
+					consecutiveWhitespace.Clear();
 
-    public static string SelectWords(this IEnumerable<char> input, Func<string, string> callback)
-    {
+					sb.Append(character);
+					break;
+			}
+		}
 
-        StringBuilder output = new();
-        StringBuilder currentWord = new();
-        var inString = false;
-        var escaped = false;
+		return sb.ToString();
+	}
 
-        using var enumerator = input.GetEnumerator();
-        while (enumerator.MoveNext())
-        {
-            var currentChar = enumerator.Current;
-            switch (currentChar)
-            {
-                case '"' when !escaped:
-                    inString = !inString;
-                    output.Append(currentChar);
-                    continue;
-                case '\\' when inString:
-                    escaped = true;
-                    output.Append(currentChar);
-                    continue;
-            }
+	public static string SelectWords(this IEnumerable<char> input, Func<string, string> callback)
+	{
+		StringBuilder output = new();
+		StringBuilder currentWord = new();
+		var inString = false;
+		var escaped = false;
 
-            if (inString)
-            {
-                output.Append(currentChar);
-                continue;
-            }
+		using var enumerator = input.GetEnumerator();
+		while (enumerator.MoveNext())
+		{
+			var currentChar = enumerator.Current;
+			switch (currentChar)
+			{
+				case '"' when !escaped:
+					inString = !inString;
+					output.Append(currentChar);
+					continue;
+				case '\\' when inString:
+					escaped = true;
+					output.Append(currentChar);
+					continue;
+			}
 
-            if (char.IsLetterOrDigit(currentChar))
-            {
-                currentWord.Append(currentChar);
-                continue;
-            }
+			if (inString)
+			{
+				output.Append(currentChar);
+				continue;
+			}
 
-            if (currentWord.Length > 0)
-                SelectWord();
+			if (char.IsLetterOrDigit(currentChar))
+			{
+				currentWord.Append(currentChar);
+				continue;
+			}
 
-            output.Append(currentChar);
-        }
+			if (currentWord.Length > 0)
+			{
+				SelectWord();
+			}
 
-        if (currentWord.Length > 0 && !inString)
-            SelectWord();
+			output.Append(currentChar);
+		}
 
-        return output.ToString();
+		if (currentWord.Length > 0 && !inString)
+		{
+			SelectWord();
+		}
 
-        void SelectWord()
-        {
-            var word = currentWord.ToString();
+		return output.ToString();
 
-            output.Append(callback(word));
+		void SelectWord()
+		{
+			var word = currentWord.ToString();
 
-            currentWord.Clear();
-        }
-    }
+			output.Append(callback(word));
+
+			currentWord.Clear();
+		}
+	}
 }

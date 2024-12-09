@@ -5,182 +5,210 @@ namespace StepLang.Framework;
 
 internal static class GraphemeExtensions
 {
-    public static int GraphemeLength(this string str)
-    {
-        var enumerator = StringInfo.GetTextElementEnumerator(str);
-        var count = 0;
-        while (enumerator.MoveNext()) count++;
-        return count;
-    }
+	public static int GraphemeLength(this string str)
+	{
+		var enumerator = StringInfo.GetTextElementEnumerator(str);
+		var count = 0;
+		while (enumerator.MoveNext())
+		{
+			count++;
+		}
 
-    public static string GraphemeSubstring(this string str, int start, int? length = null)
-    {
-        if (length <= 0)
-            return string.Empty;
+		return count;
+	}
 
-        var subjectGraphemeLength = str.GraphemeLength();
+	public static string GraphemeSubstring(this string str, int start, int? length = null)
+	{
+		if (length <= 0)
+		{
+			return string.Empty;
+		}
 
-        if (start < 0)
-            start = subjectGraphemeLength + start;
+		var subjectGraphemeLength = str.GraphemeLength();
 
-        if (start < 0 || start >= subjectGraphemeLength)
-            return string.Empty;
+		if (start < 0)
+		{
+			start = subjectGraphemeLength + start;
+		}
 
-        length = Math.Min(length ?? int.MaxValue, subjectGraphemeLength - start);
+		if (start < 0 || start >= subjectGraphemeLength)
+		{
+			return string.Empty;
+		}
 
-        var enumerator = StringInfo.GetTextElementEnumerator(str);
-        var count = 0;
-        var startIndex = 0;
-        var endIndex = 0;
-        while (enumerator.MoveNext())
-        {
-            if (count == start)
-                startIndex = enumerator.ElementIndex;
+		length = Math.Min(length ?? int.MaxValue, subjectGraphemeLength - start);
 
-            if (count == start + length)
-            {
-                endIndex = enumerator.ElementIndex;
+		var enumerator = StringInfo.GetTextElementEnumerator(str);
+		var count = 0;
+		var startIndex = 0;
+		var endIndex = 0;
+		while (enumerator.MoveNext())
+		{
+			if (count == start)
+			{
+				startIndex = enumerator.ElementIndex;
+			}
 
-                break;
-            }
+			if (count == start + length)
+			{
+				endIndex = enumerator.ElementIndex;
 
-            count++;
-        }
+				break;
+			}
 
-        if (endIndex == 0)
-            endIndex = str.Length;
+			count++;
+		}
 
-        return str.Substring(startIndex, endIndex - startIndex);
-    }
+		if (endIndex == 0)
+		{
+			endIndex = str.Length;
+		}
 
-    public static IEnumerable<string> GraphemeSplit(this string str, string separator)
-    {
-        var strNormalized = str.Normalize(NormalizationForm.FormD);
-        var separatorNormalized = separator.Normalize(NormalizationForm.FormD);
+		return str.Substring(startIndex, endIndex - startIndex);
+	}
 
-        if (string.IsNullOrEmpty(str))
-        {
-            yield return string.Empty;
-            yield break;
-        }
+	public static IEnumerable<string> GraphemeSplit(this string str, string separator)
+	{
+		var strNormalized = str.Normalize(NormalizationForm.FormD);
+		var separatorNormalized = separator.Normalize(NormalizationForm.FormD);
 
-        if (string.IsNullOrEmpty(separatorNormalized))
-        {
-            var enumerator = StringInfo.GetTextElementEnumerator(str);
-            while (enumerator.MoveNext())
-                yield return enumerator.GetTextElement();
+		if (string.IsNullOrEmpty(str))
+		{
+			yield return string.Empty;
 
-            yield break;
-        }
+			yield break;
+		}
 
-        var startIdx = 0;
-        var separatorIdx = strNormalized.GraphemeIndexOf(separatorNormalized);
-        var separatorLength = separatorNormalized.GraphemeLength();
+		if (string.IsNullOrEmpty(separatorNormalized))
+		{
+			var enumerator = StringInfo.GetTextElementEnumerator(str);
+			while (enumerator.MoveNext())
+			{
+				yield return enumerator.GetTextElement();
+			}
 
-        while (separatorIdx != -1)
-        {
-            yield return strNormalized.GraphemeSubstring(startIdx, separatorIdx - startIdx);
-            startIdx = separatorIdx + separatorLength;
-            separatorIdx = strNormalized.GraphemeIndexOf(separatorNormalized, startIdx);
-        }
+			yield break;
+		}
 
-        if (startIdx < strNormalized.GraphemeLength())
-            yield return strNormalized.GraphemeSubstring(startIdx);
-    }
+		var startIdx = 0;
+		var separatorIdx = strNormalized.GraphemeIndexOf(separatorNormalized);
+		var separatorLength = separatorNormalized.GraphemeLength();
 
-    public static string? GraphemeAt(this string str, int index)
-    {
-        if (index < 0)
-            return null;
+		while (separatorIdx != -1)
+		{
+			yield return strNormalized.GraphemeSubstring(startIdx, separatorIdx - startIdx);
 
-        var normalized = str.Normalize(NormalizationForm.FormD);
-        var enumerator = StringInfo.GetTextElementEnumerator(normalized);
-        var count = 0;
-        while (enumerator.MoveNext())
-        {
-            if (count == index)
-                return enumerator.GetTextElement();
+			startIdx = separatorIdx + separatorLength;
+			separatorIdx = strNormalized.GraphemeIndexOf(separatorNormalized, startIdx);
+		}
 
-            count++;
-        }
+		if (startIdx < strNormalized.GraphemeLength())
+		{
+			yield return strNormalized.GraphemeSubstring(startIdx);
+		}
+	}
 
-        return null;
-    }
+	public static string? GraphemeAt(this string str, int index)
+	{
+		if (index < 0)
+		{
+			return null;
+		}
 
-    public static string GraphemeReplace(this string str, string search, string replacement)
-    {
-        var strNormalized = str.Normalize(NormalizationForm.FormD);
-        var strNormalizedLength = strNormalized.GraphemeLength();
-        var searchNormalized = search.Normalize(NormalizationForm.FormD);
-        var searchNormalizedLength = searchNormalized.GraphemeLength();
-        var replacementNormalized = replacement.Normalize(NormalizationForm.FormD);
+		var normalized = str.Normalize(NormalizationForm.FormD);
+		var enumerator = StringInfo.GetTextElementEnumerator(normalized);
+		var count = 0;
+		while (enumerator.MoveNext())
+		{
+			if (count == index)
+			{
+				return enumerator.GetTextElement();
+			}
 
-        var sb = new StringBuilder();
-        var i = 0;
-        while (i < strNormalizedLength)
-        {
-            var current = strNormalized.GraphemeSubstring(i, searchNormalizedLength);
-            if (current == searchNormalized)
-            {
-                sb.Append(replacementNormalized);
-                i += searchNormalizedLength;
-            }
-            else
-            {
-                sb.Append(strNormalized.GraphemeAt(i));
-                i++;
-            }
-        }
+			count++;
+		}
 
-        return sb.ToString();
-    }
+		return null;
+	}
 
-    public static int GraphemeIndexOf(this string str, string value, int startIndex = 0)
-    {
-        var strNormalized = str.Normalize(NormalizationForm.FormD);
-        var strNormalizedLength = strNormalized.GraphemeLength();
-        var valueNormalized = value.Normalize(NormalizationForm.FormD);
-        var valueNormalizedLength = valueNormalized.GraphemeLength();
+	public static string GraphemeReplace(this string str, string search, string replacement)
+	{
+		var strNormalized = str.Normalize(NormalizationForm.FormD);
+		var strNormalizedLength = strNormalized.GraphemeLength();
+		var searchNormalized = search.Normalize(NormalizationForm.FormD);
+		var searchNormalizedLength = searchNormalized.GraphemeLength();
+		var replacementNormalized = replacement.Normalize(NormalizationForm.FormD);
 
-        for (var i = startIndex; i < strNormalizedLength; i++)
-        {
-            var current = strNormalized.GraphemeSubstring(i, valueNormalizedLength);
-            if (current == valueNormalized)
-                return i;
-        }
+		var sb = new StringBuilder();
+		var i = 0;
+		while (i < strNormalizedLength)
+		{
+			var current = strNormalized.GraphemeSubstring(i, searchNormalizedLength);
+			if (current == searchNormalized)
+			{
+				sb.Append(replacementNormalized);
+				i += searchNormalizedLength;
+			}
+			else
+			{
+				sb.Append(strNormalized.GraphemeAt(i));
+				i++;
+			}
+		}
 
-        return -1;
-    }
+		return sb.ToString();
+	}
 
-    public static bool GraphemeStartsWith(this string str, string value)
-    {
-        var normalized = value.Normalize(NormalizationForm.FormD);
-        var normalizedLength = normalized.GraphemeLength();
+	public static int GraphemeIndexOf(this string str, string value, int startIndex = 0)
+	{
+		var strNormalized = str.Normalize(NormalizationForm.FormD);
+		var strNormalizedLength = strNormalized.GraphemeLength();
+		var valueNormalized = value.Normalize(NormalizationForm.FormD);
+		var valueNormalizedLength = valueNormalized.GraphemeLength();
 
-        var current = str.GraphemeSubstring(0, normalizedLength);
-        return current == normalized;
-    }
+		for (var i = startIndex; i < strNormalizedLength; i++)
+		{
+			var current = strNormalized.GraphemeSubstring(i, valueNormalizedLength);
+			if (current == valueNormalized)
+			{
+				return i;
+			}
+		}
 
-    public static bool GraphemeEndsWith(this string str, string value)
-    {
-        var normalized = value.Normalize(NormalizationForm.FormD);
-        var normalizedLength = normalized.GraphemeLength();
-        var valueLength = str.GraphemeLength();
+		return -1;
+	}
 
-        var current = str.GraphemeSubstring(valueLength - normalizedLength, normalizedLength);
-        return current == normalized;
-    }
+	public static bool GraphemeStartsWith(this string str, string value)
+	{
+		var normalized = value.Normalize(NormalizationForm.FormD);
+		var normalizedLength = normalized.GraphemeLength();
 
-    public static string ReverseGraphemes(this string str)
-    {
-        var enumerator = StringInfo.GetTextElementEnumerator(str);
-        var count = 0;
-        var graphemes = new string[str.GraphemeLength()];
-        while (enumerator.MoveNext())
-            graphemes[count++] = enumerator.GetTextElement();
+		var current = str.GraphemeSubstring(0, normalizedLength);
+		return current == normalized;
+	}
 
-        Array.Reverse(graphemes);
+	public static bool GraphemeEndsWith(this string str, string value)
+	{
+		var normalized = value.Normalize(NormalizationForm.FormD);
+		var normalizedLength = normalized.GraphemeLength();
+		var valueLength = str.GraphemeLength();
 
-        return string.Concat(graphemes);
-    }
+		var current = str.GraphemeSubstring(valueLength - normalizedLength, normalizedLength);
+		return current == normalized;
+	}
+
+	public static string ReverseGraphemes(this string str)
+	{
+		var enumerator = StringInfo.GetTextElementEnumerator(str);
+		var count = 0;
+		var graphemes = new string[str.GraphemeLength()];
+		while (enumerator.MoveNext())
+		{
+			graphemes[count++] = enumerator.GetTextElement();
+		}
+
+		Array.Reverse(graphemes);
+
+		return string.Concat(graphemes);
+	}
 }

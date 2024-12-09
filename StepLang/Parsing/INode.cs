@@ -4,5 +4,5 @@ namespace StepLang.Parsing;
 
 public interface INode
 {
-    TokenLocation Location { get; }
+	TokenLocation Location { get; }
 }

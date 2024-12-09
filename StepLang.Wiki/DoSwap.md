@@ -17,14 +17,14 @@ doSwap(map myMap, string a, string b)
 # Remarks
 
 - `a` and `b` must be valid indices or keys in the list or map.
-  - If `a` or `b` is not a valid index or key, the function will throw an error.
-  - For a list, `a` and `b` must be between `0` and the length of the list minus `1`.
+    - If `a` or `b` is not a valid index or key, the function will throw an error.
+    - For a list, `a` and `b` must be between `0` and the length of the list minus `1`.
 - `doSwap` will swap the values of the two indices or keys.
-  - For a list, the values at indices `a` and `b` will be swapped.
-  - For a map, the values at keys `a` and `b` will be swapped.
+    - For a list, the values at indices `a` and `b` will be swapped.
+    - For a map, the values at keys `a` and `b` will be swapped.
 - `doSwap` will return a `bool` indicating whether the swap was successful.
-  - If `a` or `b` is not a valid index or key, the function will return `false`.
-  - Otherwise, the function will return `true`.
+    - If `a` or `b` is not a valid index or key, the function will return `false`.
+    - Otherwise, the function will return `true`.
 
 # Examples
 

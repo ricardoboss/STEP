@@ -2,23 +2,26 @@ namespace StepLang.Expressions.Results;
 
 public class VoidResult : ExpressionResult
 {
-    public static readonly VoidResult Instance = new();
+	public static readonly VoidResult Instance = new();
 
-    /// <inheritdoc />
-    private VoidResult() : base(ResultType.Void)
-    {
-    }
+	/// <inheritdoc />
+	private VoidResult() : base(ResultType.Void)
+	{
+	}
 
-    protected override bool EqualsInternal(ExpressionResult other)
-    {
-        return other is VoidResult;
-    }
+	protected override bool EqualsInternal(ExpressionResult other)
+	{
+		return other is VoidResult;
+	}
 
-    public override ExpressionResult DeepClone()
-    {
-        return Instance;
-    }
+	public override ExpressionResult DeepClone()
+	{
+		return Instance;
+	}
 
-    /// <inheritdoc />
-    public override string ToString() => "{void}";
+	/// <inheritdoc />
+	public override string ToString()
+	{
+		return "{void}";
+	}
 }

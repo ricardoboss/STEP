@@ -19,21 +19,24 @@ It is inspired by languages like Python, JavaScript, Dart and C#.
 
 To use STEP, you need to set up the STEP CLI.
 
-Check out the [installation guide](https://github.com/ricardoboss/STEP/wiki/Command-Line-Interface) for more information.
+Check out the [installation guide](https://github.com/ricardoboss/STEP/wiki/Command-Line-Interface) for more
+information.
 
 ## Documentation
 
 To get started using STEP, head over to the [Guide](https://github.com/ricardoboss/STEP/wiki/Guide).
 
 STEP has a standard framework of functions you can use in your programs.
-An overview of all functions can be found in the [Functions](https://github.com/ricardoboss/STEP/wiki/Function) section of the wiki.
+An overview of all functions can be found in the [Functions](https://github.com/ricardoboss/STEP/wiki/Function) section
+of the wiki.
 
 Additionally, STEP has very graceful error handling.
 All errors are documented in the [Errors](https://github.com/ricardoboss/STEP/wiki/Errors) section of the wiki.
 
 ## Contributing
 
-If you want to contribute to STEP, check out the [Contributing](https://github.com/ricardoboss/STEP/blob/main/CONTRIBUTING.md) section in the repository.
+If you want to contribute to STEP, check out
+the [Contributing](https://github.com/ricardoboss/STEP/blob/main/CONTRIBUTING.md) section in the repository.
 
 Check out the [`good first issue` issues](https://github.com/ricardoboss/STEP/contribute) to get started.
 

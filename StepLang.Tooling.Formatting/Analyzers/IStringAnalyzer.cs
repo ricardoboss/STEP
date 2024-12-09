@@ -4,11 +4,11 @@ namespace StepLang.Tooling.Formatting.Analyzers;
 
 public interface IStringAnalyzer : IAnalyzer
 {
-    /// <summary>
-    /// Applies a fix to the input string.
-    /// </summary>
-    /// <param name="input">A string to apply the fix to.</param>
-    /// <param name="cancellationToken">A cancellation token.</param>
-    /// <returns>A result containing a string with the applied fix.</returns>
-    Task<StringAnalysisResult> AnalyzeAsync(string input, CancellationToken cancellationToken = default);
+	/// <summary>
+	/// Applies a fix to the input string.
+	/// </summary>
+	/// <param name="input">A string to apply the fix to.</param>
+	/// <param name="cancellationToken">A cancellation token.</param>
+	/// <returns>A result containing a string with the applied fix.</returns>
+	Task<StringAnalysisResult> AnalyzeAsync(string input, CancellationToken cancellationToken = default);
 }

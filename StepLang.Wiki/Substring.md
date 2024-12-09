@@ -16,9 +16,12 @@ substring(string subject, number start, number length)
 
 - If `start` is greater than the number of characters in the string - 1, the function will return an empty string.
 - If `length` is 0 or negative, the function will return an empty string.
-- If `start + length` is greater than the number of characters remaining in the string, the substring will be truncated to the remaining characters.
+- If `start + length` is greater than the number of characters remaining in the string, the substring will be truncated
+  to the remaining characters.
 - If `start` or `length` is not an integer, it will be rounded to the nearest integer (0.5 rounds up).
-- If `start` is negative, it is treated as starting from the end of the subject. For example, if `start` is -3 and `length` is 3, the function will return the last 3 characters of the string. If the absolute value is greater than the number of characters in `subject`, an empty string is returned.
+- If `start` is negative, it is treated as starting from the end of the subject. For example, if `start` is -3 and
+  `length` is 3, the function will return the last 3 characters of the string. If the absolute value is greater than the
+  number of characters in `subject`, an empty string is returned.
 
 # Examples
 

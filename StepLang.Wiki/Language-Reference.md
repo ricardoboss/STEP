@@ -35,21 +35,22 @@ STEP has the following token types:
 
 - identifier (e.g. `println`)
 - literals:
-  - string (e.g. `"Hello, world!"`)
-  - number (e.g. `123`, `1.23` or `-1.2`)
-  - boolean (`true` or `false`)
+    - string (e.g. `"Hello, world!"`)
+    - number (e.g. `123`, `1.23` or `-1.2`)
+    - boolean (`true` or `false`)
 - built-in type names (`string`, `number`, `bool`, `function`, `list`, `map`)
-- symbols (`(`, `)`, `{`, `}`, `[`, `]`, `,`, `;`, `:`, `=`, `_`, `+`, `-`, `*`, `^`, `~`, `/`, `%`, `!`, `?`, `&`, `|`, `<`, `>`)
+- symbols (`(`, `)`, `{`, `}`, `[`, `]`, `,`, `;`, `:`, `=`, `_`, `+`, `-`, `*`, `^`, `~`, `/`, `%`, `!`, `?`, `&`, `|`,
+  `<`, `>`)
 - keywords:
-  - `if`
-  - `else`
-  - `while`
-  - `break`
-  - `continue`
-  - `return`
-  - `import`
-  - `foreach`
-  - `in`
+    - `if`
+    - `else`
+    - `while`
+    - `break`
+    - `continue`
+    - `return`
+    - `import`
+    - `foreach`
+    - `in`
 - comments (e.g. `// This is a comment`)
 
 Keywords cannot be used as identifiers.
@@ -129,6 +130,7 @@ Using different statements allows you to build complex programs.
 Statements, like Tokens, have a type.
 
 STEP has the following statement types:
+
 - variable declaration (e.g. `number a = 1`)
 - variable assignment (e.g. `a = 2`)
 - function call (e.g. `println("Hello, world!")`)
@@ -192,7 +194,8 @@ function calc = (number a, number b) {
 }
 ```
 
-This program will create a variable `calc` of type `function` with the value of a function that takes two numbers and returns their sum.
+This program will create a variable `calc` of type `function` with the value of a function that takes two numbers and
+returns their sum.
 
 ### `list`
 

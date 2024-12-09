@@ -10,13 +10,13 @@ fetch(string url, map options)
 
 - `url` is the URL to fetch.
 - `options` is a map of options to pass to the request.
-  - possible keys include:
-  - `method` is the HTTP method to use (default: `GET`)
-  - `headers` is a map of headers to send with the request
-  - `body` is the body to send with the request
-    - if the value is not a string, it is converted to JSON
-  - `timeout` is the timeout in milliseconds
-  - all keys are optional, other keys will be ignored
+    - possible keys include:
+    - `method` is the HTTP method to use (default: `GET`)
+    - `headers` is a map of headers to send with the request
+    - `body` is the body to send with the request
+        - if the value is not a string, it is converted to JSON
+    - `timeout` is the timeout in milliseconds
+    - all keys are optional, other keys will be ignored
 
 # Remarks
 

@@ -5,5 +5,5 @@ namespace StepLang.Tooling.Formatting.Analyzers;
 /// </summary>
 public interface IAnalyzer
 {
-    public string Name => GetType().Name;
+	public string Name => GetType().Name;
 }

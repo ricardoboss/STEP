@@ -5,34 +5,34 @@ namespace StepLang.Tooling.Formatting.Analyzers;
 
 public class IndentationAnalyzer : IStringAnalyzer
 {
-    public Task<StringAnalysisResult> AnalyzeAsync(string input, CancellationToken cancellationToken = default)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
+	public Task<StringAnalysisResult> AnalyzeAsync(string input, CancellationToken cancellationToken = default)
+	{
+		cancellationToken.ThrowIfCancellationRequested();
 
-        StringBuilder builder = new();
-        var currentIndent = 0;
-        foreach (var (lineEnding, line) in input.SplitLinesPreserveNewLines())
-        {
-            var trimmedLine = line.TrimStart();
-            if (trimmedLine.StartsWith("}") && currentIndent > 0)
-            {
-                currentIndent--;
-            }
+		StringBuilder builder = new();
+		var currentIndent = 0;
+		foreach (var (lineEnding, line) in input.SplitLinesPreserveNewLines())
+		{
+			var trimmedLine = line.TrimStart();
+			if (trimmedLine.StartsWith("}") && currentIndent > 0)
+			{
+				currentIndent--;
+			}
 
-            if (trimmedLine.Length > 0)
-            {
-                builder.Append(new string('\t', currentIndent));
-                builder.Append(trimmedLine);
-            }
+			if (trimmedLine.Length > 0)
+			{
+				builder.Append(new string('\t', currentIndent));
+				builder.Append(trimmedLine);
+			}
 
-            builder.Append(lineEnding);
+			builder.Append(lineEnding);
 
-            if (trimmedLine.TrimEnd().EndsWith("{"))
-            {
-                currentIndent++;
-            }
-        }
+			if (trimmedLine.TrimEnd().EndsWith("{"))
+			{
+				currentIndent++;
+			}
+		}
 
-        return Task.FromResult(StringAnalysisResult.FromInputAndFix(input, builder.ToString()));
-    }
+		return Task.FromResult(StringAnalysisResult.FromInputAndFix(input, builder.ToString()));
+	}
 }

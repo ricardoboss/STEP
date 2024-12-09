@@ -19,10 +19,10 @@ length(map myMap)
 # Remarks
 
 - For `text`, each whitespace counts as one character. So, two spaces are two
-characters, a line break is one character, and so on.
+  characters, a line break is one character, and so on.
 - For `text`, the length is the number of so called grapheme clusters, not the
-number of bytes. So, a single character can be multiple bytes. For example,
-'🤷‍♂️' is treated as one character, not 5.
+  number of bytes. So, a single character can be multiple bytes. For example,
+  '🤷‍♂️' is treated as one character, not 5.
 
 # Examples
 

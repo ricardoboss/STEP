@@ -2,12 +2,14 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Parsing;
 
-public sealed record RootNode(IReadOnlyCollection<ImportNode> Imports, IReadOnlyCollection<StatementNode> Body) : IVisitableNode<IRootNodeVisitor>
+public sealed record RootNode(IReadOnlyCollection<ImportNode> Imports, IReadOnlyCollection<StatementNode> Body)
+	: IVisitableNode<IRootNodeVisitor>
 {
-    public void Accept(IRootNodeVisitor visitor)
-    {
-        visitor.Visit(this);
-    }
+	public void Accept(IRootNodeVisitor visitor)
+	{
+		visitor.Visit(this);
+	}
 
-    public TokenLocation Location => Imports.FirstOrDefault()?.Location ?? Body.FirstOrDefault()?.Location ?? new();
+	public TokenLocation Location =>
+		Imports.FirstOrDefault()?.Location ?? Body.FirstOrDefault()?.Location ?? new TokenLocation();
 }

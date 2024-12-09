@@ -5,23 +5,27 @@ namespace StepLang.Interpreting;
 
 public partial class Interpreter
 {
-    public void Visit(IncrementStatementNode statementNode)
-    {
-        var variable = CurrentScope.GetVariable(statementNode.Identifier);
-        var value = variable.Value;
-        if (value is not NumberResult number)
-            throw new IncompatibleExpressionOperandsException(statementNode.Location, value, "increment");
+	public void Visit(IncrementStatementNode statementNode)
+	{
+		var variable = CurrentScope.GetVariable(statementNode.Identifier);
+		var value = variable.Value;
+		if (value is not NumberResult number)
+		{
+			throw new IncompatibleExpressionOperandsException(statementNode.Location, value, "increment");
+		}
 
-        variable.Assign(statementNode.Location, number + 1);
-    }
+		variable.Assign(statementNode.Location, number + 1);
+	}
 
-    public void Visit(DecrementStatementNode statementNode)
-    {
-        var variable = CurrentScope.GetVariable(statementNode.Identifier);
-        var value = variable.Value;
-        if (value is not NumberResult number)
-            throw new IncompatibleExpressionOperandsException(statementNode.Location, value, "decrement");
+	public void Visit(DecrementStatementNode statementNode)
+	{
+		var variable = CurrentScope.GetVariable(statementNode.Identifier);
+		var value = variable.Value;
+		if (value is not NumberResult number)
+		{
+			throw new IncompatibleExpressionOperandsException(statementNode.Location, value, "decrement");
+		}
 
-        variable.Assign(statementNode.Location, number - 1);
-    }
+		variable.Assign(statementNode.Location, number - 1);
+	}
 }

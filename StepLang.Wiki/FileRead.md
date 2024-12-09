@@ -14,7 +14,8 @@ fileRead(string path)
 # Remarks
 
 - If the file specified in `path` does not exist, `null` is returned.
-- If the file contains binary data the data is decoded as ASCII and returned as a string (so `\u09` is interpreted as an HTAB character)
+- If the file contains binary data the data is decoded as ASCII and returned as a string (so `\u09` is interpreted as an
+  HTAB character)
 - If the file cannot be opened (e.g. because it is in use by another program), `null` is returned
 
 # Examples

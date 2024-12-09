@@ -14,10 +14,10 @@ Follow these general steps to solve an error:
 
 1. Read the error message carefully.
 2. Look for issues at the line number where the error occurred.
-   - Check that you have not made any typos.
-   - Check that you have not forgotten any punctuation.
-   - Check the placement of your parentheses (`(` and `)`), brackets (`[` and `]`), and braces (`{` and `}`).
-   - Also check the lines before and after the erroring line.
+    - Check that you have not made any typos.
+    - Check that you have not forgotten any punctuation.
+    - Check the placement of your parentheses (`(` and `)`), brackets (`[` and `]`), and braces (`{` and `}`).
+    - Also check the lines before and after the erroring line.
 3. Try to rewrite this part of the code in a different way.
 4. If you still can't solve the error, ask others for help on the [Discord server].
 

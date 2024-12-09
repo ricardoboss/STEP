@@ -5,7 +5,7 @@ namespace StepLang.Parsing;
 
 public abstract record ExpressionNode : IEvaluatableNode<IExpressionEvaluator, ExpressionResult>
 {
-    public abstract ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator);
+	public abstract ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator);
 
-    public abstract TokenLocation Location { get; }
+	public abstract TokenLocation Location { get; }
 }

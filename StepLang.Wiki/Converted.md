@@ -15,7 +15,8 @@ converted(list subject, function callback)
 # Remarks
 
 - If the callback has one parameter, the parameter will be the current element in the list.
-- If the callback has two parameters, the first parameter will be the current element in the list and the second parameter will be the index of the current element in the list.
+- If the callback has two parameters, the first parameter will be the current element in the list and the second
+  parameter will be the index of the current element in the list.
 
 # Examples
 

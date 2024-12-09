@@ -4,44 +4,48 @@ namespace StepLang.Interpreting;
 
 public partial class Interpreter
 {
-    public void Visit(WhileStatementNode statementNode)
-    {
-        while (ShouldLoop())
-        {
-            var loopScope = PushScope();
+	public void Visit(WhileStatementNode statementNode)
+	{
+		while (ShouldLoop())
+		{
+			var loopScope = PushScope();
 
-            foreach (var statement in statementNode.Body)
-            {
-                Execute(statement);
+			foreach (var statement in statementNode.Body)
+			{
+				Execute(statement);
 
-                if (loopScope.ShouldReturn() || loopScope.ShouldBreak() || loopScope.ShouldContinue())
-                    break;
-            }
+				if (loopScope.ShouldReturn() || loopScope.ShouldBreak() || loopScope.ShouldContinue())
+				{
+					break;
+				}
+			}
 
-            _ = PopScope();
+			_ = PopScope();
 
-            // handle returns to parent scope
-            if (loopScope.TryGetResult(out var resultValue, out var resultLocation))
-            {
-                CurrentScope.SetResult(resultLocation, resultValue);
+			// handle returns to parent scope
+			if (loopScope.TryGetResult(out var resultValue, out var resultLocation))
+			{
+				CurrentScope.SetResult(resultLocation, resultValue);
 
-                return;
-            }
+				return;
+			}
 
-            // break out of loop
-            if (loopScope.ShouldBreak())
-                return;
+			// break out of loop
+			if (loopScope.ShouldBreak())
+			{
+				return;
+			}
 
-            // continue is implicitly handled
-        }
+			// continue is implicitly handled
+		}
 
-        return;
+		return;
 
-        bool ShouldLoop()
-        {
-            var result = statementNode.Condition.EvaluateUsing(this);
+		bool ShouldLoop()
+		{
+			var result = statementNode.Condition.EvaluateUsing(this);
 
-            return result.IsTruthy();
-        }
-    }
+			return result.IsTruthy();
+		}
+	}
 }

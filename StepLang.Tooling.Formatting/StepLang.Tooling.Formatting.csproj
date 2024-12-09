@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <ItemGroup>
-      <ProjectReference Include="..\StepLang\StepLang.csproj" />
-    </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\StepLang\StepLang.csproj"/>
+	</ItemGroup>
 
-    <ItemGroup>
-        <AdditionalFiles Include="../CSharpExtensions.json" />
-    </ItemGroup>
+	<ItemGroup>
+		<AdditionalFiles Include="../CSharpExtensions.json"/>
+	</ItemGroup>
 
 </Project>

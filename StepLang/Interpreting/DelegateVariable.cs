@@ -9,11 +9,13 @@ public delegate void VariableAssigner(TokenLocation assignmentLocation, Expressi
 
 public class DelegateVariable : BaseVariable
 {
-    public required VariableEvaluator Evaluator { get; init; }
-    public required VariableAssigner Assigner { get; init; }
+	public required VariableEvaluator Evaluator { get; init; }
+	public required VariableAssigner Assigner { get; init; }
 
-    public override void Assign(TokenLocation assignmentLocation, ExpressionResult newValue)
-        => Assigner(assignmentLocation, newValue);
+	public override void Assign(TokenLocation assignmentLocation, ExpressionResult newValue)
+	{
+		Assigner(assignmentLocation, newValue);
+	}
 
-    public override ExpressionResult Value => Evaluator();
+	public override ExpressionResult Value => Evaluator();
 }

@@ -16,7 +16,7 @@ toBool(any value)
   Whether or not a value is truthy can be determined using the following table:
 
   | Value Type | Truthy                               | Falsy     |
-  |------------|--------------------------------------|-----------|
+      |------------|--------------------------------------|-----------|
   | `bool`     | `true`                               | `false`   |
   | `number`   | `> 0`                                | `<= 0`    |
   | `string`   | `"true"` (case insensitive) or `"1"` | otherwise |

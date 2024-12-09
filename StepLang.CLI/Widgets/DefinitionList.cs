@@ -4,53 +4,55 @@ namespace StepLang.CLI.Widgets;
 
 internal sealed class DefinitionList : IRenderable
 {
-    public sealed class Item
-    {
-        public Item(IRenderable label, IRenderable definition)
-        {
-            Label = label;
-            Definition = definition;
-        }
+	public sealed class Item(IRenderable label, IRenderable definition)
+	{
+		public IRenderable Label { get; } = label;
 
-        public IRenderable Label { get; }
+		public IRenderable Definition { get; } = definition;
+	}
 
-        public IRenderable Definition { get; }
-    }
+	public List<Item> Items { get; init; } = [];
 
-    public List<Item> Items { get; init; } = [];
+	public int ItemIndent { get; init; } = 4;
 
-    public int ItemIndent { get; init; } = 4;
+	public bool Expand { get; init; }
 
-    public bool Expand { get; init; }
+	public Measurement Measure(RenderOptions options, int maxWidth)
+	{
+		if (Expand)
+		{
+			return new Measurement(maxWidth, maxWidth);
+		}
 
-    public Measurement Measure(RenderOptions options, int maxWidth)
-    {
-        if (Expand)
-            return new(maxWidth, maxWidth);
+		var maxLabelWidth = Items.Select(i => i.Label.Measure(options, maxWidth).Max).Max();
+		var maxDefinitionWidth = Items.Select(i => i.Definition.Measure(options, maxWidth - ItemIndent).Max).Max() +
+		                         ItemIndent;
 
-        var maxLabelWidth = Items.Select(i => i.Label.Measure(options, maxWidth).Max).Max();
-        var maxDefinitionWidth = Items.Select(i => i.Definition.Measure(options, maxWidth - ItemIndent).Max).Max() + ItemIndent;
+		var max = Math.Max(maxLabelWidth, maxDefinitionWidth);
 
-        var max = Math.Max(maxLabelWidth, maxDefinitionWidth);
+		return new Measurement(max, max);
+	}
 
-        return new(max, max);
-    }
+	public IEnumerable<Segment> Render(RenderOptions options, int maxWidth)
+	{
+		foreach (var item in Items)
+		{
+			foreach (var labelSegment in item.Label.Render(options, maxWidth))
+			{
+				yield return labelSegment;
+			}
 
-    public IEnumerable<Segment> Render(RenderOptions options, int maxWidth)
-    {
-        foreach (var item in Items)
-        {
-            foreach (var labelSegment in item.Label.Render(options, maxWidth))
-                yield return labelSegment;
+			yield return Segment.LineBreak;
+			yield return Segment.Padding(ItemIndent);
 
-            yield return Segment.LineBreak;
-            yield return Segment.Padding(ItemIndent);
+			foreach (var definitionSegment in item.Definition.Render(options, maxWidth - ItemIndent))
+			{
+				yield return definitionSegment;
+			}
 
-            foreach (var definitionSegment in item.Definition.Render(options, maxWidth - ItemIndent))
-                yield return definitionSegment;
+			yield return Segment.LineBreak;
+		}
 
-            yield return Segment.LineBreak;
-        }
-        yield return Segment.LineBreak;
-    }
+		yield return Segment.LineBreak;
+	}
 }

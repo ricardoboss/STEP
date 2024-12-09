@@ -6,22 +6,22 @@ namespace StepLang.Framework.Mutating;
 
 public class DoRemoveFunction : GenericFunction<ListResult, ExpressionResult>
 {
-    public const string Identifier = "doRemove";
+	public const string Identifier = "doRemove";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
-        new(OnlyList, "subject"),
-        new(AnyValueType, "element"),
-    };
+	protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+	[
+		new(OnlyList, "subject"),
+		new(AnyValueType, "element"),
+	];
 
-    protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
-        ListResult argument1, ExpressionResult argument2)
-    {
-        var list = argument1.Value;
-        var element = argument2;
+	protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+		ListResult argument1, ExpressionResult argument2)
+	{
+		var list = argument1.Value;
+		var element = argument2;
 
-        _ = list.Remove(element);
+		_ = list.Remove(element);
 
-        return VoidResult.Instance;
-    }
+		return VoidResult.Instance;
+	}
 }

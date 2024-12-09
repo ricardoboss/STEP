@@ -5,115 +5,126 @@ namespace StepLang.Interpreting;
 
 public partial class Interpreter : IRootNodeVisitor, IStatementVisitor, IExpressionEvaluator
 {
-    public TextWriter? StdOut { get; }
-    public TextWriter? StdErr { get; }
-    public TextReader? StdIn { get; }
-    public TextWriter? DebugOut { get; }
-    public int ExitCode { get; set; }
+	public TextWriter? StdOut { get; }
+	public TextWriter? StdErr { get; }
+	public TextReader? StdIn { get; }
+	public TextWriter? DebugOut { get; }
+	public int ExitCode { get; set; }
 
-    private readonly Stack<Scope> scopes = new();
+	private readonly Stack<Scope> scopes = new();
 
-    private Lazy<Random> random = new(() => new());
+	private Lazy<Random> random = new(() => new Random());
 
-    public void SetRandomSeed(int value) => random = new(() => new Random(value));
+	public void SetRandomSeed(int value)
+	{
+		random = new Lazy<Random>(() => new Random(value));
+	}
 
-    public Random Random => random.Value;
+	public Random Random => random.Value;
 
-    public Interpreter(TextWriter? stdOut = null, TextWriter? stdErr = null, TextReader? stdIn = null,
-        TextWriter? debugOut = null)
-    {
-        StdOut = stdOut;
-        StdErr = stdErr;
-        StdIn = stdIn;
-        DebugOut = debugOut;
+	public Interpreter(TextWriter? stdOut = null, TextWriter? stdErr = null, TextReader? stdIn = null,
+		TextWriter? debugOut = null)
+	{
+		StdOut = stdOut;
+		StdErr = stdErr;
+		StdIn = stdIn;
+		DebugOut = debugOut;
 
-        _ = PushScope(Scope.GlobalScope);
-    }
+		_ = PushScope(Scope.GlobalScope);
+	}
 
-    public Scope CurrentScope => scopes.Peek();
+	public Scope CurrentScope => scopes.Peek();
 
-    public Scope PushScope(Scope? parent = null)
-    {
-        var newScope = new Scope(parent ?? CurrentScope);
+	public Scope PushScope(Scope? parent = null)
+	{
+		var newScope = new Scope(parent ?? CurrentScope);
 
-        scopes.Push(newScope);
+		scopes.Push(newScope);
 
-        DebugOut?.WriteLine($"Pushed new scope (new depth: {scopes.Count - 1})");
+		DebugOut?.WriteLine($"Pushed new scope (new depth: {scopes.Count - 1})");
 
-        return newScope;
-    }
+		return newScope;
+	}
 
-    public Scope PopScope()
-    {
-        DebugOut?.WriteLine($"Popping scope (new depth: {scopes.Count - 2})");
+	public Scope PopScope()
+	{
+		DebugOut?.WriteLine($"Popping scope (new depth: {scopes.Count - 2})");
 
-        return scopes.Pop();
-    }
+		return scopes.Pop();
+	}
 
-    public void Execute(IEnumerable<StatementNode> statements)
-    {
-        foreach (var statement in statements)
-        {
-            Execute(statement);
+	public void Execute(IEnumerable<StatementNode> statements)
+	{
+		foreach (var statement in statements)
+		{
+			Execute(statement);
 
-            if (CurrentScope.TryGetResult(out _, out _))
-            {
-                DebugOut?.WriteLine("Result found, continuing");
+			if (CurrentScope.TryGetResult(out _, out _))
+			{
+				DebugOut?.WriteLine("Result found, continuing");
 
-                return;
-            }
+				return;
+			}
 
-            if (CurrentScope.ShouldBreak())
-            {
-                DebugOut?.WriteLine("Break found, breaking");
+			if (CurrentScope.ShouldBreak())
+			{
+				DebugOut?.WriteLine("Break found, breaking");
 
-                return;
-            }
+				return;
+			}
 
-            if (CurrentScope.ShouldContinue())
-            {
-                DebugOut?.WriteLine("Continue found, continuing");
+			if (CurrentScope.ShouldContinue())
+			{
+				DebugOut?.WriteLine("Continue found, continuing");
 
-                return;
-            }
-        }
-    }
+				return;
+			}
+		}
+	}
 
-    public void Execute(StatementNode statement)
-    {
-        DebugOut?.WriteLine("Executing: " + statement);
+	public void Execute(StatementNode statement)
+	{
+		DebugOut?.WriteLine("Executing: " + statement);
 
-        statement.Accept(this);
-    }
+		statement.Accept(this);
+	}
 
-    public void Visit(RootNode node)
-    {
-        foreach (var importNode in node.Imports)
-            importNode.Accept(this);
+	public void Visit(RootNode node)
+	{
+		foreach (var importNode in node.Imports)
+		{
+			importNode.Accept(this);
+		}
 
-        Execute(node.Body);
-    }
+		Execute(node.Body);
+	}
 
-    public void Visit(CodeBlockStatementNode statementNode)
-    {
-        _ = PushScope();
+	public void Visit(CodeBlockStatementNode statementNode)
+	{
+		_ = PushScope();
 
-        Execute(statementNode.Body);
+		Execute(statementNode.Body);
 
-        var resultScope = PopScope();
+		var resultScope = PopScope();
 
-        if (resultScope.TryGetResult(out var resultValue, out var resultLocation))
-            CurrentScope.SetResult(resultLocation, resultValue);
-        else if (resultScope.ShouldBreak())
-            CurrentScope.SetBreak();
-        else if (resultScope.ShouldContinue())
-            CurrentScope.SetContinue();
-    }
+		if (resultScope.TryGetResult(out var resultValue, out var resultLocation))
+		{
+			CurrentScope.SetResult(resultLocation, resultValue);
+		}
+		else if (resultScope.ShouldBreak())
+		{
+			CurrentScope.SetBreak();
+		}
+		else if (resultScope.ShouldContinue())
+		{
+			CurrentScope.SetContinue();
+		}
+	}
 
-    public ExpressionResult Evaluate(IdentifierExpressionNode expressionNode)
-    {
-        var variable = CurrentScope.GetVariable(expressionNode.Identifier);
+	public ExpressionResult Evaluate(IdentifierExpressionNode expressionNode)
+	{
+		var variable = CurrentScope.GetVariable(expressionNode.Identifier);
 
-        return variable.Value;
-    }
+		return variable.Value;
+	}
 }

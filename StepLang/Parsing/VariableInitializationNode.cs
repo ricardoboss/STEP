@@ -3,14 +3,18 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Parsing;
 
-public sealed record VariableInitializationNode(TokenLocation AssignmentLocation, IEnumerable<Token> Types, Token Identifier, ExpressionNode Expression) : IVariableDeclarationNode
+public sealed record VariableInitializationNode(
+	TokenLocation AssignmentLocation,
+	IEnumerable<Token> Types,
+	Token Identifier,
+	ExpressionNode Expression) : IVariableDeclarationNode
 {
-    public Variable EvaluateUsing(IVariableDeclarationEvaluator evaluator)
-    {
-        return evaluator.Evaluate(this);
-    }
+	public Variable EvaluateUsing(IVariableDeclarationEvaluator evaluator)
+	{
+		return evaluator.Evaluate(this);
+	}
 
-    public TokenLocation Location => AssignmentLocation;
+	public TokenLocation Location => AssignmentLocation;
 
-    public bool HasValue => true;
+	public bool HasValue => true;
 }

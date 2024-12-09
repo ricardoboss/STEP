@@ -6,10 +6,10 @@ namespace StepLang.Parsing;
 
 public record NativeFunctionDefinitionExpressionNode(NativeFunction Definition) : ExpressionNode
 {
-    public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)
-    {
-        return evaluator.Evaluate(this);
-    }
+	public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)
+	{
+		return evaluator.Evaluate(this);
+	}
 
-    public override TokenLocation Location { get; } = new();
+	public override TokenLocation Location { get; } = new();
 }

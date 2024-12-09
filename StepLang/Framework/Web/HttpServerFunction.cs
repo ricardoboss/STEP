@@ -12,327 +12,345 @@ namespace StepLang.Framework.Web;
 
 public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResult>
 {
-    public const string Identifier = "httpServer";
+	public const string Identifier = "httpServer";
 
-    /// <inheritdoc />
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
-        new(new[] { ResultType.Map, ResultType.Number }, "portOrOptions"),
-        new(OnlyFunction, "handler"),
-    };
+	/// <inheritdoc />
+	protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+	[
+		new([ResultType.Map, ResultType.Number], "portOrOptions"),
+		new(OnlyFunction, "handler"),
+	];
 
-    /// <inheritdoc />
-    protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter, ExpressionResult argument1, FunctionResult argument2)
-    {
-        int port;
-        if (argument1 is MapResult { Value: var options })
-        {
-            if (options.TryGetValue("port", out var portResult))
-            {
-                if (portResult is not NumberResult portNumber)
-                    throw new InvalidResultTypeException(callLocation, portResult, ResultType.Number);
+	/// <inheritdoc />
+	protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+		ExpressionResult argument1, FunctionResult argument2)
+	{
+		int port;
+		if (argument1 is MapResult { Value: var options })
+		{
+			if (options.TryGetValue("port", out var portResult))
+			{
+				if (portResult is not NumberResult portNumber)
+				{
+					throw new InvalidResultTypeException(callLocation, portResult, ResultType.Number);
+				}
 
-                if (portNumber < 0 || portNumber > 65535)
-                    throw new InvalidArgumentValueException(callLocation, "Port must be between 0 and 65535");
+				if (portNumber < 0 || portNumber > 65535)
+				{
+					throw new InvalidArgumentValueException(callLocation, "Port must be between 0 and 65535");
+				}
 
-                port = portNumber;
-            }
-            else
-                port = 8080;
-        }
-        else if (argument1 is NumberResult portNumber)
-        {
-            port = portNumber;
-            options = new();
-        }
-        else
-            throw new InvalidResultTypeException(callLocation, argument1, ResultType.Number, ResultType.Map);
+				port = portNumber;
+			}
+			else
+			{
+				port = 8080;
+			}
+		}
+		else if (argument1 is NumberResult portNumber)
+		{
+			port = portNumber;
+			options = new Dictionary<string, ExpressionResult>();
+		}
+		else
+		{
+			throw new InvalidResultTypeException(callLocation, argument1, ResultType.Number, ResultType.Map);
+		}
 
-        using var cts = new CancellationTokenSource();
+		using var cts = new CancellationTokenSource();
 
-        var serveTask = Serve(callLocation, interpreter, port, options, argument2.Value, cts.Token);
+		var serveTask = Serve(callLocation, interpreter, port, options, argument2.Value, cts.Token);
 
-        interpreter.StdOut?.WriteLine("Press Ctrl+C to stop the server");
+		interpreter.StdOut?.WriteLine("Press Ctrl+C to stop the server");
 
-        // TODO: move logic for handling ctrl+c to interpreter
-        Console.CancelKeyPress += Cancel;
+		// TODO: move logic for handling ctrl+c to interpreter
+		Console.CancelKeyPress += Cancel;
 
-        try
-        {
-            serveTask.Wait(cts.Token);
-        }
-        catch (OperationCanceledException)
-        {
-            // Ignore
-        }
+		try
+		{
+			serveTask.Wait(cts.Token);
+		}
+		catch (OperationCanceledException)
+		{
+			// Ignore
+		}
 
-        Console.CancelKeyPress -= Cancel;
+		Console.CancelKeyPress -= Cancel;
 
-        return VoidResult.Instance;
+		return VoidResult.Instance;
 
-        void Cancel(object? sender, ConsoleCancelEventArgs args)
-        {
-            interpreter.StdOut?.WriteLine("Stopping server...");
+		void Cancel(object? sender, ConsoleCancelEventArgs args)
+		{
+			interpreter.StdOut?.WriteLine("Stopping server...");
 
-            args.Cancel = true;
+			args.Cancel = true;
 
-            // ReSharper disable once AccessToDisposedClosure
-            cts.Cancel();
-        }
-    }
+			// ReSharper disable once AccessToDisposedClosure
+			cts.Cancel();
+		}
+	}
 
-    private static async Task Serve(TokenLocation callLocation, Interpreter interpreter, int port, Dictionary<string, ExpressionResult> options, FunctionDefinition callback, CancellationToken cancellationToken)
-    {
-        var url = $"http://localhost:{port}/";
+	private static async Task Serve(TokenLocation callLocation, Interpreter interpreter, int port,
+		Dictionary<string, ExpressionResult> options, FunctionDefinition callback, CancellationToken cancellationToken)
+	{
+		var url = $"http://localhost:{port}/";
 
-        using var server = new HttpListener();
-        server.Prefixes.Add(url);
-        server.Start();
+		using var server = new HttpListener();
+		server.Prefixes.Add(url);
+		server.Start();
 
-        interpreter.StdOut?.WriteLineAsync($"Listening on {url}");
+		interpreter.StdOut?.WriteLineAsync($"Listening on {url}");
 
-        var defaultResponseHeaders = new Dictionary<string, string>();
-        if (options.TryGetValue("headers", out var headersResult))
-        {
-            if (headersResult is not MapResult { Value: var headers })
-                throw new InvalidResultTypeException(callLocation, headersResult, ResultType.Map);
+		var defaultResponseHeaders = new Dictionary<string, string>();
+		if (options.TryGetValue("headers", out var headersResult))
+		{
+			if (headersResult is not MapResult { Value: var headers })
+			{
+				throw new InvalidResultTypeException(callLocation, headersResult, ResultType.Map);
+			}
 
-            foreach (var (key, value) in headers)
-                defaultResponseHeaders.Add(key, ToStringFunction.Render(value));
-        }
+			foreach (var (key, value) in headers)
+			{
+				defaultResponseHeaders.Add(key, ToStringFunction.Render(value));
+			}
+		}
 
-        var handlers = Enumerable
-            .Range(1, Environment.ProcessorCount)
-            .Select(i => new RequestHandler(i, interpreter, defaultResponseHeaders, callback))
-            .ToList();
+		var handlers = Enumerable
+			.Range(1, Environment.ProcessorCount)
+			.Select(i => new RequestHandler(i, interpreter, defaultResponseHeaders, callback))
+			.ToList();
 
-        try
-        {
-            await Parallel.ForEachAsync(
-                handlers,
-                cancellationToken,
-                (handler, c) => handler.HandleRequestsAsync(callLocation, server, c));
-        }
-        catch (HttpListenerException e) when (e.ErrorCode == 995)
-        {
-            // Ignore OPERATION_CANCELLED
-        }
-        catch (OperationCanceledException)
-        {
-            // ignored
-        }
-        finally
-        {
-            server.Stop();
-        }
-    }
+		try
+		{
+			await Parallel.ForEachAsync(
+				handlers,
+				cancellationToken,
+				(handler, c) => handler.HandleRequestsAsync(callLocation, server, c));
+		}
+		catch (HttpListenerException e) when (e.ErrorCode == 995)
+		{
+			// Ignore OPERATION_CANCELLED
+		}
+		catch (OperationCanceledException)
+		{
+			// ignored
+		}
+		finally
+		{
+			server.Stop();
+		}
+	}
 
-    private sealed class RequestHandler
-    {
-        private readonly int workerId;
-        private readonly Interpreter interpreter;
-        private readonly Dictionary<string, string> defaultResponseHeaders;
-        private readonly FunctionDefinition callback;
+	private sealed class RequestHandler(
+		int workerId,
+		Interpreter interpreter,
+		Dictionary<string, string> defaultResponseHeaders,
+		FunctionDefinition callback)
+	{
+		public async ValueTask HandleRequestsAsync(TokenLocation callLocation, HttpListener server,
+			CancellationToken cancellationToken)
+		{
+			while (!cancellationToken.IsCancellationRequested && server.IsListening)
+			{
+				var context = await server.GetContextAsync();
 
-        public RequestHandler(int workerId, Interpreter interpreter, Dictionary<string, string> defaultResponseHeaders, FunctionDefinition callback)
-        {
-            this.workerId = workerId;
-            this.interpreter = interpreter;
-            this.defaultResponseHeaders = defaultResponseHeaders;
-            this.callback = callback;
-        }
+				await HandleContextAsync(callLocation, context, cancellationToken);
+			}
+		}
 
-        public async ValueTask HandleRequestsAsync(TokenLocation callLocation, HttpListener server, CancellationToken cancellationToken)
-        {
-            while (!cancellationToken.IsCancellationRequested && server.IsListening)
-            {
-                var context = await server.GetContextAsync();
+		private async Task HandleContextAsync(TokenLocation callLocation, HttpListenerContext context,
+			CancellationToken cancellationToken)
+		{
+			var responseMap = await HandleRequestAsync(callLocation, context, cancellationToken);
 
-                await HandleContextAsync(callLocation, context, cancellationToken);
-            }
-        }
+			HandleResponse(callLocation, context, responseMap);
+		}
 
-        private async Task HandleContextAsync(TokenLocation callLocation, HttpListenerContext context, CancellationToken cancellationToken)
-        {
-            var responseMap = await HandleRequestAsync(callLocation, context, cancellationToken);
+		private async Task<IReadOnlyDictionary<string, ExpressionResult>> HandleRequestAsync(TokenLocation callLocation,
+			HttpListenerContext context, CancellationToken cancellationToken)
+		{
+			var request = context.Request;
+			var requestMap = await GetRequestMapAsync(request, cancellationToken);
 
-            HandleResponse(callLocation, context, responseMap);
-        }
+			if (interpreter.StdOut is { } stdOut)
+			{
+				await stdOut.WriteLineAsync(
+					$"({workerId}) {request.RemoteEndPoint} -> {request.HttpMethod} {request.Url?.AbsolutePath}");
+			}
 
-        private async Task<IReadOnlyDictionary<string, ExpressionResult>> HandleRequestAsync(TokenLocation callLocation, HttpListenerContext context, CancellationToken cancellationToken)
-        {
-            var request = context.Request;
-            var requestMap = await GetRequestMapAsync(request, cancellationToken);
+			var responseResult = InvokeCallback(callLocation, requestMap);
 
-            if (interpreter.StdOut is { } stdOut)
-                await stdOut.WriteLineAsync($"({workerId}) {request.RemoteEndPoint} -> {request.HttpMethod} {request.Url?.AbsolutePath}");
+			return GetResponseMap(responseResult);
+		}
 
-            var responseResult = InvokeCallback(callLocation, requestMap);
+		[SuppressMessage("Design", "CA1031:Do not catch general exception types")]
+		private ExpressionResult InvokeCallback(TokenLocation callLocation, MapResult requestMap)
+		{
+			try
+			{
+				return callback.Invoke(callLocation, interpreter, [
+					requestMap,
+				]);
+			}
+			catch (Exception e)
+			{
+				return new MapResult(new Dictionary<string, ExpressionResult>
+				{
+					{ "status", new NumberResult(500) }, { "body", new StringResult(RenderExceptionPage(e)) },
+				});
+			}
+		}
 
-            return GetResponseMap(responseResult);
-        }
+		private void HandleResponse(TokenLocation callLocation, HttpListenerContext context,
+			IReadOnlyDictionary<string, ExpressionResult> responseMap)
+		{
+			var response = context.Response;
 
-        [SuppressMessage("Design", "CA1031:Do not catch general exception types")]
-        private ExpressionResult InvokeCallback(TokenLocation callLocation, MapResult requestMap)
-        {
-            try
-            {
-                return callback.Invoke(callLocation, interpreter, new ExpressionNode[]
-                {
-                    requestMap,
-                });
-            }
-            catch (Exception e)
-            {
-                return new MapResult(new()
-                {
-                    {
-                        "status", new NumberResult(500)
-                    },
-                    {
-                        "body", new StringResult(RenderExceptionPage(e))
-                    },
-                });
-            }
-        }
+			response.StatusCode =
+				responseMap.TryGetValue("status", out var statusResult) && statusResult is NumberResult statusNumber ?
+					statusNumber :
+					200;
 
-        private void HandleResponse(TokenLocation callLocation, HttpListenerContext context, IReadOnlyDictionary<string, ExpressionResult> responseMap)
-        {
-            var response = context.Response;
+			interpreter.StdOut?.WriteLineAsync(
+				$"({workerId}) {context.Request.RemoteEndPoint} <- {response.StatusCode}");
 
-            response.StatusCode = responseMap.TryGetValue("status", out var statusResult) && statusResult is NumberResult statusNumber ? statusNumber : 200;
+			foreach (var (key, value) in defaultResponseHeaders)
+			{
+				response.Headers.Add(key, value);
+			}
 
-            interpreter.StdOut?.WriteLineAsync($"({workerId}) {context.Request.RemoteEndPoint} <- {response.StatusCode}");
+			if (responseMap.TryGetValue("headers", out var responseHeaders))
+			{
+				if (responseHeaders is not MapResult { Value: var headers })
+				{
+					throw new InvalidResultTypeException(callLocation, responseHeaders, ResultType.Map);
+				}
 
-            foreach (var (key, value) in defaultResponseHeaders)
-                response.Headers.Add(key, value);
+				foreach (var (key, value) in headers)
+				{
+					response.Headers.Add(key, ToStringFunction.Render(value));
+				}
+			}
 
-            if (responseMap.TryGetValue("headers", out var responseHeaders))
-            {
-                if (responseHeaders is not MapResult { Value: var headers })
-                    throw new InvalidResultTypeException(callLocation, responseHeaders, ResultType.Map);
+			if (responseMap.TryGetValue("body", out var bodyResult))
+			{
+				var body = ToStringFunction.Render(bodyResult);
+				var buffer = Encoding.UTF8.GetBytes(body);
 
-                foreach (var (key, value) in headers)
-                    response.Headers.Add(key, ToStringFunction.Render(value));
-            }
+				response.ContentLength64 = buffer.Length;
 
-            if (responseMap.TryGetValue("body", out var bodyResult))
-            {
-                var body = ToStringFunction.Render(bodyResult);
-                var buffer = Encoding.UTF8.GetBytes(body);
+				response.OutputStream.Write(buffer);
+			}
 
-                response.ContentLength64 = buffer.Length;
+			response.Close();
+		}
 
-                response.OutputStream.Write(buffer);
-            }
+		private static Dictionary<string, ExpressionResult> GetResponseMap(ExpressionResult result)
+		{
+			if (result is MapResult map)
+			{
+				return map.Value;
+			}
 
-            response.Close();
-        }
+			return new Dictionary<string, ExpressionResult> { ["body"] = result };
+		}
 
-        private static Dictionary<string, ExpressionResult> GetResponseMap(ExpressionResult result)
-        {
-            if (result is MapResult map)
-                return map.Value;
+		private static async Task<MapResult> GetRequestMapAsync(HttpListenerRequest request,
+			CancellationToken cancellationToken)
+		{
+			var requestMethod = new StringResult(request.HttpMethod);
+			ExpressionResult requestUrl = NullResult.Instance;
+			ExpressionResult requestPath = NullResult.Instance;
+			if (request.Url is not null)
+			{
+				requestUrl = new StringResult(request.Url.ToString());
+				requestPath = new StringResult(request.Url.AbsolutePath);
+			}
 
-            return new()
-            {
-                ["body"] = result,
-            };
-        }
+			var requestHeaderDict = request
+				.Headers
+				.AllKeys
+				.Where(k => k != null)
+				.Cast<string>()
+				.ToDictionary(k => k, k => (ExpressionResult)new StringResult(request.Headers[k]!));
 
-        private static async Task<MapResult> GetRequestMapAsync(HttpListenerRequest request, CancellationToken cancellationToken)
-        {
-            var requestMethod = new StringResult(request.HttpMethod);
-            ExpressionResult requestUrl = NullResult.Instance;
-            ExpressionResult requestPath = NullResult.Instance;
-            if (request.Url is not null)
-            {
-                requestUrl = new StringResult(request.Url.ToString());
-                requestPath = new StringResult(request.Url.AbsolutePath);
-            }
+			var requestHeaderResult = new MapResult(requestHeaderDict);
 
-            var requestHeaderDict = request
-                .Headers
-                .AllKeys
-                .Where(k => k != null)
-                .Cast<string>()
-                .ToDictionary(k => k, k => (ExpressionResult)new StringResult(request.Headers[k]!));
+			string requestBody;
+			using (var reader = new StreamReader(request.InputStream))
+			{
+				requestBody = await reader.ReadToEndAsync(cancellationToken);
+			}
 
-            var requestHeaderResult = new MapResult(requestHeaderDict);
+			var requestBodyResult = new StringResult(requestBody);
 
-            string requestBody;
-            using (var reader = new StreamReader(request.InputStream))
-                requestBody = await reader.ReadToEndAsync(cancellationToken);
+			return new MapResult(new Dictionary<string, ExpressionResult>
+			{
+				["method"] = requestMethod,
+				["url"] = requestUrl,
+				["path"] = requestPath,
+				["headers"] = requestHeaderResult,
+				["body"] = requestBodyResult,
+			});
+		}
 
-            var requestBodyResult = new StringResult(requestBody);
+		private static string RenderExceptionPage(Exception e)
+		{
+			string? location = null;
+			if (e is StepLangException { Location: { } l })
+			{
+				location = $"<small>thrown at: <code>{l}</code></small>";
+			}
 
-            return new(new Dictionary<string, ExpressionResult>
-            {
-                ["method"] = requestMethod,
-                ["url"] = requestUrl,
-                ["path"] = requestPath,
-                ["headers"] = requestHeaderResult,
-                ["body"] = requestBodyResult,
-            });
-        }
-
-        private static string RenderExceptionPage(Exception e)
-        {
-            string? location = null;
-            if (e is StepLangException { Location: { } l })
-            {
-                location = $"<small>thrown at: <code>{l}</code></small>";
-            }
-
-            return $$"""
-                     <!DOCTYPE html>
-                     <html lang="en">
-                     <head>
-                     	<title>Unhandled Exception: {{e.Message}}</title>
-                     	<style rel="stylesheet">
-                     		html, body {
-                     			margin: 0;
-                     			text-align: center;
-                     			font-family: sans-serif;
-                     		}
-
-                     		body {
-                     			padding: 1rem;
-                     			border: 5px dashed red;
-                     			border-radius: 1rem;
-                     		}
-
-                     		@media (prefers-color-scheme: dark) {
-                     			body {
-                     				background: #202124;
-                     				color: #fff;
-                     			}
-                     		}
-
-                     		hr {
-                     			border: 0;
-                     			border-bottom: 1px solid #ccc;
-                     		}
-
-                     		pre {
-                     			overflow: auto;
-                     			text-align: left;
-                     			padding: 1rem;
-                     		}
-                     	</style>
-                     </head>
-                     <body>
-                     	<h1>Unhandled Exception</h1>
-                     	<p>
-                     		<code>{{e.GetType().Name}}</code><br>
-                     		<strong>{{e.Message}}</strong><br>
-                     		{{location}}
-                     	</p>
-                     	<hr>
-                     	<pre>{{e.StackTrace}}</pre>
-                     </body>
-                     </html>
-                     """;
-        }
-    }
+			return $$"""
+			         <!DOCTYPE html>
+			         <html lang="en">
+			         <head>
+			         	<title>Unhandled Exception: {{e.Message}}</title>
+			         	<style rel="stylesheet">
+			         		html, body {
+			         			margin: 0;
+			         			text-align: center;
+			         			font-family: sans-serif;
+			         		}
+			         
+			         		body {
+			         			padding: 1rem;
+			         			border: 5px dashed red;
+			         			border-radius: 1rem;
+			         		}
+			         
+			         		@media (prefers-color-scheme: dark) {
+			         			body {
+			         				background: #202124;
+			         				color: #fff;
+			         			}
+			         		}
+			         
+			         		hr {
+			         			border: 0;
+			         			border-bottom: 1px solid #ccc;
+			         		}
+			         
+			         		pre {
+			         			overflow: auto;
+			         			text-align: left;
+			         			padding: 1rem;
+			         		}
+			         	</style>
+			         </head>
+			         <body>
+			         	<h1>Unhandled Exception</h1>
+			         	<p>
+			         		<code>{{e.GetType().Name}}</code><br>
+			         		<strong>{{e.Message}}</strong><br>
+			         		{{location}}
+			         	</p>
+			         	<hr>
+			         	<pre>{{e.StackTrace}}</pre>
+			         </body>
+			         </html>
+			         """;
+		}
+	}
 }

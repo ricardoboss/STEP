@@ -3,12 +3,13 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Parsing;
 
-public record NotExpressionNode(Token ExclamationMarkToken, ExpressionNode Expression) : ExpressionNode, IUnaryExpressionNode
+public record NotExpressionNode(Token ExclamationMarkToken, ExpressionNode Expression)
+	: ExpressionNode, IUnaryExpressionNode
 {
-    public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)
-    {
-        return evaluator.Evaluate(this);
-    }
+	public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)
+	{
+		return evaluator.Evaluate(this);
+	}
 
-    public override TokenLocation Location => ExclamationMarkToken.Location;
+	public override TokenLocation Location => ExclamationMarkToken.Location;
 }

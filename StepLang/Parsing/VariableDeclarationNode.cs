@@ -5,12 +5,12 @@ namespace StepLang.Parsing;
 
 public sealed record VariableDeclarationNode(IEnumerable<Token> Types, Token Identifier) : IVariableDeclarationNode
 {
-    public Variable EvaluateUsing(IVariableDeclarationEvaluator evaluator)
-    {
-        return evaluator.Evaluate(this);
-    }
+	public Variable EvaluateUsing(IVariableDeclarationEvaluator evaluator)
+	{
+		return evaluator.Evaluate(this);
+	}
 
-    public TokenLocation Location => Types.First().Location;
+	public TokenLocation Location => Types.First().Location;
 
-    public bool HasValue => false;
+	public bool HasValue => false;
 }

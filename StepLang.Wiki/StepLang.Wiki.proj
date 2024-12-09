@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
-    <Target Name="Build">
-        <Message Text="Nothing to do" />
-    </Target>
+	<Target Name="Build">
+		<Message Text="Nothing to do"/>
+	</Target>
 
-    <Target Name="Rebuild">
-        <Message Text="Nothing to do" />
-    </Target>
+	<Target Name="Rebuild">
+		<Message Text="Nothing to do"/>
+	</Target>
 
-    <Target Name="Clean">
-        <Message Text="Nothing to do" />
-    </Target>
+	<Target Name="Clean">
+		<Message Text="Nothing to do"/>
+	</Target>
 
-    <ItemGroup>
-        <None Include="*.md" />
-    </ItemGroup>
+	<ItemGroup>
+		<None Include="*.md"/>
+		<None Include="*.sh"/>
+	</ItemGroup>
 </Project>

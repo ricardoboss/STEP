@@ -6,22 +6,22 @@ namespace StepLang.Framework.Conversion;
 
 public class ToKeysFunction : GenericFunction<MapResult>
 {
-    public const string Identifier = "toKeys";
+	public const string Identifier = "toKeys";
 
-    protected override IEnumerable<NativeParameter> NativeParameters { get; } = new NativeParameter[]
-    {
-        new(OnlyMap, "source"),
-    };
+	protected override IEnumerable<NativeParameter> NativeParameters { get; } =
+	[
+		new(OnlyMap, "source"),
+	];
 
-    protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyList;
+	protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyList;
 
-    protected override ListResult Invoke(TokenLocation callLocation, Interpreter interpreter, MapResult argument1)
-    {
-        var keys = argument1.Value.Keys
-            .Select(k => new StringResult(k))
-            .Cast<ExpressionResult>()
-            .ToList();
+	protected override ListResult Invoke(TokenLocation callLocation, Interpreter interpreter, MapResult argument1)
+	{
+		var keys = argument1.Value.Keys
+			.Select(k => new StringResult(k))
+			.Cast<ExpressionResult>()
+			.ToList();
 
-        return new(keys);
-    }
+		return new ListResult(keys);
+	}
 }

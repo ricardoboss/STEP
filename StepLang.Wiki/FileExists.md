@@ -12,7 +12,8 @@ fileExists(string path)
 
 # Remarks
 
-- The function only checks if the file exists, not if it can be read using `fileRead` (so it may exist but is currently not readable)
+- The function only checks if the file exists, not if it can be read using `fileRead` (so it may exist but is currently
+  not readable)
 - The path can be relative and is interpreted relative to the current working directory
 - Absolute paths may require a drive letter (system dependent)
 

@@ -23,8 +23,8 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        version: [9.x]
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+        version: [ 9.x ]
 
     runs-on: ${{ matrix.os }}
 

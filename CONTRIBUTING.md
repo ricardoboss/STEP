@@ -26,8 +26,11 @@ There are several ways you can contribute to STEP:
 - Reporting issues and suggesting improvements through GitHub Issues.
 - Submitting code enhancements or bug fixes through Pull Requests.
 - Improving our documentation.
+
 <!-- - Helping others by participating in discussions and answering questions. -->
-- Check out the [`good first issue` issues](https://github.com/ricardoboss/STEP/contribute) to choose an issue to work on.
+
+- Check out the [`good first issue` issues](https://github.com/ricardoboss/STEP/contribute) to choose an issue to work
+  on.
 
 ## Code of Conduct
 
@@ -48,8 +51,8 @@ all contributors.
 
 1. Install [.NET](https://dotnet.microsoft.com/en-us/download)
 2. (optional) Get an IDE and set it up
-   - [JetBrains Rider](https://www.jetbrains.com/rider/)
-   - [Microsoft Visual Studio](https://visualstudio.microsoft.com/)
+    - [JetBrains Rider](https://www.jetbrains.com/rider/)
+    - [Microsoft Visual Studio](https://visualstudio.microsoft.com/)
 3. Open your cloned repository
 
 ## Making Changes
@@ -67,22 +70,24 @@ all contributors.
    git checkout -b workflow/add-build-scripts
    ```
 2. Commit your changes
-   - Make sure your changes are not out-of-scope for the issue you are working on
-   - Create small commits and put the idea behind each change in the commit message
+    - Make sure your changes are not out-of-scope for the issue you are working on
+    - Create small commits and put the idea behind each change in the commit message
 
 3. Write tests
-   - To add integration tests:
-     - create a new file in the `StepLang/Examples` folder
-     - Add a file with the same name and the extension `.step.out` with the expected output in the `StepLang.Tests/Examples` folder
-   - To add unit tests, create new Xunit tests in the appropriate `StepLang.Tests` folder
+    - To add integration tests:
+        - create a new file in the `StepLang/Examples` folder
+        - Add a file with the same name and the extension `.step.out` with the expected output in the
+          `StepLang.Tests/Examples` folder
+    - To add unit tests, create new Xunit tests in the appropriate `StepLang.Tests` folder
 
 ### Coding Guidelines
 
 Make sure your code is properly formatted and follows our coding guidelines:
 
 - Format your code using `dotnet format`
-  - Run `dotnet tool install -g dotnet-format` to install it
-- Follow the [C# Coding Conventions](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions)
+    - Run `dotnet tool install -g dotnet-format` to install it
+- Follow
+  the [C# Coding Conventions](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions)
 - Follow the [.NET Design Guidelines](https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/)
 
 ## Submitting a Pull Request
@@ -104,10 +109,10 @@ discuss development.
 In case you want to contact the maintainers privately, you can reach out to us here:
 
 - E-Mail:
-  - General: [info@step-lang.dev](mailto:info@step-lang.dev)
-  - Ricardo Boss: [mail@ricardoboss.de](mailto:mail@ricardoboss.de?subject=STEP%20Contribution)
+    - General: [info@step-lang.dev](mailto:info@step-lang.dev)
+    - Ricardo Boss: [mail@ricardoboss.de](mailto:mail@ricardoboss.de?subject=STEP%20Contribution)
 - Discord:
-  - Ricardo boss: [mizzle_de](https://discord.com/users/158966029286899713)
+    - Ricardo boss: [mizzle_de](https://discord.com/users/158966029286899713)
 
 ## Licensing
 

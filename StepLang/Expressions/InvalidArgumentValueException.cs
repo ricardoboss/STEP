@@ -3,9 +3,6 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Expressions;
 
-internal sealed class InvalidArgumentValueException : InterpreterException
-{
-    public InvalidArgumentValueException(TokenLocation location, string message) : base(7, location, message, "Make sure you're passing a value supported by the function.")
-    {
-    }
-}
+internal sealed class InvalidArgumentValueException(TokenLocation location, string message) : InterpreterException(7,
+	location, message,
+	"Make sure you're passing a value supported by the function.");

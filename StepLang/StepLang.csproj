@@ -1,59 +1,59 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup Condition=" '$(Configuration)' != 'Debug' ">
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    </PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)' != 'Debug' ">
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	</PropertyGroup>
 
-    <PropertyGroup Condition=" '$(Configuration)' == 'Test' ">
-      <DefineConstants>TRACE;RELEASE</DefineConstants>
-      <Optimize>true</Optimize>
-    </PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)' == 'Test' ">
+		<DefineConstants>TRACE;RELEASE</DefineConstants>
+		<Optimize>true</Optimize>
+	</PropertyGroup>
 
-    <ItemGroup>
-        <InternalsVisibleTo Include="StepLang.Tests"/>
-    </ItemGroup>
+	<ItemGroup>
+		<InternalsVisibleTo Include="StepLang.Tests"/>
+	</ItemGroup>
 
-    <ItemGroup>
-        <AdditionalFiles Include="../CSharpExtensions.json" />
-    </ItemGroup>
+	<ItemGroup>
+		<AdditionalFiles Include="../CSharpExtensions.json"/>
+	</ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="cmdwtf.BuildTimestampGenerator" />
-        <PackageReference Include="GitVersion.MsBuild">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="IDisposableAnalyzers">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="SmartAnalyzers.CSharpExtensions.Annotations" />
-        <PackageReference Include="System.Linq.Async"/>
-        <PackageReference Include="ToStringWithoutOverrideAnalyzer">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-    </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="cmdwtf.BuildTimestampGenerator"/>
+		<PackageReference Include="GitVersion.MsBuild">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="IDisposableAnalyzers">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="SmartAnalyzers.CSharpExtensions.Annotations"/>
+		<PackageReference Include="System.Linq.Async"/>
+		<PackageReference Include="ToStringWithoutOverrideAnalyzer">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
 
-    <ItemGroup Condition="'$(Configuration)' != 'Release'">
-        <None Update="Examples\**\*.step">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="Examples\**\*.txt">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-    </ItemGroup>
+	<ItemGroup Condition="'$(Configuration)' != 'Release'">
+		<None Update="Examples\**\*.step">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Examples\**\*.txt">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
-    <Target Name="Copy DLLs to Homepage" AfterTargets="Build">
-        <PropertyGroup>
-            <HomepageBinDir>$(SolutionDir)StepLang.Homepage\bin</HomepageBinDir>
-        </PropertyGroup>
+	<Target Name="Copy DLLs to Homepage" AfterTargets="Build">
+		<PropertyGroup>
+			<HomepageBinDir>$(SolutionDir)StepLang.Homepage\bin</HomepageBinDir>
+		</PropertyGroup>
 
-        <ItemGroup>
-            <BuiltDlls Include="bin/**/*.dll" />
-        </ItemGroup>
+		<ItemGroup>
+			<BuiltDlls Include="bin/**/*.dll"/>
+		</ItemGroup>
 
-        <Copy SourceFiles="@(BuiltDlls)" DestinationFolder="$(HomepageBinDir)\%(RecursiveDir)" SkipUnchangedFiles="false" />
-        <Message Text="Copied @(BuiltDlls) to $(HomepageBinDir)" Importance="high" />
-    </Target>
+		<Copy SourceFiles="@(BuiltDlls)" DestinationFolder="$(HomepageBinDir)\%(RecursiveDir)" SkipUnchangedFiles="false"/>
+		<Message Text="Copied @(BuiltDlls) to $(HomepageBinDir)" Importance="high"/>
+	</Target>
 </Project>

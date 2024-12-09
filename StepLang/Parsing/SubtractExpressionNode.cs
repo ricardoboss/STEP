@@ -3,10 +3,11 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Parsing;
 
-public record SubtractExpressionNode(TokenLocation OperatorLocation, ExpressionNode Left, ExpressionNode Right) : BinaryExpressionNode(OperatorLocation, Left, Right, BinaryExpressionOperator.Subtract)
+public record SubtractExpressionNode(TokenLocation OperatorLocation, ExpressionNode Left, ExpressionNode Right)
+	: BinaryExpressionNode(OperatorLocation, Left, Right, BinaryExpressionOperator.Subtract)
 {
-    public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)
-    {
-        return evaluator.Evaluate(this);
-    }
+	public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)
+	{
+		return evaluator.Evaluate(this);
+	}
 }

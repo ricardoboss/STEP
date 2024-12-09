@@ -6,169 +6,177 @@ namespace StepLang.Interpreting;
 
 public partial class Interpreter
 {
-    private void InitializeVariable(IVariableDeclarationNode declaration, ExpressionResult value)
-    {
-        var variable = declaration.EvaluateUsing(this);
-        var location = declaration.Types.First().Location;
+	private void InitializeVariable(IVariableDeclarationNode declaration, ExpressionResult value)
+	{
+		var variable = declaration.EvaluateUsing(this);
+		var location = declaration.Types.First().Location;
 
-        variable.Assign(location, value);
-    }
+		variable.Assign(location, value);
+	}
 
-    public void Visit(ForeachDeclareKeyDeclareValueStatementNode statementNode)
-    {
-        var collection = statementNode.Collection.EvaluateUsing(this);
-        var collectionLocation = statementNode.Collection.Location;
+	public void Visit(ForeachDeclareKeyDeclareValueStatementNode statementNode)
+	{
+		var collection = statementNode.Collection.EvaluateUsing(this);
+		var collectionLocation = statementNode.Collection.Location;
 
-        RunForeachLoop(
-            e => InitializeVariable(statementNode.KeyDeclaration, e),
-            e => InitializeVariable(statementNode.ValueDeclaration, e),
-            collectionLocation,
-            collection,
-            statementNode.Body
-        );
-    }
+		RunForeachLoop(
+			e => InitializeVariable(statementNode.KeyDeclaration, e),
+			e => InitializeVariable(statementNode.ValueDeclaration, e),
+			collectionLocation,
+			collection,
+			statementNode.Body
+		);
+	}
 
-    public void Visit(ForeachDeclareKeyValueStatementNode statementNode)
-    {
-        var valueVariable = CurrentScope.GetVariable(statementNode.ValueIdentifier);
-        var valueLocation = statementNode.ValueIdentifier.Location;
-        var collection = statementNode.Collection.EvaluateUsing(this);
-        var collectionLocation = statementNode.Collection.Location;
+	public void Visit(ForeachDeclareKeyValueStatementNode statementNode)
+	{
+		var valueVariable = CurrentScope.GetVariable(statementNode.ValueIdentifier);
+		var valueLocation = statementNode.ValueIdentifier.Location;
+		var collection = statementNode.Collection.EvaluateUsing(this);
+		var collectionLocation = statementNode.Collection.Location;
 
-        RunForeachLoop(
-            e => InitializeVariable(statementNode.KeyDeclaration, e),
-            e => valueVariable.Assign(valueLocation, e),
-            collectionLocation,
-            collection,
-            statementNode.Body
-        );
-    }
+		RunForeachLoop(
+			e => InitializeVariable(statementNode.KeyDeclaration, e),
+			e => valueVariable.Assign(valueLocation, e),
+			collectionLocation,
+			collection,
+			statementNode.Body
+		);
+	}
 
-    public void Visit(ForeachDeclareValueStatementNode statementNode)
-    {
-        var collection = statementNode.Collection.EvaluateUsing(this);
-        var collectionLocation = statementNode.Collection.Location;
+	public void Visit(ForeachDeclareValueStatementNode statementNode)
+	{
+		var collection = statementNode.Collection.EvaluateUsing(this);
+		var collectionLocation = statementNode.Collection.Location;
 
-        RunForeachLoop(
-            null,
-            e => InitializeVariable(statementNode.ValueDeclaration, e),
-            collectionLocation,
-            collection,
-            statementNode.Body
-        );
-    }
+		RunForeachLoop(
+			null,
+			e => InitializeVariable(statementNode.ValueDeclaration, e),
+			collectionLocation,
+			collection,
+			statementNode.Body
+		);
+	}
 
-    public void Visit(ForeachKeyValueStatementNode statementNode)
-    {
-        var keyVariable = CurrentScope.GetVariable(statementNode.KeyIdentifier);
-        var keyLocation = statementNode.KeyIdentifier.Location;
-        var valueVariable = CurrentScope.GetVariable(statementNode.ValueIdentifier);
-        var valueLocation = statementNode.ValueIdentifier.Location;
-        var collection = statementNode.Collection.EvaluateUsing(this);
-        var collectionLocation = statementNode.Collection.Location;
+	public void Visit(ForeachKeyValueStatementNode statementNode)
+	{
+		var keyVariable = CurrentScope.GetVariable(statementNode.KeyIdentifier);
+		var keyLocation = statementNode.KeyIdentifier.Location;
+		var valueVariable = CurrentScope.GetVariable(statementNode.ValueIdentifier);
+		var valueLocation = statementNode.ValueIdentifier.Location;
+		var collection = statementNode.Collection.EvaluateUsing(this);
+		var collectionLocation = statementNode.Collection.Location;
 
-        RunForeachLoop(
-            e => keyVariable.Assign(keyLocation, e),
-            e => valueVariable.Assign(valueLocation, e),
-            collectionLocation,
-            collection,
-            statementNode.Body
-        );
-    }
+		RunForeachLoop(
+			e => keyVariable.Assign(keyLocation, e),
+			e => valueVariable.Assign(valueLocation, e),
+			collectionLocation,
+			collection,
+			statementNode.Body
+		);
+	}
 
-    public void Visit(ForeachKeyDeclareValueStatementNode statementNode)
-    {
-        var collection = statementNode.Collection.EvaluateUsing(this);
-        var collectionLocation = statementNode.Collection.Location;
+	public void Visit(ForeachKeyDeclareValueStatementNode statementNode)
+	{
+		var collection = statementNode.Collection.EvaluateUsing(this);
+		var collectionLocation = statementNode.Collection.Location;
 
-        RunForeachLoop(
-            null,
-            e => InitializeVariable(statementNode.ValueDeclaration, e),
-            collectionLocation,
-            collection,
-            statementNode.Body
-        );
-    }
+		RunForeachLoop(
+			null,
+			e => InitializeVariable(statementNode.ValueDeclaration, e),
+			collectionLocation,
+			collection,
+			statementNode.Body
+		);
+	}
 
-    public void Visit(ForeachValueStatementNode statementNode)
-    {
-        var valueVariable = CurrentScope.GetVariable(statementNode.Identifier);
-        var valueLocation = statementNode.Identifier.Location;
-        var collection = statementNode.Collection.EvaluateUsing(this);
-        var collectionLocation = statementNode.Collection.Location;
+	public void Visit(ForeachValueStatementNode statementNode)
+	{
+		var valueVariable = CurrentScope.GetVariable(statementNode.Identifier);
+		var valueLocation = statementNode.Identifier.Location;
+		var collection = statementNode.Collection.EvaluateUsing(this);
+		var collectionLocation = statementNode.Collection.Location;
 
-        RunForeachLoop(
-            null,
-            e => valueVariable.Assign(valueLocation, e),
-            collectionLocation,
-            collection,
-            statementNode.Body
-        );
-    }
+		RunForeachLoop(
+			null,
+			e => valueVariable.Assign(valueLocation, e),
+			collectionLocation,
+			collection,
+			statementNode.Body
+		);
+	}
 
-    private static IEnumerable<(ExpressionResult, ExpressionResult)> ConvertToForeachEnumerable(TokenLocation evaluationLocation, ExpressionResult collection)
-    {
-        switch (collection)
-        {
-            case ListResult { Value: var items }:
-                {
-                    var index = 0;
-                    foreach (var item in items)
-                    {
-                        yield return (new NumberResult(index), item);
+	private static IEnumerable<(ExpressionResult, ExpressionResult)> ConvertToForeachEnumerable(
+		TokenLocation evaluationLocation, ExpressionResult collection)
+	{
+		switch (collection)
+		{
+			case ListResult { Value: var items }:
+				{
+					var index = 0;
+					foreach (var item in items)
+					{
+						yield return (new NumberResult(index), item);
 
-                        index++;
-                    }
+						index++;
+					}
 
-                    yield break;
-                }
-            case MapResult { Value: var pairs }:
-                {
-                    foreach (var (key, value) in pairs)
-                        yield return (new StringResult(key), value);
+					yield break;
+				}
+			case MapResult { Value: var pairs }:
+				{
+					foreach (var (key, value) in pairs)
+					{
+						yield return (new StringResult(key), value);
+					}
 
-                    yield break;
-                }
-            default:
-                throw new InvalidResultTypeException(evaluationLocation, collection, ResultType.List, ResultType.Map);
-        }
-    }
+					yield break;
+				}
+			default:
+				throw new InvalidResultTypeException(evaluationLocation, collection, ResultType.List, ResultType.Map);
+		}
+	}
 
-    private void RunForeachLoop(Action<ExpressionResult>? updateKey, Action<ExpressionResult> updateValue, TokenLocation collectionLocation, ExpressionResult collection, IReadOnlyCollection<StatementNode> body)
-    {
-        var pairs = ConvertToForeachEnumerable(collectionLocation, collection);
+	private void RunForeachLoop(Action<ExpressionResult>? updateKey, Action<ExpressionResult> updateValue,
+		TokenLocation collectionLocation, ExpressionResult collection, IReadOnlyCollection<StatementNode> body)
+	{
+		var pairs = ConvertToForeachEnumerable(collectionLocation, collection);
 
-        foreach (var (keyValue, valueValue) in pairs)
-        {
-            var loopScope = PushScope();
+		foreach (var (keyValue, valueValue) in pairs)
+		{
+			var loopScope = PushScope();
 
-            // update/initialize key and value in loop scope
-            updateKey?.Invoke(keyValue);
-            updateValue(valueValue);
+			// update/initialize key and value in loop scope
+			updateKey?.Invoke(keyValue);
+			updateValue(valueValue);
 
-            foreach (var statement in body)
-            {
-                Execute(statement);
+			foreach (var statement in body)
+			{
+				Execute(statement);
 
-                if (loopScope.ShouldReturn() || loopScope.ShouldBreak() || loopScope.ShouldContinue())
-                    break;
-            }
+				if (loopScope.ShouldReturn() || loopScope.ShouldBreak() || loopScope.ShouldContinue())
+				{
+					break;
+				}
+			}
 
-            _ = PopScope();
+			_ = PopScope();
 
-            // handle returns to parent scope
-            if (loopScope.TryGetResult(out var resultValue, out var resultLocation))
-            {
-                CurrentScope.SetResult(resultLocation, resultValue);
+			// handle returns to parent scope
+			if (loopScope.TryGetResult(out var resultValue, out var resultLocation))
+			{
+				CurrentScope.SetResult(resultLocation, resultValue);
 
-                return;
-            }
+				return;
+			}
 
-            // break out of loop
-            if (loopScope.ShouldBreak())
-                return;
+			// break out of loop
+			if (loopScope.ShouldBreak())
+			{
+				return;
+			}
 
-            // continue is implicitly handled
-        }
-    }
+			// continue is implicitly handled
+		}
+	}
 }
