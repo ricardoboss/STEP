@@ -48,10 +48,8 @@ public class IndexOfFunction : GenericFunction<ExpressionResult, ExpressionResul
 
 	private static ExpressionResult GetMapKey(MapResult map, ExpressionResult value)
 	{
-		var pair = map.Value.FirstOrDefault(x => x.Value.Equals(value));
+		var (key, _) = map.Value.FirstOrDefault(x => x.Value.Equals(value));
 
-		return pair.Equals(default(KeyValuePair<string, ExpressionResult>)) ?
-			NullResult.Instance :
-			new StringResult(pair.Key);
+		return key == null ? NullResult.Instance : new StringResult(key);
 	}
 }

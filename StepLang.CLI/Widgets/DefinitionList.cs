@@ -4,7 +4,7 @@ namespace StepLang.CLI.Widgets;
 
 internal sealed class DefinitionList : IRenderable
 {
-	public sealed class Item(IRenderable label, IRenderable definition)
+	internal sealed class Item(IRenderable label, IRenderable definition)
 	{
 		public IRenderable Label { get; } = label;
 

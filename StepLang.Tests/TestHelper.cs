@@ -4,7 +4,7 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Tests;
 
-public static class TestHelper
+internal static class TestHelper
 {
 	public static IEnumerable<Token> AsTokens(this string code)
 	{

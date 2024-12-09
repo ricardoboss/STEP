@@ -246,6 +246,18 @@ dotnet_naming_style.begins_with_i.capitalization = pascal_case
 # CSE006: Try to simplify expression by extracting method invocation results to separated variables
 dotnet_diagnostic.CSE006.severity = none
 
+# CA2007: Consider calling ConfigureAwait on the awaited task
+dotnet_diagnostic.CA2007.severity = none
+
+# CA1062: In externally visible method '...', validate parameter '...' is non-null before using it. If appropriate, throw an 'ArgumentNullException' when the argument is 'null'.
+dotnet_diagnostic.CA1062.severity = none
+
+# CA1032: Add the following constructor to ...Exception: ...
+dotnet_diagnostic.CA1032.severity = none
+
+# CA1720: Identifier 'String' contains type name
+dotnet_diagnostic.CA1720.severity = none
+
 [*.json]
 indent_size = 2
 indent_style = space

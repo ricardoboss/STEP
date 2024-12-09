@@ -14,9 +14,9 @@ public class Variable(string identifier, IReadOnlyList<ResultType> types, bool n
 
 	public bool Nullable { get; } = nullable;
 
-	private ExpressionResult value = VoidResult.Instance;
+	private ExpressionResult innerValue = VoidResult.Instance;
 
-	public override ExpressionResult Value => value;
+	public override ExpressionResult Value => innerValue;
 
 	public override void Assign(TokenLocation assignmentLocation, ExpressionResult newValue)
 	{
@@ -30,7 +30,7 @@ public class Variable(string identifier, IReadOnlyList<ResultType> types, bool n
 			throw new NonNullableVariableAssignmentException(assignmentLocation, this, newValue);
 		}
 
-		value = newValue;
+		innerValue = newValue;
 	}
 
 	public bool Accepts(ExpressionResult value)

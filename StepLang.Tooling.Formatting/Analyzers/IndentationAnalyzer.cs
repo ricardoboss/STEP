@@ -14,7 +14,7 @@ public class IndentationAnalyzer : IStringAnalyzer
 		foreach (var (lineEnding, line) in input.SplitLinesPreserveNewLines())
 		{
 			var trimmedLine = line.TrimStart();
-			if (trimmedLine.StartsWith("}") && currentIndent > 0)
+			if (trimmedLine.StartsWith('}') && currentIndent > 0)
 			{
 				currentIndent--;
 			}
@@ -27,7 +27,7 @@ public class IndentationAnalyzer : IStringAnalyzer
 
 			builder.Append(lineEnding);
 
-			if (trimmedLine.TrimEnd().EndsWith("{"))
+			if (trimmedLine.TrimEnd().EndsWith('{'))
 			{
 				currentIndent++;
 			}

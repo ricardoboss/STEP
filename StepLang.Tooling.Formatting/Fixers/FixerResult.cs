@@ -2,7 +2,7 @@ namespace StepLang.Tooling.Formatting.Fixers;
 
 public record FixerResult
 {
-	protected FixerResult(int AppliedFixes, TimeSpan Elapsed)
+	private FixerResult(int AppliedFixes, TimeSpan Elapsed)
 	{
 		this.AppliedFixes = AppliedFixes;
 		this.Elapsed = Elapsed;
@@ -24,5 +24,10 @@ public record FixerResult
 			a.AppliedFixes + b.AppliedFixes,
 			a.Elapsed + b.Elapsed
 		);
+	}
+
+	public static FixerResult Add(FixerResult left, FixerResult right)
+	{
+		return left + right;
 	}
 }

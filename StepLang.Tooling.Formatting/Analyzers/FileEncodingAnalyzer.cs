@@ -22,7 +22,7 @@ public class FileEncodingAnalyzer : IFileAnalyzer
 		await using var tempWriter = new StreamWriter(tempFile, false, DefaultEncoding);
 		using var fileReader = new StreamReader(stream, usedEncoding);
 		await tempWriter.WriteAsync(await fileReader.ReadToEndAsync(cancellationToken));
-		await tempWriter.FlushAsync();
+		await tempWriter.FlushAsync(cancellationToken);
 
 		return FileAnalysisResult.FixedAt(new FileInfo(tempFile));
 	}

@@ -10,36 +10,36 @@ public partial class Interpreter : IVariableDeclarationEvaluator
 		_ = statementNode.Declaration.EvaluateUsing(this);
 	}
 
-	public Variable Evaluate(VariableDeclarationNode statementNode)
+	public Variable Evaluate(VariableDeclarationNode expressionNode)
 	{
-		var validResults = statementNode.GetResultTypes().ToList();
+		var validResults = expressionNode.GetResultTypes().ToList();
 
-		return CurrentScope.CreateVariable(statementNode.Location, statementNode.Identifier, validResults,
-			ExpressionResult.DefaultFor(validResults.First()), false);
+		return CurrentScope.CreateVariable(expressionNode.Location, expressionNode.Identifier, validResults,
+			ExpressionResult.DefaultFor(validResults.First()));
 	}
 
-	public Variable Evaluate(NullableVariableDeclarationNode statementNode)
+	public Variable Evaluate(NullableVariableDeclarationNode expressionNode)
 	{
-		var validResults = statementNode.GetResultTypes().ToList();
+		var validResults = expressionNode.GetResultTypes().ToList();
 
-		return CurrentScope.CreateVariable(statementNode.Location, statementNode.Identifier, validResults,
+		return CurrentScope.CreateVariable(expressionNode.Location, expressionNode.Identifier, validResults,
 			NullResult.Instance, true);
 	}
 
-	public Variable Evaluate(VariableInitializationNode statementNode)
+	public Variable Evaluate(VariableInitializationNode expressionNode)
 	{
-		var validResults = statementNode.GetResultTypes().ToList();
+		var validResults = expressionNode.GetResultTypes().ToList();
 
-		return CurrentScope.CreateVariable(statementNode.Location, statementNode.Identifier, validResults,
-			statementNode.Expression.EvaluateUsing(this), false);
+		return CurrentScope.CreateVariable(expressionNode.Location, expressionNode.Identifier, validResults,
+			expressionNode.Expression.EvaluateUsing(this));
 	}
 
-	public Variable Evaluate(NullableVariableInitializationNode statementNode)
+	public Variable Evaluate(NullableVariableInitializationNode expressionNode)
 	{
-		var validResults = statementNode.GetResultTypes().ToList();
+		var validResults = expressionNode.GetResultTypes().ToList();
 
-		return CurrentScope.CreateVariable(statementNode.Location, statementNode.Identifier, validResults,
-			statementNode.Expression.EvaluateUsing(this), true);
+		return CurrentScope.CreateVariable(expressionNode.Location, expressionNode.Identifier, validResults,
+			expressionNode.Expression.EvaluateUsing(this), true);
 	}
 
 	public void Visit(VariableAssignmentNode statementNode)

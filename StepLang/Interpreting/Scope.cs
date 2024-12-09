@@ -111,7 +111,7 @@ public class Scope
 
 	public void CreateVariable(string identifier, ExpressionResult initialValue, bool nullable = false)
 	{
-		CreateVariable(new TokenLocation(), new Token(TokenType.Identifier, identifier),
+		_ = CreateVariable(new TokenLocation(), new Token(TokenType.Identifier, identifier),
 			[initialValue.ResultType], initialValue,
 			nullable);
 	}
