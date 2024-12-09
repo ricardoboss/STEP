@@ -1,4 +1,4 @@
-string? input = fileRead("input.txt")
+string? input = fileRead("example.txt")
 if (input == null) {
 	println("Could not read file")
 	return
