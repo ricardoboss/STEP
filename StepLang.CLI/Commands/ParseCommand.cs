@@ -47,7 +47,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             this.root = root;
         }
 
-        public void Run(RootNode node)
+        public void Visit(RootNode node)
         {
             IHasTreeNodes statementsRoot;
             if (node.Imports.Count > 0)
@@ -92,7 +92,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             this.root = root;
         }
 
-        public void Execute(CallStatementNode statementNode)
+        public void Visit(CallStatementNode statementNode)
         {
             var node = root.AddNode("CallStatement:");
             var evaluator = new ExpressionTreeBuilder(node);
@@ -100,7 +100,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             _ = expression.EvaluateUsing(evaluator);
         }
 
-        public void Execute(CodeBlockStatementNode statementNode)
+        public void Visit(CodeBlockStatementNode statementNode)
         {
             var node = root.AddNode("CodeBlockStatement:");
             var statementTreeBuilder = new StatementTreeBuilder(node);
@@ -108,12 +108,12 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
                 statement.Accept(statementTreeBuilder);
         }
 
-        public void Execute(ContinueStatementNode statementNode)
+        public void Visit(ContinueStatementNode statementNode)
         {
             root.AddNode("ContinueStatement");
         }
 
-        public void Execute(ForeachDeclareKeyDeclareValueStatementNode statementNode)
+        public void Visit(ForeachDeclareKeyDeclareValueStatementNode statementNode)
         {
             var node = root.AddNode("ForeachStatement:");
 
@@ -135,12 +135,12 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
                 statement.Accept(statementTreeBuilder);
         }
 
-        public void Execute(BreakStatementNode statementNode)
+        public void Visit(BreakStatementNode statementNode)
         {
             root.AddNode("BreakStatement");
         }
 
-        public void Execute(ForeachDeclareKeyValueStatementNode statementNode)
+        public void Visit(ForeachDeclareKeyValueStatementNode statementNode)
         {
             var node = root.AddNode("ForeachStatement:");
 
@@ -160,7 +160,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
                 statement.Accept(statementTreeBuilder);
         }
 
-        public void Execute(ForeachDeclareValueStatementNode statementNode)
+        public void Visit(ForeachDeclareValueStatementNode statementNode)
         {
             var node = root.AddNode("ForeachStatement:");
 
@@ -178,7 +178,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
                 statement.Accept(statementTreeBuilder);
         }
 
-        public void Execute(ForeachKeyValueStatementNode statementNode)
+        public void Visit(ForeachKeyValueStatementNode statementNode)
         {
             var node = root.AddNode("ForeachStatement:");
 
@@ -195,7 +195,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
                 statement.Accept(statementTreeBuilder);
         }
 
-        public void Execute(ForeachKeyDeclareValueStatementNode statementNode)
+        public void Visit(ForeachKeyDeclareValueStatementNode statementNode)
         {
             var node = root.AddNode("ForeachStatement:");
 
@@ -215,7 +215,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
                 statement.Accept(statementTreeBuilder);
         }
 
-        public void Execute(ForeachValueStatementNode statementNode)
+        public void Visit(ForeachValueStatementNode statementNode)
         {
             var node = root.AddNode("ForeachStatement:");
 
@@ -231,7 +231,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
                 statement.Accept(statementTreeBuilder);
         }
 
-        public void Execute(IdentifierIndexAssignmentNode statementNode)
+        public void Visit(IdentifierIndexAssignmentNode statementNode)
         {
             var node = root.AddNode("IdentifierIndexAssignment:");
             node.AddNode("Identifier: " + statementNode.Identifier.ToString().EscapeMarkup());
@@ -247,7 +247,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             _ = statementNode.ValueExpression.EvaluateUsing(expressionTreeBuilder);
         }
 
-        public void Execute(IfStatementNode statementNode)
+        public void Visit(IfStatementNode statementNode)
         {
             var node = root.AddNode("IfStatement:");
 
@@ -264,14 +264,14 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             }
         }
 
-        public void Execute(ReturnExpressionStatementNode statementNode)
+        public void Visit(ReturnExpressionStatementNode statementNode)
         {
             var node = root.AddNode("ReturnExpressionStatement:");
             var expressionTreeBuilder = new ExpressionTreeBuilder(node);
             _ = statementNode.Expression.EvaluateUsing(expressionTreeBuilder);
         }
 
-        public void Execute(VariableAssignmentNode statementNode)
+        public void Visit(VariableAssignmentNode statementNode)
         {
             var node = root.AddNode("VariableAssignment:");
             node.AddNode("Identifier: " + statementNode.Identifier.ToString().EscapeMarkup());
@@ -281,7 +281,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             _ = statementNode.Expression.EvaluateUsing(expressionTreeBuilder);
         }
 
-        public void Execute(WhileStatementNode statementNode)
+        public void Visit(WhileStatementNode statementNode)
         {
             var node = root.AddNode("WhileStatement:");
 
@@ -295,7 +295,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
                 statement.Accept(statementTreeBuilder);
         }
 
-        public void Execute(IncrementStatementNode statementNode)
+        public void Visit(IncrementStatementNode statementNode)
         {
             var node = root.AddNode("IncrementStatement:");
 
@@ -303,7 +303,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             _ = node.AddNode("Identifier: " + statementNode.Identifier.ToString().EscapeMarkup());
         }
 
-        public void Execute(DecrementStatementNode statementNode)
+        public void Visit(DecrementStatementNode statementNode)
         {
             var node = root.AddNode("DecrementStatement:");
 
@@ -311,18 +311,18 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             _ = node.AddNode("Identifier: " + statementNode.Identifier.ToString().EscapeMarkup());
         }
 
-        public void Execute(VariableDeclarationStatementNode statementNode)
+        public void Visit(VariableDeclarationStatementNode statementNode)
         {
             var variableDeclarationTreeBuilder = new VariableDeclarationTreeBuilder(root);
             _ = statementNode.Declaration.EvaluateUsing(variableDeclarationTreeBuilder);
         }
 
-        public void Execute(ReturnStatementNode statementNode)
+        public void Visit(ReturnStatementNode statementNode)
         {
             root.AddNode("ReturnStatement");
         }
 
-        public void Execute(DiscardStatementNode discardStatementNode)
+        public void Visit(DiscardStatementNode discardStatementNode)
         {
             var node = root.AddNode("DiscardStatement");
 
@@ -341,7 +341,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             this.root = root;
         }
 
-        public Variable Execute(VariableDeclarationNode variableDeclarationNode)
+        public Variable Evaluate(VariableDeclarationNode variableDeclarationNode)
         {
             var node = root.AddNode("VariableDeclaration:");
             node.AddNode("Types: " + string.Join("|", variableDeclarationNode.Types).EscapeMarkup());
@@ -350,7 +350,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             return DummyVariable;
         }
 
-        public Variable Execute(NullableVariableDeclarationNode variableDeclarationNode)
+        public Variable Evaluate(NullableVariableDeclarationNode variableDeclarationNode)
         {
             var node = root.AddNode("NullableVariableDeclaration:");
             node.AddNode("Types: " + string.Join("|", variableDeclarationNode.Types).EscapeMarkup());
@@ -360,7 +360,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             return DummyVariable;
         }
 
-        public Variable Execute(VariableInitializationNode variableDeclarationNode)
+        public Variable Evaluate(VariableInitializationNode variableDeclarationNode)
         {
             var node = root.AddNode("VariableInitialization:");
             node.AddNode("Types: " + string.Join("|", variableDeclarationNode.Types).EscapeMarkup());
@@ -373,7 +373,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             return DummyVariable;
         }
 
-        public Variable Execute(NullableVariableInitializationNode variableDeclarationNode)
+        public Variable Evaluate(NullableVariableInitializationNode variableDeclarationNode)
         {
             var node = root.AddNode("NullableVariableInitialization:");
             node.AddNode("Types: " + string.Join("|", variableDeclarationNode.Types).EscapeMarkup());

@@ -2,24 +2,24 @@ namespace StepLang.Parsing;
 
 public interface IStatementVisitor
 {
-    void Execute(CallStatementNode statementNode);
-    void Execute(CodeBlockStatementNode statementNode);
-    void Execute(ContinueStatementNode statementNode);
-    void Execute(ForeachDeclareKeyDeclareValueStatementNode statementNode);
-    void Execute(BreakStatementNode statementNode);
-    void Execute(ForeachDeclareKeyValueStatementNode statementNode);
-    void Execute(ForeachDeclareValueStatementNode statementNode);
-    void Execute(ForeachKeyValueStatementNode statementNode);
-    void Execute(ForeachKeyDeclareValueStatementNode statementNode);
-    void Execute(ForeachValueStatementNode statementNode);
-    void Execute(IdentifierIndexAssignmentNode statementNode);
-    void Execute(IfStatementNode statementNode);
-    void Execute(ReturnExpressionStatementNode statementNode);
-    void Execute(VariableAssignmentNode statementNode);
-    void Execute(WhileStatementNode statementNode);
-    void Execute(IncrementStatementNode statementNode);
-    void Execute(DecrementStatementNode statementNode);
-    void Execute(VariableDeclarationStatementNode statementNode);
-    void Execute(ReturnStatementNode statementNode);
-    void Execute(DiscardStatementNode discardStatementNode);
+    void Visit(CallStatementNode statementNode);
+    void Visit(CodeBlockStatementNode statementNode);
+    void Visit(ContinueStatementNode statementNode);
+    void Visit(ForeachDeclareKeyDeclareValueStatementNode statementNode);
+    void Visit(BreakStatementNode statementNode);
+    void Visit(ForeachDeclareKeyValueStatementNode statementNode);
+    void Visit(ForeachDeclareValueStatementNode statementNode);
+    void Visit(ForeachKeyValueStatementNode statementNode);
+    void Visit(ForeachKeyDeclareValueStatementNode statementNode);
+    void Visit(ForeachValueStatementNode statementNode);
+    void Visit(IdentifierIndexAssignmentNode statementNode);
+    void Visit(IfStatementNode statementNode);
+    void Visit(ReturnExpressionStatementNode statementNode);
+    void Visit(VariableAssignmentNode statementNode);
+    void Visit(WhileStatementNode statementNode);
+    void Visit(IncrementStatementNode statementNode);
+    void Visit(DecrementStatementNode statementNode);
+    void Visit(VariableDeclarationStatementNode statementNode);
+    void Visit(ReturnStatementNode statementNode);
+    void Visit(DiscardStatementNode discardStatementNode);
 }

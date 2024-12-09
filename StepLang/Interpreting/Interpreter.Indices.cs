@@ -8,7 +8,7 @@ namespace StepLang.Interpreting;
 
 public partial class Interpreter
 {
-    public void Execute(IdentifierIndexAssignmentNode statementNode)
+    public void Visit(IdentifierIndexAssignmentNode statementNode)
     {
         BaseVariable variable = CurrentScope.GetVariable(statementNode.Identifier);
 

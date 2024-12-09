@@ -4,7 +4,7 @@ namespace StepLang.Interpreting;
 
 public partial class Interpreter
 {
-    public void Execute(IfStatementNode statementNode)
+    public void Visit(IfStatementNode statementNode)
     {
         foreach (var (condition, body) in statementNode.ConditionBodyMap)
         {
@@ -12,18 +12,18 @@ public partial class Interpreter
             if (!result.IsTruthy())
                 continue;
 
-            Execute(body);
+            Visit(body);
 
             break;
         }
     }
 
-    public void Execute(ContinueStatementNode statementNode)
+    public void Visit(ContinueStatementNode statementNode)
     {
         CurrentScope.SetContinue();
     }
 
-    public void Execute(BreakStatementNode statementNode)
+    public void Visit(BreakStatementNode statementNode)
     {
         CurrentScope.SetBreak();
     }

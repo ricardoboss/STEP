@@ -6,7 +6,7 @@ public sealed record ReturnExpressionStatementNode(Token ReturnKeywordToken, Exp
 {
     public override void Accept(IStatementVisitor visitor)
     {
-        visitor.Execute(this);
+        visitor.Visit(this);
     }
 
     public override TokenLocation Location => ReturnKeywordToken.Location;

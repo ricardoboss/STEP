@@ -7,7 +7,7 @@ public sealed record VariableDeclarationNode(IEnumerable<Token> Types, Token Ide
 {
     public Variable EvaluateUsing(IVariableDeclarationEvaluator evaluator)
     {
-        return evaluator.Execute(this);
+        return evaluator.Evaluate(this);
     }
 
     public TokenLocation Location => Types.First().Location;

@@ -6,7 +6,7 @@ public sealed record VariableAssignmentNode(TokenLocation AssignmentLocation, To
 {
     public override void Accept(IStatementVisitor visitor)
     {
-        visitor.Execute(this);
+        visitor.Visit(this);
     }
 
     public override TokenLocation Location => AssignmentLocation;

@@ -4,7 +4,7 @@ namespace StepLang.Interpreting;
 
 public partial class Interpreter
 {
-    public void Execute(WhileStatementNode statementNode)
+    public void Visit(WhileStatementNode statementNode)
     {
         while (ShouldLoop())
         {

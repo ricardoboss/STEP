@@ -5,40 +5,40 @@ namespace StepLang.Interpreting;
 
 public partial class Interpreter : IVariableDeclarationEvaluator
 {
-    public void Execute(VariableDeclarationStatementNode statementNode)
+    public void Visit(VariableDeclarationStatementNode statementNode)
     {
         _ = statementNode.Declaration.EvaluateUsing(this);
     }
 
-    public Variable Execute(VariableDeclarationNode statementNode)
+    public Variable Evaluate(VariableDeclarationNode statementNode)
     {
         var validResults = statementNode.GetResultTypes().ToList();
 
         return CurrentScope.CreateVariable(statementNode.Location, statementNode.Identifier, validResults, ExpressionResult.DefaultFor(validResults.First()), nullable: false);
     }
 
-    public Variable Execute(NullableVariableDeclarationNode statementNode)
+    public Variable Evaluate(NullableVariableDeclarationNode statementNode)
     {
         var validResults = statementNode.GetResultTypes().ToList();
 
         return CurrentScope.CreateVariable(statementNode.Location, statementNode.Identifier, validResults, NullResult.Instance, nullable: true);
     }
 
-    public Variable Execute(VariableInitializationNode statementNode)
+    public Variable Evaluate(VariableInitializationNode statementNode)
     {
         var validResults = statementNode.GetResultTypes().ToList();
 
         return CurrentScope.CreateVariable(statementNode.Location, statementNode.Identifier, validResults, statementNode.Expression.EvaluateUsing(this), nullable: false);
     }
 
-    public Variable Execute(NullableVariableInitializationNode statementNode)
+    public Variable Evaluate(NullableVariableInitializationNode statementNode)
     {
         var validResults = statementNode.GetResultTypes().ToList();
 
         return CurrentScope.CreateVariable(statementNode.Location, statementNode.Identifier, validResults, statementNode.Expression.EvaluateUsing(this), nullable: true);
     }
 
-    public void Execute(VariableAssignmentNode statementNode)
+    public void Visit(VariableAssignmentNode statementNode)
     {
         var variable = CurrentScope.GetVariable(statementNode.Identifier);
 

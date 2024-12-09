@@ -6,7 +6,7 @@ namespace StepLang.Interpreting;
 
 public partial class Interpreter
 {
-    public void Execute(CallStatementNode statementNode)
+    public void Visit(CallStatementNode statementNode)
     {
         var variable = CurrentScope.GetVariable(statementNode.CallExpression.Identifier);
         if (variable.Value is not FunctionResult function)

@@ -14,7 +14,7 @@ public partial class Interpreter
         variable.Assign(location, value);
     }
 
-    public void Execute(ForeachDeclareKeyDeclareValueStatementNode statementNode)
+    public void Visit(ForeachDeclareKeyDeclareValueStatementNode statementNode)
     {
         var collection = statementNode.Collection.EvaluateUsing(this);
         var collectionLocation = statementNode.Collection.Location;
@@ -28,7 +28,7 @@ public partial class Interpreter
         );
     }
 
-    public void Execute(ForeachDeclareKeyValueStatementNode statementNode)
+    public void Visit(ForeachDeclareKeyValueStatementNode statementNode)
     {
         var valueVariable = CurrentScope.GetVariable(statementNode.ValueIdentifier);
         var valueLocation = statementNode.ValueIdentifier.Location;
@@ -44,7 +44,7 @@ public partial class Interpreter
         );
     }
 
-    public void Execute(ForeachDeclareValueStatementNode statementNode)
+    public void Visit(ForeachDeclareValueStatementNode statementNode)
     {
         var collection = statementNode.Collection.EvaluateUsing(this);
         var collectionLocation = statementNode.Collection.Location;
@@ -58,7 +58,7 @@ public partial class Interpreter
         );
     }
 
-    public void Execute(ForeachKeyValueStatementNode statementNode)
+    public void Visit(ForeachKeyValueStatementNode statementNode)
     {
         var keyVariable = CurrentScope.GetVariable(statementNode.KeyIdentifier);
         var keyLocation = statementNode.KeyIdentifier.Location;
@@ -76,7 +76,7 @@ public partial class Interpreter
         );
     }
 
-    public void Execute(ForeachKeyDeclareValueStatementNode statementNode)
+    public void Visit(ForeachKeyDeclareValueStatementNode statementNode)
     {
         var collection = statementNode.Collection.EvaluateUsing(this);
         var collectionLocation = statementNode.Collection.Location;
@@ -90,7 +90,7 @@ public partial class Interpreter
         );
     }
 
-    public void Execute(ForeachValueStatementNode statementNode)
+    public void Visit(ForeachValueStatementNode statementNode)
     {
         var valueVariable = CurrentScope.GetVariable(statementNode.Identifier);
         var valueLocation = statementNode.Identifier.Location;

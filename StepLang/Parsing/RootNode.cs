@@ -6,7 +6,7 @@ public sealed record RootNode(IReadOnlyCollection<ImportNode> Imports, IReadOnly
 {
     public void Accept(IRootNodeVisitor visitor)
     {
-        visitor.Run(this);
+        visitor.Visit(this);
     }
 
     public TokenLocation Location => Imports.FirstOrDefault()?.Location ?? Body.FirstOrDefault()?.Location ?? new();

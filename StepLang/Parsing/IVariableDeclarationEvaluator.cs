@@ -4,8 +4,8 @@ namespace StepLang.Parsing;
 
 public interface IVariableDeclarationEvaluator
 {
-    Variable Execute(VariableDeclarationNode variableDeclarationNode);
-    Variable Execute(NullableVariableDeclarationNode variableDeclarationNode);
-    Variable Execute(VariableInitializationNode variableDeclarationNode);
-    Variable Execute(NullableVariableInitializationNode variableDeclarationNode);
+    Variable Evaluate(VariableDeclarationNode variableDeclarationNode);
+    Variable Evaluate(NullableVariableDeclarationNode variableDeclarationNode);
+    Variable Evaluate(VariableInitializationNode variableDeclarationNode);
+    Variable Evaluate(NullableVariableInitializationNode variableDeclarationNode);
 }
