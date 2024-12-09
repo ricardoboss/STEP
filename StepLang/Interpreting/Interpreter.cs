@@ -100,8 +100,14 @@ public partial class Interpreter : IRootNodeVisitor, IStatementVisitor, IExpress
 
         Execute(statementNode.Body);
 
-        if (PopScope().TryGetResult(out var resultValue, out var resultLocation))
+        var resultScope = PopScope();
+
+        if (resultScope.TryGetResult(out var resultValue, out var resultLocation))
             CurrentScope.SetResult(resultLocation, resultValue);
+        else if (resultScope.ShouldBreak())
+            CurrentScope.SetBreak();
+        else if (resultScope.ShouldContinue())
+            CurrentScope.SetContinue();
     }
 
     public ExpressionResult Evaluate(IdentifierExpressionNode expressionNode)
