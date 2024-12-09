@@ -9,7 +9,6 @@ using StepLang.Tooling.Formatting.Fixers;
 namespace StepLang.CLI.Commands;
 
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
-[SuppressMessage("Performance", "CA1812: Avoid uninstantiated internal classes")]
 internal sealed class FormatCommand : AsyncCommand<FormatCommand.Settings>
 {
 	[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]

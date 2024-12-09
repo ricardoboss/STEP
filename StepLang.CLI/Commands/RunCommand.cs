@@ -8,7 +8,6 @@ using StepLang.Tokenizing;
 namespace StepLang.CLI.Commands;
 
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
-[SuppressMessage("Performance", "CA1812: Avoid uninstantiated internal classes")]
 internal sealed class RunCommand : AsyncCommand<RunCommand.Settings>
 {
 	public sealed class Settings : HiddenGlobalCommandSettings

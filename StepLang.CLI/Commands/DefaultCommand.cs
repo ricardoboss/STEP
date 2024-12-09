@@ -6,7 +6,6 @@ using Spectre.Console.Cli;
 namespace StepLang.CLI.Commands;
 
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
-[SuppressMessage("Performance", "CA1812: Avoid uninstantiated internal classes")]
 internal sealed class DefaultCommand : AsyncCommand<DefaultCommand.Settings>
 {
 	[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]

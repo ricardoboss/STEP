@@ -9,7 +9,6 @@ using StepLang.Tooling.Highlighting;
 namespace StepLang.CLI.Commands;
 
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
-[SuppressMessage("Performance", "CA1812: Avoid uninstantiated internal classes")]
 internal sealed class HighlightCommand : AsyncCommand<HighlightCommand.Settings>
 {
 	[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
