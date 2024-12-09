@@ -10,11 +10,13 @@ public class UserDefinedFunctionDefinition : FunctionDefinition
 {
     private readonly TokenLocation location;
     private readonly IReadOnlyList<IVariableDeclarationNode> parameters;
+    private readonly Scope capturedScope;
 
-    public UserDefinedFunctionDefinition(TokenLocation location, IReadOnlyList<IVariableDeclarationNode> parameters, IReadOnlyList<StatementNode> body)
+    public UserDefinedFunctionDefinition(TokenLocation location, IReadOnlyList<IVariableDeclarationNode> parameters, IReadOnlyList<StatementNode> body, Scope capturedScope)
     {
         this.location = location;
         this.parameters = parameters;
+        this.capturedScope = capturedScope;
         Body = body;
     }
 
@@ -36,7 +38,9 @@ public class UserDefinedFunctionDefinition : FunctionDefinition
         if (arguments.Count < RequiredParametersCount || arguments.Count > TotalParametersCount)
             throw new InvalidArgumentCountException(callLocation, parameters.Count, arguments.Count);
 
-        // evaluate args _before_ pushing scope
+        _ = interpreter.PushScope(capturedScope);
+
+        // evaluate args _before_ pushing function body scope
         var evaldArgs = EvaluateArguments(interpreter, arguments).ToList();
 
         _ = interpreter.PushScope();

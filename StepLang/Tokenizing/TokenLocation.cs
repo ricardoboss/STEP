@@ -6,7 +6,7 @@ public record TokenLocation(FileSystemInfo? File = null, int Line = 1, int Colum
     public override string ToString()
     {
         if (File is not null)
-            return $"{File.FullName}:{Line}:{Column}";
+            return $"{File.Name}:{Line}:{Column}";
 
         return $"{Line}:{Column}";
     }

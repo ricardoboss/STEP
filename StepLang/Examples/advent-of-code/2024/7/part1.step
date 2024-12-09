@@ -16,33 +16,35 @@ function getResults = (list numbers) {
 	list results = []
 	number patternId = 0
 	while (patternId < length(numbers)) {
-		doAdd(results, aggregatePattern(numbers, patternId))
+		function combiner = getCombiner(numbers, patternId)
+		doAdd(results, aggregatePattern(numbers, combiner))
 		patternId++
 	}
 
 	return results
 }
 
-function aggregatePattern = (list numbers, number patternId) {
-	function pattern
-	if (patternId == 0) {
-		pattern = (number a, number b, number idx) { return a + b }
-	} else if (patternId == 1) {
-		pattern = (number a, number b, number idx) { return a * b }
+function getCombiner = (list numbers, number depth) {
+	if (depth == 0) {
+		return (number a, number b, number idx) { return a + b }
+	} else if (depth == 1) {
+		return (number a, number b, number idx) { return a * b }
 	} else {
-		pattern = (number a, number b, number idx) {
+		return (number a, number b, number idx) {
 			if (idx % 2 == 0) {
-				return a + b
+				return getCombiner(numbers, depth - 1)
 			}
 
-			return a * b
+			return getCombiner(numbers, depth - 2)
 		}
 	}
+}
 
+function aggregatePattern = (list numbers, function combiner) {
 	number i = 1
 	number result = numbers[0]
 	while (i < length(numbers)) {
-		result = pattern(result, numbers[i], i)
+		result = combiner(result, numbers[i], i)
 		i++
 	}
 

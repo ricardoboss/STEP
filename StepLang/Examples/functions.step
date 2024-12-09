@@ -56,6 +56,14 @@ function loop = (bool whileLoop, bool breakOrReturn) {
 	return 0
 }
 
+function generateClosureWithCapturedVariable = (number x) {
+	function inner = (number y) {
+		return x + y
+	}
+
+	return inner
+}
+
 println("Inline function definition and call:")
 println((number a, number b) {
 	return a + b
@@ -83,3 +91,11 @@ println("loop(true, true): ", loop(true, true))
 println("loop(true, false): ", loop(true, false))
 println("loop(false, true): ", loop(false, true))
 println("loop(false, false): ", loop(false, false))
+
+println()
+print("closure with captured variable: ")
+number a = 5 // variable names are explicitly different from the parameters so they are not used from global scope
+number b = 10
+
+function captured = generateClosureWithCapturedVariable(a)
+println(captured(b))

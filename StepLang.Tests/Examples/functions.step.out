@@ -18,3 +18,5 @@ loop(true, true): 0
 loop(true, false): 6
 loop(false, true): 0
 loop(false, false): 6
+
+closure with captured variable: 15
