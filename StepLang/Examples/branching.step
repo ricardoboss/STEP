@@ -12,10 +12,8 @@ if ((name ?? "") != "") {
 
 if (name == "John") {
 	println("Hello John")
+} else if (name != "") {
+	println("Welcome back, ", name)
 } else {
-	if (name != "") {
-		println("Welcome back, ", name)
-	} else {
-		println("Welcome")
-	}
+	println("Welcome")
 }
