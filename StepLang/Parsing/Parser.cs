@@ -409,12 +409,8 @@ public class Parser
 
         var codeBlock = ParseCodeBlock();
 
-        var conditionBodyMap = new Dictionary<ExpressionNode, CodeBlockStatementNode>
-        {
-            {
-                condition, codeBlock
-            },
-        };
+        var conditionBodyMap = new LinkedList<(ExpressionNode, CodeBlockStatementNode)>();
+        _ = conditionBodyMap.AddLast((condition, codeBlock));
 
         if (tokens.PeekType() is not TokenType.ElseKeyword)
             return new IfStatementNode(ifKeyword, conditionBodyMap);
@@ -426,14 +422,14 @@ public class Parser
             var nested = ParseIfStatement();
 
             foreach (var (nestedCondition, nestedCodeBlock) in nested.ConditionBodyMap)
-                conditionBodyMap.Add(nestedCondition, nestedCodeBlock);
+                _ = conditionBodyMap.AddLast((nestedCondition, nestedCodeBlock));
 
             return new IfStatementNode(ifKeyword, conditionBodyMap);
         }
 
         var elseCodeBlock = ParseCodeBlock();
 
-        conditionBodyMap.Add(LiteralExpressionNode.FromBoolean(true), elseCodeBlock);
+        _ = conditionBodyMap.AddLast((LiteralExpressionNode.FromBoolean(true), elseCodeBlock));
 
         return new IfStatementNode(ifKeyword, conditionBodyMap);
     }
