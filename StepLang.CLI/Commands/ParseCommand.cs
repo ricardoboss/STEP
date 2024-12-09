@@ -247,60 +247,21 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
             _ = statementNode.ValueExpression.EvaluateUsing(expressionTreeBuilder);
         }
 
-        public void Execute(IfElseIfStatementNode statementNode)
-        {
-            var node = root.AddNode("IfElseIfStatement:");
-
-            var conditionNode = node.AddNode("Condition:");
-            var expressionTreeBuilder = new ExpressionTreeBuilder(conditionNode);
-            _ = statementNode.Condition.EvaluateUsing(expressionTreeBuilder);
-
-            var body = node.AddNode("Body:");
-            var statementTreeBuilder = new StatementTreeBuilder(body);
-            foreach (var statement in statementNode.Body)
-                statement.Accept(statementTreeBuilder);
-
-            var elseIfConditionNode = node.AddNode("ElseIfCondition:");
-            var elseIfExpressionTreeBuilder = new ExpressionTreeBuilder(elseIfConditionNode);
-            _ = statementNode.ElseCondition.EvaluateUsing(elseIfExpressionTreeBuilder);
-
-            var elseIfBody = node.AddNode("ElseBody:");
-            var elseIfStatementTreeBuilder = new StatementTreeBuilder(elseIfBody);
-            foreach (var statement in statementNode.ElseBody)
-                statement.Accept(elseIfStatementTreeBuilder);
-        }
-
-        public void Execute(IfElseStatementNode statementNode)
-        {
-            var node = root.AddNode("IfElseStatement:");
-
-            var conditionNode = node.AddNode("Condition:");
-            var expressionTreeBuilder = new ExpressionTreeBuilder(conditionNode);
-            _ = statementNode.Condition.EvaluateUsing(expressionTreeBuilder);
-
-            var body = node.AddNode("Body:");
-            var statementTreeBuilder = new StatementTreeBuilder(body);
-            foreach (var statement in statementNode.Body)
-                statement.Accept(statementTreeBuilder);
-
-            var elseBody = node.AddNode("ElseBody:");
-            var elseStatementTreeBuilder = new StatementTreeBuilder(elseBody);
-            foreach (var statement in statementNode.ElseBody)
-                statement.Accept(elseStatementTreeBuilder);
-        }
-
         public void Execute(IfStatementNode statementNode)
         {
             var node = root.AddNode("IfStatement:");
 
-            var conditionNode = node.AddNode("Condition:");
-            var expressionTreeBuilder = new ExpressionTreeBuilder(conditionNode);
-            _ = statementNode.Condition.EvaluateUsing(expressionTreeBuilder);
+            foreach (var (condition, statements) in statementNode.ConditionBodyMap)
+            {
+                var conditionNode = node.AddNode("Condition:");
+                var expressionTreeBuilder = new ExpressionTreeBuilder(conditionNode);
+                _ = condition.EvaluateUsing(expressionTreeBuilder);
 
-            var body = node.AddNode("Body:");
-            var statementTreeBuilder = new StatementTreeBuilder(body);
-            foreach (var statement in statementNode.Body)
-                statement.Accept(statementTreeBuilder);
+                var body = node.AddNode("Body:");
+                var statementTreeBuilder = new StatementTreeBuilder(body);
+                foreach (var statement in statements.Body)
+                    statement.Accept(statementTreeBuilder);
+            }
         }
 
         public void Execute(ReturnExpressionStatementNode statementNode)

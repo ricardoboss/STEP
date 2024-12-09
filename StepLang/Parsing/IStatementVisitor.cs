@@ -13,8 +13,6 @@ public interface IStatementVisitor
     void Execute(ForeachKeyDeclareValueStatementNode statementNode);
     void Execute(ForeachValueStatementNode statementNode);
     void Execute(IdentifierIndexAssignmentNode statementNode);
-    void Execute(IfElseIfStatementNode statementNode);
-    void Execute(IfElseStatementNode statementNode);
     void Execute(IfStatementNode statementNode);
     void Execute(ReturnExpressionStatementNode statementNode);
     void Execute(VariableAssignmentNode statementNode);

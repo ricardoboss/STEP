@@ -399,30 +399,43 @@ public class Parser
         return new(whileKeyword, condition, codeBlock.Body);
     }
 
-    private StatementNode ParseIfStatement()
+    private IfStatementNode ParseIfStatement()
     {
         var ifKeyword = tokens.Dequeue(TokenType.IfKeyword);
+
         _ = tokens.Dequeue(TokenType.OpeningParentheses);
         var condition = ParseExpression();
         _ = tokens.Dequeue(TokenType.ClosingParentheses);
+
         var codeBlock = ParseCodeBlock();
 
+        var conditionBodyMap = new Dictionary<ExpressionNode, CodeBlockStatementNode>
+        {
+            {
+                condition, codeBlock
+            },
+        };
+
         if (tokens.PeekType() is not TokenType.ElseKeyword)
-            return new IfStatementNode(ifKeyword, condition, codeBlock.Body);
+            return new IfStatementNode(ifKeyword, conditionBodyMap);
 
         _ = tokens.Dequeue(TokenType.ElseKeyword);
+
         if (tokens.PeekType() is TokenType.IfKeyword)
         {
-            _ = tokens.Dequeue(TokenType.IfKeyword);
-            _ = tokens.Dequeue(TokenType.OpeningParentheses);
-            var elseCondition = ParseExpression();
-            _ = tokens.Dequeue(TokenType.ClosingParentheses);
-            var elseIfCodeBlock = ParseCodeBlock();
-            return new IfElseIfStatementNode(ifKeyword, condition, codeBlock.Body, elseCondition, elseIfCodeBlock.Body);
+            var nested = ParseIfStatement();
+
+            foreach (var (nestedCondition, nestedCodeBlock) in nested.ConditionBodyMap)
+                conditionBodyMap.Add(nestedCondition, nestedCodeBlock);
+
+            return new IfStatementNode(ifKeyword, conditionBodyMap);
         }
 
         var elseCodeBlock = ParseCodeBlock();
-        return new IfElseStatementNode(ifKeyword, condition, codeBlock.Body, elseCodeBlock.Body);
+
+        conditionBodyMap.Add(LiteralExpressionNode.FromBoolean(true), elseCodeBlock);
+
+        return new IfStatementNode(ifKeyword, conditionBodyMap);
     }
 
     private CallStatementNode ParseFunctionCall()

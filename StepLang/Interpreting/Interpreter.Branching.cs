@@ -6,32 +6,16 @@ public partial class Interpreter
 {
     public void Execute(IfStatementNode statementNode)
     {
-        var result = statementNode.Condition.EvaluateUsing(this);
-        if (result.IsTruthy())
-            Execute(statementNode.Body);
-    }
-
-    public void Execute(IfElseStatementNode statementNode)
-    {
-        var result = statementNode.Condition.EvaluateUsing(this);
-        if (result.IsTruthy())
-            Execute(statementNode.Body);
-        else
-            Execute(statementNode.ElseBody);
-    }
-
-    public void Execute(IfElseIfStatementNode statementNode)
-    {
-        var result = statementNode.Condition.EvaluateUsing(this);
-        if (result.IsTruthy())
+        foreach (var (condition, body) in statementNode.ConditionBodyMap)
         {
-            Execute(statementNode.Body);
-            return;
-        }
+            var result = condition.EvaluateUsing(this);
+            if (!result.IsTruthy())
+                continue;
 
-        var elseResult = statementNode.ElseCondition.EvaluateUsing(this);
-        if (elseResult.IsTruthy())
-            Execute(statementNode.ElseBody);
+            Execute(body);
+
+            break;
+        }
     }
 
     public void Execute(ContinueStatementNode statementNode)
