@@ -177,6 +177,6 @@ public class Scope
 
     public override string ToString()
     {
-        return $"Scope: {{{string.Join(", ", identifiers.Select(kvp => kvp.Value.ToString()))}}}";
+        return $"Scope: {(shouldBreak ? "BREAK " : "")}{(shouldContinue ? "CONTINUE " : "")}{{{string.Join(", ", identifiers.Select(kvp => kvp.Value.ToString()))}}}";
     }
 }
