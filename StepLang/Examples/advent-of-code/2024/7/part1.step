@@ -1,0 +1,62 @@
+string? input = fileRead("example.txt")
+if (input == null) {
+	println("Could not read file")
+	return
+}
+
+list equations = []
+foreach (string line in split(input, "\n")) {
+	list parts = split(line, ": ")
+	number result = toNumber(parts[0])
+	list numbers = converted(split(parts[1], " "), (string x) { return toNumber(x) })
+	doAdd(equations, {"result": result, "numbers": numbers})
+}
+
+function getResults = (list numbers) {
+	list results = []
+	number patternId = 0
+	while (patternId < length(numbers)) {
+		doAdd(results, aggregatePattern(numbers, patternId))
+		patternId++
+	}
+
+	return results
+}
+
+function aggregatePattern = (list numbers, number patternId) {
+	function pattern
+	if (patternId == 0) {
+		pattern = (number a, number b, number idx) { return a + b }
+	} else if (patternId == 1) {
+		pattern = (number a, number b, number idx) { return a * b }
+	} else {
+		pattern = (number a, number b, number idx) {
+			if (idx % 2 == 0) {
+				return a + b
+			}
+
+			return a * b
+		}
+	}
+
+	number i = 1
+	number result = numbers[0]
+	while (i < length(numbers)) {
+		result = pattern(result, numbers[i], i)
+		i++
+	}
+
+	return result
+}
+
+number sumSolvable = 0
+foreach (map equation in equations) {
+	number expectedResult = equation["result"]
+	list calculatedResults = getResults(equation["numbers"])
+
+	if (contains(calculatedResults, expectedResult)) {
+		sumSolvable += expectedResult
+	}
+}
+
+println(sumSolvable)
