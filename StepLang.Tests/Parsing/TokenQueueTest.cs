@@ -1,8 +1,10 @@
 using StepLang.Parsing;
 using StepLang.Tokenizing;
+using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.Tests.Parsing;
 
+[SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes")]
 public class TokenQueueTest
 {
 	[Fact]

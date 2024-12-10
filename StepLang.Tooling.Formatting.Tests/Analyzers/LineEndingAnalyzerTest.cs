@@ -1,7 +1,9 @@
 using StepLang.Tooling.Formatting.Analyzers;
+using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.Tooling.Formatting.Tests.Analyzers;
 
+[SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes")]
 public class LineEndingAnalyzerTest
 {
 	[Theory]

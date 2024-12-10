@@ -1,8 +1,10 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
+using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.Tests.Interpreting;
 
+[SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes")]
 public class InterpretationTest
 {
 	[Fact]

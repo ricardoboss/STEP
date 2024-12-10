@@ -1,8 +1,9 @@
-using System.Diagnostics.CodeAnalysis;
 using StepLang.Framework;
+using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.Tests.Framework;
 
+[SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes")]
 public class GraphemeExtensionsTest
 {
 	[Theory]

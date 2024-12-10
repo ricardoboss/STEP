@@ -1,8 +1,10 @@
 using StepLang.Interpreting;
 using StepLang.Tokenizing;
+using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.Tests.Interpreting;
 
+[SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes")]
 public class ScopeTest
 {
 	[Fact]

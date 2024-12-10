@@ -1,12 +1,13 @@
-using System.Collections;
-using System.Diagnostics.CodeAnalysis;
-using System.Text.Json;
 using StepLang.Interpreting;
 using StepLang.Parsing;
 using StepLang.Tokenizing;
+using System.Collections;
+using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 
 namespace StepLang.Tests.Integration;
 
+[SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes")]
 public class FailuresIntegrationTest
 {
 	[SkippableTheory]
