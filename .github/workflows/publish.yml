@@ -173,7 +173,6 @@ jobs:
 
     needs:
       - build
-      - sign-macos
 
     strategy:
       fail-fast: false
@@ -192,7 +191,7 @@ jobs:
       - name: Download binary
         uses: actions/download-artifact@v3
         with:
-          name: step-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.os == 'osx' && matrix.arch == 'arm64' && '-signed' || '' }}
+          name: step-${{ matrix.os }}-${{ matrix.arch }}
           path: ./artifact
 
       - name: Test (linux)
@@ -211,7 +210,7 @@ jobs:
         shell: bash
         if: matrix.os == 'osx'
         run: |
-          ./artifact/step-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.arch == 'arm64' && '-signed' || '' }} --info
+          ./artifact/step-${{ matrix.os }}-${{ matrix.arch }} --info
 
   release:
     name: Create GitHub Release
