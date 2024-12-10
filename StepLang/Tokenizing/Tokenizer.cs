@@ -79,7 +79,7 @@ public class Tokenizer
 			}
 
 			if (character is '\r' && source.TryPeek(out nextCharacter) && nextCharacter is '\n')
-				// skip \r in new lines
+			// skip \r in new lines
 			{
 				continue;
 			}
@@ -126,7 +126,7 @@ public class Tokenizer
 		tokenBuilder.Append(newTokenFirstChar);
 
 		if (tokenEmitted)
-			// the new tokens first char was already consumed, so we need to adjust the new token start location
+		// the new tokens first char was already consumed, so we need to adjust the new token start location
 		{
 			tokenStartLocation = tokenStartLocation with { Column = tokenStartLocation.Column - 1 };
 		}

@@ -1,7 +1,7 @@
-using System.Numerics;
 using StepLang.Expressions.Results;
 using StepLang.Parsing;
 using StepLang.Tokenizing;
+using System.Numerics;
 
 namespace StepLang.Interpreting;
 

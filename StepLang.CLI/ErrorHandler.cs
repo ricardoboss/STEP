@@ -1,9 +1,9 @@
-using System.Diagnostics.CodeAnalysis;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using StepLang.CLI.Widgets;
 using StepLang.Tooling.Formatting;
 using StepLang.Tooling.Highlighting;
+using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.CLI;
 

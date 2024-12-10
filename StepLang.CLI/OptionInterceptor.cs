@@ -1,8 +1,8 @@
-using System.Runtime.InteropServices;
 using cmdwtf;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using StepLang.CLI.Commands;
+using System.Runtime.InteropServices;
 
 namespace StepLang.CLI;
 

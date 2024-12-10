@@ -1,9 +1,9 @@
-using System.Globalization;
 using Spectre.Console.Rendering;
 using StepLang.CLI.Extensions;
 using StepLang.Tokenizing;
 using StepLang.Tooling.Formatting;
 using StepLang.Tooling.Highlighting;
+using System.Globalization;
 using Style = Spectre.Console.Style;
 
 namespace StepLang.CLI.Widgets;

@@ -1,7 +1,7 @@
+using StepLang.Tooling.Highlighting;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using StepLang.Tooling.Highlighting;
 
 namespace StepLang.CLI.Converter;
 

@@ -1,5 +1,5 @@
-using System.Text;
 using StepLang.Tooling.Formatting.Analyzers.Results;
+using System.Text;
 
 namespace StepLang.Tooling.Formatting.Analyzers;
 

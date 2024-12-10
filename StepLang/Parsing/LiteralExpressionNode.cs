@@ -1,6 +1,6 @@
-using System.Globalization;
 using StepLang.Expressions.Results;
 using StepLang.Tokenizing;
+using System.Globalization;
 
 namespace StepLang.Parsing;
 

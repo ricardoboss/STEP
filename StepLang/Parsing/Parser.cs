@@ -1,5 +1,5 @@
-using System.Diagnostics;
 using StepLang.Tokenizing;
+using System.Diagnostics;
 
 namespace StepLang.Parsing;
 
@@ -588,7 +588,7 @@ public class Parser(IEnumerable<Token> tokens)
 			BinaryExpressionOperator.BitwiseRotateRight => new BitwiseRotateRightExpressionNode(operatorLocation, left,
 				right),
 			_ => throw new NotSupportedException("Expression for operator " + binaryOperator.ToSymbol() +
-			                                     " not supported"),
+												 " not supported"),
 		};
 	}
 

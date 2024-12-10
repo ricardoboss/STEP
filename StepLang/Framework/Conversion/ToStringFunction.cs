@@ -1,9 +1,9 @@
-using System.CodeDom.Compiler;
-using System.Globalization;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
 using StepLang.Parsing;
 using StepLang.Tokenizing;
+using System.CodeDom.Compiler;
+using System.Globalization;
 
 namespace StepLang.Framework.Conversion;
 

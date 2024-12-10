@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Framework.Conversion;
@@ -7,6 +6,7 @@ using StepLang.Framework.Other;
 using StepLang.Framework.Pure;
 using StepLang.Framework.Web;
 using StepLang.Tokenizing;
+using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.Interpreting;
 

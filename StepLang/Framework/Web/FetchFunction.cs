@@ -1,10 +1,10 @@
-using System.Text;
-using System.Text.Json;
 using StepLang.Expressions.Results;
 using StepLang.Framework.Conversion;
 using StepLang.Interpreting;
 using StepLang.Parsing;
 using StepLang.Tokenizing;
+using System.Text;
+using System.Text.Json;
 
 namespace StepLang.Framework.Web;
 
@@ -46,7 +46,7 @@ public class FetchFunction : GenericFunction<StringResult, MapResult>
 
 		var method = "GET";
 		if (options.TryGetValue("method", out var methodResult) &&
-		    methodResult is StringResult { Value: var methodValue })
+			methodResult is StringResult { Value: var methodValue })
 		{
 			method = methodValue;
 		}
@@ -76,7 +76,7 @@ public class FetchFunction : GenericFunction<StringResult, MapResult>
 		}
 
 		if (options.TryGetValue("timeout", out var timeoutResult) &&
-		    timeoutResult is NumberResult { Value: var timeout })
+			timeoutResult is NumberResult { Value: var timeout })
 		{
 			client.Timeout = TimeSpan.FromMilliseconds(timeout);
 		}

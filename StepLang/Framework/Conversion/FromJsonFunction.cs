@@ -1,7 +1,7 @@
-using System.Text.Json;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
 using StepLang.Tokenizing;
+using System.Text.Json;
 
 namespace StepLang.Framework.Conversion;
 
@@ -22,7 +22,7 @@ public class FromJsonFunction : GenericFunction<StringResult>
 		try
 		{
 			return JsonSerializer.Deserialize(argument1.Value, JsonConversionContext.Default.ExpressionResult) ??
-			       NullResult.Instance;
+				   NullResult.Instance;
 		}
 		catch (JsonException)
 		{
