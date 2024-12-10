@@ -77,6 +77,14 @@ jobs:
         run: |
           chmod +x "${{ env.sourcePath }}"
 
+          file "${{ env.sourcePath }}"
+
+          # verify runner arch matches built arch
+          if [[ "${{ matrix.arch }}" != "${{ runner.arch }}" ]]; then
+            echo "Runner arch (${{ runner.arch }}) does not match built arch (${{ matrix.arch }}); skipping test"
+            exit 0
+          fi
+
           ${{ env.sourcePath }} --info
 
           if [[ $LASTEXITCODE -ne 0 ]]; then
