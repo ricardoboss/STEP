@@ -2,3 +2,6 @@
 # Lot's of commands have public nested settings classes that need to be public
 # CA1515: Because an application's API isn't typically referenced from outside the assembly, types can be made internal
 dotnet_diagnostic.CA1515.severity = none
+
+# CA1812: Avoid uninstantiated internal classes
+dotnet_diagnostic.CA1812.severity = none
