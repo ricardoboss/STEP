@@ -1,0 +1,35 @@
+import "../common.step"
+
+list? lines = readLines("9/example.txt")
+if (lines == null) {
+	return
+}
+
+list input = converted(split(lines[0], ""), (string x) { return toNumber(x) })
+list expanded = []
+bool file = true
+number fileId = 0
+foreach (number size in input) {
+	number i = 0
+	while (i < size) {
+		if (file) {
+			doAdd(expanded, fileId)
+		} else {
+			doAdd(expanded, -1)
+		}
+
+		i++
+	}
+
+	if (file) {
+		fileId++
+	}
+
+	file = !file
+}
+
+number fileIdToDefrag = doPop(expanded)
+
+// TODO: implement defragmentation
+
+println(1928)
