@@ -18,6 +18,9 @@ internal static class Program
 	[DynamicDependency(
 		DynamicallyAccessedMemberTypes.PublicParameterlessConstructor |
 		DynamicallyAccessedMemberTypes.PublicNestedTypes, typeof(HighlightCommand))]
+	[DynamicDependency(
+		DynamicallyAccessedMemberTypes.PublicParameterlessConstructor |
+		DynamicallyAccessedMemberTypes.PublicNestedTypes, typeof(ParseCommand))]
 	public static async Task<int> Main(string[] args)
 	{
 		const string slogan = "STEP - Simple Transition to Elevated Programming";
