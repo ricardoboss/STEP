@@ -1,4 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: ExcludeFromCodeCoverage]
-[assembly: SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Scope = "NamespaceAndDescendants")]
+[assembly: SuppressMessage("Maintainability", "CA1515:Consider making public types internal")]
