@@ -57,17 +57,35 @@ jobs:
       - name: Build
         run: dotnet publish StepLang.CLI/StepLang.CLI.csproj --configuration Release --no-restore --runtime ${{ matrix.os }}-${{ matrix.arch }} --framework net${{ matrix.dotnet }} --self-contained true /p:PublishTrimmed=true /p:PublishSingleFile=true
 
+      - name: Determine binary name
+        env:
+          frameworkVersion: net${{ matrix.dotnet }}
+          platform: ${{ matrix.os }}-${{ matrix.arch }}
+        run: |
+          sourceFilename="step"
+          if [[ "$platform" == "win-x64" || "$platform" == "win-arm64" ]]; then
+              sourceFilename="$sourceFilename.exe"
+          fi
+
+          sourcePath="StepLang.CLI/bin/Release/$frameworkVersion/$platform/publish/$sourceFilename"
+
+          echo "sourceFilename=$sourceFilename" >> $GITHUB_ENV
+          echo "sourcePath=$sourcePath" >> $GITHUB_ENV
+
+      - name: Test Binary
+        run: |
+          ${{ env.sourceFilename }} --info
+
+          if [[ $LASTEXITCODE -ne 0 ]]; then
+            exit $LASTEXITCODE
+          fi
+
       - name: Prepare Artifact
         env:
           frameworkVersion: net${{ matrix.dotnet }}
           platform: ${{ matrix.os }}-${{ matrix.arch }}
         run: |
           mkdir -p publish
-
-          sourceFilename="step"
-          if [[ "$platform" == "win-x64" || "$platform" == "win-arm64" ]]; then
-              sourceFilename="$sourceFilename.exe"
-          fi
 
           targetFilename="step-$platform"
           if [[ "$platform" == "win-x64" || "$platform" == "win-arm64" ]]; then
@@ -77,7 +95,7 @@ jobs:
           outputPath="publish/$targetFilename"
 
           # move built binary to publish folder
-          mv "StepLang.CLI/bin/Release/$frameworkVersion/$platform/publish/$sourceFilename" "$outputPath"
+          mv "${{ env.sourcePath }}" "$outputPath"
 
           chmod +x "$outputPath"
 
