@@ -4,6 +4,7 @@ using StepLang.Tokenizing;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace StepLang.Tests.Integration;
 
@@ -23,7 +24,9 @@ public class FailuresIntegrationTest
 		var detailsFile = exampleFile.FullName + ".exception.json";
 		Skip.IfNot(File.Exists(detailsFile), $"No exception details file found for {exampleFile.FullName}");
 
-		var details = JsonSerializer.Deserialize<ExceptionDetails?>(await File.ReadAllTextAsync(detailsFile));
+		var detailsContent = await File.ReadAllTextAsync(detailsFile);
+		var details = JsonSerializer.Deserialize(detailsContent, ExceptionDetailsJsonContext.Default.ExceptionDetails);
+
 		Skip.If(details is null, $"Failed to deserialize exception details for {exampleFile.FullName}");
 
 		var stdOut = new StringWriter();
@@ -68,17 +71,20 @@ public class FailuresIntegrationTest
 			return GetEnumerator();
 		}
 	}
-
-	[SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Deserialized from JSON")]
-	[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local", Justification = "Initialized from JSON")]
-	[SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Used by xUnit")]
-	private sealed class ExceptionDetails
-	{
-		public string? ErrorCode { get; init; }
-		public string? Message { get; init; }
-		public string? HelpText { get; init; }
-		public int Line { get; init; }
-		public int Column { get; init; }
-		public int? Length { get; init; }
-	}
 }
+
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Deserialized from JSON")]
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local", Justification = "Initialized from JSON")]
+internal sealed class ExceptionDetails
+{
+	public string? ErrorCode { get; init; }
+	public string? Message { get; init; }
+	public string? HelpText { get; init; }
+	public int Line { get; init; }
+	public int Column { get; init; }
+	public int? Length { get; init; }
+}
+
+[JsonSourceGenerationOptions(WriteIndented = true)]
+[JsonSerializable(typeof(ExceptionDetails))]
+internal sealed partial class ExceptionDetailsJsonContext : JsonSerializerContext;
