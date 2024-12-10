@@ -154,5 +154,5 @@ jobs:
           message: |
             ![Code Coverage](${{ needs.coverage.outputs.badge }}) \
             ![Documentation Coverage](${{ needs.docblocks.outputs.badge }}) \
-            ![Code Style](https://img.shields.io/badge/Code%20Style-${{ needs.style.result == 'success' && 'ok' || 'run `dotnet format`' }}-${{ needs.style.result == 'success' && 'brightgreen' || 'red' }}.svg?style=flat) \
+            ![Code Style](https://img.shields.io/badge/Code%20Style-${{ needs.style.result == 'success' && 'ok' || 'run%20`dotnet%20format`' }}-${{ needs.style.result == 'success' && 'brightgreen' || 'red' }}.svg?style=flat) \
             ![CHANGELOG](${{ needs.changelog.outputs.badge }})
