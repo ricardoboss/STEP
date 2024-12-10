@@ -8,4 +8,7 @@
 		<Configurations>Debug;Release;Test</Configurations>
 		<Platforms>AnyCPU</Platforms>
 	</PropertyGroup>
+
+	<Import Project="Tests.props" Condition="$(MSBuildProjectFile.EndsWith('.Tests.csproj'))"/>
+
 </Project>
