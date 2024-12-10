@@ -1,5 +1,5 @@
-using System.Diagnostics.CodeAnalysis;
 using StepLang.Tokenizing;
+using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.Parsing;
 

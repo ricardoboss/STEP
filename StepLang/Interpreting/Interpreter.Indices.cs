@@ -1,8 +1,8 @@
-using System.Globalization;
 using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Framework;
 using StepLang.Parsing;
+using System.Globalization;
 
 namespace StepLang.Interpreting;
 
@@ -20,14 +20,16 @@ public partial class Interpreter
 				case ListResult { Value: var list } when indexResult is NumberResult index:
 					variable = new DelegateVariable
 					{
-						Evaluator = () => list[index], Assigner = (_, value) => list[index] = value,
+						Evaluator = () => list[index],
+						Assigner = (_, value) => list[index] = value,
 					};
 
 					break;
 				case MapResult { Value: var map } when indexResult is StringResult { Value: var key }:
 					variable = new DelegateVariable
 					{
-						Evaluator = () => map[key], Assigner = (_, value) => map[key] = value,
+						Evaluator = () => map[key],
+						Assigner = (_, value) => map[key] = value,
 					};
 
 					break;

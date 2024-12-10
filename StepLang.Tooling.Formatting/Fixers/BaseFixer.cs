@@ -1,6 +1,6 @@
-using System.Diagnostics;
 using StepLang.Tooling.Formatting.Analyzers;
 using StepLang.Tooling.Formatting.Analyzers.Results;
+using System.Diagnostics;
 
 namespace StepLang.Tooling.Formatting.Fixers;
 

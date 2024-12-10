@@ -1,10 +1,10 @@
-using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using StepLang.CLI.Converter;
 using StepLang.CLI.Widgets;
 using StepLang.Tooling.Highlighting;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.CLI.Commands;
 

@@ -1,9 +1,9 @@
-using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using Spectre.Console.Cli;
 using StepLang.Interpreting;
 using StepLang.Parsing;
 using StepLang.Tokenizing;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.CLI.Commands;
 

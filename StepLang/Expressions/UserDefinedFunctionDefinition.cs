@@ -1,8 +1,8 @@
-using System.Diagnostics;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
 using StepLang.Parsing;
 using StepLang.Tokenizing;
+using System.Diagnostics;
 
 namespace StepLang.Expressions;
 

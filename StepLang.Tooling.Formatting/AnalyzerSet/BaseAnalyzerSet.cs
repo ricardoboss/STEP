@@ -1,5 +1,5 @@
-using System.Collections;
 using StepLang.Tooling.Formatting.Analyzers;
+using System.Collections;
 
 namespace StepLang.Tooling.Formatting.AnalyzerSet;
 

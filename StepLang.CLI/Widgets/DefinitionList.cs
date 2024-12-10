@@ -26,7 +26,7 @@ internal sealed class DefinitionList : IRenderable
 
 		var maxLabelWidth = Items.Select(i => i.Label.Measure(options, maxWidth).Max).Max();
 		var maxDefinitionWidth = Items.Select(i => i.Definition.Measure(options, maxWidth - ItemIndent).Max).Max() +
-		                         ItemIndent;
+								 ItemIndent;
 
 		var max = Math.Max(maxLabelWidth, maxDefinitionWidth);
 
