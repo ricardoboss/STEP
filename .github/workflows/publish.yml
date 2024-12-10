@@ -168,6 +168,51 @@ jobs:
           name: step-osx-arm64-signed
           path: ./artifact/step-osx-arm64
 
+  test:
+    name: Test Binaries
+
+    needs:
+      - build
+      - sign-macos
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ linux, win, osx ]
+        arch: [ x64, arm64 ]
+        exclude:
+          - os: linux
+            arch: arm64
+          - os: win
+            arch: arm64
+
+    runs-on: ${{ (matrix.os == 'win' && 'windows-latest') || (matrix.os == 'osx' && 'macos-latest') || 'ubuntu-latest' }}
+
+    steps:
+      - name: Download binary
+        uses: actions/download-artifact@v3
+        with:
+          name: step-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.os == 'osx' && matrix.arch == 'arm64' && '-signed' || '' }}
+          path: ./artifact
+
+      - name: Test (linux)
+        shell: bash
+        if: matrix.os == 'linux'
+        run: |
+          ./artifact/step-${{ matrix.os }}-${{ matrix.arch }} --info
+
+      - name: Test (win)
+        shell: pwsh
+        if: matrix.os == 'win'
+        run: |
+          & ./artifact/step-${{ matrix.os }}-${{ matrix.arch }}.exe --info
+
+      - name: Test (osx)
+        shell: bash
+        if: matrix.os == 'osx'
+        run: |
+          ./artifact/step-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.arch == 'arm64' && '-signed' || '' }} --info
+
   release:
     name: Create GitHub Release
 
