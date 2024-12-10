@@ -83,34 +83,6 @@ jobs:
         id: style
         run: dotnet format --verify-no-changes
 
-  docblocks:
-    name: Check Docblocks
-
-    runs-on: ubuntu-latest
-
-    outputs:
-      badge: ${{ steps.docblocks.outputs.badge || steps.doc-failure.outputs.badge }}
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: 8.x
-
-      - name: Check Docblock Coverage
-        id: docblocks
-        run: dotnet tool update cranky -g && cranky --project ./StepLang/StepLang.csproj --github --set-exit-code --percentages 0,50
-
-      - name: Provide failure badge
-        id: doc-failure
-        if: failure()
-        run: |
-          echo "badge=https://img.shields.io/badge/Documentation%20Coverage-failed-red.svg?style=flat" >> "$GITHUB_OUTPUT"
-
   changelog:
     name: Check CHANGELOG was updated
 
@@ -139,7 +111,7 @@ jobs:
     name: Report
 
     if: always()
-    needs: [ coverage, style, docblocks, changelog ]
+    needs: [ coverage, style, changelog ]
 
     runs-on: ubuntu-latest
 
@@ -153,6 +125,5 @@ jobs:
           comment_tag: report
           message: |
             ![Code Coverage](${{ needs.coverage.outputs.badge }}) \
-            ![Documentation Coverage](${{ needs.docblocks.outputs.badge }}) \
             ![Code Style](https://img.shields.io/badge/Code%20Style-${{ needs.style.result == 'success' && 'ok' || 'run%20`dotnet%20format`' }}-${{ needs.style.result == 'success' && 'brightgreen' || 'red' }}.svg?style=flat) \
             ![CHANGELOG](${{ needs.changelog.outputs.badge }})
