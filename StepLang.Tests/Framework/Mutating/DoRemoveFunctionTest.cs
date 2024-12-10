@@ -1,9 +1,9 @@
-using System.Diagnostics.CodeAnalysis;
 using StepLang.Expressions.Results;
 using StepLang.Framework.Mutating;
 using StepLang.Interpreting;
 using StepLang.Parsing;
 using StepLang.Tokenizing;
+using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.Tests.Framework.Mutating;
 

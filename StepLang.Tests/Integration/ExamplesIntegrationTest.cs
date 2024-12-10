@@ -1,9 +1,9 @@
-using System.Collections;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using StepLang.Interpreting;
 using StepLang.Parsing;
 using StepLang.Tokenizing;
+using System.Collections;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
 namespace StepLang.Tests.Integration;
 
