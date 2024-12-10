@@ -74,6 +74,7 @@ jobs:
           echo "sourcePath=$sourcePath" >> $GITHUB_ENV
 
       - name: Test Binary
+        if: matrix.os != 'win'
         run: |
           chmod +x "${{ env.sourcePath }}"
 
@@ -92,6 +93,34 @@ jobs:
           if [[ $LASTEXITCODE -ne 0 ]]; then
             exit $LASTEXITCODE
           fi
+
+      - name: Test Binary
+        if: matrix.os == 'win'
+        shell: pwsh
+        run: |
+          # Make the file executable
+          $sourcePath = $env:sourcePath
+
+          # Get file info
+          $fileInfo = Get-Item $sourcePath
+          Write-Output $fileInfo
+
+          # Verify runner architecture matches built architecture
+          $runnerArch = $env:RUNNER_ARCH.ToLower()
+          $builtArch = $env:BUILT_ARCH.ToLower()
+
+          if ($runnerArch -ne $builtArch) {
+            Write-Output "Runner arch ($env:RUNNER_ARCH) does not match built arch ($env:BUILT_ARCH); skipping test"
+            exit 0
+          }
+
+          # Execute the script with --info
+          & $sourcePath --info
+
+          # Check the last exit code
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
 
       - name: Prepare Artifact
         env:
