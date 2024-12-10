@@ -1,3 +1,7 @@
+# Unreleased
+
+* (internal) Workflow now checks the built binaries before publishing
+
 # v2.1.0
 
 * Changed "power" operator from `^` to `**` by @ricardoboss in https://github.com/ricardoboss/STEP/pull/107
