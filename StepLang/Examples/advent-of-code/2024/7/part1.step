@@ -13,42 +13,24 @@ foreach (string line in split(input, "\n")) {
 }
 
 function getResults = (list numbers) {
-	list results = []
-	number patternId = 0
-	while (patternId < length(numbers)) {
-		function combiner = getCombiner(numbers, patternId)
-		doAdd(results, aggregatePattern(numbers, combiner))
-		patternId++
+	list results = [doShift(numbers)]
+
+	foreach (number n in numbers) {
+		results = applyOperators(results, n)
 	}
 
 	return results
 }
 
-function getCombiner = (list numbers, number depth) {
-	if (depth == 0) {
-		return (number a, number b, number idx) { return a + b }
-	} else if (depth == 1) {
-		return (number a, number b, number idx) { return a * b }
-	} else {
-		return (number a, number b, number idx) {
-			if (idx % 2 == 0) {
-				return getCombiner(numbers, depth - 1)
-			}
+function applyOperators = (list numbers, number next) {
+	list results = []
 
-			return getCombiner(numbers, depth - 2)
-		}
-	}
-}
-
-function aggregatePattern = (list numbers, function combiner) {
-	number i = 1
-	number result = numbers[0]
-	while (i < length(numbers)) {
-		result = combiner(result, numbers[i], i)
-		i++
+	foreach (number n in numbers) {
+		doAdd(results, n + next)
+		doAdd(results, n * next)
 	}
 
-	return result
+	return results
 }
 
 number sumSolvable = 0
