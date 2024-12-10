@@ -20,14 +20,14 @@ jobs:
   build:
     name: Build Binaries
 
-    runs-on: ubuntu-latest
-
     strategy:
       fail-fast: false
       matrix:
         os: [ linux, win, osx ]
         arch: [ x64, arm64 ]
         dotnet: [ "9.0" ]
+
+    runs-on: ${{ (matrix.os == 'win' && 'windows-latest') || (matrix.os == 'osx' && 'macos-latest') || 'ubuntu-latest' }}
 
     env:
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
