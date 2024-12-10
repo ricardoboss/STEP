@@ -74,7 +74,7 @@ jobs:
 
       - name: Test Binary
         run: |
-          ${{ env.sourceFilename }} --info
+          ${{ env.sourcePath }} --info
 
           if [[ $LASTEXITCODE -ne 0 ]]; then
             exit $LASTEXITCODE
