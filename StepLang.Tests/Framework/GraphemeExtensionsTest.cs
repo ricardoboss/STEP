@@ -1,5 +1,5 @@
-using System.Diagnostics.CodeAnalysis;
 using StepLang.Framework;
+using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.Tests.Framework;
 
