@@ -34,12 +34,10 @@ public class UserDefinedFunctionDefinition(
 			throw new InvalidArgumentCountException(callLocation, parameters.Count, arguments.Count);
 		}
 
-		_ = interpreter.PushScope(capturedScope);
-
-		// evaluate args _before_ pushing function body scope
+		// evaluate args _before_ entering function scope
 		var evaldArgs = EvaluateArguments(interpreter, arguments).ToList();
 
-		_ = interpreter.PushScope();
+		_ = interpreter.PushScope(capturedScope);
 
 		// create the parameter variables in the new scope
 		CreateArgumentVariables(interpreter, evaldArgs);
