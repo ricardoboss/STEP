@@ -80,7 +80,9 @@ jobs:
           file "${{ env.sourcePath }}"
 
           # verify runner arch matches built arch
-          if [[ "${{ matrix.arch }}" != "${{ runner.arch }}" ]]; then
+          runnerArch=${{ runner.arch }}
+          builtArch=${{ matrix.arch }}
+          if [[ "${runnerArch,,}" != "${builtArch,,}" ]]; then
             echo "Runner arch (${{ runner.arch }}) does not match built arch (${{ matrix.arch }}); skipping test"
             exit 0
           fi
