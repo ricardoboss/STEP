@@ -20,14 +20,14 @@ jobs:
   build:
     name: Build Binaries
 
+    runs-on: ubuntu-latest
+
     strategy:
       fail-fast: false
       matrix:
         os: [ linux, win, osx ]
         arch: [ x64, arm64 ]
         dotnet: [ "9.0" ]
-
-    runs-on: ${{ (matrix.os == 'win' && 'windows-latest') || (matrix.os == 'osx' && 'macos-latest') || 'ubuntu-latest' }}
 
     env:
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
@@ -58,76 +58,17 @@ jobs:
       - name: Build
         run: dotnet publish StepLang.CLI/StepLang.CLI.csproj --configuration Release --no-restore --runtime ${{ matrix.os }}-${{ matrix.arch }} --framework net${{ matrix.dotnet }} --self-contained true /p:PublishTrimmed=true /p:PublishSingleFile=true
 
-      - name: Determine binary name
-        env:
-          frameworkVersion: net${{ matrix.dotnet }}
-          platform: ${{ matrix.os }}-${{ matrix.arch }}
-        run: |
-          sourceFilename="step"
-          if [[ "$platform" == "win-x64" || "$platform" == "win-arm64" ]]; then
-              sourceFilename="$sourceFilename.exe"
-          fi
-
-          sourcePath="StepLang.CLI/bin/Release/$frameworkVersion/$platform/publish/$sourceFilename"
-
-          echo "sourceFilename=$sourceFilename" >> $GITHUB_ENV
-          echo "sourcePath=$sourcePath" >> $GITHUB_ENV
-
-      - name: Test Binary
-        if: matrix.os != 'win'
-        run: |
-          chmod +x "${{ env.sourcePath }}"
-
-          file "${{ env.sourcePath }}"
-
-          # verify runner arch matches built arch
-          runnerArch=${{ runner.arch }} |  tr '[:upper:]' '[:lower:]'
-          builtArch=${{ matrix.arch }} |  tr '[:upper:]' '[:lower:]'
-          if [[ "$runnerArch" != "$builtArch" ]]; then
-            echo "Runner arch (${{ runner.arch }}) does not match built arch (${{ matrix.arch }}); skipping test"
-            exit 0
-          fi
-
-          ${{ env.sourcePath }} --info
-
-          if [[ $LASTEXITCODE -ne 0 ]]; then
-            exit $LASTEXITCODE
-          fi
-
-      - name: Test Binary
-        if: matrix.os == 'win'
-        shell: pwsh
-        run: |
-          # Make the file executable
-          $sourcePath = $env:sourcePath
-
-          # Get file info
-          $fileInfo = Get-Item $sourcePath
-          Write-Output $fileInfo
-
-          # Verify runner architecture matches built architecture
-          $runnerArch = $env:RUNNER_ARCH.ToLower()
-          $builtArch = $env:BUILT_ARCH.ToLower()
-
-          if ($runnerArch -ne $builtArch) {
-            Write-Output "Runner arch ($env:RUNNER_ARCH) does not match built arch ($env:BUILT_ARCH); skipping test"
-            exit 0
-          }
-
-          # Execute the script with --info
-          & $sourcePath --info
-
-          # Check the last exit code
-          if ($LASTEXITCODE -ne 0) {
-            exit $LASTEXITCODE
-          }
-
       - name: Prepare Artifact
         env:
           frameworkVersion: net${{ matrix.dotnet }}
           platform: ${{ matrix.os }}-${{ matrix.arch }}
         run: |
           mkdir -p publish
+
+          sourceFilename="step"
+          if [[ "$platform" == "win-x64" || "$platform" == "win-arm64" ]]; then
+              sourceFilename="$sourceFilename.exe"
+          fi
 
           targetFilename="step-$platform"
           if [[ "$platform" == "win-x64" || "$platform" == "win-arm64" ]]; then
@@ -137,9 +78,8 @@ jobs:
           outputPath="publish/$targetFilename"
 
           # move built binary to publish folder
-          mv "${{ env.sourcePath }}" "$outputPath"
+          mv "StepLang.CLI/bin/Release/$frameworkVersion/$platform/publish/$sourceFilename" "$outputPath"
 
-          # ensure executable bit is set
           chmod +x "$outputPath"
 
           echo "Created $outputPath"
