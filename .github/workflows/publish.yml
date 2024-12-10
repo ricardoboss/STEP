@@ -194,10 +194,11 @@ jobs:
           name: step-${{ matrix.os }}-${{ matrix.arch }}
           path: ./artifact
 
-      - name: Test (linux)
+      - name: Test (unix)
         shell: bash
-        if: matrix.os == 'linux'
+        if: matrix.os != 'win'
         run: |
+          chmod +x ./artifact/step-${{ matrix.os }}-${{ matrix.arch }}
           ./artifact/step-${{ matrix.os }}-${{ matrix.arch }} --info
 
       - name: Test (win)
@@ -205,12 +206,6 @@ jobs:
         if: matrix.os == 'win'
         run: |
           & ./artifact/step-${{ matrix.os }}-${{ matrix.arch }}.exe --info
-
-      - name: Test (osx)
-        shell: bash
-        if: matrix.os == 'osx'
-        run: |
-          ./artifact/step-${{ matrix.os }}-${{ matrix.arch }} --info
 
   release:
     name: Create GitHub Release
