@@ -8,5 +8,5 @@ public class NonNullableVariableAssignmentException(
 	Variable variable,
 	ExpressionResult newValue)
 	: InterpreterException(7, location,
-		$"Cannot assign a value of type {newValue.ResultType.ToTypeName()} to a variable declared as {variable.TypeString}",
+		$"Cannot assign a value of type {newValue.ResultType.ToTypeName()} to a variable declared as {variable.TypeString} (at {location})",
 		$"Make sure the value you are trying to assign to {variable.Identifier} is of type {variable.TypeString} and not {ResultType.Null.ToTypeName()}.");
