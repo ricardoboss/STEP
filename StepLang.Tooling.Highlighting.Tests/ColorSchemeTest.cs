@@ -1,8 +1,5 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace StepLang.Tooling.Highlighting.Tests;
 
-[SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes")]
 public class ColorSchemeTest
 {
 	[Theory]

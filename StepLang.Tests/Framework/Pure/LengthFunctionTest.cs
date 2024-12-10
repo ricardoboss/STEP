@@ -1,14 +1,13 @@
+using System.Diagnostics.CodeAnalysis;
 using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Framework.Pure;
 using StepLang.Interpreting;
 using StepLang.Parsing;
 using StepLang.Tokenizing;
-using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.Tests.Framework.Pure;
 
-[SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes")]
 public class LengthFunctionTest
 {
 	[Theory]
