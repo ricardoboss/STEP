@@ -168,7 +168,7 @@ jobs:
           name: step-osx-arm64-signed
           path: ./artifact/step-osx-arm64
 
-  test:
+  test-binaries:
     name: Test Binaries
 
     needs:
@@ -215,6 +215,7 @@ jobs:
     needs:
       - build
       - sign-macos
+      - test-binaries
 
     runs-on: ubuntu-latest
 
