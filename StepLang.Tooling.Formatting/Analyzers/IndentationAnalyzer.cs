@@ -27,7 +27,7 @@ public class IndentationAnalyzer : IStringAnalyzer
 
 			builder.Append(lineEnding);
 
-			if (trimmedLine.TrimEnd().EndsWith('{'))
+			if (!trimmedLine.StartsWith("//") && trimmedLine.TrimEnd().EndsWith('{'))
 			{
 				currentIndent++;
 			}
