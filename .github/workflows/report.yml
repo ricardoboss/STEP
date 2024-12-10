@@ -81,7 +81,7 @@ jobs:
 
       - name: Check Style
         id: style
-        run: dotnet tool update dotnet-format -g && dotnet format --verify-no-changes
+        run: dotnet format --verify-no-changes
 
   docblocks:
     name: Check Docblocks
