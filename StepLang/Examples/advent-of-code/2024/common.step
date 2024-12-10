@@ -1,0 +1,72 @@
+function readLines = (string file) {
+	string? input = fileRead(file)
+	if (input == null) {
+		println("Could not read file")
+		return null
+	}
+
+	return split(input, "\n")
+}
+
+function readGrid = (string file) {
+	list? lines = readLines(file)
+	if (lines == null) {
+		return null
+	}
+
+	return converted(lines, (string x) { return split(x, "") })
+}
+
+function countChars = (list grid, string chars) {
+	number count = 0
+
+	forEachCell(grid, (string cell) {
+		if (contains(chars, cell)) {
+			count++
+		}
+	})
+
+	return count
+}
+
+function printGrid = (list grid) {
+	foreach (list row in grid) {
+		foreach (string cell in row) {
+			print(cell, " ")
+		}
+
+		println()
+	}
+}
+
+function forEachCell = (list grid, function callback) {
+	foreach (list row in grid) {
+		foreach (string cell in row) {
+			callback(cell)
+		}
+	}
+}
+
+function findCoordinates = (list grid, string char) {
+	list coordinates = []
+	number x = 0
+	number y = 0
+	while (y < length(grid)) {
+		x = 0
+		while (x < length(grid[y])) {
+			if (grid[y][x] == char) {
+				doAdd(coordinates, {"x": x, "y": y})
+			}
+
+			x++
+		}
+
+		y++
+	}
+
+	return coordinates
+}
+
+function printSeparator = (string? a = null) {
+	println("=============================")
+}

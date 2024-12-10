@@ -1,0 +1,45 @@
+import "../common.step"
+
+list? grid = readGrid("8/example.txt")
+if (grid == null) {
+	return
+}
+
+map antennas = {}
+forEachCell(grid, (string cell) {
+	if (cell != "." && !containsKey(antennas, cell)) {
+		antennas[cell] = findCoordinates(grid, cell)
+	}
+})
+
+function getAntinode = (map a, map b) {
+	number dx = b["x"] - a["x"]
+	number dy = b["y"] - a["y"]
+
+	return {"x": a["x"] + 2 * dx, "y": a["y"] + 2 * dy}
+}
+
+list resultGrid = clone(grid)
+foreach (string cell: list coordinates in antennas) {
+	foreach (map a in coordinates) {
+		foreach (map b in coordinates) {
+			if (a["x"] == b["x"] && a["y"] == b["y"]) {
+				continue
+			}
+
+			list antinodes = [getAntinode(a, b), getAntinode(b, a)]
+			foreach (map antinode in antinodes) {
+				number x = antinode["x"]
+				number y = antinode["y"]
+
+				if (y < 0 || y >= length(resultGrid) || x < 0 || x >= length(resultGrid[y])) {
+					continue
+				}
+
+				resultGrid[antinode["y"]][antinode["x"]] = "#"
+			}
+		}
+	}
+}
+
+println(countChars(resultGrid, "#"))
