@@ -108,7 +108,6 @@ discuss development.
 In case you want to contact the maintainers privately, you can reach out to us here:
 
 - E-Mail:
-    - General: [info@step-lang.dev](mailto:info@step-lang.dev)
     - Ricardo Boss: [mail@ricardoboss.de](mailto:mail@ricardoboss.de?subject=STEP%20Contribution)
 - Discord:
     - Ricardo boss: [mizzle_de](https://discord.com/users/158966029286899713)
