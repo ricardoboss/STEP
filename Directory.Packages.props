@@ -2,8 +2,6 @@
 	<PropertyGroup>
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
-		<InvariantGlobalization>true</InvariantGlobalization>
-		<IsTrimmable>true</IsTrimmable>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageVersion Include="cmdwtf.BuildTimestampGenerator" Version="1.0.1"/>

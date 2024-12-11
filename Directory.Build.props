@@ -5,9 +5,13 @@
 		<Nullable>enable</Nullable>
 		<LangVersion>default</LangVersion>
 		<AnalysisMode>All</AnalysisMode>
+		<InvariantGlobalization>true</InvariantGlobalization>
+
 		<Configurations>Debug;Release;Test</Configurations>
 		<Platforms>AnyCPU</Platforms>
+
 		<IsAotCompatible>true</IsAotCompatible>
+		<StripSymbols>false</StripSymbols>
 	</PropertyGroup>
 
 	<Import Project="Tests.props" Condition="$(MSBuildProjectFile.EndsWith('.Tests.csproj'))"/>
