@@ -85,7 +85,6 @@ all contributors.
 Make sure your code is properly formatted and follows our coding guidelines:
 
 - Format your code using `dotnet format`
-    - Run `dotnet tool install -g dotnet-format` to install it
 - Follow
   the [C# Coding Conventions](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions)
 - Follow the [.NET Design Guidelines](https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/)
