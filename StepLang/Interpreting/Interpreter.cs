@@ -103,7 +103,7 @@ public partial class Interpreter : IRootNodeVisitor, IStatementVisitor, IExpress
 	{
 		_ = PushScope();
 
-		Execute(statementNode.Body);
+		Execute(statementNode.Statements);
 
 		var resultScope = PopScope();
 

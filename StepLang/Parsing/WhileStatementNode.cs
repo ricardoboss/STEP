@@ -5,7 +5,7 @@ namespace StepLang.Parsing;
 public sealed record WhileStatementNode(
 	Token WhileKeywordToken,
 	ExpressionNode Condition,
-	IReadOnlyCollection<StatementNode> Body) : StatementNode
+	CodeBlockStatementNode Body) : StatementNode
 {
 	public override void Accept(IStatementVisitor visitor)
 	{

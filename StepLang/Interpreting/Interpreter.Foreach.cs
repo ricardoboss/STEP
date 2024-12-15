@@ -138,7 +138,7 @@ public partial class Interpreter
 	}
 
 	private void RunForeachLoop(Action<ExpressionResult>? updateKey, Action<ExpressionResult> updateValue,
-		TokenLocation collectionLocation, ExpressionResult collection, IReadOnlyCollection<StatementNode> body)
+		TokenLocation collectionLocation, ExpressionResult collection, CodeBlockStatementNode body)
 	{
 		var pairs = ConvertToForeachEnumerable(collectionLocation, collection);
 
@@ -150,15 +150,7 @@ public partial class Interpreter
 			updateKey?.Invoke(keyValue);
 			updateValue(valueValue);
 
-			foreach (var statement in body)
-			{
-				Execute(statement);
-
-				if (loopScope.ShouldReturn() || loopScope.ShouldBreak() || loopScope.ShouldContinue())
-				{
-					break;
-				}
-			}
+			Execute(body);
 
 			_ = PopScope();
 

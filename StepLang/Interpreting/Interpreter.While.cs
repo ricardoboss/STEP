@@ -10,15 +10,7 @@ public partial class Interpreter
 		{
 			var loopScope = PushScope();
 
-			foreach (var statement in statementNode.Body)
-			{
-				Execute(statement);
-
-				if (loopScope.ShouldReturn() || loopScope.ShouldBreak() || loopScope.ShouldContinue())
-				{
-					break;
-				}
-			}
+			Execute(statementNode.Body);
 
 			_ = PopScope();
 

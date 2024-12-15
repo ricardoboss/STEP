@@ -6,7 +6,7 @@ namespace StepLang.Parsing;
 public sealed record FunctionDefinitionExpressionNode(
 	Token OpenParenthesisToken,
 	IReadOnlyList<IVariableDeclarationNode> Parameters,
-	IReadOnlyList<StatementNode> Body) : ExpressionNode
+	CodeBlockStatementNode Body) : ExpressionNode
 {
 	public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)
 	{

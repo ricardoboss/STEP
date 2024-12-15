@@ -88,7 +88,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 		{
 			var node = root.AddNode("CodeBlockStatement:");
 			var statementTreeBuilder = new StatementTreeBuilder(node);
-			foreach (var statement in statementNode.Body)
+			foreach (var statement in statementNode.Statements)
 			{
 				statement.Accept(statementTreeBuilder);
 			}
@@ -117,10 +117,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
 			var bodyNode = node.AddNode("Body:");
 			var statementTreeBuilder = new StatementTreeBuilder(bodyNode);
-			foreach (var statement in statementNode.Body)
-			{
-				statement.Accept(statementTreeBuilder);
-			}
+			statementNode.Body.Accept(statementTreeBuilder);
 		}
 
 		public void Visit(BreakStatementNode statementNode)
@@ -144,10 +141,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
 			var bodyNode = node.AddNode("Body:");
 			var statementTreeBuilder = new StatementTreeBuilder(bodyNode);
-			foreach (var statement in statementNode.Body)
-			{
-				statement.Accept(statementTreeBuilder);
-			}
+			statementNode.Body.Accept(statementTreeBuilder);
 		}
 
 		public void Visit(ForeachDeclareValueStatementNode statementNode)
@@ -164,10 +158,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
 			var bodyNode = node.AddNode("Body:");
 			var statementTreeBuilder = new StatementTreeBuilder(bodyNode);
-			foreach (var statement in statementNode.Body)
-			{
-				statement.Accept(statementTreeBuilder);
-			}
+			statementNode.Body.Accept(statementTreeBuilder);
 		}
 
 		public void Visit(ForeachKeyValueStatementNode statementNode)
@@ -183,10 +174,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
 			var bodyNode = node.AddNode("Body:");
 			var statementTreeBuilder = new StatementTreeBuilder(bodyNode);
-			foreach (var statement in statementNode.Body)
-			{
-				statement.Accept(statementTreeBuilder);
-			}
+			statementNode.Body.Accept(statementTreeBuilder);
 		}
 
 		public void Visit(ForeachKeyDeclareValueStatementNode statementNode)
@@ -205,10 +193,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
 			var bodyNode = node.AddNode("Body:");
 			var statementTreeBuilder = new StatementTreeBuilder(bodyNode);
-			foreach (var statement in statementNode.Body)
-			{
-				statement.Accept(statementTreeBuilder);
-			}
+			statementNode.Body.Accept(statementTreeBuilder);
 		}
 
 		public void Visit(ForeachValueStatementNode statementNode)
@@ -223,10 +208,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
 			var bodyNode = node.AddNode("Body:");
 			var statementTreeBuilder = new StatementTreeBuilder(bodyNode);
-			foreach (var statement in statementNode.Body)
-			{
-				statement.Accept(statementTreeBuilder);
-			}
+			statementNode.Body.Accept(statementTreeBuilder);
 		}
 
 		public void Visit(IdentifierIndexAssignmentNode statementNode)
@@ -251,16 +233,15 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
 			foreach (var (condition, statements) in statementNode.ConditionBodyMap)
 			{
-				var conditionNode = node.AddNode("Condition:");
+				var branchNode = node.AddNode("Branch:");
+
+				var conditionNode = branchNode.AddNode("Condition:");
 				var expressionTreeBuilder = new ExpressionTreeBuilder(conditionNode);
 				_ = condition.EvaluateUsing(expressionTreeBuilder);
 
-				var body = node.AddNode("Body:");
+				var body = branchNode.AddNode("Body:");
 				var statementTreeBuilder = new StatementTreeBuilder(body);
-				foreach (var statement in statements.Body)
-				{
-					statement.Accept(statementTreeBuilder);
-				}
+				statements.Accept(statementTreeBuilder);
 			}
 		}
 
@@ -291,10 +272,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
 			var body = node.AddNode("Body:");
 			var statementTreeBuilder = new StatementTreeBuilder(body);
-			foreach (var statement in statementNode.Body)
-			{
-				statement.Accept(statementTreeBuilder);
-			}
+			statementNode.Body.Accept(statementTreeBuilder);
 		}
 
 		public void Visit(IncrementStatementNode statementNode)
@@ -421,10 +399,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
 			var bodyNode = node.AddNode("Body:");
 			var statementTreeBuilder = new StatementTreeBuilder(bodyNode);
-			foreach (var statement in expressionNode.Body)
-			{
-				statement.Accept(statementTreeBuilder);
-			}
+			expressionNode.Body.Accept(statementTreeBuilder);
 
 			return VoidResult.Instance;
 		}
@@ -708,10 +683,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
 			var definitionBody = definitionNode.AddNode("Body:");
 			var definitionBodyTreeBuilder = new StatementTreeBuilder(definitionBody);
-			foreach (var statement in expressionNode.Body)
-			{
-				statement.Accept(definitionBodyTreeBuilder);
-			}
+			expressionNode.Body.Accept(definitionBodyTreeBuilder);
 
 			var argumentsNode = node.AddNode("Arguments:");
 			var argumentsTreeBuilder = new ExpressionTreeBuilder(argumentsNode);

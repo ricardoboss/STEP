@@ -341,7 +341,7 @@ public class Parser(IEnumerable<Token> tokens)
 
 		_ = tokens.Dequeue(TokenType.ClosingParentheses);
 
-		var body = ParseCodeBlock().Body;
+		var body = ParseCodeBlock();
 
 		if (keyDeclaration is not null)
 		{
@@ -380,9 +380,9 @@ public class Parser(IEnumerable<Token> tokens)
 
 		var statements = ParseStatements(TokenType.ClosingCurlyBracket);
 
-		_ = tokens.Dequeue(TokenType.ClosingCurlyBracket);
+		var closingCurlyBrace = tokens.Dequeue(TokenType.ClosingCurlyBracket);
 
-		return new CodeBlockStatementNode(openCurlyBrace, statements);
+		return new CodeBlockStatementNode(openCurlyBrace, statements, closingCurlyBrace);
 	}
 
 	private ContinueStatementNode ParseContinueStatement()
@@ -425,7 +425,7 @@ public class Parser(IEnumerable<Token> tokens)
 
 		var codeBlock = ParseCodeBlock();
 
-		return new WhileStatementNode(whileKeyword, condition, codeBlock.Body);
+		return new WhileStatementNode(whileKeyword, condition, codeBlock);
 	}
 
 	private IfStatementNode ParseIfStatement()
@@ -903,7 +903,7 @@ public class Parser(IEnumerable<Token> tokens)
 
 		_ = tokens.Dequeue(TokenType.ClosingParentheses);
 
-		var body = ParseCodeBlock().Body;
+		var body = ParseCodeBlock();
 
 		if (tokens.PeekType() is not TokenType.OpeningParentheses)
 		{

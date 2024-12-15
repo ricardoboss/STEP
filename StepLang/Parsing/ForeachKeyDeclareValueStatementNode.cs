@@ -7,7 +7,7 @@ public sealed record ForeachKeyDeclareValueStatementNode(
 	Token KeyIdentifier,
 	IVariableDeclarationNode ValueDeclaration,
 	ExpressionNode Collection,
-	IReadOnlyCollection<StatementNode> Body) : StatementNode
+	CodeBlockStatementNode Body) : StatementNode
 {
 	public override void Accept(IStatementVisitor visitor)
 	{
