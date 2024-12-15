@@ -2,27 +2,34 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.Tokenizing;
 
-public class Token(TokenType type, string value, TokenLocation? location = null)
+public class Token
 {
-	public TokenType Type { get; } = type;
+    public TokenType Type { get; }
 
-	public string Value { get; } = value;
+    public string Value { get; }
 
-	public TokenLocation Location { get; } = location ?? new TokenLocation();
+    public TokenLocation Location { get; }
 
-	public string StringValue => Type switch
-	{
-		TokenType.LiteralString => Value[1..^1], // cut off the quotes
-		_ => Value,
-	};
+    public Token(TokenType type, string value, TokenLocation? location = null)
+    {
+        Type = type;
+        Value = value;
+        Location = location ?? new TokenLocation();
+    }
 
-	[ExcludeFromCodeCoverage]
-	public override string ToString()
-	{
-		var printableValue = Value
-			.Replace("\n", "\\n", StringComparison.InvariantCulture)
-			.Replace("\r", "\\r", StringComparison.InvariantCulture);
+    public string StringValue => Type switch
+    {
+        TokenType.LiteralString => Value[1..^1], // cut off the quotes
+        _ => Value,
+    };
 
-		return Value.Length > 0 ? $"<{Type}: '{printableValue}'>" : $"<{Type}>";
-	}
+    [ExcludeFromCodeCoverage]
+    public override string ToString()
+    {
+        var printableValue = Value
+            .Replace("\n", "\\n", StringComparison.InvariantCulture)
+            .Replace("\r", "\\r", StringComparison.InvariantCulture);
+
+        return Value.Length > 0 ? $"<{Type}: '{printableValue}'>" : $"<{Type}>";
+    }
 }
