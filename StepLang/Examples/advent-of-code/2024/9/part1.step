@@ -70,23 +70,10 @@ function getLastUsedBlock = (list l) {
 	return -1
 }
 
-function printExpanded = (list l) {
-	foreach (number x in l) {
-		if (x == -1) {
-			print(".")
-		} else {
-			print(x)
-		}
-	}
-	println()
-}
-
-printExpanded(expanded)
 while (true) {
 	number nextFreeBlockIdx = getNextFreeBlock(expanded)
 	number lastUsedBlockIdx = getLastUsedBlock(expanded)
 	if (nextFreeBlockIdx >= lastUsedBlockIdx) {
-		println("Fully defragmented")
 		break
 	}
 
@@ -94,7 +81,5 @@ while (true) {
 		break
 	}
 }
-
-printExpanded(expanded)
 
 println(calculateChecksum(expanded))
