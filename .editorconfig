@@ -264,6 +264,9 @@ dotnet_diagnostic.CS1591.severity = none
 # CA1000: Do not declare static members on generic types
 dotnet_diagnostic.CA1000.severity = none
 
+# CA1848: Use the LoggerMessage delegates
+dotnet_diagnostic.CA1848.severity = none
+
 [*.json]
 indent_size = 2
 indent_style = space

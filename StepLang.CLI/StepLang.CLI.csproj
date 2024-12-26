@@ -14,6 +14,7 @@
 	<ItemGroup>
 		<PackageReference Include="Baugen" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection"/>
+		<PackageReference Include="Lunet.Extensions.Logging.SpectreConsole" />
 		<PackageReference Include="System.Linq.Async"/>
 	</ItemGroup>
 
