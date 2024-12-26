@@ -3,9 +3,9 @@ using System.Diagnostics;
 
 namespace StepLang.Parsing;
 
-public class Parser(IEnumerable<Token> tokens)
+public class Parser(IEnumerable<Token> tokenList)
 {
-	private readonly TokenQueue tokens = new(tokens) { IgnoreMeaningless = true };
+	private readonly TokenQueue tokens = new(tokenList) { IgnoreMeaningless = true };
 
 	public RootNode ParseRoot()
 	{
