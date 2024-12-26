@@ -49,7 +49,7 @@ public class FailuresIntegrationTest
 		Assert.Equal(details.ErrorCode, exception.ErrorCode);
 		Assert.Equal(details.Message, exception.Message);
 		Assert.Equal(details.HelpText, exception.HelpText);
-		Assert.Equal(exampleFile, exception.Location?.File);
+		Assert.Equal(exampleFile.FullName, exception.Location?.File?.FullName);
 		Assert.Equal(details.Line, exception.Location?.Line);
 		Assert.Equal(details.Column, exception.Location?.Column);
 		Assert.Equal(details.Length, exception.Location?.Length);

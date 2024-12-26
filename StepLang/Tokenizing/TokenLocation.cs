@@ -6,7 +6,7 @@ public record TokenLocation(Uri? DocumentUri = null, int Line = 1, int Column = 
     public override string ToString()
     {
         if (File is {} file)
-            return $"{file.FullName}:{Line}:{Column}";
+            return $"{file.Name}:{Line}:{Column}";
 
         if (DocumentUri != null)
             return $"{DocumentUri.ToString()}:{Line}:{Column}";
