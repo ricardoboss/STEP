@@ -50,6 +50,9 @@ jobs:
 
       - name: Post coverage to Coveralls
         uses: coverallsapp/github-action@v2
+        with:
+          format: cobertura
+          files: coverage/**/coverage.cobertura.xml
 
   style:
     name: Check Style
