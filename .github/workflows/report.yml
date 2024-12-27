@@ -18,9 +18,6 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    outputs:
-      badge: ${{ steps.coverage.outputs.badge || steps.coverage-failure.outputs.badge }}
-
     steps:
       - uses: actions/checkout@v4
         with:
