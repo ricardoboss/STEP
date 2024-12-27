@@ -1,7 +1,9 @@
 namespace StepLang.Tooling.Meta;
 
-public interface IGitVersionProvider
+public interface IMetadataProvider
 {
+	DateTimeOffset BuildTime { get; }
+
 	string FullSemVer { get; }
 
 	string Sha { get; }
