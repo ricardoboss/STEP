@@ -1,0 +1,7 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<AdditionalFiles Include="../CSharpExtensions.json"/>
+	</ItemGroup>
+
+</Project>

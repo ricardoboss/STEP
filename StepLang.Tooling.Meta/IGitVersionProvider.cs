@@ -1,4 +1,4 @@
-namespace StepLang.Tooling.CLI;
+namespace StepLang.Tooling.Meta;
 
 public interface IGitVersionProvider
 {

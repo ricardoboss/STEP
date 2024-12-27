@@ -1,6 +1,7 @@
 using Spectre.Console;
 using Spectre.Console.Cli;
 using StepLang.CLI.Widgets;
+using StepLang.Tooling.CLI.Widgets;
 using StepLang.Tooling.Formatting;
 using StepLang.Tooling.Highlighting;
 using System.Diagnostics.CodeAnalysis;
@@ -36,13 +37,13 @@ internal static class ErrorHandler
 
 			if (location.File?.Exists ?? false)
 			{
-				details.Items.Add(new DefinitionList.Item(
+				details.Items.Add(new DefinitionListItem(
 					new Markup("[bold]File[/]"),
 					new TextPath(location.File.FullName)
 				));
 			}
 
-			details.Items.Add(new DefinitionList.Item(
+			details.Items.Add(new DefinitionListItem(
 				new Markup("[bold]Location[/]"),
 				new Text($"line {location.Line}, column {location.Column}")
 			));
