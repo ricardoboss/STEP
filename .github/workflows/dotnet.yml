@@ -69,3 +69,4 @@ jobs:
           format: cobertura
           files: coverage/**/coverage.cobertura.xml
           base-path: https://raw.githubusercontent.com/${{ github.repository }}/${{ github.sha }}/
+          debug: true
