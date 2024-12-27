@@ -30,13 +30,6 @@ jobs:
 
     name: Build & Test on .NET ${{ matrix.version }} (${{ matrix.os }})
 
-    outputs:
-      badge: ${{ steps.coverage.outputs.badge }}
-      line_rate: ${{ steps.coverage.outputs.line_rate }}
-      branch_rate: ${{ steps.coverage.outputs.branch_rate }}
-      complexity: ${{ steps.coverage.outputs.complexity }}
-      health: ${{ steps.coverage.outputs.health }}
-
     steps:
       - uses: actions/checkout@v4
         with:
@@ -62,42 +55,17 @@ jobs:
         run: dotnet build --configuration Test --no-restore
 
       - name: Test
+        if: matrix.os != 'ubuntu-latest'
         run: dotnet test --configuration Test --no-build
 
-  coverage:
-    name: Coverage
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: 9.x
-
-      - name: Cache NuGet packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-
-      - name: Restore dependencies
-        run: dotnet restore
-
-      - name: Build
-        run: dotnet build --configuration Test --no-restore
-
-      - name: Test
+      - name: Test with coverage
+        if: matrix.os == 'ubuntu-latest'
         run: dotnet test --configuration Test --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
 
-      - name: Post coverage to Coveralls
+      - name: Upload coverage reports
+        if: matrix.os == 'ubuntu-latest'
         uses: coverallsapp/github-action@v2
         with:
           format: cobertura
           files: coverage/**/coverage.cobertura.xml
+
