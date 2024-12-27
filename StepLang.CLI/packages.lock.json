@@ -238,7 +238,7 @@
       },
       "Spectre.Console.Cli": {
         "type": "CentralTransitive",
-        "requested": "[0.51.1, )",
+        "requested": "[0.52.0, )",
         "resolved": "0.52.0",
         "contentHash": "50O+XG7tqtEErVGtqX00aUcsXJs7ltlSkGGAdRTI17zEgqzpQd7RRtf657eHXnPSK10SCoAuVMK0fnWPXDoVCA==",
         "dependencies": {
