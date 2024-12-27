@@ -27,6 +27,9 @@ internal static class Program
 	[DynamicDependency(
 		DynamicallyAccessedMemberTypes.PublicParameterlessConstructor |
 		DynamicallyAccessedMemberTypes.PublicNestedTypes, typeof(AnalyzeCommand))]
+	[DynamicDependency(
+		DynamicallyAccessedMemberTypes.PublicParameterlessConstructor |
+		DynamicallyAccessedMemberTypes.PublicNestedTypes, typeof(LspCommand))]
 	public static async Task<int> Main(string[] args)
 	{
 		const string slogan = "STEP - Simple Transition to Elevated Programming";
@@ -101,6 +104,11 @@ internal static class Program
 				.WithDescription("Analyze the current folder or a .step-file and print the diagnostics to the console.")
 				.WithExample("analyze")
 				.WithExample("analyze my-script.step")
+				;
+
+			config.AddCommand<LspCommand>("lsp")
+				.WithDescription("Start the LSP server.")
+				.WithExample("lsp")
 				;
 		});
 
