@@ -1,0 +1,44 @@
+name: Verify
+
+on:
+  pull_request:
+    paths-ignore:
+      - "StepLang.Wiki/**"
+      - "StepLang.Homepage/**"
+    types: [ assigned, opened, synchronize, reopened, labeled, unlabeled ]
+    branches:
+      - main
+
+jobs:
+  style:
+    name: Code Style
+
+    runs-on: ubuntu-latest
+
+    env:
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 9.x
+
+      - name: Run dotnet format
+        id: style
+        run: dotnet format --verify-no-changes
+
+  changelog:
+    name: CHANGELOG was updated
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: tarides/changelog-check-action@v2
+        with:
+          changelog: CHANGELOG.md
