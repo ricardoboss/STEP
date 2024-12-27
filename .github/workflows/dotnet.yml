@@ -68,4 +68,3 @@ jobs:
         with:
           format: cobertura
           files: coverage/**/coverage.cobertura.xml
-
