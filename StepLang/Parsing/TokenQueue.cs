@@ -82,7 +82,15 @@ public class TokenQueue
 			source = source.Where(t => t.Type.HasMeaning());
 		}
 
-		return source.Skip(offset).First();
+		try
+		{
+			return source.Skip(offset).First();
+		}
+		catch (InvalidOperationException)
+		{
+			// source probably doesn't container enough tokens
+			throw new UnexpectedEndOfTokensException(LastToken?.Location);
+		}
 	}
 
 	public TokenType PeekType(int offset = 0)

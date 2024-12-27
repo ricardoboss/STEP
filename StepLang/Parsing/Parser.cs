@@ -93,7 +93,7 @@ public class Parser(IEnumerable<Token> tokenList)
 		}
 	}
 
-	private StatementNode ParseIdentifierUsage()
+	public StatementNode ParseIdentifierUsage()
 	{
 		var next = tokens.Peek(1);
 		switch (next.Type)
