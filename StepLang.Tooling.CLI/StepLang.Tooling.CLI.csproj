@@ -1,10 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
-		<AdditionalFiles Include="../CSharpExtensions.json"/>
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="Spectre.Console.Cli"/>
 	</ItemGroup>
 

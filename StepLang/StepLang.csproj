@@ -4,17 +4,8 @@
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	</PropertyGroup>
 
-	<PropertyGroup Condition=" '$(Configuration)' == 'Test' ">
-		<DefineConstants>TRACE;RELEASE</DefineConstants>
-		<Optimize>true</Optimize>
-	</PropertyGroup>
-
 	<ItemGroup>
 		<InternalsVisibleTo Include="StepLang.Tests"/>
-	</ItemGroup>
-
-	<ItemGroup>
-		<AdditionalFiles Include="../CSharpExtensions.json"/>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -23,16 +14,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="IDisposableAnalyzers">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="SmartAnalyzers.CSharpExtensions.Annotations"/>
 		<PackageReference Include="System.Linq.Async"/>
-		<PackageReference Include="ToStringWithoutOverrideAnalyzer">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(Configuration)' != 'Release'">

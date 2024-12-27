@@ -34,7 +34,7 @@ public class SubstringFunctionTest
 		var parser = new Parser(tokens);
 		var root = parser.ParseRoot();
 
-		var output = new StringWriter();
+		using var output = new StringWriter();
 		var interpreter = new Interpreter(output);
 		root.Accept(interpreter);
 

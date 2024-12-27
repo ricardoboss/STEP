@@ -4,8 +4,4 @@
 		<ProjectReference Include="..\StepLang\StepLang.csproj"/>
 	</ItemGroup>
 
-	<ItemGroup>
-		<AdditionalFiles Include="../CSharpExtensions.json"/>
-	</ItemGroup>
-
 </Project>
