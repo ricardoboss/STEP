@@ -14,7 +14,7 @@ env:
 
 jobs:
   coverage:
-    name: Report Coverage
+    name: Coverage
 
     runs-on: ubuntu-latest
 
