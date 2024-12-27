@@ -37,9 +37,9 @@ body:
     attributes:
       label: Source Code
       description: The source code you used to reproduce the bug. If not applicable, delete this section.
+      render: step
       value: |
         // Your code here
-      render: step
   - type: textarea
     attributes:
       label: Additional context
@@ -48,6 +48,7 @@ body:
     attributes:
       label: step --info Output
       description: Run `step --info` in your terminal paste the output here.
+      render: text
       placeholder: |
         STEP - Simple Transition to Elevated Programming
         Build Date:
