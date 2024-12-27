@@ -62,6 +62,16 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: dotnet test --configuration Test --no-build --verbosity normal --collect:"XPlat Code Coverage" --settings coverlet.runsettings --results-directory ./coverage
 
+      - name: Rewrite coverage file paths
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          # Each file in ./coverage/**/coverage.cobertura.xml has a URL that needs to be replaced with a relative path
+          baseUrl="https://raw.githubusercontent.com/${{ github.repository }}/${{ github.sha }}/"
+
+          for file in ./coverage/**/coverage.cobertura.xml; do
+            sed -i "s|${baseUrl}||g" "$file"
+          done
+
       - name: Upload coverage reports
         if: matrix.os == 'ubuntu-latest'
         uses: coverallsapp/github-action@v2
