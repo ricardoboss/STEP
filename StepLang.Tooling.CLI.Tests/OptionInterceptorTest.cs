@@ -1,6 +1,7 @@
 using Spectre.Console;
 using Spectre.Console.Cli;
 using Spectre.Console.Rendering;
+using StepLang.Tooling.Meta;
 using System.Runtime.InteropServices;
 
 namespace StepLang.Tooling.CLI.Tests;
@@ -119,7 +120,7 @@ public class OptionInterceptorTest
 		var remainingArgumentsMock = new Mock<IRemainingArguments>();
 
 		buildTimeProviderMock
-			.SetupGet(g => g.BuildTimeUtc)
+			.SetupGet(g => g.BuildTime)
 			.Returns(buildTimeUtc)
 			.Verifiable();
 
@@ -139,7 +140,7 @@ public class OptionInterceptorTest
 			.Verifiable();
 
 		buildTimeProviderMock
-			.Setup(b => b.BuildTimeUtc)
+			.Setup(b => b.BuildTime)
 			.Returns(buildTimeUtc)
 			.Verifiable();
 

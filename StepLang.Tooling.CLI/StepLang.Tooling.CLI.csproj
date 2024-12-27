@@ -8,4 +8,8 @@
 		<PackageReference Include="Spectre.Console.Cli"/>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\StepLang.Tooling.Meta\StepLang.Tooling.Meta.csproj" />
+	</ItemGroup>
+
 </Project>

@@ -159,9 +159,13 @@
         "type": "Project",
         "dependencies": {
           "SmartAnalyzers.CSharpExtensions.Annotations": "[4.2.11, )",
+          "StepLang.Tooling.Meta": "[1.0.0, )",
           "System.Linq.Async": "[6.0.1, )",
           "cmdwtf.BuildTimestampGenerator": "[1.0.1, )"
         }
+      },
+      "steplang.tooling.meta": {
+        "type": "Project"
       },
       "cmdwtf.BuildTimestampGenerator": {
         "type": "CentralTransitive",

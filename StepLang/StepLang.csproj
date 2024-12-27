@@ -44,6 +44,10 @@
 		</None>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\StepLang.Tooling.Meta\StepLang.Tooling.Meta.csproj" />
+	</ItemGroup>
+
 	<Target Name="Copy DLLs to Homepage" AfterTargets="Build">
 		<PropertyGroup>
 			<HomepageBinDir>$(SolutionDir)StepLang.Homepage\bin</HomepageBinDir>

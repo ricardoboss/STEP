@@ -3,6 +3,9 @@ using Spectre.Console.Cli;
 using StepLang.CLI.Commands;
 using StepLang.Tooling.CLI;
 using System.Diagnostics.CodeAnalysis;
+using InformationTuple =
+	(StepLang.Tooling.Meta.IGitVersionProvider GitVersionProvider, StepLang.Tooling.Meta.IBuildTimeProvider
+	BuildTimeProvider);
 
 namespace StepLang.CLI;
 
@@ -46,8 +49,12 @@ internal static class Program
 
 			var interceptor = new OptionInterceptor(
 				config.Settings.Console ?? AnsiConsole.Console,
-				gitVersionProvider: new GitVersionProvider(),
-				buildTimeProvider: new BuildTimeProvider()
+				CliGitVersionProvider.Instance,
+				new Dictionary<string, InformationTuple>
+				{
+					{ "Core", (CoreGitVersionProvider.Instance, CoreBuildTimestampProvider.Instance) },
+					{ "Command Line Interface", (CliGitVersionProvider.Instance, CliBuildTimeProvider.Instance) },
+				}
 			);
 
 			config.SetInterceptor(interceptor);
@@ -83,16 +90,4 @@ internal static class Program
 
 		return await app.RunAsync(args);
 	}
-}
-
-file sealed class GitVersionProvider : IGitVersionProvider
-{
-	public string FullSemVer => GitVersionInformation.FullSemVer;
-	public string Sha => GitVersionInformation.Sha;
-	public string BranchName => GitVersionInformation.BranchName;
-}
-
-file sealed class BuildTimeProvider : IBuildTimeProvider
-{
-	public DateTimeOffset BuildTimeUtc => DateTimeOffset.UtcNow;
 }

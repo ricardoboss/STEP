@@ -158,8 +158,12 @@
       "steplang.tooling.cli": {
         "type": "Project",
         "dependencies": {
-          "Spectre.Console.Cli": "[0.49.1, )"
+          "Spectre.Console.Cli": "[0.49.1, )",
+          "StepLang.Tooling.Meta": "[1.0.0, )"
         }
+      },
+      "steplang.tooling.meta": {
+        "type": "Project"
       },
       "Spectre.Console.Cli": {
         "type": "CentralTransitive",

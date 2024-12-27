@@ -46,4 +46,8 @@
 		<AdditionalFiles Include="../CSharpExtensions.json"/>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Remove="Widgets\DefinitionList.cs" />
+	</ItemGroup>
+
 </Project>

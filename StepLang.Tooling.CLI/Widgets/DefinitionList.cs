@@ -1,17 +1,11 @@
+using Spectre.Console;
 using Spectre.Console.Rendering;
 
-namespace StepLang.CLI.Widgets;
+namespace StepLang.Tooling.CLI.Widgets;
 
-internal sealed class DefinitionList : IRenderable
+public sealed class DefinitionList : IRenderable
 {
-	internal sealed class Item(IRenderable label, IRenderable definition)
-	{
-		public IRenderable Label { get; } = label;
-
-		public IRenderable Definition { get; } = definition;
-	}
-
-	public List<Item> Items { get; init; } = [];
+	public List<DefinitionListItem> Items { get; init; } = [];
 
 	public int ItemIndent { get; init; } = 4;
 
@@ -48,6 +42,9 @@ internal sealed class DefinitionList : IRenderable
 			foreach (var definitionSegment in item.Definition.Render(options, maxWidth - ItemIndent))
 			{
 				yield return definitionSegment;
+
+				if (definitionSegment.IsLineBreak)
+					yield return Segment.Padding(ItemIndent);
 			}
 
 			yield return Segment.LineBreak;
