@@ -107,20 +107,7 @@ public class Parser(IEnumerable<Token> tokenList)
 		}
 
 		var nextNext = tokens.Peek(2);
-		if (nextNext is not { Type: var nextNextType })
-		{
-			throw new UnexpectedTokenException(next,
-				new[]
-					{
-						TokenType.EqualsSymbol, TokenType.OpeningParentheses,
-						TokenType.OpeningSquareBracket,
-					}.Concat(TokenTypes.ShorthandMathematicalOperations)
-					.Concat(TokenTypes.ShorthandMathematicalOperationsWithAssignment)
-					.Distinct()
-					.ToArray());
-		}
-
-		if (next.Type.IsShorthandMathematicalOperation() && nextNextType == next.Type)
+		if (next.Type.IsShorthandMathematicalOperation() && nextNext.Type == next.Type)
 		{
 			return ParseShorthandMathOperation();
 		}
