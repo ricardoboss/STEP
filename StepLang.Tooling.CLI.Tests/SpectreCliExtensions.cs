@@ -18,4 +18,18 @@ public static class SpectreCliExtensions
 
 		return string.Join("", segments.Select(s => s.Text));
 	}
+
+	public static string GetTextContent(this Markup markup)
+	{
+		var readOnlyCapabilitiesMock = new Mock<IReadOnlyCapabilities>();
+
+		var renderOptions =
+			new RenderOptions(readOnlyCapabilitiesMock.Object, new Size(markup.Length, 1));
+
+		var segments = ((IRenderable)markup).Render(renderOptions, markup.Length);
+
+		readOnlyCapabilitiesMock.VerifyAll();
+
+		return string.Join("", segments.Select(s => s.Text));
+	}
 }
