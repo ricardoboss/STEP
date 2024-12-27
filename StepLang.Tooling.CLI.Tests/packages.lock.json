@@ -68,11 +68,6 @@
           "System.Diagnostics.EventLog": "6.0.0"
         }
       },
-      "Microsoft.Bcl.AsyncInterfaces": {
-        "type": "Transitive",
-        "resolved": "6.0.0",
-        "contentHash": "UcSjPsst+DfAdJGVDsu346FX0ci0ah+lw3WRtn18NUwEqRt70HaOQ7lI72vy3+1LxtqI3T5GWwV39rQSrCzAeg=="
-      },
       "Microsoft.CodeCoverage": {
         "type": "Transitive",
         "resolved": "17.12.0",
@@ -99,6 +94,11 @@
         "type": "Transitive",
         "resolved": "13.0.1",
         "contentHash": "ppPFpBcvxdsfUonNcvITKqLl3bqxWbDCZIzDWHzjpdAHRFfZe0Dw9HmA0+za13IdyrgJwpkDTDA9fHaxOrt20A=="
+      },
+      "Spectre.Console": {
+        "type": "Transitive",
+        "resolved": "0.49.1",
+        "contentHash": "USV+pdu49OJ3nCjxNuw1K9Zw/c1HCBbwbjXZp0EOn6wM99tFdAtN34KEBZUMyRuJuXlUMDqhd8Yq9obW2MslYA=="
       },
       "System.Diagnostics.EventLog": {
         "type": "Transitive",
@@ -155,33 +155,19 @@
           "xunit.extensibility.core": "[2.9.2]"
         }
       },
-      "steplang": {
+      "steplang.tooling.cli": {
         "type": "Project",
         "dependencies": {
-          "SmartAnalyzers.CSharpExtensions.Annotations": "[4.2.11, )",
-          "System.Linq.Async": "[6.0.1, )",
-          "cmdwtf.BuildTimestampGenerator": "[1.0.1, )"
+          "Spectre.Console.Cli": "[0.49.1, )"
         }
       },
-      "cmdwtf.BuildTimestampGenerator": {
+      "Spectre.Console.Cli": {
         "type": "CentralTransitive",
-        "requested": "[1.0.1, )",
-        "resolved": "1.0.1",
-        "contentHash": "2XZIjeMNLYzeUyuxxn1IrWm04J4MiP4NnTyJHU3ToLXIBltAObpp3r3WIS6xHzwqGsex3YEZSXYxxpn2J1/o1Q=="
-      },
-      "SmartAnalyzers.CSharpExtensions.Annotations": {
-        "type": "CentralTransitive",
-        "requested": "[4.2.11, )",
-        "resolved": "4.2.11",
-        "contentHash": "01zSK7s9KHR8g2KpvaPMvoejeEQklac1psroAimb0Gb8mO11+3dPl4yEEtNBOF9zjWmKliODMjNKpT9DHE+EYg=="
-      },
-      "System.Linq.Async": {
-        "type": "CentralTransitive",
-        "requested": "[6.0.1, )",
-        "resolved": "6.0.1",
-        "contentHash": "0YhHcaroWpQ9UCot3Pizah7ryAzQhNvobLMSxeDIGmnXfkQn8u5owvpOH0K6EVB+z9L7u6Cc4W17Br/+jyttEQ==",
+        "requested": "[0.49.1, )",
+        "resolved": "0.49.1",
+        "contentHash": "wBZzyEbKqfPFFUPhV5E7/k4Kwy4UDO42IVzvzk0C4Pkjjw+NSd0EOBkIutYET4vJY4X81pD9ooQO9gfBGXj4+g==",
         "dependencies": {
-          "Microsoft.Bcl.AsyncInterfaces": "6.0.0"
+          "Spectre.Console": "0.49.1"
         }
       }
     }

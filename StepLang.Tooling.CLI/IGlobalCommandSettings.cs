@@ -1,6 +1,6 @@
-namespace StepLang.CLI.Commands;
+namespace StepLang.Tooling.CLI;
 
-internal interface IGlobalCommandSettings
+public interface IGlobalCommandSettings
 {
 	public const string InfoOptionName = "--info";
 	public const string InfoOptionDescription =

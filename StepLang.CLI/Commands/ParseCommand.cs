@@ -4,6 +4,7 @@ using StepLang.Expressions.Results;
 using StepLang.Interpreting;
 using StepLang.Parsing;
 using StepLang.Tokenizing;
+using StepLang.Tooling.CLI;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 

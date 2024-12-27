@@ -1,5 +1,6 @@
 using Spectre.Console;
 using Spectre.Console.Cli;
+using StepLang.Tooling.CLI;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 

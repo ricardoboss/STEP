@@ -28,7 +28,6 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection"/>
-		<PackageReference Include="Spectre.Console.Cli"/>
 		<PackageReference Include="System.Linq.Async"/>
 		<PackageReference Include="ToStringWithoutOverrideAnalyzer">
 			<PrivateAssets>all</PrivateAssets>
@@ -37,6 +36,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\StepLang.Tooling.CLI\StepLang.Tooling.CLI.csproj" />
 		<ProjectReference Include="..\StepLang.Tooling.Formatting\StepLang.Tooling.Formatting.csproj"/>
 		<ProjectReference Include="..\StepLang.Tooling.Highlighting\StepLang.Tooling.Highlighting.csproj"/>
 		<ProjectReference Include="..\StepLang\StepLang.csproj"/>

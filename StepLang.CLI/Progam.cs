@@ -1,5 +1,7 @@
+using Spectre.Console;
 using Spectre.Console.Cli;
 using StepLang.CLI.Commands;
+using StepLang.Tooling.CLI;
 using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.CLI;
@@ -42,7 +44,13 @@ internal static class Program
 				.SetExceptionHandler(ErrorHandler.HandleException)
 				;
 
-			config.SetInterceptor(new OptionInterceptor());
+			var interceptor = new OptionInterceptor(
+				config.Settings.Console ?? AnsiConsole.Console,
+				gitVersionProvider: new GitVersionProvider(),
+				buildTimeProvider: new BuildTimeProvider()
+			);
+
+			config.SetInterceptor(interceptor);
 
 			config.AddExample("script.step");
 			config.AddExample("format script.step");
@@ -75,4 +83,16 @@ internal static class Program
 
 		return await app.RunAsync(args);
 	}
+}
+
+file sealed class GitVersionProvider : IGitVersionProvider
+{
+	public string FullSemVer => GitVersionInformation.FullSemVer;
+	public string Sha => GitVersionInformation.Sha;
+	public string BranchName => GitVersionInformation.BranchName;
+}
+
+file sealed class BuildTimeProvider : IBuildTimeProvider
+{
+	public DateTimeOffset BuildTimeUtc => DateTimeOffset.UtcNow;
 }

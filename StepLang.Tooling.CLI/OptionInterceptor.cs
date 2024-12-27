@@ -1,19 +1,19 @@
-using cmdwtf;
 using Spectre.Console;
 using Spectre.Console.Cli;
-using StepLang.CLI.Commands;
 using System.Runtime.InteropServices;
 
-namespace StepLang.CLI;
+namespace StepLang.Tooling.CLI;
 
-internal sealed class OptionInterceptor : ICommandInterceptor
+public sealed class OptionInterceptor(
+	IAnsiConsole console,
+	IGitVersionProvider gitVersionProvider,
+	IBuildTimeProvider buildTimeProvider
+) : ICommandInterceptor
 {
 	public void Intercept(CommandContext context, CommandSettings settings)
 	{
 		if (settings is not IGlobalCommandSettings globalSettings)
-		{
 			return;
-		}
 
 		if (globalSettings.Version)
 		{
@@ -25,18 +25,18 @@ internal sealed class OptionInterceptor : ICommandInterceptor
 		}
 	}
 
-	private static void HandleVersionOption()
+	private void HandleVersionOption()
 	{
-		AnsiConsole.WriteLine(GitVersionInformation.FullSemVer);
+		console.WriteLine(gitVersionProvider.FullSemVer);
 	}
 
-	private static void HandleInfoOption()
+	private void HandleInfoOption()
 	{
 		var data = new Dictionary<string, string>
 		{
-			{ "Build Date", $"{BuildTimestamp.BuildTimeUtc:yyyy-MM-dd HH:mm:ss} UTC" },
-			{ "Version", $"{GitVersionInformation.Sha} ({GitVersionInformation.FullSemVer})" },
-			{ "Branch", GitVersionInformation.BranchName },
+			{ "Build Date", $"{buildTimeProvider.BuildTimeUtc:yyyy-MM-dd HH:mm:ss} UTC" },
+			{ "Version", $"{gitVersionProvider.Sha} ({gitVersionProvider.FullSemVer})" },
+			{ "Branch", gitVersionProvider.BranchName },
 			{ "CLR Version", Environment.Version.ToString() },
 			{ "OS Version", $"{RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})" },
 		};
@@ -50,6 +50,6 @@ internal sealed class OptionInterceptor : ICommandInterceptor
 			_ = infoGrid.AddRow(new Text(name, headerStyle).RightJustified(), new Text(value));
 		}
 
-		AnsiConsole.Write(infoGrid);
+		console.Write(infoGrid);
 	}
 }

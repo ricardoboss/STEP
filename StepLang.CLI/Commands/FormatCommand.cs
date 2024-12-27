@@ -1,5 +1,6 @@
 using Spectre.Console;
 using Spectre.Console.Cli;
+using StepLang.Tooling.CLI;
 using StepLang.Tooling.Formatting.AnalyzerSet;
 using StepLang.Tooling.Formatting.Fixers;
 using System.ComponentModel;
