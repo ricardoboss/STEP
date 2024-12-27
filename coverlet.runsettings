@@ -7,7 +7,6 @@
 					<Format>cobertura</Format>
 					<Exclude>[*]cmdwtf.*,[*]GitVersionInformation</Exclude>
 					<ExcludeByAttribute>Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute</ExcludeByAttribute>
-					<UseSourceLink>true</UseSourceLink>
 					<DeterministicReport>true</DeterministicReport>
 				</Configuration>
 			</DataCollector>

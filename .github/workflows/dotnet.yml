@@ -65,11 +65,11 @@ jobs:
       - name: Rewrite coverage file paths
         if: matrix.os == 'ubuntu-latest'
         run: |
-          # Each file in ./coverage/**/coverage.cobertura.xml has a URL that needs to be replaced with a relative path
-          baseUrl="https://raw.githubusercontent.com/${{ github.repository }}/${{ github.sha }}/"
+          # Each file in ./coverage/**/coverage.cobertura.xml contains paths that start with /_/
+          # Replace those with nothing to make the paths relative to the repository root
 
           for file in ./coverage/**/coverage.cobertura.xml; do
-            sed -i "s|${baseUrl}||g" "$file"
+            sed -i "s|/_/|/|g" "$file"
           done
 
       - name: Upload coverage reports
