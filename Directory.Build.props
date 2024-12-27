@@ -4,7 +4,6 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<LangVersion>default</LangVersion>
-		<AnalysisMode>All</AnalysisMode>
 		<InvariantGlobalization>true</InvariantGlobalization>
 
 		<Configurations>Debug;Release;Test</Configurations>
@@ -12,8 +11,61 @@
 
 		<IsAotCompatible>true</IsAotCompatible>
 		<StripSymbols>false</StripSymbols>
+
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
 
+	<!-- Emulate Release configuration for tests -->
+	<PropertyGroup Condition=" '$(Configuration)' == 'Test' ">
+		<DefineConstants>TRACE;RELEASE</DefineConstants>
+		<Optimize>true</Optimize>
+	</PropertyGroup>
+
+	<!-- Embed debug symbols in release builds -->
+	<PropertyGroup Condition="$(Configuration) != 'Debug'">
+		<DebugType>embedded</DebugType>
+	</PropertyGroup>
+
+	<!-- Harden code against potential issues -->
+	<PropertyGroup>
+		<AnalysisMode>All</AnalysisMode>
+		<!--EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>-->
+	</PropertyGroup>
+
+	<!-- Hide actual source paths in release builds -->
+	<PropertyGroup Condition="$(Configuration) != 'Debug'">
+		<Deterministic>true</Deterministic>
+		<DeterministicSourcePaths>true</DeterministicSourcePaths>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<SourceRoot Include="$(MSBuildThisFileDirectory)/" />
+	</ItemGroup>
+
+	<!-- Globally enable source link -->
+	<ItemGroup>
+		<PackageReference Include="Microsoft.SourceLink.GitHub">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<!-- Additional analyzers -->
+	<ItemGroup>
+		<PackageReference Include="IDisposableAnalyzers">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="ToStringWithoutOverrideAnalyzer">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+
+		<PackageReference Include="SmartAnalyzers.CSharpExtensions.Annotations" />
+		<AdditionalFiles Include="$(MSBuildThisFileDirectory)/CSharpExtensions.json" />
+	</ItemGroup>
+
+	<!-- For test projects, import additional props -->
 	<Import Project="Tests.props" Condition="$(MSBuildProjectFile.EndsWith('.Tests.csproj'))"/>
 
 </Project>

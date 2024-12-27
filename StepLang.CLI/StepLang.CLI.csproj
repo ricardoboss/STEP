@@ -6,16 +6,9 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition=" '$(Configuration)' != 'Debug' ">
-		<DebugType>embedded</DebugType>
-
 		<!-- TODO: Treat errors as warnings and remove partial trimming as soon as https://github.com/spectreconsole/spectre.console/issues/955 is resolved -->
 		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
 		<TrimMode>partial</TrimMode>
-	</PropertyGroup>
-
-	<PropertyGroup Condition=" '$(Configuration)' == 'Test' ">
-		<DefineConstants>TRACE;RELEASE</DefineConstants>
-		<Optimize>true</Optimize>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -23,16 +16,8 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="IDisposableAnalyzers">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection"/>
 		<PackageReference Include="System.Linq.Async"/>
-		<PackageReference Include="ToStringWithoutOverrideAnalyzer">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -40,14 +25,6 @@
 		<ProjectReference Include="..\StepLang.Tooling.Formatting\StepLang.Tooling.Formatting.csproj"/>
 		<ProjectReference Include="..\StepLang.Tooling.Highlighting\StepLang.Tooling.Highlighting.csproj"/>
 		<ProjectReference Include="..\StepLang\StepLang.csproj"/>
-	</ItemGroup>
-
-	<ItemGroup>
-		<AdditionalFiles Include="../CSharpExtensions.json"/>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Compile Remove="Widgets\DefinitionList.cs" />
 	</ItemGroup>
 
 </Project>

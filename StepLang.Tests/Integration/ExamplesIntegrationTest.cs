@@ -20,9 +20,9 @@ public class ExamplesIntegrationTest
 			stdInText = await File.ReadAllTextAsync(exampleFile.FullName + ".in");
 		}
 
-		var stdOut = new StringWriter();
-		var stdErr = new StringWriter();
-		var stdIn = new StringReader(stdInText);
+		await using var stdOut = new StringWriter();
+		await using var stdErr = new StringWriter();
+		using var stdIn = new StringReader(stdInText);
 
 		var expectedExitCode = 0;
 		var expectedOutput = "";

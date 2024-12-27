@@ -29,9 +29,9 @@ public class FailuresIntegrationTest
 
 		Skip.If(details is null, $"Failed to deserialize exception details for {exampleFile.FullName}");
 
-		var stdOut = new StringWriter();
-		var stdErr = new StringWriter();
-		var stdIn = new StringReader(stdInText);
+		await using var stdOut = new StringWriter();
+		await using var stdErr = new StringWriter();
+		using var stdIn = new StringReader(stdInText);
 
 		// act
 		var tokenizer = new Tokenizer(exampleFile);
