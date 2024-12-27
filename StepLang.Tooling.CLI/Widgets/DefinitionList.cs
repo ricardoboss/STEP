@@ -1,11 +1,10 @@
-using Spectre.Console;
 using Spectre.Console.Rendering;
 
 namespace StepLang.Tooling.CLI.Widgets;
 
 public sealed class DefinitionList : IRenderable
 {
-	public List<DefinitionListItem> Items { get; init; } = [];
+	public IList<DefinitionListItem> Items { get; init; } = [];
 
 	public int ItemIndent { get; init; } = 4;
 
