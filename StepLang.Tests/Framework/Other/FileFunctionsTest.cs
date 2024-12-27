@@ -12,10 +12,10 @@ public class FileFunctionsTest
 	[SkippableTheory]
 	[InlineData("Windows", @"C:\temp\test.txt")]
 	[InlineData("Linux", "/tmp/test.txt")]
-	[InlineData("OSX", "/tmp/test.txt")]
+	[InlineData("macOS", "/tmp/test.txt")]
 	public void TestFileFunctions(string platform, string filename)
 	{
-		Skip.IfNot(RuntimeInformation.IsOSPlatform(OSPlatform.Create(platform)), $"Test only for {platform}");
+		Skip.IfNot(OperatingSystem.IsOSPlatform(platform), $"Test only for {platform}");
 
 		const string content = "Hello World";
 
