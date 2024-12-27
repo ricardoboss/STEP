@@ -63,7 +63,7 @@ jobs:
         run: dotnet test --configuration Test --no-build --verbosity normal --collect:"XPlat Code Coverage" --settings coverlet.runsettings --results-directory ./coverage
 
       - name: Rewrite coverage file paths
-        if: matrix.os == 'ubuntu-latest'
+        if: success() && !cancelled() && matrix.os == 'ubuntu-latest'
         run: |
           # Each file in ./coverage/**/coverage.cobertura.xml contains paths that start with /_/
           # Replace those with nothing to make the paths relative to the repository root
@@ -73,7 +73,7 @@ jobs:
           done
 
       - name: Upload coverage reports
-        if: matrix.os == 'ubuntu-latest'
+        if: success() && !cancelled() && matrix.os == 'ubuntu-latest'
         uses: coverallsapp/github-action@v2
         with:
           format: cobertura
