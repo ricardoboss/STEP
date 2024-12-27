@@ -33,7 +33,7 @@
 
 1. Install the latest [.NET SDK](https://dotnet.microsoft.com/download/dotnet)
 2. Clone the repository
-3. Run `dotnet run --project StepLang.CLI/StepLang.CLI.csproj --version` in the root directory of the repository
+3. Run `dotnet run --project StepLang.CLI/StepLang.CLI.csproj -- --version` in the root directory of the repository
 4. If the command prints the version of STEP, the installation was successful.
 
 ### From package managers
