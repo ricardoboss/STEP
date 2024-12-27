@@ -2,10 +2,8 @@ using Spectre.Console;
 using Spectre.Console.Cli;
 using StepLang.CLI.Commands;
 using StepLang.Tooling.CLI;
+using StepLang.Tooling.Meta;
 using System.Diagnostics.CodeAnalysis;
-using InformationTuple =
-	(StepLang.Tooling.Meta.IGitVersionProvider GitVersionProvider, StepLang.Tooling.Meta.IBuildTimeProvider
-	BuildTimeProvider);
 
 namespace StepLang.CLI;
 
@@ -49,11 +47,11 @@ internal static class Program
 
 			var interceptor = new OptionInterceptor(
 				config.Settings.Console ?? AnsiConsole.Console,
-				CliGitVersionProvider.Instance,
-				new Dictionary<string, InformationTuple>
+				CliMetadataProvider.Instance,
+				new Dictionary<string, IMetadataProvider>
 				{
-					{ "Core", (CoreGitVersionProvider.Instance, CoreBuildTimestampProvider.Instance) },
-					{ "Command Line Interface", (CliGitVersionProvider.Instance, CliBuildTimeProvider.Instance) },
+					{ "Core", CoreMetadataProvider.Instance },
+					{ "Command Line Interface", CliMetadataProvider.Instance },
 				}
 			);
 

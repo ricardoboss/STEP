@@ -3,16 +3,13 @@ using Spectre.Console.Cli;
 using StepLang.Tooling.CLI.Widgets;
 using StepLang.Tooling.Meta;
 using System.Runtime.InteropServices;
-using InformationTuple =
-	(StepLang.Tooling.Meta.IGitVersionProvider GitVersionProvider, StepLang.Tooling.Meta.IBuildTimeProvider
-	BuildTimeProvider);
 
 namespace StepLang.Tooling.CLI;
 
 public sealed class OptionInterceptor(
 	IAnsiConsole console,
-	IGitVersionProvider binaryGitVersionProvider,
-	IReadOnlyDictionary<string, InformationTuple> componentInformationProviders
+	IMetadataProvider executingAssemblyMetadataProvider,
+	IReadOnlyDictionary<string, IMetadataProvider> componentMetadataProviders
 ) : ICommandInterceptor
 {
 	public void Intercept(CommandContext context, CommandSettings settings)
@@ -32,17 +29,17 @@ public sealed class OptionInterceptor(
 
 	private void HandleVersionOption()
 	{
-		console.WriteLine(binaryGitVersionProvider.FullSemVer);
+		console.WriteLine(executingAssemblyMetadataProvider.FullSemVer);
 	}
 
 	private void HandleInfoOption()
 	{
 		var definitionList = new DefinitionList();
 
-		foreach (var (componentName, (gitVersionProvider, buildTimeProvider)) in componentInformationProviders)
+		foreach (var (componentName, metadataProvider) in componentMetadataProviders)
 		{
 			var componentHeader = new Markup($"[dim]{componentName}[/]");
-			var componentGrid = BuildComponentInformation(buildTimeProvider, gitVersionProvider);
+			var componentGrid = BuildComponentInformation(metadataProvider);
 
 			definitionList.Items.Add(new DefinitionListItem(componentHeader, componentGrid));
 		}
@@ -54,26 +51,16 @@ public sealed class OptionInterceptor(
 		console.Write(definitionList);
 	}
 
-	private static Grid BuildComponentInformation(IBuildTimeProvider buildTimeProvider,
-		IGitVersionProvider gitVersionProvider)
+	private static Grid BuildComponentInformation(IMetadataProvider metadataProvider)
 	{
 		var data = new Dictionary<string, string>
 		{
-			{ "Build Date", $"{buildTimeProvider.BuildTime:yyyy-MM-dd HH:mm:ss} UTC" },
-			{ "Version", $"{gitVersionProvider.Sha} ({gitVersionProvider.FullSemVer})" },
-			{ "Branch", gitVersionProvider.BranchName },
+			{ "Build Date", $"{metadataProvider.BuildTime:yyyy-MM-dd HH:mm:ss} UTC" },
+			{ "Version", $"{metadataProvider.Sha} ({metadataProvider.FullSemVer})" },
+			{ "Branch", metadataProvider.BranchName },
 		};
 
-		var infoGrid = new Grid().AddColumns(2);
-
-		var headerStyle = new Style(decoration: Decoration.Bold);
-
-		foreach (var (name, value) in data)
-		{
-			_ = infoGrid.AddRow(new Text(name, headerStyle).RightJustified(), new Text(value));
-		}
-
-		return infoGrid;
+		return BuildGrid(data);
 	}
 
 	private static Grid BuildEnvironmentInformation()
@@ -84,13 +71,21 @@ public sealed class OptionInterceptor(
 			{ "OS Version", $"{RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})" },
 		};
 
+		return BuildGrid(data);
+	}
+
+	private static Grid BuildGrid(Dictionary<string, string> data)
+	{
 		var infoGrid = new Grid().AddColumns(2);
 
 		var headerStyle = new Style(decoration: Decoration.Bold);
 
 		foreach (var (name, value) in data)
 		{
-			_ = infoGrid.AddRow(new Text(name, headerStyle).RightJustified(), new Text(value));
+			var header = new Text(name, headerStyle).RightJustified();
+			var content = new Text(value);
+
+			_ = infoGrid.AddRow(header, content);
 		}
 
 		return infoGrid;
