@@ -6,6 +6,7 @@
 				<Configuration>
 					<Format>cobertura</Format>
 					<Exclude>[*]cmdwtf.*,[*]GitVersionInformation</Exclude>
+					<UseSourceLink>true</UseSourceLink>
 					<DeterministicReport>true</DeterministicReport>
 				</Configuration>
 			</DataCollector>
