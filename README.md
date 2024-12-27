@@ -1,4 +1,6 @@
-﻿<img src="StepLang.Homepage/images/logo.svg" align="left" alt="STEP" width="120" height="120">
+﻿[![Coverage Status](https://coveralls.io/repos/github/ricardoboss/STEP/badge.svg)](https://coveralls.io/github/ricardoboss/STEP)
+
+<img src="StepLang.Homepage/images/logo.svg" align="left" alt="STEP" width="60" height="60">
 
 <p>
   <h1>STEP</h1>
