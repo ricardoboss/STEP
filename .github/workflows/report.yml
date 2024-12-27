@@ -48,21 +48,8 @@ jobs:
       - name: Test
         run: dotnet test --configuration Test --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
 
-      - name: Provide Code Coverage Summary
-        id: coverage
-        uses: ricardoboss/CodeCoverageSummary@dev
-        with:
-          filename: coverage/**/coverage.cobertura.xml
-          output: github
-          fail_below_min: true
-          thresholds: '0 85'
-          badge: true
-
-      - name: Provide failure badge
-        id: coverage-failure
-        if: failure()
-        run: |
-          echo "badge=https://img.shields.io/badge/Test%20Coverage-failed-red.svg?style=flat" >> "$GITHUB_OUTPUT"
+      - name: Post coverage to Coveralls
+        uses: coverallsapp/github-action@v2
 
   style:
     name: Check Style
@@ -111,7 +98,7 @@ jobs:
     name: Report
 
     if: always()
-    needs: [ coverage, style, changelog ]
+    needs: [ style, changelog ]
 
     runs-on: ubuntu-latest
 
@@ -124,6 +111,5 @@ jobs:
         with:
           comment_tag: report
           message: |
-            ![Code Coverage](${{ needs.coverage.outputs.badge }}) \
             ![Code Style](https://img.shields.io/badge/Code%20Style-${{ needs.style.result == 'success' && 'ok' || 'run%20`dotnet%20format`' }}-${{ needs.style.result == 'success' && 'brightgreen' || 'red' }}.svg?style=flat) \
             ![CHANGELOG](${{ needs.changelog.outputs.badge }})
