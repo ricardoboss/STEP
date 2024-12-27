@@ -1,6 +1,7 @@
 # Unreleased
 
 * (internal) Workflow now checks the built binaries before publishing
+* Track and report core and CLI build metadata separately by @ricardoboss in https://github.com/ricardoboss/STEP/pull/131
 
 # v2.1.0
 
