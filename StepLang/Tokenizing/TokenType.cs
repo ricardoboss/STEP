@@ -45,6 +45,7 @@ public enum TokenType
 	ForEachKeyword,
 	InKeyword,
 	EndOfFile,
+	Error,
 }
 
 public static class TokenTypes

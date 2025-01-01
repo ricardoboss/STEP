@@ -1,5 +1,6 @@
 using Spectre.Console;
 using Spectre.Console.Cli;
+using StepLang.Diagnostics;
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
 using StepLang.Parsing;
@@ -28,13 +29,17 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 	{
 		var scriptFile = new FileInfo(settings.File);
 		var source = await CharacterSource.FromFileAsync(scriptFile);
-		var tokenizer = new Tokenizer(source);
+		var diagnostics = new DiagnosticCollection();
+		var tokenizer = new Tokenizer(source, diagnostics);
 		var tokens = tokenizer.Tokenize();
 		var parser = new Parser(tokens);
 		var root = parser.ParseRoot();
 
 		var tree = new Tree(scriptFile.Name);
 		var treeBuilder = new RootTreeBuilder(tree);
+
+		// TODO: report diagnostics
+
 		root.Accept(treeBuilder);
 
 		AnsiConsole.Write(tree);

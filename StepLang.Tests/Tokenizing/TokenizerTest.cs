@@ -1,3 +1,4 @@
+using StepLang.Diagnostics;
 using StepLang.Tokenizing;
 
 namespace StepLang.Tests.Tokenizing;
@@ -9,7 +10,8 @@ public class TokenizerTest
 	{
 		const string source = "\"abc\"";
 
-		var tokenizer = new Tokenizer(source);
+		var diagnostics = new DiagnosticCollection();
+		var tokenizer = new Tokenizer(source, diagnostics);
 		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToArray();
 
 		Assert.Equal(2, tokens.Length);
@@ -21,6 +23,7 @@ public class TokenizerTest
 		Assert.Equal(TokenType.EndOfFile, tokens[1].Type);
 		Assert.Equal(1, tokens[1].Location.Line);
 		Assert.Equal(source.Length + 1, tokens[1].Location.Column);
+		Assert.Empty(diagnostics);
 	}
 
 	[Fact]
@@ -28,7 +31,8 @@ public class TokenizerTest
 	{
 		const string source = "\"\\n\"";
 
-		var tokenizer = new Tokenizer(source);
+		var diagnostics = new DiagnosticCollection();
+		var tokenizer = new Tokenizer(source, diagnostics);
 		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToArray();
 
 		Assert.Equal(2, tokens.Length);
@@ -39,6 +43,7 @@ public class TokenizerTest
 		Assert.Equal(TokenType.EndOfFile, tokens[1].Type);
 		Assert.Equal(1, tokens[1].Location.Line);
 		Assert.Equal(source.Length + 1, tokens[1].Location.Column);
+		Assert.Empty(diagnostics);
 	}
 
 	[Fact]
@@ -46,7 +51,8 @@ public class TokenizerTest
 	{
 		const string source = "123";
 
-		var tokenizer = new Tokenizer(source);
+		var diagnostics = new DiagnosticCollection();
+		var tokenizer = new Tokenizer(source, diagnostics);
 		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToArray();
 
 		Assert.Equal(2, tokens.Length);
@@ -57,6 +63,7 @@ public class TokenizerTest
 		Assert.Equal(TokenType.EndOfFile, tokens[1].Type);
 		Assert.Equal(1, tokens[1].Location.Line);
 		Assert.Equal(source.Length + 1, tokens[1].Location.Column);
+		Assert.Empty(diagnostics);
 	}
 
 	[Fact]
@@ -64,7 +71,8 @@ public class TokenizerTest
 	{
 		const string source = "-123";
 
-		var tokenizer = new Tokenizer(source);
+		var diagnostics = new DiagnosticCollection();
+		var tokenizer = new Tokenizer(source, diagnostics);
 		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToArray();
 
 		Assert.Equal(3, tokens.Length);
@@ -79,6 +87,7 @@ public class TokenizerTest
 		Assert.Equal(TokenType.EndOfFile, tokens[2].Type);
 		Assert.Equal(1, tokens[2].Location.Line);
 		Assert.Equal(source.Length + 1, tokens[2].Location.Column);
+		Assert.Empty(diagnostics);
 	}
 
 	[Fact]
@@ -86,7 +95,8 @@ public class TokenizerTest
 	{
 		const string source = "-1.23";
 
-		var tokenizer = new Tokenizer(source);
+		var diagnostics = new DiagnosticCollection();
+		var tokenizer = new Tokenizer(source, diagnostics);
 		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToArray();
 
 		Assert.Equal(3, tokens.Length);
@@ -101,6 +111,7 @@ public class TokenizerTest
 		Assert.Equal(TokenType.EndOfFile, tokens[2].Type);
 		Assert.Equal(1, tokens[2].Location.Line);
 		Assert.Equal(source.Length + 1, tokens[2].Location.Column);
+		Assert.Empty(diagnostics);
 	}
 
 	[Fact]
@@ -108,7 +119,8 @@ public class TokenizerTest
 	{
 		const string source = "\"abc def\"";
 
-		var tokenizer = new Tokenizer(source);
+		var diagnostics = new DiagnosticCollection();
+		var tokenizer = new Tokenizer(source, diagnostics);
 		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToArray();
 
 		Assert.Equal(2, tokens.Length);
@@ -120,13 +132,15 @@ public class TokenizerTest
 		Assert.Equal(TokenType.EndOfFile, tokens[1].Type);
 		Assert.Equal(1, tokens[1].Location.Line);
 		Assert.Equal(source.Length + 1, tokens[1].Location.Column);
+		Assert.Empty(diagnostics);
 	}
 
 	[Theory]
 	[InlineData("\"abc\\\"def\"", "abc\"def")]
 	public void TestTokenizeLiteralStringWithEscapedQuotes(string source, string expected)
 	{
-		var tokenizer = new Tokenizer(source);
+		var diagnostics = new DiagnosticCollection();
+		var tokenizer = new Tokenizer(source, diagnostics);
 		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToArray();
 
 		Assert.Equal(2, tokens.Length);
@@ -137,6 +151,7 @@ public class TokenizerTest
 		Assert.Equal(TokenType.EndOfFile, tokens[1].Type);
 		Assert.Equal(1, tokens[1].Location.Line);
 		Assert.Equal(source.Length + 1, tokens[1].Location.Column);
+		Assert.Empty(diagnostics);
 	}
 
 	[Theory]
@@ -146,7 +161,8 @@ public class TokenizerTest
 	[InlineData("function")]
 	public void TestTokenizeKnownType(string source)
 	{
-		var tokenizer = new Tokenizer(source);
+		var diagnostics = new DiagnosticCollection();
+		var tokenizer = new Tokenizer(source, diagnostics);
 		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToList();
 
 		Assert.Equal(2, tokens.Count);
@@ -157,6 +173,7 @@ public class TokenizerTest
 		Assert.Equal(TokenType.EndOfFile, tokens[1].Type);
 		Assert.Equal(1, tokens[1].Location.Line);
 		Assert.Equal(source.Length + 1, tokens[1].Location.Column);
+		Assert.Empty(diagnostics);
 	}
 
 	[Theory]
@@ -167,7 +184,8 @@ public class TokenizerTest
 	[InlineData("continue", TokenType.ContinueKeyword)]
 	public void TestTokenizeKeyword(string source, TokenType type)
 	{
-		var tokenizer = new Tokenizer(source);
+		var diagnostics = new DiagnosticCollection();
+		var tokenizer = new Tokenizer(source, diagnostics);
 		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToArray();
 
 		Assert.Equal(2, tokens.Length);
@@ -178,6 +196,7 @@ public class TokenizerTest
 		Assert.Equal(TokenType.EndOfFile, tokens[1].Type);
 		Assert.Equal(1, tokens[1].Location.Line);
 		Assert.Equal(source.Length + 1, tokens[1].Location.Column);
+		Assert.Empty(diagnostics);
 	}
 
 	[Fact]
@@ -185,7 +204,8 @@ public class TokenizerTest
 	{
 		const string source = "number identifier = 1";
 
-		var tokenizer = new Tokenizer(source);
+		var diagnostics = new DiagnosticCollection();
+		var tokenizer = new Tokenizer(source, diagnostics);
 		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToList();
 
 		Assert.Equal(8, tokens.Count);
@@ -237,6 +257,8 @@ public class TokenizerTest
 		Assert.Equal(1, tokens[7].Location.Line);
 		Assert.Equal(22, tokens[7].Location.Column);
 		Assert.Equal(0, tokens[7].Location.Length);
+
+		Assert.Empty(diagnostics);
 	}
 
 	[Fact]
@@ -244,7 +266,8 @@ public class TokenizerTest
 	{
 		const string source = "if (true)";
 
-		var tokenizer = new Tokenizer(source);
+		var diagnostics = new DiagnosticCollection();
+		var tokenizer = new Tokenizer(source, diagnostics);
 		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToList();
 
 		Assert.Equal(6, tokens.Count);
@@ -271,6 +294,7 @@ public class TokenizerTest
 		Assert.Equal(TokenType.EndOfFile, tokens[5].Type);
 		Assert.Equal(1, tokens[5].Location.Line);
 		Assert.Equal(10, tokens[5].Location.Column);
+		Assert.Empty(diagnostics);
 	}
 
 	[Fact]
@@ -278,7 +302,8 @@ public class TokenizerTest
 	{
 		const string source = "print(\"hello\")";
 
-		var tokenizer = new Tokenizer(source);
+		var diagnostics = new DiagnosticCollection();
+		var tokenizer = new Tokenizer(source, diagnostics);
 		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToList();
 
 		Assert.Equal(5, tokens.Count);
@@ -291,6 +316,7 @@ public class TokenizerTest
 		Assert.Equal(TokenType.ClosingParentheses, tokens[3].Type);
 		Assert.Equal(")", tokens[3].Value);
 		Assert.Equal(TokenType.EndOfFile, tokens[4].Type);
+		Assert.Empty(diagnostics);
 	}
 
 	[Fact]
@@ -298,7 +324,8 @@ public class TokenizerTest
 	{
 		const string source = "f(variable) // this is a comment\nprintln(\"text\") // more comments";
 
-		var tokenizer = new Tokenizer(source);
+		var diagnostics = new DiagnosticCollection();
+		var tokenizer = new Tokenizer(source, diagnostics);
 		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToList();
 
 		Assert.Equal(14, tokens.Count);
@@ -329,6 +356,7 @@ public class TokenizerTest
 		Assert.Equal(TokenType.LineComment, tokens[12].Type);
 		Assert.Equal("// more comments", tokens[12].Value);
 		Assert.Equal(TokenType.EndOfFile, tokens[13].Type);
+		Assert.Empty(diagnostics);
 	}
 
 	[Fact]
@@ -336,7 +364,8 @@ public class TokenizerTest
 	{
 		const string source = "identifier\"\"";
 
-		var tokenizer = new Tokenizer(source);
+		var diagnostics = new DiagnosticCollection();
+		var tokenizer = new Tokenizer(source, diagnostics);
 		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToList();
 
 		Assert.Equal(3, tokens.Count);
@@ -345,29 +374,73 @@ public class TokenizerTest
 		Assert.Equal(TokenType.LiteralString, tokens[1].Type);
 		Assert.Equal("\"\"", tokens[1].Value);
 		Assert.Equal(TokenType.EndOfFile, tokens[2].Type);
+		Assert.Empty(diagnostics);
 	}
 
 	[Fact]
-	public void TesetThrowsForInvalidIdentifiers()
+	public void TestReportsInvalidIdentifierDiagnostic()
 	{
 		const string source = "number a.b = 1";
 
-		var tokenizer = new Tokenizer(source);
-		var exception = Assert.Throws<InvalidIdentifierException>(() => tokenizer.Tokenize(TestContext.Current.CancellationToken).ToList());
+		var diagnostics = new DiagnosticCollection();
+		var tokenizer = new Tokenizer(source, diagnostics);
+		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToList();
 
-		Assert.Equal("TOK001", exception.ErrorCode);
+		Assert.Equal(8, tokens.Count);
+		Assert.Equal(TokenType.TypeName, tokens[0].Type);
+		Assert.Equal("number", tokens[0].Value);
+		Assert.Equal(TokenType.Whitespace, tokens[1].Type);
+		Assert.Equal(" ", tokens[1].Value);
+		Assert.Equal(TokenType.Error, tokens[2].Type);
+		Assert.Equal("a.b", tokens[2].Value);
+		Assert.Equal(TokenType.Whitespace, tokens[3].Type);
+		Assert.Equal(" ", tokens[3].Value);
+		Assert.Equal(TokenType.EqualsSymbol, tokens[4].Type);
+		Assert.Equal("=", tokens[4].Value);
+		Assert.Equal(TokenType.Whitespace, tokens[5].Type);
+		Assert.Equal(" ", tokens[5].Value);
+		Assert.Equal(TokenType.LiteralNumber, tokens[6].Type);
+		Assert.Equal("1", tokens[6].Value);
+		Assert.Equal(TokenType.EndOfFile, tokens[7].Type);
+
+		var diagnostic = Assert.Single(diagnostics);
+		Assert.Equal(Severity.Error, diagnostic.Severity);
+		Assert.Equal("Invalid identifier", diagnostic.Message);
+		Assert.Equal("TOK001", diagnostic.Code);
+		Assert.Null(diagnostic.Kind);
+		Assert.Equal(DiagnosticArea.Tokenizing, diagnostic.Area);
+		Assert.Equal(tokens[2], diagnostic.Token);
+		Assert.Equal(1, diagnostic.Location?.Line);
+		Assert.Equal(8, diagnostic.Location?.Column);
+		Assert.Equal(3, diagnostic.Location?.Length);
+		Assert.Null(diagnostic.RelatedTokens);
 	}
 
 	[Fact]
-	public void TestThrowsForUnclosedStrings()
+	public void TestReportsUnterminatedStringDiagnostic()
 	{
 		const string source = "\"string";
 
-		var tokenizer = new Tokenizer(source);
-		var exception = Assert.Throws<UnterminatedStringException>(() => tokenizer.Tokenize(TestContext.Current.CancellationToken).ToList());
+		var diagnostics = new DiagnosticCollection();
+		var tokenizer = new Tokenizer(source, diagnostics);
+		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToList();
 
-		Assert.Equal("TOK002", exception.ErrorCode);
-		Assert.Equal('\"', exception.StringDelimiter);
+		Assert.Equal(2, tokens.Count);
+		Assert.Equal(TokenType.Error, tokens[0].Type);
+		Assert.Equal("\"string", tokens[0].Value);
+		Assert.Equal(TokenType.EndOfFile, tokens[1].Type);
+
+		var diagnostic = Assert.Single(diagnostics);
+		Assert.Equal(Severity.Error, diagnostic.Severity);
+		Assert.Equal("Unterminated string", diagnostic.Message);
+		Assert.Equal("TOK002", diagnostic.Code);
+		Assert.Null(diagnostic.Kind);
+		Assert.Equal(DiagnosticArea.Tokenizing, diagnostic.Area);
+		Assert.Equal(tokens[0], diagnostic.Token);
+		Assert.Equal(1, diagnostic.Location?.Line);
+		Assert.Equal(1, diagnostic.Location?.Column);
+		Assert.Equal(source.Length, diagnostic.Location?.Length);
+		Assert.Null(diagnostic.RelatedTokens);
 	}
 
 	[Fact]
@@ -376,7 +449,8 @@ public class TokenizerTest
 		// identifier "ifempty" contains the keyword "if"
 		const string source = "println(ifempty(\"abc\", \"b\"))";
 
-		var tokenizer = new Tokenizer(source);
+		var diagnostics = new DiagnosticCollection();
+		var tokenizer = new Tokenizer(source, diagnostics);
 		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToList();
 
 		Assert.Equal(11, tokens.Count);

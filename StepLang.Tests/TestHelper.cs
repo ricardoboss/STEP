@@ -9,7 +9,7 @@ internal static class TestHelper
 {
 	public static IEnumerable<Token> AsTokens(this string code)
 	{
-		var tokenizer = new Tokenizer(code);
+		var tokenizer = new Tokenizer(code, []);
 
 		return tokenizer.Tokenize(TestContext.Current.CancellationToken);
 	}
