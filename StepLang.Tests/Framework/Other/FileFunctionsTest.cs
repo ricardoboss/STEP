@@ -1,7 +1,7 @@
 using StepLang.Expressions.Results;
 using StepLang.Framework.Other;
 using StepLang.Interpreting;
-using StepLang.Parsing;
+using StepLang.Parsing.Nodes;
 using StepLang.Tokenizing;
 
 namespace StepLang.Tests.Framework.Other;
