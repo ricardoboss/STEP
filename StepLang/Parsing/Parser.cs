@@ -42,8 +42,8 @@ public class Parser(IEnumerable<Token> tokenList)
 	private List<StatementNode> ParseStatements(TokenType stopTokenType)
 	{
 		var statements = new List<StatementNode>();
-		TokenType nextType;
-		while ((nextType = tokens.PeekType()) != stopTokenType)
+		TokenType? nextType;
+		while ((nextType = tokens.PeekType()) != null && nextType != stopTokenType)
 		{
 			if (nextType is TokenType.NewLine)
 			{
@@ -96,6 +96,11 @@ public class Parser(IEnumerable<Token> tokenList)
 	public StatementNode ParseIdentifierUsage()
 	{
 		var next = tokens.Peek(1);
+		if (next is null)
+		{
+			throw new UnexpectedEndOfTokensException(tokens.LastToken?.Location);
+		}
+
 		switch (next.Type)
 		{
 			case TokenType.EqualsSymbol:
@@ -107,6 +112,11 @@ public class Parser(IEnumerable<Token> tokenList)
 		}
 
 		var nextNext = tokens.Peek(2);
+		if (nextNext is null)
+		{
+			throw new UnexpectedEndOfTokensException(next.Location);
+		}
+
 		if (next.Type.IsShorthandMathematicalOperation() && nextNext.Type == next.Type)
 		{
 			return ParseShorthandMathOperation();
@@ -519,7 +529,7 @@ public class Parser(IEnumerable<Token> tokenList)
 			left = new IndexAccessExpressionNode(left, index);
 		}
 
-		while (tokens.PeekType().IsOperator())
+		while (tokens.PeekType() is { } nextType && nextType.IsOperator())
 		{
 			var operatorTokens = PeekContinuousOperators(TokenTypes.Operators);
 			var binaryOperator = ParseExpressionOperator(operatorTokens);
@@ -582,35 +592,42 @@ public class Parser(IEnumerable<Token> tokenList)
 	private List<Token> PeekContinuousOperators(TokenType[] allowedOperators)
 	{
 		// whitespaces have meaning in operators
+		var previousIgnoreMeaningless = tokens.IgnoreMeaningless;
 		tokens.IgnoreMeaningless = false;
 
-		var offset = 0;
-		var operators = new List<Token>();
-		Token next;
-		while ((next = tokens.Peek(offset)).Type is not TokenType.EndOfFile)
+		try
 		{
-			if (allowedOperators.Contains(next.Type))
+			var offset = 0;
+			var operators = new List<Token>();
+			while (tokens.Peek(offset) is { Type: not TokenType.EndOfFile } next)
 			{
-				operators.Add(tokens.Peek(offset++));
-			}
-			else if (operators.Count == 0)
-			{
-				if (next.Type is not TokenType.Whitespace)
+				if (allowedOperators.Contains(next.Type))
 				{
-					throw new UnexpectedTokenException(next, allowedOperators);
+					operators.Add(next);
+
+					offset++;
 				}
+				else if (operators.Count == 0)
+				{
+					if (next.Type is not TokenType.Whitespace)
+					{
+						throw new UnexpectedTokenException(next, allowedOperators);
+					}
 
-				offset++; // skip leading whitespace
+					offset++; // skip leading whitespace
+				}
+				else
+				{
+					break;
+				}
 			}
-			else
-			{
-				break;
-			}
+
+			return operators;
 		}
-
-		tokens.IgnoreMeaningless = true;
-
-		return operators;
+		finally
+		{
+			tokens.IgnoreMeaningless = previousIgnoreMeaningless;
+		}
 	}
 
 	private BinaryExpressionOperator ParseExpressionOperator(List<Token> operatorTokens)
@@ -731,7 +748,12 @@ public class Parser(IEnumerable<Token> tokenList)
 
 	private ExpressionNode ParsePrimaryExpression()
 	{
-		var tokenType = tokens.PeekType();
+		var maybeTokenType = tokens.PeekType();
+		if (maybeTokenType is not { } tokenType)
+		{
+			throw new UnexpectedEndOfTokensException(tokens.LastToken?.Location);
+		}
+
 		if (tokenType.IsLiteral())
 		{
 			return new LiteralExpressionNode(tokens.Dequeue(tokenType));
@@ -765,12 +787,12 @@ public class Parser(IEnumerable<Token> tokenList)
 				return ParseNegateExpression();
 			case TokenType.ExclamationMarkSymbol:
 				return ParseNotExpression();
-			case TokenType.TypeName when tokens.Peek().Value.Equals("null", StringComparison.OrdinalIgnoreCase):
+			case TokenType.TypeName when tokens.Peek()?.Value.Equals("null", StringComparison.OrdinalIgnoreCase) ?? false:
 				var nullToken = tokens.Dequeue(TokenType.TypeName);
 
 				return new LiteralExpressionNode(new Token(TokenType.LiteralNull, nullToken.Value, nullToken.Location));
 			default:
-				throw new MissingExpressionException(tokens.LastToken ?? tokens.Peek());
+				throw new MissingExpressionException(tokens.LastToken);
 		}
 	}
 

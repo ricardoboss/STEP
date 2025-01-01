@@ -74,7 +74,14 @@ public class TokenQueue
 		return tokens;
 	}
 
-	public Token Peek(int offset = 0)
+	public TokenType? PeekType(int offset = 0)
+	{
+		var token = Peek(offset);
+
+		return token?.Type;
+	}
+
+	public Token? Peek(int offset = 0)
 	{
 		var source = tokenList.AsEnumerable();
 		if (IgnoreMeaningless)
@@ -82,20 +89,7 @@ public class TokenQueue
 			source = source.Where(t => t.Type.HasMeaning());
 		}
 
-		var remaining = source.Skip(offset).ToArray();
-		if (remaining.Length == 0)
-		{
-			throw new UnexpectedEndOfTokensException(LastToken?.Location);
-		}
-
-		return remaining[0];
-	}
-
-	public TokenType PeekType(int offset = 0)
-	{
-		var token = Peek(offset);
-
-		return token.Type;
+		return source.Skip(offset).FirstOrDefault();
 	}
 
 	public Token Dequeue(params TokenType[] allowed)
