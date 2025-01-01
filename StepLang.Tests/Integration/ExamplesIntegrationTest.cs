@@ -1,3 +1,4 @@
+using StepLang.Diagnostics;
 using StepLang.Interpreting;
 using StepLang.Parsing;
 using StepLang.Tokenizing;
@@ -46,7 +47,8 @@ public class ExamplesIntegrationTest
 
 
 		// act
-		var tokenizer = new Tokenizer(exampleFile);
+		var diagnostics = new DiagnosticCollection();
+		var tokenizer = new Tokenizer(exampleFile, diagnostics);
 		var tokens = tokenizer.Tokenize();
 		var parser = new Parser(tokens);
 		var root = parser.ParseRoot();
@@ -54,9 +56,13 @@ public class ExamplesIntegrationTest
 		root.Accept(interpreter);
 
 		// assert
-		Assert.Equal(expectedExitCode, interpreter.ExitCode);
-		Assert.Equal(expectedOutput, stdOut.ToString(), ignoreLineEndingDifferences: true);
-		Assert.Equal(expectedError, stdErr.ToString(), ignoreLineEndingDifferences: true);
+		Assert.Multiple([SuppressMessage("ReSharper", "AccessToDisposedClosure")]() =>
+		{
+			Assert.Equal(expectedExitCode, interpreter.ExitCode);
+			Assert.Equal(expectedOutput, stdOut.ToString(), ignoreLineEndingDifferences: true);
+			Assert.Equal(expectedError, stdErr.ToString(), ignoreLineEndingDifferences: true);
+			Assert.Empty(diagnostics);
+		});
 	}
 
 	[SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Used by xUnit")]

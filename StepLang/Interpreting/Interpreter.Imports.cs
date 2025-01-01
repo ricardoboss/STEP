@@ -40,7 +40,8 @@ public partial class Interpreter : IImportNodeVisitor
 		}
 
 		var source = CharacterSource.FromFile(importedFile);
-		var tokenizer = new Tokenizer(source);
+		// TODO: handle diagnostics differently?
+		var tokenizer = new Tokenizer(source, []);
 		var tokens = tokenizer.Tokenize();
 
 		var parser = new Parser(tokens);
