@@ -48,7 +48,7 @@ public class FailuresIntegrationTest
 
 		return;
 
-		var parser = new Parser(tokens);
+		var parser = new Parser(tokens, diagnostics);
 		var root = parser.ParseRoot();
 		if (diagnostics.Count > 0)
 		{
