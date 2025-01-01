@@ -1,5 +1,5 @@
 using StepLang.Interpreting;
-using StepLang.Parsing.Nodes;
+using StepLang.Parsing.Nodes.VariableDeclarations;
 
 namespace StepLang.Parsing;
 

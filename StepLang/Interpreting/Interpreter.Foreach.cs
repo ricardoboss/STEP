@@ -1,5 +1,6 @@
 using StepLang.Expressions.Results;
-using StepLang.Parsing.Nodes;
+using StepLang.Parsing.Nodes.Statements;
+using StepLang.Parsing.Nodes.VariableDeclarations;
 using StepLang.Tokenizing;
 
 namespace StepLang.Interpreting;

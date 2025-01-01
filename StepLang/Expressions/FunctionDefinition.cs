@@ -1,6 +1,7 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
-using StepLang.Parsing.Nodes;
+using StepLang.Parsing.Nodes.Expressions;
+using StepLang.Parsing.Nodes.VariableDeclarations;
 using StepLang.Tokenizing;
 using System.Diagnostics.CodeAnalysis;
 

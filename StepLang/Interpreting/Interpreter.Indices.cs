@@ -1,7 +1,8 @@
 using StepLang.Expressions;
 using StepLang.Expressions.Results;
 using StepLang.Framework;
-using StepLang.Parsing.Nodes;
+using StepLang.Parsing.Nodes.Expressions;
+using StepLang.Parsing.Nodes.Statements;
 using System.Globalization;
 
 namespace StepLang.Interpreting;

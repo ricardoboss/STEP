@@ -1,6 +1,6 @@
 using StepLang.Framework;
 using StepLang.Framework.Conversion;
-using StepLang.Parsing.Nodes;
+using StepLang.Parsing.Nodes.Expressions;
 using StepLang.Tokenizing;
 using System.Text.Json.Serialization;
 
