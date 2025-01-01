@@ -30,10 +30,11 @@ public class SubstringFunctionTest
 	public void TestSubstring(string code, string result)
 	{
 		var diagnostics = new DiagnosticCollection();
+
 		var tokenizer = new Tokenizer($"print({code})", diagnostics);
 		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken);
 
-		var parser = new Parser(tokens);
+		var parser = new Parser(tokens, diagnostics);
 		var root = parser.ParseRoot();
 
 		using var output = new StringWriter();
