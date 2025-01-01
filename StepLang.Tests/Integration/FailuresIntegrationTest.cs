@@ -46,13 +46,16 @@ public class FailuresIntegrationTest
 			root.Accept(interpreter);
 		});
 
-		Assert.Equal(details.ErrorCode, exception.ErrorCode);
-		Assert.Equal(details.Message, exception.Message);
-		Assert.Equal(details.HelpText, exception.HelpText);
-		Assert.Equal(exampleFile.FullName, exception.Location?.File?.FullName);
-		Assert.Equal(details.Line, exception.Location?.Line);
-		Assert.Equal(details.Column, exception.Location?.Column);
-		Assert.Equal(details.Length, exception.Location?.Length);
+		Assert.Multiple(() =>
+		{
+			Assert.Equal(details.ErrorCode, exception.ErrorCode);
+			Assert.Equal(details.Message, exception.Message);
+			Assert.Equal(details.HelpText, exception.HelpText);
+			Assert.Equal(exampleFile.FullName, exception.Location?.File?.FullName);
+			Assert.Equal(details.Line, exception.Location?.Line);
+			Assert.Equal(details.Column, exception.Location?.Column);
+			Assert.Equal(details.Length, exception.Location?.Length);
+		});
 	}
 
 	[SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Used by xUnit")]

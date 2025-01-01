@@ -585,7 +585,7 @@ public class Parser(IEnumerable<Token> tokenList)
 			BinaryExpressionOperator.BitwiseRotateRight => new BitwiseRotateRightExpressionNode(operatorLocation, left,
 				right),
 			_ => throw new NotSupportedException("Expression for operator " + binaryOperator.ToSymbol() +
-												 " not supported"),
+			                                     " not supported"),
 		};
 	}
 
@@ -787,7 +787,8 @@ public class Parser(IEnumerable<Token> tokenList)
 				return ParseNegateExpression();
 			case TokenType.ExclamationMarkSymbol:
 				return ParseNotExpression();
-			case TokenType.TypeName when tokens.Peek()?.Value.Equals("null", StringComparison.OrdinalIgnoreCase) ?? false:
+			case TokenType.TypeName
+				when tokens.Peek()?.Value.Equals("null", StringComparison.OrdinalIgnoreCase) ?? false:
 				var nullToken = tokens.Dequeue(TokenType.TypeName);
 
 				return new LiteralExpressionNode(new Token(TokenType.LiteralNull, nullToken.Value, nullToken.Location));

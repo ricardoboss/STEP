@@ -74,24 +74,6 @@ public class TokenQueue
 		return tokens;
 	}
 
-	public TokenType? PeekType(int offset = 0)
-	{
-		var token = Peek(offset);
-
-		return token?.Type;
-	}
-
-	public Token? Peek(int offset = 0)
-	{
-		var source = tokenList.AsEnumerable();
-		if (IgnoreMeaningless)
-		{
-			source = source.Where(t => t.Type.HasMeaning());
-		}
-
-		return source.Skip(offset).FirstOrDefault();
-	}
-
 	public Token Dequeue(params TokenType[] allowed)
 	{
 		Token? token;
@@ -118,5 +100,23 @@ public class TokenQueue
 		}
 
 		return token;
+	}
+
+	public TokenType? PeekType(int offset = 0)
+	{
+		var token = Peek(offset);
+
+		return token?.Type;
+	}
+
+	public Token? Peek(int offset = 0)
+	{
+		var source = tokenList.AsEnumerable();
+		if (IgnoreMeaningless)
+		{
+			source = source.Where(t => t.Type.HasMeaning());
+		}
+
+		return source.Skip(offset).FirstOrDefault();
 	}
 }
