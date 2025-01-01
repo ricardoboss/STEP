@@ -29,6 +29,8 @@ public class DiagnosticCollection : ICollection<Diagnostic>
 
 	public bool Contains(Diagnostic item) => diagnostics.Contains(item);
 
+	public bool ContainsErrors => diagnostics.Any(d => d.Severity == Severity.Error);
+
 	public void CopyTo(Diagnostic[] array, int arrayIndex) => diagnostics.CopyTo(array, arrayIndex);
 
 	public bool Remove(Diagnostic item) => diagnostics.Remove(item);

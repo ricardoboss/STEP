@@ -5,6 +5,7 @@ using StepLang.Parsing;
 using StepLang.Tokenizing;
 using StepLang.Tooling.CLI;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.CLI.Commands;
@@ -26,10 +27,11 @@ internal sealed class RunCommand : AsyncCommand<RunCommand.Settings>
 		var source = await CharacterSource.FromFileAsync(scriptFile);
 
 		var diagnostics = new DiagnosticCollection();
+
 		var tokenizer = new Tokenizer(source, diagnostics);
 		var tokens = tokenizer.Tokenize();
 
-		var parser = new Parser(tokens);
+		var parser = new Parser(tokens, diagnostics);
 		var root = parser.ParseRoot();
 
 		// TODO: report diagnostics

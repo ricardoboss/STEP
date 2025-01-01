@@ -2,7 +2,7 @@ using StepLang.Diagnostics;
 
 namespace StepLang.Tokenizing;
 
-public static class DiagnosticCollectionExtensions
+public static class TokenizingDiagnosticCollectionExtensions
 {
 	public static void AddUnterminatedString(this DiagnosticCollection collection, Token errorToken)
 	{

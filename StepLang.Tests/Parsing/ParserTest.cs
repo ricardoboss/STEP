@@ -1,3 +1,4 @@
+using StepLang.Diagnostics;
 using StepLang.Parsing;
 
 namespace StepLang.Tests.Parsing;
@@ -9,11 +10,13 @@ public class ParserTest
 	{
 		// Arrange
 		const string source = "identifier";
-		var tokens = source.AsTokens();
+		var diagnostics = new DiagnosticCollection();
+		var tokens = source.AsTokens(diagnostics);
 
-		var parser = new Parser(tokens);
+		var parser = new Parser(tokens, diagnostics);
 
 		// Act
+		// TODO: rewrite using diagnostics
 		var exception = Assert.Throws<UnexpectedEndOfTokensException>(() => parser.ParseIdentifierUsage());
 
 		// Assert

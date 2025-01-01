@@ -1,3 +1,4 @@
+using StepLang.Diagnostics;
 using StepLang.Parsing.Nodes;
 using StepLang.Parsing.Nodes.Expressions;
 using StepLang.Parsing.Nodes.Statements;
@@ -7,7 +8,7 @@ using System.Diagnostics;
 
 namespace StepLang.Parsing;
 
-public class Parser(IEnumerable<Token> tokenList)
+public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnostics)
 {
 	private readonly TokenQueue tokens = new(tokenList) { IgnoreMeaningless = true };
 
@@ -92,10 +93,20 @@ public class Parser(IEnumerable<Token> tokenList)
 			case TokenType.OpeningCurlyBracket:
 				return ParseCodeBlock();
 			case null:
-				throw new UnexpectedEndOfTokensException(tokens.LastToken?.Location);
+				{
+					var dequeued = tokens.Dequeue(1)[0];
+
+					return diagnostics.AddUnexpectedEndOfTokens(dequeued);
+				}
 			default:
-				throw new UnexpectedTokenException(token, TokenType.TypeName, TokenType.Identifier, TokenType.NewLine,
-					TokenType.LineComment);
+				{
+					// throw new UnexpectedTokenException(token, TokenType.TypeName, TokenType.Identifier, TokenType.NewLine,
+					// 	TokenType.LineComment);
+					var dequeued = tokens.Dequeue(1)[0];
+
+					return diagnostics.AddUnexpectedToken(dequeued, TokenType.TypeName, TokenType.Identifier,
+						TokenType.NewLine, TokenType.LineComment);
+				}
 		}
 	}
 
@@ -104,7 +115,7 @@ public class Parser(IEnumerable<Token> tokenList)
 		var next = tokens.Peek(1);
 		if (next is null)
 		{
-			throw new UnexpectedEndOfTokensException(tokens.LastToken?.Location);
+			return diagnostics.AddUnexpectedEndOfTokens(tokens.LastToken);
 		}
 
 		switch (next.Type)
@@ -120,7 +131,7 @@ public class Parser(IEnumerable<Token> tokenList)
 		var nextNext = tokens.Peek(2);
 		if (nextNext is null)
 		{
-			throw new UnexpectedEndOfTokensException(next.Location);
+			return diagnostics.AddUnexpectedEndOfTokens(tokens.LastToken);
 		}
 
 		if (next.Type.IsShorthandMathematicalOperation() && nextNext.Type == next.Type)
@@ -133,7 +144,10 @@ public class Parser(IEnumerable<Token> tokenList)
 			return ParseShorthandMathOperationExpression();
 		}
 
-		throw new UnexpectedTokenException(nextNext, next.Type, TokenType.EqualsSymbol);
+		// throw new UnexpectedTokenException(nextNext, next.Type, TokenType.EqualsSymbol);
+		var dequeued = tokens.Dequeue(2);
+
+		return diagnostics.AddUnexpectedToken(dequeued[1], next.Type, TokenType.EqualsSymbol);
 	}
 
 	private DiscardStatementNode ParseDiscardStatement()
@@ -182,12 +196,16 @@ public class Parser(IEnumerable<Token> tokenList)
 		var operation = tokens.Dequeue(TokenTypes.ShorthandMathematicalOperations);
 		_ = tokens.Dequeue(operation.Type);
 
-		return operation.Type switch
+		switch (operation.Type)
 		{
-			TokenType.PlusSymbol => new IncrementStatementNode(identifier),
-			TokenType.MinusSymbol => new DecrementStatementNode(identifier),
-			_ => throw new UnexpectedTokenException(operation, TokenType.PlusSymbol, TokenType.MinusSymbol),
-		};
+			case TokenType.PlusSymbol:
+				return new IncrementStatementNode(identifier);
+			case TokenType.MinusSymbol:
+				return new DecrementStatementNode(identifier);
+			default:
+				// throw new UnexpectedTokenException(operation, TokenType.PlusSymbol, TokenType.MinusSymbol);
+				return diagnostics.AddUnexpectedToken(operation, TokenType.PlusSymbol, TokenType.MinusSymbol);
+		}
 	}
 
 	private VariableAssignmentNode ParseShorthandMathOperationExpression()

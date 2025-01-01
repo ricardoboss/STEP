@@ -44,7 +44,7 @@ public partial class Interpreter : IImportNodeVisitor
 		var tokenizer = new Tokenizer(source, []);
 		var tokens = tokenizer.Tokenize();
 
-		var parser = new Parser(tokens);
+		var parser = new Parser(tokens, []);
 		var root = parser.ParseRoot();
 
 		Visit(root);

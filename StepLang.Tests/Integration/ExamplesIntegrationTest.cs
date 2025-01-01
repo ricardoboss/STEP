@@ -48,10 +48,13 @@ public class ExamplesIntegrationTest
 
 		// act
 		var diagnostics = new DiagnosticCollection();
+
 		var tokenizer = new Tokenizer(exampleFile, diagnostics);
 		var tokens = tokenizer.Tokenize();
-		var parser = new Parser(tokens);
+
+		var parser = new Parser(tokens,diagnostics);
 		var root = parser.ParseRoot();
+
 		var interpreter = new Interpreter(stdOut, stdErr, stdIn);
 		root.Accept(interpreter);
 

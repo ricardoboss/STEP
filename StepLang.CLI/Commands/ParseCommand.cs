@@ -32,7 +32,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 		var diagnostics = new DiagnosticCollection();
 		var tokenizer = new Tokenizer(source, diagnostics);
 		var tokens = tokenizer.Tokenize();
-		var parser = new Parser(tokens);
+		var parser = new Parser(tokens, diagnostics);
 		var root = parser.ParseRoot();
 
 		var tree = new Tree(scriptFile.Name);
@@ -319,6 +319,19 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 			var expressionNode = node.AddNode("Expression:");
 			var expressionTreeBuilder = new ExpressionTreeBuilder(expressionNode);
 			_ = discardStatementNode.Expression.EvaluateUsing(expressionTreeBuilder);
+		}
+
+		public void Visit(ErrorStatementNode errorStatementNode)
+		{
+			var node = root.AddNode("ErrorStatement");
+
+			_ = node.AddNode("Description: " + errorStatementNode.Description.EscapeMarkup());
+			var tokensNode = node.AddNode("Tokens:");
+
+			foreach (var token in errorStatementNode.Tokens.OfType<Token>())
+			{
+				tokensNode.AddNode(token.ToString().EscapeMarkup());
+			}
 		}
 	}
 

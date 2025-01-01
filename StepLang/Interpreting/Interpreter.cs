@@ -124,6 +124,11 @@ public partial class Interpreter : IRootNodeVisitor, IStatementVisitor, IExpress
 		}
 	}
 
+	public void Visit(ErrorStatementNode errorStatementNode)
+	{
+		throw new NotSupportedException("Error statement nodes cannot be interpreted");
+	}
+
 	public ExpressionResult Evaluate(IdentifierExpressionNode expressionNode)
 	{
 		var variable = CurrentScope.GetVariable(expressionNode.Identifier);
