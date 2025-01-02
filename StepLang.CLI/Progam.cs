@@ -34,6 +34,11 @@ internal static class Program
 
 		app.Configure(config =>
 		{
+			// ensure we are using the full width of the console
+			var console = AnsiConsole.Console;
+			console.Profile.Width = Console.LargestWindowWidth;
+			config.ConfigureConsole(console);
+
 			config
 				.SetApplicationName("step")
 				.SetApplicationVersion(GitVersionInformation.FullSemVer)
