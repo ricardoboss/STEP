@@ -96,6 +96,11 @@
           "System.Diagnostics.EventLog": "6.0.0"
         }
       },
+      "Microsoft.Bcl.AsyncInterfaces": {
+        "type": "Transitive",
+        "resolved": "6.0.0",
+        "contentHash": "UcSjPsst+DfAdJGVDsu346FX0ci0ah+lw3WRtn18NUwEqRt70HaOQ7lI72vy3+1LxtqI3T5GWwV39rQSrCzAeg=="
+      },
       "Microsoft.Build.Tasks.Git": {
         "type": "Transitive",
         "resolved": "8.0.0",
@@ -193,11 +198,21 @@
           "xunit.extensibility.core": "[2.9.2]"
         }
       },
+      "steplang": {
+        "type": "Project",
+        "dependencies": {
+          "SmartAnalyzers.CSharpExtensions.Annotations": "[4.2.11, )",
+          "StepLang.Tooling.Meta": "[1.0.0, )",
+          "System.Linq.Async": "[6.0.1, )",
+          "cmdwtf.BuildTimestampGenerator": "[1.0.1, )"
+        }
+      },
       "steplang.tooling.cli": {
         "type": "Project",
         "dependencies": {
           "SmartAnalyzers.CSharpExtensions.Annotations": "[4.2.11, )",
           "Spectre.Console.Cli": "[0.49.1, )",
+          "StepLang": "[1.0.0, )",
           "StepLang.Tooling.Meta": "[1.0.0, )"
         }
       },
@@ -207,6 +222,12 @@
           "SmartAnalyzers.CSharpExtensions.Annotations": "[4.2.11, )"
         }
       },
+      "cmdwtf.BuildTimestampGenerator": {
+        "type": "CentralTransitive",
+        "requested": "[1.0.1, )",
+        "resolved": "1.0.1",
+        "contentHash": "2XZIjeMNLYzeUyuxxn1IrWm04J4MiP4NnTyJHU3ToLXIBltAObpp3r3WIS6xHzwqGsex3YEZSXYxxpn2J1/o1Q=="
+      },
       "Spectre.Console.Cli": {
         "type": "CentralTransitive",
         "requested": "[0.49.1, )",
@@ -214,6 +235,15 @@
         "contentHash": "wBZzyEbKqfPFFUPhV5E7/k4Kwy4UDO42IVzvzk0C4Pkjjw+NSd0EOBkIutYET4vJY4X81pD9ooQO9gfBGXj4+g==",
         "dependencies": {
           "Spectre.Console": "0.49.1"
+        }
+      },
+      "System.Linq.Async": {
+        "type": "CentralTransitive",
+        "requested": "[6.0.1, )",
+        "resolved": "6.0.1",
+        "contentHash": "0YhHcaroWpQ9UCot3Pizah7ryAzQhNvobLMSxeDIGmnXfkQn8u5owvpOH0K6EVB+z9L7u6Cc4W17Br/+jyttEQ==",
+        "dependencies": {
+          "Microsoft.Bcl.AsyncInterfaces": "6.0.0"
         }
       }
     }
