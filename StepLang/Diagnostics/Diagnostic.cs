@@ -33,5 +33,13 @@ public class Diagnostic
 		init => tokenLocation = value;
 	}
 
+	public Uri? DocumentUri => Location?.DocumentUri;
+
+	public FileSystemInfo? File => Location?.File;
+
+	public int Line => Location?.Line ?? 0;
+
+	public int Column => Location?.Column ?? 0;
+
 	public IEnumerable<Token>? RelatedTokens { get; init; }
 }

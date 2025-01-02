@@ -10,6 +10,8 @@ using StepLang.Parsing.Nodes.Statements;
 using StepLang.Parsing.Nodes.VariableDeclarations;
 using StepLang.Tokenizing;
 using StepLang.Tooling.CLI;
+using StepLang.Tooling.CLI.Widgets;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 
@@ -30,6 +32,14 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 		var scriptFile = new FileInfo(settings.File);
 		var source = await CharacterSource.FromFileAsync(scriptFile);
 		var diagnostics = new DiagnosticCollection();
+		diagnostics.CollectionChanged += (_, e) =>
+		{
+			if (e is { Action: NotifyCollectionChangedAction.Add, NewItems: not null })
+			{
+				ReportDiagnostics(e.NewItems);
+			}
+		};
+
 		var tokenizer = new Tokenizer(source, diagnostics);
 		var tokens = tokenizer.Tokenize();
 		var parser = new Parser(tokens, diagnostics);
@@ -38,13 +48,21 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 		var tree = new Tree(scriptFile.Name);
 		var treeBuilder = new RootTreeBuilder(tree);
 
-		// TODO: report diagnostics
-
 		root.Accept(treeBuilder);
 
 		AnsiConsole.Write(tree);
 
 		return 0;
+	}
+
+	private static void ReportDiagnostics(IReadOnlyList<Diagnostic> eNewItems)
+	{
+		foreach (var diagnostic in eNewItems)
+		{
+			var line = new DiagnosticLine(diagnostic);
+
+			AnsiConsole.Write(line);
+		}
 	}
 
 	private sealed class RootTreeBuilder(IHasTreeNodes root) : IRootNodeVisitor

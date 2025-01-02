@@ -1,15 +1,51 @@
 using StepLang.Tokenizing;
 using System.Collections;
+using System.Collections.Immutable;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 
 namespace StepLang.Diagnostics;
 
+public class DiagnosticCollectionChangedEventArgs(
+	NotifyCollectionChangedAction action,
+	IReadOnlyList<Diagnostic>? newItems,
+	IReadOnlyList<Diagnostic>? oldItems
+) : EventArgs
+{
+	public NotifyCollectionChangedAction Action { get; } = action;
+
+	public IReadOnlyList<Diagnostic>? NewItems { get; } = newItems;
+
+	public IReadOnlyList<Diagnostic>? OldItems { get; } = oldItems;
+}
+
 public class DiagnosticCollection : ICollection<Diagnostic>
 {
-	private readonly List<Diagnostic> diagnostics = [];
+	private readonly ObservableCollection<Diagnostic> diagnostics = [];
+
+	public event EventHandler<DiagnosticCollectionChangedEventArgs>? CollectionChanged;
+
+	public DiagnosticCollection()
+	{
+		diagnostics.CollectionChanged += OnDiagnosticsOnCollectionChanged;
+	}
+
+	private void OnDiagnosticsOnCollectionChanged(object? _, NotifyCollectionChangedEventArgs e)
+	{
+		CollectionChanged?.Invoke(
+			this,
+			new DiagnosticCollectionChangedEventArgs(
+				e.Action,
+				e.NewItems?.Cast<Diagnostic>().ToImmutableList(),
+				e.OldItems?.Cast<Diagnostic>().ToImmutableList()
+			)
+		);
+	}
 
 	public void Add(Diagnostic diagnostic) => diagnostics.Add(diagnostic);
 
-	public void Add(DiagnosticArea area, Severity severity, string message, string code, Token? token = null, TokenLocation? location = null,
+	public void Add(DiagnosticArea area, Severity severity, string message, string code, Token? token = null,
+		TokenLocation? location = null,
 		DiagnosticKind? kind = null, IEnumerable<Token>? relatedTokens = null)
 	{
 		diagnostics.Add(new Diagnostic
