@@ -2,7 +2,7 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Parsing;
 
-public class UnexpectedTokenException(Token token, string message) : ParserException(1, token, message, BuildHelpText())
+public class UnexpectedTokenException(string message, Token token) : ParserException(1, token, message, BuildHelpText())
 {
 	private static string BuildMessage(Token token, TokenType[] allowed)
 	{
@@ -22,7 +22,10 @@ public class UnexpectedTokenException(Token token, string message) : ParserExcep
 			"This error is usually caused by a missing token or a typo. Check the syntax of the statement you are trying to use. Also review your code for syntax errors, such as missing parentheses or other punctuation.";
 	}
 
-	public UnexpectedTokenException(Token token, params TokenType[] allowed) : this(token, BuildMessage(token, allowed))
+	public UnexpectedTokenException(Token token, params TokenType[] allowed) : this(BuildMessage(token, allowed), token)
 	{
+		Token = token;
 	}
+
+	public Token Token { get; } = token;
 }

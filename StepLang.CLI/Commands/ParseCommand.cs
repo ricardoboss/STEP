@@ -765,6 +765,21 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 			return VoidResult.Instance;
 		}
 
+		public ExpressionResult Evaluate(ErrorExpressionNode expressionNode)
+		{
+			var node = root.AddNode("ErrorExpression");
+
+			_ = node.AddNode("Description: " + expressionNode.Description.EscapeMarkup());
+			var tokensNode = node.AddNode("Tokens:");
+
+			foreach (var token in expressionNode.Tokens.OfType<Token>())
+			{
+				tokensNode.AddNode(token.ToString().EscapeMarkup());
+			}
+
+			return VoidResult.Instance;
+		}
+
 		private static void EvaluateBinary(IHasTreeNodes parent, IBinaryExpressionNode node)
 		{
 			_ = parent.AddNode("Operator: " + node.Op.ToSymbol().EscapeMarkup());
