@@ -65,7 +65,7 @@ public class Parser(IEnumerable<Token> tokenList)
 	private StatementNode ParseStatement()
 	{
 		var token = tokens.Peek();
-		switch (token.Type)
+		switch (token?.Type)
 		{
 			case TokenType.TypeName:
 				{
@@ -91,6 +91,8 @@ public class Parser(IEnumerable<Token> tokenList)
 				return ParseContinueStatement();
 			case TokenType.OpeningCurlyBracket:
 				return ParseCodeBlock();
+			case null:
+				throw new UnexpectedEndOfTokensException(tokens.LastToken?.Location);
 			default:
 				throw new UnexpectedTokenException(token, TokenType.TypeName, TokenType.Identifier, TokenType.NewLine,
 					TokenType.LineComment);
@@ -249,14 +251,14 @@ public class Parser(IEnumerable<Token> tokenList)
 		Token? valueIdentifier = null;
 
 		var next = tokens.Peek();
-		switch (next.Type)
+		switch (next?.Type)
 		{
 			case TokenType.TypeName:
 				{
 					var firstDeclaration = ParseVariableDeclaration();
 
 					next = tokens.Peek();
-					switch (next.Type)
+					switch (next?.Type)
 					{
 						case TokenType.ColonSymbol:
 							{
@@ -265,7 +267,7 @@ public class Parser(IEnumerable<Token> tokenList)
 								_ = tokens.Dequeue(TokenType.ColonSymbol);
 
 								next = tokens.Peek();
-								switch (next.Type)
+								switch (next?.Type)
 								{
 									case TokenType.TypeName:
 										valueDeclaration = ParseVariableDeclaration();
@@ -273,6 +275,8 @@ public class Parser(IEnumerable<Token> tokenList)
 									case TokenType.Identifier:
 										valueIdentifier = tokens.Dequeue(TokenType.Identifier);
 										break;
+									case null:
+										throw new UnexpectedEndOfTokensException(tokens.LastToken?.Location);
 									default:
 										throw new UnexpectedTokenException(next, TokenType.TypeName,
 											TokenType.Identifier);
@@ -283,6 +287,8 @@ public class Parser(IEnumerable<Token> tokenList)
 						case TokenType.InKeyword:
 							valueDeclaration = firstDeclaration;
 							break;
+						case null:
+							throw new UnexpectedEndOfTokensException(tokens.LastToken?.Location);
 						default:
 							throw new UnexpectedTokenException(next, TokenType.ColonSymbol, TokenType.InKeyword);
 					}
@@ -294,7 +300,7 @@ public class Parser(IEnumerable<Token> tokenList)
 					var firstIdentifier = tokens.Dequeue(TokenType.Identifier);
 
 					next = tokens.Peek();
-					switch (next.Type)
+					switch (next?.Type)
 					{
 						case TokenType.ColonSymbol:
 							{
@@ -303,7 +309,7 @@ public class Parser(IEnumerable<Token> tokenList)
 								_ = tokens.Dequeue(TokenType.ColonSymbol);
 
 								next = tokens.Peek();
-								switch (next.Type)
+								switch (next?.Type)
 								{
 									case TokenType.TypeName:
 										valueDeclaration = ParseVariableDeclaration();
@@ -311,6 +317,8 @@ public class Parser(IEnumerable<Token> tokenList)
 									case TokenType.Identifier:
 										valueIdentifier = tokens.Dequeue(TokenType.Identifier);
 										break;
+									case null:
+										throw new UnexpectedEndOfTokensException(tokens.LastToken?.Location);
 									default:
 										throw new UnexpectedTokenException(next, TokenType.TypeName,
 											TokenType.Identifier);
@@ -321,19 +329,23 @@ public class Parser(IEnumerable<Token> tokenList)
 						case TokenType.InKeyword:
 							valueIdentifier = firstIdentifier;
 							break;
+						case null:
+							throw new UnexpectedEndOfTokensException(tokens.LastToken?.Location);
 						default:
 							throw new UnexpectedTokenException(next, TokenType.ColonSymbol, TokenType.InKeyword);
 					}
 
 					break;
 				}
+			case null:
+				throw new UnexpectedEndOfTokensException(tokens.LastToken?.Location);
 			default:
 				throw new UnexpectedTokenException(next, TokenType.TypeName, TokenType.Identifier);
 		}
 
 		if (valueDeclaration is null && valueIdentifier is null)
 		{
-			throw new UnexpectedTokenException(tokens.Peek(), "Foreach without value declaration or identifier");
+			throw new UnexpectedTokenException(tokens.Dequeue(), "Foreach without value declaration or identifier");
 		}
 
 		_ = tokens.Dequeue(TokenType.InKeyword);
