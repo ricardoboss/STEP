@@ -100,8 +100,6 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 				}
 			default:
 				{
-					// throw new UnexpectedTokenException(token, TokenType.TypeName, TokenType.Identifier, TokenType.NewLine,
-					// 	TokenType.LineComment);
 					var dequeued = tokens.Dequeue(1)[0];
 
 					return diagnostics.AddUnexpectedToken(dequeued, TokenType.TypeName, TokenType.Identifier,
@@ -115,7 +113,9 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 		var next = tokens.Peek(1);
 		if (next is null)
 		{
-			return diagnostics.AddUnexpectedEndOfTokens(tokens.LastToken);
+			var identifier = tokens.Dequeue(TokenType.Identifier);
+
+			return diagnostics.AddUnexpectedEndOfTokens(identifier);
 		}
 
 		switch (next.Type)
@@ -131,7 +131,10 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 		var nextNext = tokens.Peek(2);
 		if (nextNext is null)
 		{
-			return diagnostics.AddUnexpectedEndOfTokens(tokens.LastToken);
+			_ = tokens.Dequeue(TokenType.Identifier);
+			var last = tokens.Dequeue();
+
+			return diagnostics.AddUnexpectedEndOfTokens(last);
 		}
 
 		if (next.Type.IsShorthandMathematicalOperation() && nextNext.Type == next.Type)
@@ -144,7 +147,6 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 			return ParseShorthandMathOperationExpression();
 		}
 
-		// throw new UnexpectedTokenException(nextNext, next.Type, TokenType.EqualsSymbol);
 		var dequeued = tokens.Dequeue(2);
 
 		return diagnostics.AddUnexpectedToken(dequeued[1], next.Type, TokenType.EqualsSymbol);
@@ -203,17 +205,25 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 			case TokenType.MinusSymbol:
 				return new DecrementStatementNode(identifier);
 			default:
-				// throw new UnexpectedTokenException(operation, TokenType.PlusSymbol, TokenType.MinusSymbol);
 				return diagnostics.AddUnexpectedToken(operation, TokenType.PlusSymbol, TokenType.MinusSymbol);
 		}
 	}
 
-	private VariableAssignmentNode ParseShorthandMathOperationExpression()
+	private StatementNode ParseShorthandMathOperationExpression()
 	{
 		var identifier = tokens.Dequeue(TokenType.Identifier);
 		var identifierExpression = new IdentifierExpressionNode(identifier);
 
-		var operatorTokens = PeekContinuousOperators(TokenTypes.ShorthandMathematicalOperationsWithAssignment);
+		List<Token> operatorTokens;
+		try
+		{
+			operatorTokens = PeekContinuousOperators(TokenTypes.ShorthandMathematicalOperationsWithAssignment);
+		}
+		catch (UnexpectedTokenException e)
+		{
+			return diagnostics.AddUnexpectedToken(e.Message, e.Token);
+		}
+
 		Debug.Assert(operatorTokens.Count > 0);
 
 		_ = tokens.Dequeue(operatorTokens.Count);
@@ -224,35 +234,101 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 		return firstOperator.Type switch
 		{
-			TokenType.PlusSymbol => new VariableAssignmentNode(assignmentToken.Location, identifier,
-				new AddExpressionNode(firstOperator.Location, identifierExpression, expression)),
-			TokenType.MinusSymbol => new VariableAssignmentNode(assignmentToken.Location, identifier,
-				new SubtractExpressionNode(firstOperator.Location, identifierExpression, expression)),
+			TokenType.PlusSymbol => new VariableAssignmentNode(
+				assignmentToken.Location,
+				identifier,
+				new AddExpressionNode(firstOperator.Location, identifierExpression, expression)
+			),
+			TokenType.MinusSymbol => new VariableAssignmentNode(
+				assignmentToken.Location,
+				identifier,
+				new SubtractExpressionNode(
+					firstOperator.Location,
+					identifierExpression,
+					expression
+				)
+			),
 			TokenType.AsteriskSymbol => operatorTokens.Count switch
 			{
-				1 => new VariableAssignmentNode(assignmentToken.Location, identifier,
-					new MultiplyExpressionNode(firstOperator.Location, identifierExpression, expression)),
+				1 => new VariableAssignmentNode(
+					assignmentToken.Location,
+					identifier,
+					new MultiplyExpressionNode(
+						firstOperator.Location,
+						identifierExpression,
+						expression
+					)
+				),
 				2 => operatorTokens[1].Type switch
 				{
-					TokenType.AsteriskSymbol => new VariableAssignmentNode(assignmentToken.Location, identifier,
-						new PowerExpressionNode(firstOperator.Location, identifierExpression, expression)),
-					_ => throw new UnexpectedTokenException(operatorTokens[1], TokenType.AsteriskSymbol),
+					TokenType.AsteriskSymbol => new VariableAssignmentNode(
+						assignmentToken.Location,
+						identifier,
+						new PowerExpressionNode(
+							firstOperator.Location,
+							identifierExpression,
+							expression
+						)
+					),
+					_ => diagnostics.AddUnexpectedToken(operatorTokens[1], TokenType.AsteriskSymbol),
 				},
-				_ => throw new UnexpectedEndOfTokensException(firstOperator.Location, "Expected an operator"),
+				_ => diagnostics.AddUnexpectedEndOfTokens(firstOperator, "Expected an operator"),
 			},
-			TokenType.SlashSymbol => new VariableAssignmentNode(assignmentToken.Location, identifier,
-				new DivideExpressionNode(firstOperator.Location, identifierExpression, expression)),
-			TokenType.PercentSymbol => new VariableAssignmentNode(assignmentToken.Location, identifier,
-				new ModuloExpressionNode(firstOperator.Location, identifierExpression, expression)),
-			TokenType.PipeSymbol => new VariableAssignmentNode(assignmentToken.Location, identifier,
-				new BitwiseOrExpressionNode(firstOperator.Location, identifierExpression, expression)),
-			TokenType.AmpersandSymbol => new VariableAssignmentNode(assignmentToken.Location, identifier,
-				new BitwiseAndExpressionNode(firstOperator.Location, identifierExpression, expression)),
-			TokenType.HatSymbol => new VariableAssignmentNode(assignmentToken.Location, identifier,
-				new BitwiseXorExpressionNode(firstOperator.Location, identifierExpression, expression)),
-			TokenType.QuestionMarkSymbol => new VariableAssignmentNode(assignmentToken.Location, identifier,
-				new CoalesceExpressionNode(firstOperator.Location, identifierExpression, expression)),
-			_ => throw new UnexpectedTokenException(firstOperator, TokenType.PlusSymbol, TokenType.MinusSymbol,
+			TokenType.SlashSymbol => new VariableAssignmentNode(
+				assignmentToken.Location,
+				identifier,
+				new DivideExpressionNode(
+					firstOperator.Location,
+					identifierExpression,
+					expression
+				)
+			),
+			TokenType.PercentSymbol => new VariableAssignmentNode(
+				assignmentToken.Location,
+				identifier,
+				new ModuloExpressionNode(
+					firstOperator.Location,
+					identifierExpression,
+					expression
+				)
+			),
+			TokenType.PipeSymbol => new VariableAssignmentNode(
+				assignmentToken.Location,
+				identifier,
+				new BitwiseOrExpressionNode(
+					firstOperator.Location,
+					identifierExpression,
+					expression
+				)
+			),
+			TokenType.AmpersandSymbol => new VariableAssignmentNode(
+				assignmentToken.Location,
+				identifier,
+				new BitwiseAndExpressionNode(
+					firstOperator.Location,
+					identifierExpression,
+					expression
+				)
+			),
+			TokenType.HatSymbol => new VariableAssignmentNode(
+				assignmentToken.Location,
+				identifier,
+				new BitwiseXorExpressionNode(
+					firstOperator.Location,
+					identifierExpression,
+					expression
+				)
+			),
+			TokenType.QuestionMarkSymbol => new VariableAssignmentNode(
+				assignmentToken.Location,
+				identifier,
+				new CoalesceExpressionNode(
+					firstOperator.Location,
+					identifierExpression,
+					expression
+				)
+			),
+			_ => diagnostics.AddUnexpectedToken(firstOperator, TokenType.PlusSymbol, TokenType.MinusSymbol,
 				TokenType.AsteriskSymbol, TokenType.SlashSymbol, TokenType.PercentSymbol, TokenType.PipeSymbol,
 				TokenType.AmpersandSymbol, TokenType.HatSymbol, TokenType.QuestionMarkSymbol),
 		};
@@ -294,9 +370,11 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 										valueIdentifier = tokens.Dequeue(TokenType.Identifier);
 										break;
 									case null:
-										throw new UnexpectedEndOfTokensException(tokens.LastToken?.Location);
+										return diagnostics.AddUnexpectedEndOfTokens(tokens.LastToken);
 									default:
-										throw new UnexpectedTokenException(next, TokenType.TypeName,
+										_ = tokens.Dequeue(next.Type);
+
+										return diagnostics.AddUnexpectedToken(next, TokenType.TypeName,
 											TokenType.Identifier);
 								}
 
@@ -308,7 +386,9 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 						case null:
 							throw new UnexpectedEndOfTokensException(tokens.LastToken?.Location);
 						default:
-							throw new UnexpectedTokenException(next, TokenType.ColonSymbol, TokenType.InKeyword);
+							_ = tokens.Dequeue(next.Type);
+
+							return diagnostics.AddUnexpectedToken(next, TokenType.ColonSymbol, TokenType.InKeyword);
 					}
 
 					break;
@@ -336,9 +416,11 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 										valueIdentifier = tokens.Dequeue(TokenType.Identifier);
 										break;
 									case null:
-										throw new UnexpectedEndOfTokensException(tokens.LastToken?.Location);
+										return diagnostics.AddUnexpectedEndOfTokens(tokens.LastToken);
 									default:
-										throw new UnexpectedTokenException(next, TokenType.TypeName,
+										_ = tokens.Dequeue(next.Type);
+
+										return diagnostics.AddUnexpectedToken(next, TokenType.TypeName,
 											TokenType.Identifier);
 								}
 
@@ -348,22 +430,24 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 							valueIdentifier = firstIdentifier;
 							break;
 						case null:
-							throw new UnexpectedEndOfTokensException(tokens.LastToken?.Location);
+							return diagnostics.AddUnexpectedEndOfTokens(tokens.LastToken);
 						default:
-							throw new UnexpectedTokenException(next, TokenType.ColonSymbol, TokenType.InKeyword);
+							_ = tokens.Dequeue(next.Type);
+
+							return diagnostics.AddUnexpectedToken(next, TokenType.ColonSymbol, TokenType.InKeyword);
 					}
 
 					break;
 				}
 			case null:
-				throw new UnexpectedEndOfTokensException(tokens.LastToken?.Location);
+				return diagnostics.AddUnexpectedEndOfTokens(tokens.LastToken);
 			default:
-				throw new UnexpectedTokenException(next, TokenType.TypeName, TokenType.Identifier);
+				return diagnostics.AddUnexpectedToken(next, TokenType.TypeName, TokenType.Identifier);
 		}
 
 		if (valueDeclaration is null && valueIdentifier is null)
 		{
-			throw new UnexpectedTokenException(tokens.Dequeue(), "Foreach without value declaration or identifier");
+			return diagnostics.AddUnexpectedToken("Foreach without value declaration or identifier", tokens.Dequeue());
 		}
 
 		_ = tokens.Dequeue(TokenType.InKeyword);
@@ -565,7 +649,16 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 		while (tokens.PeekType() is { } nextType && nextType.IsOperator())
 		{
-			var operatorTokens = PeekContinuousOperators(TokenTypes.Operators);
+			List<Token> operatorTokens;
+			try
+			{
+				operatorTokens = PeekContinuousOperators(TokenTypes.Operators);
+			}
+			catch (UnexpectedTokenException e)
+			{
+				return diagnostics.AddUnexpectedTokenExpression(e.Message, e.Token);
+			}
+
 			var binaryOperator = ParseExpressionOperator(operatorTokens);
 
 			var precedence = binaryOperator.Precedence();
@@ -776,7 +869,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 			case 0:
 				throw new UnexpectedEndOfTokensException(tokens.LastToken?.Location, "Expected an operator");
 			default:
-				throw new UnexpectedTokenException(operatorTokens[0], "Operators can only be chained up to 3 times");
+				throw new UnexpectedTokenException("Operators can only be chained up to 3 times", operatorTokens[0]);
 		}
 	}
 
@@ -785,7 +878,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 		var maybeTokenType = tokens.PeekType();
 		if (maybeTokenType is not { } tokenType)
 		{
-			throw new UnexpectedEndOfTokensException(tokens.LastToken?.Location);
+			return diagnostics.AddUnexpectedEndOfTokensExpression(tokens.LastToken);
 		}
 
 		if (tokenType.IsLiteral())
@@ -827,7 +920,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 				return new LiteralExpressionNode(new Token(TokenType.LiteralNull, nullToken.Value, nullToken.Location));
 			default:
-				throw new MissingExpressionException(tokens.LastToken);
+				return diagnostics.AddMissingExpression(tokens.LastToken);
 		}
 	}
 

@@ -1,5 +1,7 @@
 using StepLang.Diagnostics;
 using StepLang.Parsing;
+using StepLang.Parsing.Nodes.Statements;
+using StepLang.Tokenizing;
 
 namespace StepLang.Tests.Parsing;
 
@@ -16,10 +18,11 @@ public class ParserTest
 		var parser = new Parser(tokens, diagnostics);
 
 		// Act
-		// TODO: rewrite using diagnostics
-		var exception = Assert.Throws<UnexpectedEndOfTokensException>(() => parser.ParseIdentifierUsage());
+		var root = parser.ParseRoot();
 
 		// Assert
-		Assert.Equal("Expected a statement", exception.Message);
+		var errorStatement = Assert.IsType<ErrorStatementNode>(root.Body.First());
+		Assert.Equal("Unexpected end of tokens", errorStatement.Description);
+		Assert.Equal(TokenType.EndOfFile, errorStatement.Tokens.First()?.Type);
 	}
 }
