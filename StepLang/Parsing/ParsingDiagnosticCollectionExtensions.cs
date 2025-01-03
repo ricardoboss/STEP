@@ -1,4 +1,5 @@
 using StepLang.Diagnostics;
+using StepLang.Parsing.Nodes.Expressions;
 using StepLang.Parsing.Nodes.Statements;
 using StepLang.Tokenizing;
 
@@ -16,15 +17,52 @@ public static class ParsingDiagnosticCollectionExtensions
 			_ => $"any one of {string.Join(", ", allowed.Select(TokenTypes.ToDisplay))}",
 		};
 
-		collection.Add(DiagnosticArea.Parsing, Severity.Error, $"Unexpected {errorToken.Type.ToDisplay()}, expected {typeInfo}", "PAR001", errorToken);
+		var message = $"Unexpected {errorToken.Type.ToDisplay()}, expected {typeInfo}";
 
-		return new ErrorStatementNode($"Unexpected {errorToken.Type.ToDisplay()}, expected {typeInfo}", [errorToken]);
+		return AddUnexpectedToken(collection, message, errorToken);
 	}
 
-	public static ErrorStatementNode AddUnexpectedEndOfTokens(this DiagnosticCollection collection, Token? lastToken)
+	public static ErrorStatementNode AddUnexpectedToken(this DiagnosticCollection collection,
+		string message, params Token[] errorTokens)
 	{
-		collection.Add(DiagnosticArea.Parsing, Severity.Error, "Unexpected end of tokens", "PAR004", lastToken);
+		collection.Add(DiagnosticArea.Parsing, Severity.Error, message, "PAR001", errorTokens.First());
 
-		return new ErrorStatementNode("Unexpected end of tokens", [lastToken]);
+		return new ErrorStatementNode(message, errorTokens);
+	}
+
+	public static ErrorExpressionNode AddUnexpectedTokenExpression(this DiagnosticCollection collection,
+		string message, params Token[] errorTokens)
+	{
+		collection.Add(DiagnosticArea.Parsing, Severity.Error, message, "PAR001", errorTokens.First());
+
+		return new ErrorExpressionNode(message, errorTokens);
+	}
+
+	public static ErrorStatementNode AddUnexpectedEndOfTokens(this DiagnosticCollection collection, Token? lastToken,
+		string? message = null)
+	{
+		collection.Add(DiagnosticArea.Parsing, Severity.Error, message ?? "Unexpected end of tokens", "PAR004",
+			lastToken);
+
+		return new ErrorStatementNode(message ?? "Unexpected end of tokens", [lastToken]);
+	}
+
+	public static ErrorExpressionNode AddUnexpectedEndOfTokensExpression(this DiagnosticCollection collection, Token? lastToken,
+		string? message = null)
+	{
+		collection.Add(DiagnosticArea.Parsing, Severity.Error, message ?? "Unexpected end of tokens", "PAR004",
+			lastToken);
+
+		return new ErrorExpressionNode(message ?? "Unexpected end of tokens", [lastToken]);
+	}
+
+	public static ErrorExpressionNode AddMissingExpression(this DiagnosticCollection collection, Token? lastToken,
+		string? message = null)
+	{
+		message ??= "A value was expected, but none was found";
+
+		collection.Add(DiagnosticArea.Parsing, Severity.Error, message, "PAR003", lastToken);
+
+		return new ErrorExpressionNode(message, [lastToken]);
 	}
 }

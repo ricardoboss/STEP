@@ -135,4 +135,9 @@ public partial class Interpreter : IRootNodeVisitor, IStatementVisitor, IExpress
 
 		return variable.Value;
 	}
+
+	public ExpressionResult Evaluate(ErrorExpressionNode expressionNode)
+	{
+		throw new NotSupportedException("Error expression nodes cannot be interpreted");
+	}
 }
