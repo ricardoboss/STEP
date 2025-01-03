@@ -11,7 +11,7 @@ internal static class TestHelper
 	{
 		var tokenizer = new Tokenizer(code);
 
-		return tokenizer.Tokenize();
+		return tokenizer.Tokenize(TestContext.Current.CancellationToken);
 	}
 
 	public static RootNode AsParsed(this string code)

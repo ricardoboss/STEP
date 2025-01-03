@@ -10,7 +10,7 @@ public class TokenizerTest
 		const string source = "\"abc\"";
 
 		var tokenizer = new Tokenizer(source);
-		var tokens = tokenizer.Tokenize().ToArray();
+		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToArray();
 
 		Assert.Equal(2, tokens.Length);
 		Assert.Equal(TokenType.LiteralString, tokens[0].Type);
@@ -29,7 +29,7 @@ public class TokenizerTest
 		const string source = "\"\\n\"";
 
 		var tokenizer = new Tokenizer(source);
-		var tokens = tokenizer.Tokenize().ToArray();
+		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToArray();
 
 		Assert.Equal(2, tokens.Length);
 		Assert.Equal(TokenType.LiteralString, tokens[0].Type);
@@ -47,7 +47,7 @@ public class TokenizerTest
 		const string source = "123";
 
 		var tokenizer = new Tokenizer(source);
-		var tokens = tokenizer.Tokenize().ToArray();
+		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToArray();
 
 		Assert.Equal(2, tokens.Length);
 		Assert.Equal(TokenType.LiteralNumber, tokens[0].Type);
@@ -65,7 +65,7 @@ public class TokenizerTest
 		const string source = "-123";
 
 		var tokenizer = new Tokenizer(source);
-		var tokens = tokenizer.Tokenize().ToArray();
+		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToArray();
 
 		Assert.Equal(3, tokens.Length);
 		Assert.Equal(TokenType.MinusSymbol, tokens[0].Type);
@@ -87,7 +87,7 @@ public class TokenizerTest
 		const string source = "-1.23";
 
 		var tokenizer = new Tokenizer(source);
-		var tokens = tokenizer.Tokenize().ToArray();
+		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToArray();
 
 		Assert.Equal(3, tokens.Length);
 		Assert.Equal(TokenType.MinusSymbol, tokens[0].Type);
@@ -109,7 +109,7 @@ public class TokenizerTest
 		const string source = "\"abc def\"";
 
 		var tokenizer = new Tokenizer(source);
-		var tokens = tokenizer.Tokenize().ToArray();
+		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToArray();
 
 		Assert.Equal(2, tokens.Length);
 		Assert.Equal(TokenType.LiteralString, tokens[0].Type);
@@ -127,7 +127,7 @@ public class TokenizerTest
 	public void TestTokenizeLiteralStringWithEscapedQuotes(string source, string expected)
 	{
 		var tokenizer = new Tokenizer(source);
-		var tokens = tokenizer.Tokenize().ToArray();
+		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToArray();
 
 		Assert.Equal(2, tokens.Length);
 		Assert.Equal(TokenType.LiteralString, tokens[0].Type);
@@ -147,7 +147,7 @@ public class TokenizerTest
 	public void TestTokenizeKnownType(string source)
 	{
 		var tokenizer = new Tokenizer(source);
-		var tokens = tokenizer.Tokenize().ToList();
+		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToList();
 
 		Assert.Equal(2, tokens.Count);
 		Assert.Equal(TokenType.TypeName, tokens[0].Type);
@@ -168,7 +168,7 @@ public class TokenizerTest
 	public void TestTokenizeKeyword(string source, TokenType type)
 	{
 		var tokenizer = new Tokenizer(source);
-		var tokens = tokenizer.Tokenize().ToArray();
+		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToArray();
 
 		Assert.Equal(2, tokens.Length);
 		Assert.Equal(type, tokens[0].Type);
@@ -186,7 +186,7 @@ public class TokenizerTest
 		const string source = "number identifier = 1";
 
 		var tokenizer = new Tokenizer(source);
-		var tokens = tokenizer.Tokenize().ToList();
+		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToList();
 
 		Assert.Equal(8, tokens.Count);
 
@@ -245,7 +245,7 @@ public class TokenizerTest
 		const string source = "if (true)";
 
 		var tokenizer = new Tokenizer(source);
-		var tokens = tokenizer.Tokenize().ToList();
+		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToList();
 
 		Assert.Equal(6, tokens.Count);
 		Assert.Equal(TokenType.IfKeyword, tokens[0].Type);
@@ -279,7 +279,7 @@ public class TokenizerTest
 		const string source = "print(\"hello\")";
 
 		var tokenizer = new Tokenizer(source);
-		var tokens = tokenizer.Tokenize().ToList();
+		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToList();
 
 		Assert.Equal(5, tokens.Count);
 		Assert.Equal(TokenType.Identifier, tokens[0].Type);
@@ -299,7 +299,7 @@ public class TokenizerTest
 		const string source = "f(variable) // this is a comment\nprintln(\"text\") // more comments";
 
 		var tokenizer = new Tokenizer(source);
-		var tokens = tokenizer.Tokenize().ToList();
+		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToList();
 
 		Assert.Equal(14, tokens.Count);
 		Assert.Equal(TokenType.Identifier, tokens[0].Type);
@@ -337,7 +337,7 @@ public class TokenizerTest
 		const string source = "identifier\"\"";
 
 		var tokenizer = new Tokenizer(source);
-		var tokens = tokenizer.Tokenize().ToList();
+		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToList();
 
 		Assert.Equal(3, tokens.Count);
 		Assert.Equal(TokenType.Identifier, tokens[0].Type);
@@ -353,7 +353,7 @@ public class TokenizerTest
 		const string source = "number a.b = 1";
 
 		var tokenizer = new Tokenizer(source);
-		var exception = Assert.Throws<InvalidIdentifierException>(() => tokenizer.Tokenize().ToList());
+		var exception = Assert.Throws<InvalidIdentifierException>(() => tokenizer.Tokenize(TestContext.Current.CancellationToken).ToList());
 
 		Assert.Equal("TOK001", exception.ErrorCode);
 	}
@@ -364,7 +364,7 @@ public class TokenizerTest
 		const string source = "\"string";
 
 		var tokenizer = new Tokenizer(source);
-		var exception = Assert.Throws<UnterminatedStringException>(() => tokenizer.Tokenize().ToList());
+		var exception = Assert.Throws<UnterminatedStringException>(() => tokenizer.Tokenize(TestContext.Current.CancellationToken).ToList());
 
 		Assert.Equal("TOK002", exception.ErrorCode);
 		Assert.Equal('\"', exception.StringDelimiter);
@@ -377,7 +377,7 @@ public class TokenizerTest
 		const string source = "println(ifempty(\"abc\", \"b\"))";
 
 		var tokenizer = new Tokenizer(source);
-		var tokens = tokenizer.Tokenize().ToList();
+		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToList();
 
 		Assert.Equal(11, tokens.Count);
 		Assert.Equal(TokenType.Identifier, tokens[0].Type);
