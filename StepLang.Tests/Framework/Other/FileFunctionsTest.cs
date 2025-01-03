@@ -8,13 +8,13 @@ namespace StepLang.Tests.Framework.Other;
 
 public class FileFunctionsTest
 {
-	[SkippableTheory]
+	[Theory]
 	[InlineData("Windows", @"C:\temp\test.txt")]
 	[InlineData("Linux", "/tmp/test.txt")]
 	[InlineData("macOS", "/tmp/test.txt")]
 	public void TestFileFunctions(string platform, string filename)
 	{
-		Skip.IfNot(OperatingSystem.IsOSPlatform(platform), $"Test only for {platform}");
+		Assert.SkipUnless(OperatingSystem.IsOSPlatform(platform), $"Test only for {platform}");
 
 		const string content = "Hello World";
 

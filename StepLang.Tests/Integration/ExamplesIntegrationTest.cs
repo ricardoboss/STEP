@@ -11,13 +11,15 @@ public class ExamplesIntegrationTest
 {
 	[Theory]
 	[ClassData(typeof(ExampleFiles))]
-	public async Task TestExamplesSucceed(FileInfo exampleFile)
+	public async Task TestExamplesSucceed(string exampleFilePath)
 	{
 		// arrange
+		var exampleFile = new FileInfo(exampleFilePath);
 		var stdInText = "";
 		if (File.Exists(exampleFile.FullName + ".in"))
 		{
-			stdInText = await File.ReadAllTextAsync(exampleFile.FullName + ".in");
+			stdInText = await File.ReadAllTextAsync(exampleFile.FullName + ".in",
+				TestContext.Current.CancellationToken);
 		}
 
 		await using var stdOut = new StringWriter();
@@ -30,24 +32,27 @@ public class ExamplesIntegrationTest
 
 		if (File.Exists(exampleFile.FullName + ".exit"))
 		{
-			expectedExitCode = int.Parse(await File.ReadAllTextAsync(exampleFile.FullName + ".exit"),
-				CultureInfo.InvariantCulture);
+			var exitCodeStr =
+				await File.ReadAllTextAsync(exampleFile.FullName + ".exit", TestContext.Current.CancellationToken);
+
+			expectedExitCode = int.Parse(exitCodeStr, CultureInfo.InvariantCulture);
 		}
 
 		if (File.Exists(exampleFile.FullName + ".out"))
 		{
-			expectedOutput = await File.ReadAllTextAsync(exampleFile.FullName + ".out");
+			expectedOutput =
+				await File.ReadAllTextAsync(exampleFile.FullName + ".out", TestContext.Current.CancellationToken);
 		}
 
 		if (File.Exists(exampleFile.FullName + ".err"))
 		{
-			expectedError = await File.ReadAllTextAsync(exampleFile.FullName + ".err");
+			expectedError =
+				await File.ReadAllTextAsync(exampleFile.FullName + ".err", TestContext.Current.CancellationToken);
 		}
-
 
 		// act
 		var tokenizer = new Tokenizer(exampleFile);
-		var tokens = tokenizer.Tokenize();
+		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken);
 		var parser = new Parser(tokens);
 		var root = parser.ParseRoot();
 		var interpreter = new Interpreter(stdOut, stdErr, stdIn);
@@ -60,13 +65,13 @@ public class ExamplesIntegrationTest
 	}
 
 	[SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Used by xUnit")]
-	private sealed class ExampleFiles : IEnumerable<object[]>
+	private sealed class ExampleFiles : IEnumerable<TheoryDataRow<string>>
 	{
-		public IEnumerator<object[]> GetEnumerator()
+		public IEnumerator<TheoryDataRow<string>> GetEnumerator()
 		{
 			return Directory
 				.EnumerateFiles("Examples", "*.step", SearchOption.AllDirectories)
-				.Select(path => new object[] { new FileInfo(path) })
+				.Select(path => new TheoryDataRow<string>(path))
 				.GetEnumerator();
 		}
 

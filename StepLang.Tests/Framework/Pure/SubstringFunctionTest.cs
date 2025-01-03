@@ -29,7 +29,7 @@ public class SubstringFunctionTest
 	public void TestSubstring(string code, string result)
 	{
 		var tokenizer = new Tokenizer($"print({code})");
-		var tokens = tokenizer.Tokenize();
+		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken);
 
 		var parser = new Parser(tokens);
 		var root = parser.ParseRoot();
