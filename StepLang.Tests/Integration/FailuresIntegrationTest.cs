@@ -10,24 +10,25 @@ namespace StepLang.Tests.Integration;
 
 public class FailuresIntegrationTest
 {
-	[SkippableTheory]
+	[Theory]
 	[ClassData(typeof(FailureFiles))]
-	public async Task TestFailuresFail(FileInfo exampleFile)
+	public async Task TestFailuresFail(string exampleFilePath)
 	{
 		// arrange
+		var exampleFile = new FileInfo(exampleFilePath);
 		var stdInText = "";
 		if (File.Exists(exampleFile.FullName + ".in"))
 		{
-			stdInText = await File.ReadAllTextAsync(exampleFile.FullName + ".in");
+			stdInText = await File.ReadAllTextAsync(exampleFile.FullName + ".in", TestContext.Current.CancellationToken);
 		}
 
 		var detailsFile = exampleFile.FullName + ".exception.json";
-		Skip.IfNot(File.Exists(detailsFile), $"No exception details file found for {exampleFile.FullName}");
+		Assert.SkipUnless(File.Exists(detailsFile), $"No exception details file found for {exampleFile.FullName}");
 
-		var detailsContent = await File.ReadAllTextAsync(detailsFile);
+		var detailsContent = await File.ReadAllTextAsync(detailsFile, TestContext.Current.CancellationToken);
 		var details = JsonSerializer.Deserialize(detailsContent, ExceptionDetailsJsonContext.Default.ExceptionDetails);
 
-		Skip.If(details is null, $"Failed to deserialize exception details for {exampleFile.FullName}");
+		Assert.SkipWhen(details is null, $"Failed to deserialize exception details for {exampleFile.FullName}");
 
 		await using var stdOut = new StringWriter();
 		await using var stdErr = new StringWriter();
@@ -40,7 +41,7 @@ public class FailuresIntegrationTest
 		// assert
 		var exception = Assert.ThrowsAny<StepLangException>(() =>
 		{
-			var tokens = tokenizer.Tokenize();
+			var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken);
 			var parser = new Parser(tokens);
 			var root = parser.ParseRoot();
 			root.Accept(interpreter);
@@ -59,13 +60,13 @@ public class FailuresIntegrationTest
 	}
 
 	[SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Used by xUnit")]
-	private sealed class FailureFiles : IEnumerable<object[]>
+	private sealed class FailureFiles : IEnumerable<TheoryDataRow<string>>
 	{
-		public IEnumerator<object[]> GetEnumerator()
+		public IEnumerator<TheoryDataRow<string>> GetEnumerator()
 		{
 			return Directory
 				.EnumerateFiles("Failures", "*.step")
-				.Select(path => new object[] { new FileInfo(path) })
+				.Select(file => new TheoryDataRow<string>(file))
 				.GetEnumerator();
 		}
 
