@@ -42,6 +42,6 @@ public class EnvFunction : NativeFunction
 
 		Environment.SetEnvironmentVariable(key, stringValue);
 
-		return new StringResult(stringValue);
+		return VoidResult.Instance;
 	}
 }
