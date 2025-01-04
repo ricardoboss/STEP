@@ -1,4 +1,3 @@
-using cmdwtf;
 using StepLang.Tooling.Meta;
 
 namespace StepLang.CLI;
@@ -9,7 +8,7 @@ internal sealed class CliMetadataProvider : IMetadataProvider
 
 	private CliMetadataProvider() { }
 
-	public DateTimeOffset BuildTime => BuildTimestamp.BuildTimeDto;
+	public DateTimeOffset BuildTime => BuildMetadata.BuildTimestamp;
 
 	public string FullSemVer => GitVersionInformation.FullSemVer;
 
