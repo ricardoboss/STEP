@@ -4,7 +4,10 @@
 		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageVersion Include="cmdwtf.BuildTimestampGenerator" Version="1.0.1"/>
+		<PackageVersion Include="Baugen" Version="1.0.2">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageVersion>
 		<PackageVersion Include="GitVersion.MsBuild" Version="[5.12.0,)">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
