@@ -35,9 +35,12 @@ internal static class Program
 		app.Configure(config =>
 		{
 			// ensure we are using the full width of the console
-			var console = AnsiConsole.Console;
-			console.Profile.Width = Console.LargestWindowWidth > 0 ? Console.LargestWindowWidth : Console.BufferWidth;
-			config.ConfigureConsole(console);
+			if (Console.LargestWindowWidth > 0)
+			{
+				var console = AnsiConsole.Console;
+				console.Profile.Width = Console.LargestWindowWidth;
+				config.ConfigureConsole(console);
+			}
 
 			config
 				.SetApplicationName("step")
