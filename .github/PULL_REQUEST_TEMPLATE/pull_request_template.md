@@ -1,6 +1,6 @@
 <!--
   Hi there!
-  Thanks for opening a PR. Please make sure you will out all the required fields below and that the checklist is completed.
+  Thanks for opening a PR. Please make sure you fill out all the required fields below and that the checklist is completed.
 -->
 
 General
@@ -12,6 +12,6 @@ General
 Checklist
 ---------
 
-- [ ] I added new/updated existing tests
+- [ ] I added new/updated existing/made sure this doesn't break existing tests
 - [ ] I updated the CHANGELOG.md/This change doesn't need a changelog
 - [ ] I checked/updated any related documentation
