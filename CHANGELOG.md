@@ -5,6 +5,7 @@
 * (internal) Replace custom coverage summary reporting with coveralls by @ricardoboss in https://github.com/ricardoboss/STEP/pull/133
 * Improved error reporting for when identifier usage ends early by @ricardoboss in https://github.com/ricardoboss/STEP/pull/137
 * (internal) Replaced `cmdwtf.BuildTimestampGenerator` with `Baugen` by @ricardoboss in https://github.com/ricardoboss/STEP/pull/139
+* (internal) Upgraded to xunit v3 core by @ricardoboss in https://github.com/ricardoboss/STEP/pull/140
 
 # v2.1.0
 
