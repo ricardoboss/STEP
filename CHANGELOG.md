@@ -4,6 +4,7 @@
 * Track and report core and CLI build metadata separately by @ricardoboss in https://github.com/ricardoboss/STEP/pull/131
 * (internal) Replace custom coverage summary reporting with coveralls by @ricardoboss in https://github.com/ricardoboss/STEP/pull/133
 * Improved error reporting for when identifier usage ends early by @ricardoboss in https://github.com/ricardoboss/STEP/pull/137
+* (internal) Replaced `cmdwtf.BuildTimestampGenerator` with `Baugen` by @ricardoboss in https://github.com/ricardoboss/STEP/pull/139
 
 # v2.1.0
 
