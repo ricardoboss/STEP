@@ -36,7 +36,7 @@ internal static class Program
 		{
 			// ensure we are using the full width of the console
 			var console = AnsiConsole.Console;
-			console.Profile.Width = Console.LargestWindowWidth;
+			console.Profile.Width = Console.LargestWindowWidth > 0 ? Console.LargestWindowWidth : Console.BufferWidth;
 			config.ConfigureConsole(console);
 
 			config
