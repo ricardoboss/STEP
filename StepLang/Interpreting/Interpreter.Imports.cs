@@ -1,5 +1,6 @@
 using StepLang.Parsing;
 using StepLang.Parsing.Nodes;
+using StepLang.Parsing.Nodes.Import;
 using StepLang.Tokenizing;
 
 namespace StepLang.Interpreting;
@@ -48,5 +49,10 @@ public partial class Interpreter : IImportNodeVisitor
 		var root = parser.ParseRoot();
 
 		Visit(root);
+	}
+
+	public void Visit(ErrorImportNode importNode)
+	{
+		throw new NotSupportedException("Cannot interpret imports with errors");
 	}
 }

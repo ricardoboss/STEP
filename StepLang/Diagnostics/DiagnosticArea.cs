@@ -5,4 +5,5 @@ public enum DiagnosticArea
 	Tokenizing,
 	Parsing,
 	Interpreting,
+	Other,
 }

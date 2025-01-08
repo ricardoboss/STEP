@@ -6,6 +6,7 @@ using StepLang.Interpreting;
 using StepLang.Parsing;
 using StepLang.Parsing.Nodes;
 using StepLang.Parsing.Nodes.Expressions;
+using StepLang.Parsing.Nodes.Import;
 using StepLang.Parsing.Nodes.Statements;
 using StepLang.Parsing.Nodes.VariableDeclarations;
 using StepLang.Tokenizing;
@@ -99,6 +100,11 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 		public void Visit(ImportNode importNode)
 		{
 			_ = parent.AddNode("Import: " + importNode.PathToken.StringValue);
+		}
+
+		public void Visit(ErrorImportNode importNode)
+		{
+			_ = parent.AddNode("ErrorImport: " + importNode.Description);
 		}
 	}
 
@@ -397,6 +403,14 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 			var expressionNode = node.AddNode("Expression:");
 			var expressionTreeBuilder = new ExpressionTreeBuilder(expressionNode);
 			_ = variableDeclarationNode.Expression.EvaluateUsing(expressionTreeBuilder);
+
+			return DummyVariable;
+		}
+
+		public Variable Evaluate(ErrorVariableDeclarationNode variableDeclarationNode)
+		{
+			var node = root.AddNode("ErrorVariableDeclaration:");
+			node.AddNode("Description: " + variableDeclarationNode.Description.EscapeMarkup());
 
 			return DummyVariable;
 		}
