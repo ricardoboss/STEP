@@ -8,6 +8,8 @@ public abstract class Result<T>
 
 	public abstract bool IsOk { get; }
 
+	public bool IsErr => !IsOk;
+
 	public abstract T Value { get; }
 
 	public abstract Exception? Exception { get; }

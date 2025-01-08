@@ -41,5 +41,7 @@ public class Diagnostic
 
 	public int Column => Location?.Column ?? 0;
 
+	public int Length => Location?.Length ?? 0;
+
 	public IEnumerable<Token>? RelatedTokens { get; init; }
 }
