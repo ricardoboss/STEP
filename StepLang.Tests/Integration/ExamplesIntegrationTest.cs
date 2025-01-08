@@ -57,14 +57,14 @@ public class ExamplesIntegrationTest
 		var tokenizer = new Tokenizer(exampleFile, diagnostics);
 		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken);
 
-		var parser = new Parser(tokens,diagnostics);
+		var parser = new Parser(tokens, diagnostics);
 		var root = parser.ParseRoot();
 
 		var interpreter = new Interpreter(stdOut, stdErr, stdIn);
 		root.Accept(interpreter);
 
 		// assert
-		Assert.Multiple([SuppressMessage("ReSharper", "AccessToDisposedClosure")]() =>
+		Assert.Multiple([SuppressMessage("ReSharper", "AccessToDisposedClosure")] () =>
 		{
 			Assert.Equal(expectedExitCode, interpreter.ExitCode);
 			Assert.Equal(expectedOutput, stdOut.ToString(), ignoreLineEndingDifferences: true);

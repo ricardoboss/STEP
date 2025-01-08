@@ -1,4 +1,3 @@
-using StepLang.Parsing.Nodes;
 using StepLang.Parsing.Nodes.Import;
 
 namespace StepLang.Parsing;

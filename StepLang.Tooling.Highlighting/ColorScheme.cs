@@ -15,7 +15,8 @@ public record ColorScheme(
 	Style Operator,
 	Style Punctuation,
 	Style Error
-) {
+)
+{
 	public static IEnumerable<string> Names => ["Pale", "Dim", "Mono"];
 
 	public static ColorScheme ByName(string name)
