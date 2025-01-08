@@ -885,7 +885,6 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private Result<BinaryExpressionOperator> ParseExpressionOperator(List<Token> operatorTokens)
 	{
-		// TODO: return Err<BinaryExpressionOperator> instead of throwing exceptions
 		switch (operatorTokens.Count)
 		{
 			case 3:
@@ -899,21 +898,25 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 							TokenType.GreaterThanSymbol => third.Type switch
 							{
 								TokenType.GreaterThanSymbol => BinaryExpressionOperator.BitwiseRotateRight.ToResult(),
-								_ => throw new UnexpectedTokenException(third, TokenType.GreaterThanSymbol),
+								_ => new UnexpectedTokenException(third, TokenType.GreaterThanSymbol)
+									.ToErr<BinaryExpressionOperator>(),
 							},
-							_ => throw new UnexpectedTokenException(second, TokenType.GreaterThanSymbol),
+							_ => new UnexpectedTokenException(second, TokenType.GreaterThanSymbol)
+								.ToErr<BinaryExpressionOperator>(),
 						},
 						TokenType.LessThanSymbol => second.Type switch
 						{
 							TokenType.LessThanSymbol => third.Type switch
 							{
 								TokenType.LessThanSymbol => BinaryExpressionOperator.BitwiseRotateLeft.ToResult(),
-								_ => throw new UnexpectedTokenException(third, TokenType.LessThanSymbol),
+								_ => new UnexpectedTokenException(third, TokenType.LessThanSymbol)
+									.ToErr<BinaryExpressionOperator>(),
 							},
-							_ => throw new UnexpectedTokenException(second, TokenType.LessThanSymbol),
+							_ => new UnexpectedTokenException(second, TokenType.LessThanSymbol)
+								.ToErr<BinaryExpressionOperator>(),
 						},
-						_ => throw new UnexpectedTokenException(first, TokenType.GreaterThanSymbol,
-							TokenType.LessThanSymbol),
+						_ => new UnexpectedTokenException(first, TokenType.GreaterThanSymbol,
+							TokenType.LessThanSymbol).ToErr<BinaryExpressionOperator>(),
 					};
 				}
 			case 2:
@@ -925,50 +928,57 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 						TokenType.AsteriskSymbol => second.Type switch
 						{
 							TokenType.AsteriskSymbol => BinaryExpressionOperator.Power.ToResult(),
-							_ => throw new UnexpectedTokenException(second, TokenType.AsteriskSymbol),
+							_ => new UnexpectedTokenException(second, TokenType.AsteriskSymbol)
+								.ToErr<BinaryExpressionOperator>(),
 						},
 						TokenType.EqualsSymbol => second.Type switch
 						{
 							TokenType.EqualsSymbol => BinaryExpressionOperator.Equal.ToResult(),
-							_ => throw new UnexpectedTokenException(second, TokenType.EqualsSymbol),
+							_ => new UnexpectedTokenException(second, TokenType.EqualsSymbol)
+								.ToErr<BinaryExpressionOperator>(),
 						},
 						TokenType.ExclamationMarkSymbol => second.Type switch
 						{
 							TokenType.EqualsSymbol => BinaryExpressionOperator.NotEqual.ToResult(),
-							_ => throw new UnexpectedTokenException(second, TokenType.EqualsSymbol),
+							_ => new UnexpectedTokenException(second, TokenType.EqualsSymbol)
+								.ToErr<BinaryExpressionOperator>(),
 						},
 						TokenType.AmpersandSymbol => second.Type switch
 						{
 							TokenType.AmpersandSymbol => BinaryExpressionOperator.LogicalAnd.ToResult(),
-							_ => throw new UnexpectedTokenException(second, TokenType.AmpersandSymbol),
+							_ => new UnexpectedTokenException(second, TokenType.AmpersandSymbol)
+								.ToErr<BinaryExpressionOperator>(),
 						},
 						TokenType.PipeSymbol => second.Type switch
 						{
 							TokenType.PipeSymbol => BinaryExpressionOperator.LogicalOr.ToResult(),
-							_ => throw new UnexpectedTokenException(second, TokenType.PipeSymbol),
+							_ => new UnexpectedTokenException(second, TokenType.PipeSymbol)
+								.ToErr<BinaryExpressionOperator>(),
 						},
 						TokenType.LessThanSymbol => second.Type switch
 						{
 							TokenType.EqualsSymbol => BinaryExpressionOperator.LessThanOrEqual.ToResult(),
 							TokenType.LessThanSymbol => BinaryExpressionOperator.BitwiseShiftLeft.ToResult(),
-							_ => throw new UnexpectedTokenException(second, TokenType.EqualsSymbol,
-								TokenType.LessThanSymbol),
+							_ => new UnexpectedTokenException(second, TokenType.EqualsSymbol,
+								TokenType.LessThanSymbol).ToErr<BinaryExpressionOperator>(),
 						},
 						TokenType.GreaterThanSymbol => second.Type switch
 						{
 							TokenType.EqualsSymbol => BinaryExpressionOperator.GreaterThanOrEqual.ToResult(),
 							TokenType.GreaterThanSymbol => BinaryExpressionOperator.BitwiseShiftRight.ToResult(),
-							_ => throw new UnexpectedTokenException(second, TokenType.EqualsSymbol,
-								TokenType.GreaterThanSymbol),
+							_ => new UnexpectedTokenException(second, TokenType.EqualsSymbol,
+								TokenType.GreaterThanSymbol).ToErr<BinaryExpressionOperator>(),
 						},
 						TokenType.QuestionMarkSymbol => second.Type switch
 						{
 							TokenType.QuestionMarkSymbol => BinaryExpressionOperator.Coalesce.ToResult(),
-							_ => throw new UnexpectedTokenException(second, TokenType.QuestionMarkSymbol),
+							_ => new UnexpectedTokenException(second, TokenType.QuestionMarkSymbol)
+								.ToErr<BinaryExpressionOperator>(),
 						},
-						_ => throw new UnexpectedTokenException(first, TokenType.AsteriskSymbol, TokenType.EqualsSymbol,
-							TokenType.ExclamationMarkSymbol, TokenType.AmpersandSymbol, TokenType.PipeSymbol,
-							TokenType.LessThanSymbol, TokenType.GreaterThanSymbol, TokenType.QuestionMarkSymbol),
+						_ => new UnexpectedTokenException(first, TokenType.AsteriskSymbol, TokenType.EqualsSymbol,
+								TokenType.ExclamationMarkSymbol, TokenType.AmpersandSymbol, TokenType.PipeSymbol,
+								TokenType.LessThanSymbol, TokenType.GreaterThanSymbol, TokenType.QuestionMarkSymbol)
+							.ToErr<BinaryExpressionOperator>(),
 					};
 				}
 			case 1:
@@ -987,16 +997,18 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 						TokenType.PipeSymbol => BinaryExpressionOperator.BitwiseOr.ToResult(),
 						TokenType.AmpersandSymbol => BinaryExpressionOperator.BitwiseAnd.ToResult(),
 						TokenType.HatSymbol => BinaryExpressionOperator.BitwiseXor.ToResult(),
-						_ => throw new UnexpectedTokenException(first, TokenType.PlusSymbol, TokenType.MinusSymbol,
+						_ => new UnexpectedTokenException(first, TokenType.PlusSymbol, TokenType.MinusSymbol,
 							TokenType.AsteriskSymbol, TokenType.SlashSymbol, TokenType.PercentSymbol,
 							TokenType.GreaterThanSymbol, TokenType.LessThanSymbol, TokenType.PipeSymbol,
-							TokenType.AmpersandSymbol, TokenType.HatSymbol),
+							TokenType.AmpersandSymbol, TokenType.HatSymbol).ToErr<BinaryExpressionOperator>(),
 					};
 				}
 			case 0:
-				throw new UnexpectedEndOfTokensException(tokens.LastToken, "Expected an operator");
+				return new UnexpectedEndOfTokensException(tokens.LastToken, "Expected an operator")
+					.ToErr<BinaryExpressionOperator>();
 			default:
-				throw new UnexpectedTokenException("Operators can only be chained up to 3 times", operatorTokens[0]);
+				return new UnexpectedTokenException("Operators can only be chained up to 3 times", operatorTokens[0])
+					.ToErr<BinaryExpressionOperator>();
 		}
 	}
 
