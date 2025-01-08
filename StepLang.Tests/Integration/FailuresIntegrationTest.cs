@@ -1,4 +1,3 @@
-using Newtonsoft.Json.Converters;
 using StepLang.Diagnostics;
 using StepLang.Interpreting;
 using StepLang.Parsing;
@@ -143,6 +142,6 @@ internal sealed class ExceptionDetails
 	public DiagnosticArea? Area { get; init; }
 }
 
-[JsonSourceGenerationOptions(WriteIndented = true, Converters = [typeof(JsonStringEnumConverter<DiagnosticArea>),typeof(JsonStringEnumConverter<DiagnosticKind>),typeof(JsonStringEnumConverter<Severity>)])]
+[JsonSourceGenerationOptions(WriteIndented = true, Converters = [typeof(JsonStringEnumConverter<DiagnosticArea>), typeof(JsonStringEnumConverter<DiagnosticKind>), typeof(JsonStringEnumConverter<Severity>)])]
 [JsonSerializable(typeof(List<ExceptionDetails>))]
 internal sealed partial class ExceptionDetailsJsonContext : JsonSerializerContext;
