@@ -1,11 +1,12 @@
+using Spectre.Console;
 using Spectre.Console.Cli;
 using StepLang.Diagnostics;
 using StepLang.Interpreting;
 using StepLang.Parsing;
 using StepLang.Tokenizing;
 using StepLang.Tooling.CLI;
+using StepLang.Tooling.CLI.Widgets;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.CLI.Commands;
@@ -34,7 +35,17 @@ internal sealed class RunCommand : AsyncCommand<RunCommand.Settings>
 		var parser = new Parser(tokens, diagnostics);
 		var root = parser.ParseRoot();
 
-		// TODO: report diagnostics
+		if (diagnostics.ContainsErrors)
+		{
+			AnsiConsole.MarkupLine("[bold red]The file contains errors:[/]");
+
+			foreach (var diagnostic in diagnostics)
+			{
+				AnsiConsole.Write(new DiagnosticLine(diagnostic));
+			}
+
+			return -1;
+		}
 
 		var interpreter = new Interpreter(Console.Out, Console.Error, Console.In);
 		root.Accept(interpreter);

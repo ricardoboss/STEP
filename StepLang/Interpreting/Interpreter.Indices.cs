@@ -21,16 +21,14 @@ public partial class Interpreter
 				case ListResult { Value: var list } when indexResult is NumberResult index:
 					variable = new DelegateVariable
 					{
-						Evaluator = () => list[index],
-						Assigner = (_, value) => list[index] = value,
+						Evaluator = () => list[index], Assigner = (_, value) => list[index] = value,
 					};
 
 					break;
 				case MapResult { Value: var map } when indexResult is StringResult { Value: var key }:
 					variable = new DelegateVariable
 					{
-						Evaluator = () => map[key],
-						Assigner = (_, value) => map[key] = value,
+						Evaluator = () => map[key], Assigner = (_, value) => map[key] = value,
 					};
 
 					break;
@@ -42,8 +40,7 @@ public partial class Interpreter
 						_ => indexResult.ToString(),
 					};
 
-					throw new InvalidIndexOperatorException(statementNode.Location, indexRepresentation,
-						variable.Value.ResultType, "assign");
+					throw new InvalidIndexOperatorException(indexRepresentation, variable.Value.ResultType, "assign");
 			}
 		}
 
@@ -89,8 +86,7 @@ public partial class Interpreter
 						_ => indexResult.ToString(),
 					};
 
-					throw new InvalidIndexOperatorException(expressionNode.Location, indexRepresentation,
-						valueResult.ResultType, "access");
+					throw new InvalidIndexOperatorException(indexRepresentation, valueResult.ResultType, "access");
 				}
 		}
 	}
