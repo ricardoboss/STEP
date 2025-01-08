@@ -28,7 +28,8 @@ public class FailuresIntegrationTest
 		Assert.SkipUnless(File.Exists(detailsFile), $"No exception details file found for {exampleFile.FullName}");
 
 		var detailsContent = await File.ReadAllTextAsync(detailsFile, TestContext.Current.CancellationToken);
-		var details = JsonSerializer.Deserialize(detailsContent, ExceptionDetailsJsonContext.Default.ListExceptionDetails);
+		var details =
+			JsonSerializer.Deserialize(detailsContent, ExceptionDetailsJsonContext.Default.ListExceptionDetails);
 
 		Assert.SkipWhen(details is null, $"Failed to deserialize exception details for {exampleFile.FullName}");
 
@@ -65,7 +66,8 @@ public class FailuresIntegrationTest
 		AssertException(e, exampleFile, details);
 	}
 
-	private static void AssertErrors(DiagnosticCollection diagnostics, FileInfo sourceFile, List<ExceptionDetails> details)
+	private static void AssertErrors(DiagnosticCollection diagnostics, FileInfo sourceFile,
+		List<ExceptionDetails> details)
 	{
 		Assert.Equal(details.Count, diagnostics.Count);
 
@@ -130,17 +132,17 @@ internal sealed class ExceptionDetails
 	public string? ErrorCode { get; init; }
 	public string? Message { get; init; }
 	public string? HelpText { get; init; }
+	[JsonConverter(typeof(JsonStringEnumConverter<Severity>))]
 	public Severity? Severity { get; init; }
 	public int Line { get; init; }
 	public int Column { get; init; }
 	public int? Length { get; init; }
+	[JsonConverter(typeof(JsonStringEnumConverter<DiagnosticKind>))]
 	public DiagnosticKind? Kind { get; init; }
+	[JsonConverter(typeof(JsonStringEnumConverter<DiagnosticArea>))]
 	public DiagnosticArea? Area { get; init; }
 }
 
-[JsonSourceGenerationOptions(WriteIndented = true, Converters = [typeof(StringEnumConverter)])]
-[JsonSerializable(typeof(ExceptionDetails))]
+[JsonSourceGenerationOptions(WriteIndented = true, Converters = [typeof(JsonStringEnumConverter<DiagnosticArea>),typeof(JsonStringEnumConverter<DiagnosticKind>),typeof(JsonStringEnumConverter<Severity>)])]
 [JsonSerializable(typeof(List<ExceptionDetails>))]
-[JsonSerializable(typeof(Severity))]
-[JsonSerializable(typeof(DiagnosticKind))]
 internal sealed partial class ExceptionDetailsJsonContext : JsonSerializerContext;
