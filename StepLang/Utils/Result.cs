@@ -2,11 +2,11 @@ namespace StepLang.Utils;
 
 public abstract class Result<T>
 {
-#pragma warning disable CA1000 # Do not declare static members on generic types
+#pragma warning disable CA1000 // Do not declare static members on generic types
 	public static Result<T> Ok(T value) => new Ok<T>(value);
 
 	public static Result<T> Err(Exception e) => new Err<T>(e);
-#pragma warning restore CA1000 # Do not declare static members on generic types
+#pragma warning restore CA1000 // Do not declare static members on generic types
 
 	public abstract bool IsOk { get; }
 
