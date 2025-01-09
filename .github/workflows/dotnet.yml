@@ -67,10 +67,10 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         uses: danielpalme/ReportGenerator-GitHub-Action@5
         with:
-          reports: 'coverage/**/coverage.cobertura.xml'
-          targetdir: 'coverage/merged'
-          reporttypes: 'Cobertura'
-          sourcedirs: '.'
+          reports: coverage/**/coverage.cobertura.xml
+          targetdir: coverage/merged
+          reporttypes: Cobertura
+          classfilters: -StepLang.Framework.Conversion.JsonConversionContext
 
       - name: Upload coverage reports
         if: success() && !cancelled() && matrix.os == 'ubuntu-latest'
