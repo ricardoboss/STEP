@@ -153,6 +153,7 @@
         "dependencies": {
           "SmartAnalyzers.CSharpExtensions.Annotations": "[4.2.11, )",
           "Spectre.Console.Cli": "[0.49.1, )",
+          "StepLang": "[1.0.0, )",
           "StepLang.Tooling.Meta": "[1.0.0, )"
         }
       },
