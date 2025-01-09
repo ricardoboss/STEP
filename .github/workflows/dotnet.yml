@@ -61,21 +61,20 @@ jobs:
 
       - name: Test with coverage
         if: matrix.os == 'ubuntu-latest'
-        run: dotnet test --configuration Test --no-build --verbosity normal --collect:"XPlat Code Coverage" --settings coverlet.runsettings --results-directory ./coverage
+        run: dotnet test --configuration Test --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
 
-      - name: Rewrite coverage file paths
-        if: success() && !cancelled() && matrix.os == 'ubuntu-latest'
-        run: |
-          # Each file in ./coverage/**/coverage.cobertura.xml contains paths that start with /_/
-          # Replace those with nothing to make the paths relative to the repository root
-
-          for file in ./coverage/**/coverage.cobertura.xml; do
-            sed -i "s|/_/|/|g" "$file"
-          done
+      - name: Merge coverage reports
+        if: matrix.os == 'ubuntu-latest'
+        uses: danielpalme/ReportGenerator-GitHub-Action@5
+        with:
+          reports: 'coverage/**/coverage.cobertura.xml'
+          targetdir: 'coverage/merged'
+          reporttypes: 'Cobertura'
+          sourcedirs: '.'
 
       - name: Upload coverage reports
         if: success() && !cancelled() && matrix.os == 'ubuntu-latest'
         uses: coverallsapp/github-action@v2
         with:
           format: cobertura
-          files: coverage/**/coverage.cobertura.xml
+          files: coverage/merged/Cobertura.xml
