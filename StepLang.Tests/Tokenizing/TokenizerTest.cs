@@ -1,8 +1,11 @@
 using StepLang.Diagnostics;
 using StepLang.Tokenizing;
+using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.Tests.Tokenizing;
 
+[SuppressMessage("ReSharper", "UnusedType.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class TokenizerTest
 {
 	[Fact]
@@ -469,5 +472,108 @@ public class TokenizerTest
 		Assert.Equal(TokenType.ClosingParentheses, tokens[8].Type);
 		Assert.Equal(TokenType.ClosingParentheses, tokens[9].Type);
 		Assert.Equal(TokenType.EndOfFile, tokens[10].Type);
+	}
+
+	[Fact]
+	public void TestTokenizeLineCommentAfterTokens()
+	{
+		const string source = "a = b// more comments";
+
+		var diagnostics = new DiagnosticCollection();
+		var tokenizer = new Tokenizer(source, diagnostics);
+		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToList();
+
+		Assert.Equal(7, tokens.Count);
+		Assert.Equal(TokenType.Identifier, tokens[0].Type);
+		Assert.Equal("a", tokens[0].Value);
+		Assert.Equal(TokenType.Whitespace, tokens[1].Type);
+		Assert.Equal(" ", tokens[1].Value);
+		Assert.Equal(TokenType.EqualsSymbol, tokens[2].Type);
+		Assert.Equal("=", tokens[2].Value);
+		Assert.Equal(TokenType.Whitespace, tokens[3].Type);
+		Assert.Equal(" ", tokens[3].Value);
+		Assert.Equal(TokenType.Identifier, tokens[4].Type);
+		Assert.Equal("b", tokens[4].Value);
+		Assert.Equal(TokenType.LineComment, tokens[5].Type);
+		Assert.Equal("// more comments", tokens[5].Value);
+		Assert.Equal(TokenType.EndOfFile, tokens[6].Type);
+		Assert.Empty(diagnostics);
+	}
+
+	[Fact]
+	public void TestParsesStringsWithUnescapedControlCharacters()
+	{
+		const string source = "\"abc\r";
+
+		var diagnostics = new DiagnosticCollection();
+		var tokenizer = new Tokenizer(source, diagnostics);
+		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToList();
+
+		Assert.Equal(3, tokens.Count);
+		Assert.Equal(TokenType.Error, tokens[0].Type);
+		Assert.Equal("\"abc", tokens[0].Value);
+		Assert.Equal(TokenType.Error, tokens[1].Type);
+		Assert.Equal("\r", tokens[1].Value);
+		Assert.Equal(TokenType.EndOfFile, tokens[2].Type);
+
+		Assert.Equal(2, diagnostics.Count);
+
+		Assert.Equal(DiagnosticArea.Tokenizing, diagnostics[0].Area);
+		Assert.Equal("TOK002", diagnostics[0].Code);
+		Assert.Equal(1, diagnostics[0].Column);
+		Assert.Equal(4, diagnostics[0].Length);
+		Assert.Equal(1, diagnostics[0].Line);
+		Assert.Equal("Unterminated string", diagnostics[0].Message);
+		Assert.Equal(Severity.Error, diagnostics[0].Severity);
+
+		Assert.Equal(DiagnosticArea.Tokenizing, diagnostics[1].Area);
+		Assert.Equal("TOK002", diagnostics[1].Code);
+		Assert.Equal(5, diagnostics[1].Column);
+		Assert.Equal(1, diagnostics[1].Length);
+		Assert.Equal(1, diagnostics[1].Line);
+		Assert.Equal("Unescaped control character", diagnostics[1].Message);
+		Assert.Equal(Severity.Error, diagnostics[1].Severity);
+	}
+
+	[Fact]
+	public void TestReturnsNewLineAfterUnterminatedString()
+	{
+		const string source = "\"abc\n";
+
+		var diagnostics = new DiagnosticCollection();
+		var tokenizer = new Tokenizer(source, diagnostics);
+		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToList();
+
+		Assert.Equal(3, tokens.Count);
+		Assert.Equal(TokenType.Error, tokens[0].Type);
+		Assert.Equal("\"abc", tokens[0].Value);
+		Assert.Equal(TokenType.NewLine, tokens[1].Type);
+		Assert.Equal("\n", tokens[1].Value);
+		Assert.Equal(TokenType.EndOfFile, tokens[2].Type);
+
+		var diagnostic = Assert.Single(diagnostics);
+
+		Assert.Equal(DiagnosticArea.Tokenizing, diagnostic.Area);
+		Assert.Equal("TOK002", diagnostic.Code);
+		Assert.Equal(1, diagnostic.Column);
+		Assert.Equal(4, diagnostic.Length);
+		Assert.Equal(1, diagnostic.Line);
+		Assert.Equal("Unterminated string", diagnostic.Message);
+		Assert.Equal(Severity.Error, diagnostic.Severity);
+	}
+
+	[Fact]
+	public void TestSkipsCarriageReturns()
+	{
+		const string source = "\r\n";
+
+		var diagnostics = new DiagnosticCollection();
+		var tokenizer = new Tokenizer(source, diagnostics);
+		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken).ToList();
+
+		Assert.Equal(2, tokens.Count);
+		Assert.Equal(TokenType.NewLine, tokens[0].Type);
+		Assert.Equal(TokenType.EndOfFile, tokens[1].Type);
+		Assert.Empty(diagnostics);
 	}
 }

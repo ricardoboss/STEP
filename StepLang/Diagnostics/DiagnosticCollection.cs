@@ -19,7 +19,7 @@ public class DiagnosticCollectionChangedEventArgs(
 	public IReadOnlyList<Diagnostic>? OldItems { get; } = oldItems;
 }
 
-public class DiagnosticCollection : ICollection<Diagnostic>
+public class DiagnosticCollection : IList<Diagnostic>
 {
 	private readonly ObservableCollection<Diagnostic> diagnostics = [];
 
@@ -34,7 +34,7 @@ public class DiagnosticCollection : ICollection<Diagnostic>
 	{
 		CollectionChanged?.Invoke(
 			this,
-			new DiagnosticCollectionChangedEventArgs(
+			new(
 				e.Action,
 				e.NewItems?.Cast<Diagnostic>().ToImmutableList(),
 				e.OldItems?.Cast<Diagnostic>().ToImmutableList()
@@ -78,4 +78,16 @@ public class DiagnosticCollection : ICollection<Diagnostic>
 	public IEnumerator<Diagnostic> GetEnumerator() => diagnostics.GetEnumerator();
 
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+	public int IndexOf(Diagnostic item) => diagnostics.IndexOf(item);
+
+	public void Insert(int index, Diagnostic item) => diagnostics.Insert(index, item);
+
+	public void RemoveAt(int index) => diagnostics.RemoveAt(index);
+
+	public Diagnostic this[int index]
+	{
+		get => diagnostics[index];
+		set => diagnostics[index] = value;
+	}
 }

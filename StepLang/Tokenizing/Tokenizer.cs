@@ -35,7 +35,7 @@ public class Tokenizer
 
 		var column = source.Column - length;
 
-		return new TokenLocation(source.DocumentUri, source.Line, column, length);
+		return new(source.DocumentUri, source.Line, column, length);
 	}
 
 	public IEnumerable<Token> Tokenize(CancellationToken cancellationToken = default)
@@ -83,8 +83,6 @@ public class Tokenizer
 
 		if (stringQuote.HasValue)
 		{
-			//throw new UnterminatedStringException(tokenStartLocation, stringQuote!.Value);
-
 			var errorToken = FinalizeToken(TokenType.Error);
 
 			diagnostics.AddUnterminatedString(errorToken);
@@ -176,20 +174,33 @@ public class Tokenizer
 		// strings can't contain unescaped control characters
 		if (char.IsControl(c))
 		{
-			var errorToken = FinalizeToken(TokenType.Error);
+			var unterminatedStringErrorToken = FinalizeToken(TokenType.Error);
 
-			diagnostics.AddUnterminatedString(errorToken);
+			diagnostics.AddUnterminatedString(unterminatedStringErrorToken);
 
-			yield return errorToken;
+			yield return unterminatedStringErrorToken;
 
 			stringQuote = null;
 			stringSourceLength = null;
 
-			if (c is not '\n')
-				yield break;
-
 			tokenBuilder.Append(c);
-			yield return FinalizeToken(TokenType.NewLine);
+			tokenStartLocation = unterminatedStringErrorToken.Location with
+			{
+				Column = unterminatedStringErrorToken.Location.Column + unterminatedStringErrorToken.Location.Length,
+			};
+
+			if (c is '\n')
+			{
+				yield return FinalizeToken(TokenType.NewLine);
+
+				yield break;
+			}
+
+			var errorToken = FinalizeToken(TokenType.Error);
+
+			diagnostics.AddUnescapedControlCharacter(errorToken);
+
+			yield return errorToken;
 
 			yield break;
 		}
@@ -205,6 +216,7 @@ public class Tokenizer
 				yield return previous;
 
 			yield return FinalizeToken(symbolType.Value);
+
 			yield break;
 		}
 
