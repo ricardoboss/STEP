@@ -13,4 +13,9 @@ public static class TokenizingDiagnosticCollectionExtensions
 	{
 		collection.Add(DiagnosticArea.Tokenizing, Severity.Error, "Invalid identifier", "TOK001", errorToken);
 	}
+
+	public static void AddUnescapedControlCharacter(this DiagnosticCollection collection, Token errorToken)
+	{
+		collection.Add(DiagnosticArea.Tokenizing, Severity.Error, "Unescaped control character", "TOK002", errorToken);
+	}
 }
