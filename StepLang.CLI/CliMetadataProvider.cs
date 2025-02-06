@@ -1,7 +1,9 @@
 using StepLang.Tooling.Meta;
+using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.CLI;
 
+[ExcludeFromCodeCoverage]
 internal sealed class CliMetadataProvider : IMetadataProvider
 {
 	public static CliMetadataProvider Instance { get; } = new();
