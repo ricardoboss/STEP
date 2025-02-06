@@ -1,0 +1,2 @@
+number a = 0
+number b = a[0]

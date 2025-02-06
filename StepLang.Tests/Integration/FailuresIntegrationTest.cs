@@ -99,10 +99,20 @@ public class FailuresIntegrationTest
 			Assert.Equal(detail.ErrorCode, caught.ErrorCode);
 			Assert.Equal(detail.Message, caught.Message);
 			Assert.Equal(detail.HelpText, caught.HelpText);
-			Assert.Equal(detail.Line, caught.Location?.Line);
-			Assert.Equal(detail.Column, caught.Location?.Column);
-			Assert.Equal(detail.Length, caught.Location?.Length);
-			Assert.Equal(sourceFile.FullName, caught.Location?.File?.FullName);
+
+			if (caught.Location is { } location)
+			{
+				Assert.Equal(detail.Line, location.Line);
+				Assert.Equal(detail.Column, location.Column);
+				Assert.Equal(detail.Length, location.Length);
+				Assert.Equal(sourceFile.FullName, location.File?.FullName);
+			}
+			else
+			{
+				Assert.Null(detail.Line);
+				Assert.Null(detail.Column);
+				Assert.Null(detail.Length);
+			}
 		});
 	}
 
@@ -133,8 +143,8 @@ internal sealed class ExceptionDetails
 	public string? HelpText { get; init; }
 	[JsonConverter(typeof(JsonStringEnumConverter<Severity>))]
 	public Severity? Severity { get; init; }
-	public int Line { get; init; }
-	public int Column { get; init; }
+	public int? Line { get; init; }
+	public int? Column { get; init; }
 	public int? Length { get; init; }
 	[JsonConverter(typeof(JsonStringEnumConverter<DiagnosticKind>))]
 	public DiagnosticKind? Kind { get; init; }
