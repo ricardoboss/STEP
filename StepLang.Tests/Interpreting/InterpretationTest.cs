@@ -105,4 +105,16 @@ public class InterpretationTest
 
 		Assert.Equal("TYP004", exception.ErrorCode);
 	}
+
+	[Fact]
+	public void TestThrowsWhenInterpretingErrorImport()
+	{
+		const string source = """
+		                      import 123
+		                      """;
+
+		var exception = Assert.Throws<NotSupportedException>(() => source.Interpret());
+
+		Assert.Equal("Cannot interpret imports with errors", exception.Message);
+	}
 }

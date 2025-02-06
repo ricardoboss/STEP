@@ -23,7 +23,8 @@ public abstract class FunctionDefinition
 	[ExcludeFromCodeCoverage]
 	private string DebugReturnTypeString => string.Join("|", ReturnTypes.Select(r => r.ToString()));
 
-	[ExcludeFromCodeCoverage] protected abstract string DebugBodyString { get; }
+	[ExcludeFromCodeCoverage]
+	protected abstract string DebugBodyString { get; }
 
 	/// <inheritdoc />
 	[ExcludeFromCodeCoverage]

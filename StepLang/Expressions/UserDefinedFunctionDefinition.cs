@@ -6,6 +6,7 @@ using StepLang.Parsing.Nodes.Statements;
 using StepLang.Parsing.Nodes.VariableDeclarations;
 using StepLang.Tokenizing;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.Expressions;
 
@@ -16,6 +17,7 @@ public class UserDefinedFunctionDefinition(
 	Scope capturedScope)
 	: FunctionDefinition
 {
+	[ExcludeFromCodeCoverage]
 	protected override string DebugBodyString => $"[Body: {Body.GetType().Name}]";
 
 	public override IReadOnlyList<IVariableDeclarationNode> Parameters => parameters;
