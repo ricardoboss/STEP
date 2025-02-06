@@ -117,4 +117,40 @@ public class InterpretationTest
 
 		Assert.Equal("Cannot interpret imports with errors", exception.Message);
 	}
+
+	[Fact]
+	public void TestThrowsWhenInterpretingErrorVariableDeclaration()
+	{
+		const string source = """
+		                      number = 1
+		                      """;
+
+		var exception = Assert.Throws<NotSupportedException>(() => source.Interpret());
+
+		Assert.Equal("Cannot evaluate error variable declaration node", exception.Message);
+	}
+
+	[Fact]
+	public void TestThrowsWhenInterpretingErrorExpression()
+	{
+		const string source = """
+		                      number a =
+		                      """;
+
+		var exception = Assert.Throws<NotSupportedException>(() => source.Interpret());
+
+		Assert.Equal("Error expression nodes cannot be interpreted", exception.Message);
+	}
+
+	[Fact]
+	public void TestThrowsWhenInterpretingErrorStatement()
+	{
+		const string source = """
+		                      doSomething
+		                      """;
+
+		var exception = Assert.Throws<NotSupportedException>(() => source.Interpret());
+
+		Assert.Equal("Error statement nodes cannot be interpreted", exception.Message);
+	}
 }
