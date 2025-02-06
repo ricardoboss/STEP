@@ -1,7 +1,9 @@
 using StepLang.Tooling.Meta;
+using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang;
 
+[ExcludeFromCodeCoverage]
 public sealed class CoreMetadataProvider : IMetadataProvider
 {
 	public static CoreMetadataProvider Instance { get; } = new();
