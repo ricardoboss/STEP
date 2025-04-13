@@ -23,8 +23,6 @@ public class TokenQueue
 
 	public Token? LastToken { get; private set; }
 
-	private static readonly char[] Vowels = ['a', 'e', 'i', 'o', 'u'];
-
 	public bool TryDequeue([NotNullWhen(true)] out Token? token)
 	{
 		token = null;
@@ -91,27 +89,7 @@ public class TokenQueue
 				continue;
 			}
 
-			string typeInfo;
-			switch (allowed.Length)
-			{
-				case 0:
-					typeInfo = "any token";
-					break;
-				case 1:
-					var display = allowed[0].ToDisplay();
-					var firstChar = display.ToLowerInvariant()[0];
-					var article = Vowels.Any(c => firstChar == c) ? "an" : "a";
-
-					typeInfo = $"{article} {display}";
-					break;
-				default:
-					typeInfo =
-						$"one of {string.Join(", ", allowed[..^1].Select(TokenTypes.ToDisplay))} or {allowed[^1].ToDisplay()}";
-
-					break;
-			}
-
-			return new UnexpectedEndOfTokensException(LastToken, $"Expected {typeInfo}").ToErr<Token>();
+			return new UnexpectedEndOfTokensException(LastToken).ToErr<Token>();
 		} while (!token.Type.HasMeaning() && IgnoreMeaningless);
 
 		if (allowed.Contains(token.Type))
