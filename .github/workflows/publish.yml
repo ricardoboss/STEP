@@ -156,7 +156,8 @@ jobs:
 
           # import certificate to keychain
           security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
-          security list-keychain -d user -s $KEYCHAIN_PATH
+          security list-keychains -d user -s $KEYCHAIN_PATH
+          security default-keychain -d user -s $KEYCHAIN_PATH
 
           # apply provisioning profile
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
@@ -166,7 +167,11 @@ jobs:
         env:
           APPLE_SIGNING_ID: ${{ secrets.APPLE_SIGNING_ID }}
         shell: bash
-        run: codesign --force --timestamp --options=runtime --entitlements StepLang.CLI/entitlements.plist --sign "$APPLE_SIGNING_ID" ./artifact/step-osx-arm64
+        run: |
+          # ensure identity was imported
+          security find-identity -v -p codesigning $KEYCHAIN_PATH
+
+          codesign --force --timestamp --options=runtime --entitlements StepLang.CLI/entitlements.plist --sign "$APPLE_SIGNING_ID" ./artifact/step-osx-arm64
 
       - name: Notarize Binary
         uses: lando/notarize-action@v2
