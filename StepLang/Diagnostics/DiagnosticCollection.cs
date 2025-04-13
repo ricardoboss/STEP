@@ -67,6 +67,8 @@ public class DiagnosticCollection : IList<Diagnostic>
 
 	public bool ContainsErrors => diagnostics.Any(d => d.Severity == Severity.Error);
 
+	public IEnumerable<Diagnostic> Errors => diagnostics.Where(d => d.Severity == Severity.Error);
+
 	public void CopyTo(Diagnostic[] array, int arrayIndex) => diagnostics.CopyTo(array, arrayIndex);
 
 	public bool Remove(Diagnostic item) => diagnostics.Remove(item);

@@ -7,6 +7,7 @@ using StepLang.Tokenizing;
 using StepLang.Tooling.CLI;
 using StepLang.Tooling.CLI.Widgets;
 using System.ComponentModel;
+using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.CLI.Commands;
@@ -19,6 +20,10 @@ internal sealed class RunCommand : AsyncCommand<RunCommand.Settings>
 		[CommandArgument(0, "<file>")]
 		[Description("The path to a .step-file to run.")]
 		public string File { get; init; } = null!;
+
+		[CommandOption("-w|--no-warn")]
+		[Description("Don't emit warnings when processing the source code.")]
+		public bool NoWarn { get; init; }
 	}
 
 	public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
@@ -28,6 +33,16 @@ internal sealed class RunCommand : AsyncCommand<RunCommand.Settings>
 		var source = await CharacterSource.FromFileAsync(scriptFile);
 
 		var diagnostics = new DiagnosticCollection();
+		if (!settings.NoWarn)
+		{
+			diagnostics.CollectionChanged += (_, e) =>
+			{
+				if (e is { Action: NotifyCollectionChangedAction.Add, NewItems: not null })
+				{
+					ReportDiagnostics(e.NewItems);
+				}
+			};
+		}
 
 		var tokenizer = new Tokenizer(source, diagnostics);
 		var tokens = tokenizer.Tokenize();
@@ -39,10 +54,7 @@ internal sealed class RunCommand : AsyncCommand<RunCommand.Settings>
 		{
 			AnsiConsole.MarkupLine("[bold red]The file contains errors:[/]");
 
-			foreach (var diagnostic in diagnostics)
-			{
-				AnsiConsole.Write(new DiagnosticLine(diagnostic));
-			}
+			ReportDiagnostics(diagnostics.Errors);
 
 			return -1;
 		}
@@ -51,5 +63,15 @@ internal sealed class RunCommand : AsyncCommand<RunCommand.Settings>
 		root.Accept(interpreter);
 
 		return interpreter.ExitCode;
+	}
+
+	private static void ReportDiagnostics(IEnumerable<Diagnostic> diagnostics)
+	{
+		foreach (var diagnostic in diagnostics)
+		{
+			var line = new DiagnosticLine(diagnostic);
+
+			AnsiConsole.Write(line);
+		}
 	}
 }
