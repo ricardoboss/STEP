@@ -12,14 +12,6 @@
 		<None Update="Failures\**\*.step*">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-
-		<None Update="Failures\invalid-index-assignment.step">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-
-		<None Update="Failures\invalid-index-assignment.step.exception.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
 	</ItemGroup>
 
 </Project>
