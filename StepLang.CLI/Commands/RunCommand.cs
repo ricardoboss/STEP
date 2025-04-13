@@ -6,8 +6,8 @@ using StepLang.Parsing;
 using StepLang.Tokenizing;
 using StepLang.Tooling.CLI;
 using StepLang.Tooling.CLI.Widgets;
-using System.ComponentModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.CLI.Commands;
