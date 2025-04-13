@@ -10,5 +10,5 @@ public sealed record ErrorExpressionNode(string Description, IReadOnlyCollection
 		return evaluator.Evaluate(this);
 	}
 
-	public override TokenLocation Location => Tokens.FirstOrDefault()?.Location ?? new TokenLocation();
+	public override Token FirstToken => Tokens.FirstOrDefault() ?? new Token(TokenType.Error, "");
 }

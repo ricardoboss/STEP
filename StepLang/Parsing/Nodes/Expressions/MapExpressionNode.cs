@@ -12,5 +12,5 @@ public sealed record MapExpressionNode(
 		return evaluator.Evaluate(this);
 	}
 
-	public override TokenLocation Location => OpenCurlyBraceToken.Location;
+	public override Token FirstToken => OpenCurlyBraceToken;
 }

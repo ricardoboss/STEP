@@ -4,10 +4,10 @@ using StepLang.Tokenizing;
 namespace StepLang.Parsing.Nodes.Expressions;
 
 public record GreaterThanOrEqualExpressionNode(
-	TokenLocation OperatorLocation,
+	Token Operator,
 	ExpressionNode Left,
 	ExpressionNode Right)
-	: BinaryExpressionNode(OperatorLocation, Left, Right, BinaryExpressionOperator.GreaterThanOrEqual)
+	: BinaryExpressionNode(Operator, Left, Right, BinaryExpressionOperator.GreaterThanOrEqual)
 {
 	public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)
 	{

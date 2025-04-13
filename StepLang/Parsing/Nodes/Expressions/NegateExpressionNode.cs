@@ -10,5 +10,5 @@ public record NegateExpressionNode(Token MinusToken, ExpressionNode Expression) 
 		return evaluator.Evaluate(this);
 	}
 
-	public override TokenLocation Location => MinusToken.Location;
+	public override Token FirstToken => MinusToken;
 }

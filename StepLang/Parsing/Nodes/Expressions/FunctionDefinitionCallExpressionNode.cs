@@ -16,5 +16,5 @@ public record FunctionDefinitionCallExpressionNode(
 		return evaluator.Evaluate(this);
 	}
 
-	public override TokenLocation Location => OpenParenthesisToken.Location;
+	public override Token FirstToken => OpenParenthesisToken;
 }

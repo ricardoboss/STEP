@@ -35,7 +35,7 @@ public class DoRemoveFunctionTest
 			Add(ListResult.Empty, LiteralExpressionNode.FromInt32(1), ListResult.Empty);
 			Add(ListResult.Empty, LiteralExpressionNode.FromBoolean(true), ListResult.Empty);
 			Add(ListResult.Empty,
-				new AddExpressionNode(new TokenLocation(), LiteralExpressionNode.FromInt32(1),
+				new AddExpressionNode(new Token(TokenType.MinusSymbol, "-"), LiteralExpressionNode.FromInt32(1),
 					LiteralExpressionNode.FromInt32(2)), ListResult.Empty);
 
 			Add(ListResult.From(BoolResult.True), LiteralExpressionNode.FromBoolean(false),

@@ -10,5 +10,5 @@ public sealed record IdentifierExpressionNode(Token Identifier) : ExpressionNode
 		return evaluator.Evaluate(this);
 	}
 
-	public override TokenLocation Location => Identifier.Location;
+	public override Token FirstToken => Identifier;
 }

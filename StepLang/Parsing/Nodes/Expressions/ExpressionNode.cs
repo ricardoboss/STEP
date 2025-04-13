@@ -7,5 +7,7 @@ public abstract record ExpressionNode : IEvaluatableNode<IExpressionEvaluator, E
 {
 	public abstract ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator);
 
-	public abstract TokenLocation Location { get; }
+	public abstract Token FirstToken { get; }
+
+	public virtual TokenLocation Location => FirstToken.Location;
 }

@@ -11,5 +11,5 @@ public sealed record ListExpressionNode(Token OpenBracketToken, IReadOnlyCollect
 		return evaluator.Evaluate(this);
 	}
 
-	public override TokenLocation Location => OpenBracketToken.Location;
+	public override Token FirstToken => OpenBracketToken;
 }

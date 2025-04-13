@@ -11,7 +11,7 @@ public sealed record LiteralExpressionNode(Token Literal) : ExpressionNode
 		return evaluator.Evaluate(this);
 	}
 
-	public override TokenLocation Location => Literal.Location;
+	public override Token FirstToken => Literal;
 
 	public static implicit operator LiteralExpressionNode(string literal)
 	{
