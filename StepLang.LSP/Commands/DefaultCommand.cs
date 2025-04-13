@@ -44,14 +44,13 @@ internal sealed class DefaultCommand : AsyncCommand<DefaultCommand.Settings>
 		services.AddLogging(
 			b =>
 			{
-				b
-					.SetMinimumLevel(LogLevel.Trace)
-					.ClearProviders();
+				b.ClearProviders();
 
 				if (settings.Stdio)
 					return;
 
-				b.AddSimpleSpectreConsole();
+				b.SetMinimumLevel(LogLevel.Trace)
+					.AddSimpleSpectreConsole();
 			});
 
 		services.AddSingleton<ServerManager>();
