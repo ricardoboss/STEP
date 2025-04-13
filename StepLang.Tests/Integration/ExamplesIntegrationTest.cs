@@ -60,7 +60,7 @@ public class ExamplesIntegrationTest
 		var parser = new Parser(tokens, diagnostics);
 		var root = parser.ParseRoot();
 
-		var interpreter = new Interpreter(stdOut, stdErr, stdIn);
+		var interpreter = new Interpreter(stdOut, stdErr, stdIn, null, diagnostics);
 		root.Accept(interpreter);
 
 		// assert

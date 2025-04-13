@@ -59,7 +59,7 @@ internal sealed class RunCommand : AsyncCommand<RunCommand.Settings>
 			return -1;
 		}
 
-		var interpreter = new Interpreter(Console.Out, Console.Error, Console.In);
+		var interpreter = new Interpreter(Console.Out, Console.Error, Console.In, null, diagnostics);
 		root.Accept(interpreter);
 
 		return interpreter.ExitCode;
