@@ -5,8 +5,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\StepLang.Tooling.Meta\StepLang.Tooling.Meta.csproj" />
-	  <ProjectReference Include="..\StepLang\StepLang.csproj" />
+		<ProjectReference Include="..\StepLang.Tooling.Meta\StepLang.Tooling.Meta.csproj"/>
+		<ProjectReference Include="..\StepLang\StepLang.csproj"/>
 	</ItemGroup>
 
 </Project>
