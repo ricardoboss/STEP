@@ -4,6 +4,9 @@
     "Message": "Invalid index expression: Cannot access index 0 of a value of type number",
     "HelpText": "Make sure you're accessing an index of a value that supports indexing (like lists or maps).",
     "Severity": "Error",
-    "Area": "Parsing"
+    "Area": "Parsing",
+    "Line": 2,
+    "Column": 13,
+    "Length": 1
   }
 ]
