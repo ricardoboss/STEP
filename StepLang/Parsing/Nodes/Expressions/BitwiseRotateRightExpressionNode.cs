@@ -4,10 +4,10 @@ using StepLang.Tokenizing;
 namespace StepLang.Parsing.Nodes.Expressions;
 
 public record BitwiseRotateRightExpressionNode(
-	TokenLocation OperatorLocation,
+	Token Operator,
 	ExpressionNode Left,
 	ExpressionNode Right)
-	: BinaryExpressionNode(OperatorLocation, Left, Right, BinaryExpressionOperator.BitwiseRotateRight)
+	: BinaryExpressionNode(Operator, Left, Right, BinaryExpressionOperator.BitwiseRotateRight)
 {
 	public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)
 	{

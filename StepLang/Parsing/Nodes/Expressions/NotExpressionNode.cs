@@ -11,5 +11,5 @@ public record NotExpressionNode(Token ExclamationMarkToken, ExpressionNode Expre
 		return evaluator.Evaluate(this);
 	}
 
-	public override TokenLocation Location => ExclamationMarkToken.Location;
+	public override Token FirstToken => ExclamationMarkToken;
 }

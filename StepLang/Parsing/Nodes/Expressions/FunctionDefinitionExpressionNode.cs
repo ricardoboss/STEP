@@ -15,5 +15,7 @@ public sealed record FunctionDefinitionExpressionNode(
 		return evaluator.Evaluate(this);
 	}
 
+	public override Token FirstToken => OpenParenthesisToken;
+
 	public override TokenLocation Location => OpenParenthesisToken.Location;
 }

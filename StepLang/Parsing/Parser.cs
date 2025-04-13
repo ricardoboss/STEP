@@ -282,13 +282,13 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 			TokenType.PlusSymbol => new VariableAssignmentNode(
 				assignmentToken.Location,
 				identifier,
-				new AddExpressionNode(firstOperator.Location, identifierExpression, expression)
+				new AddExpressionNode(firstOperator, identifierExpression, expression)
 			),
 			TokenType.MinusSymbol => new VariableAssignmentNode(
 				assignmentToken.Location,
 				identifier,
 				new SubtractExpressionNode(
-					firstOperator.Location,
+					firstOperator,
 					identifierExpression,
 					expression
 				)
@@ -299,7 +299,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 					assignmentToken.Location,
 					identifier,
 					new MultiplyExpressionNode(
-						firstOperator.Location,
+						firstOperator,
 						identifierExpression,
 						expression
 					)
@@ -310,7 +310,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 						assignmentToken.Location,
 						identifier,
 						new PowerExpressionNode(
-							firstOperator.Location,
+							firstOperator,
 							identifierExpression,
 							expression
 						)
@@ -323,7 +323,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 				assignmentToken.Location,
 				identifier,
 				new DivideExpressionNode(
-					firstOperator.Location,
+					firstOperator,
 					identifierExpression,
 					expression
 				)
@@ -332,7 +332,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 				assignmentToken.Location,
 				identifier,
 				new ModuloExpressionNode(
-					firstOperator.Location,
+					firstOperator,
 					identifierExpression,
 					expression
 				)
@@ -341,7 +341,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 				assignmentToken.Location,
 				identifier,
 				new BitwiseOrExpressionNode(
-					firstOperator.Location,
+					firstOperator,
 					identifierExpression,
 					expression
 				)
@@ -350,7 +350,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 				assignmentToken.Location,
 				identifier,
 				new BitwiseAndExpressionNode(
-					firstOperator.Location,
+					firstOperator,
 					identifierExpression,
 					expression
 				)
@@ -359,7 +359,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 				assignmentToken.Location,
 				identifier,
 				new BitwiseXorExpressionNode(
-					firstOperator.Location,
+					firstOperator,
 					identifierExpression,
 					expression
 				)
@@ -368,7 +368,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 				assignmentToken.Location,
 				identifier,
 				new CoalesceExpressionNode(
-					firstOperator.Location,
+					firstOperator,
 					identifierExpression,
 					expression
 				)
@@ -760,13 +760,13 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 		while (tokens.PeekType() is TokenType.OpeningSquareBracket)
 		{
-			_ = tokens.Dequeue(TokenType.OpeningSquareBracket);
+			var openBracket = tokens.Dequeue(TokenType.OpeningSquareBracket);
 
 			var index = ParseExpression();
 
 			_ = tokens.Dequeue(TokenType.ClosingSquareBracket);
 
-			left = new IndexAccessExpressionNode(left, index);
+			left = new IndexAccessExpressionNode(openBracket.Value, left, index);
 		}
 
 		while (tokens.PeekType() is { } nextType && nextType.IsOperator())
@@ -798,44 +798,44 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 			var right = ParseExpression(precedence + 1);
 
-			left = Combine(operatorTokens.First().Location, left, binaryOperator, right);
+			left = Combine(operatorTokens.First(), left, binaryOperator, right);
 		}
 
 		return left;
 	}
 
-	private static ExpressionNode Combine(TokenLocation operatorLocation, ExpressionNode left,
+	private static ExpressionNode Combine(Token @operator, ExpressionNode left,
 		BinaryExpressionOperator binaryOperator, ExpressionNode right)
 	{
 		return binaryOperator switch
 		{
-			BinaryExpressionOperator.Add => new AddExpressionNode(operatorLocation, left, right),
-			BinaryExpressionOperator.Coalesce => new CoalesceExpressionNode(operatorLocation, left, right),
-			BinaryExpressionOperator.NotEqual => new NotEqualsExpressionNode(operatorLocation, left, right),
-			BinaryExpressionOperator.Equal => new EqualsExpressionNode(operatorLocation, left, right),
-			BinaryExpressionOperator.Subtract => new SubtractExpressionNode(operatorLocation, left, right),
-			BinaryExpressionOperator.Multiply => new MultiplyExpressionNode(operatorLocation, left, right),
-			BinaryExpressionOperator.Divide => new DivideExpressionNode(operatorLocation, left, right),
-			BinaryExpressionOperator.Modulo => new ModuloExpressionNode(operatorLocation, left, right),
-			BinaryExpressionOperator.Power => new PowerExpressionNode(operatorLocation, left, right),
-			BinaryExpressionOperator.GreaterThan => new GreaterThanExpressionNode(operatorLocation, left, right),
-			BinaryExpressionOperator.LessThan => new LessThanExpressionNode(operatorLocation, left, right),
-			BinaryExpressionOperator.GreaterThanOrEqual => new GreaterThanOrEqualExpressionNode(operatorLocation, left,
+			BinaryExpressionOperator.Add => new AddExpressionNode(@operator, left, right),
+			BinaryExpressionOperator.Coalesce => new CoalesceExpressionNode(@operator, left, right),
+			BinaryExpressionOperator.NotEqual => new NotEqualsExpressionNode(@operator, left, right),
+			BinaryExpressionOperator.Equal => new EqualsExpressionNode(@operator, left, right),
+			BinaryExpressionOperator.Subtract => new SubtractExpressionNode(@operator, left, right),
+			BinaryExpressionOperator.Multiply => new MultiplyExpressionNode(@operator, left, right),
+			BinaryExpressionOperator.Divide => new DivideExpressionNode(@operator, left, right),
+			BinaryExpressionOperator.Modulo => new ModuloExpressionNode(@operator, left, right),
+			BinaryExpressionOperator.Power => new PowerExpressionNode(@operator, left, right),
+			BinaryExpressionOperator.GreaterThan => new GreaterThanExpressionNode(@operator, left, right),
+			BinaryExpressionOperator.LessThan => new LessThanExpressionNode(@operator, left, right),
+			BinaryExpressionOperator.GreaterThanOrEqual => new GreaterThanOrEqualExpressionNode(@operator, left,
 				right),
 			BinaryExpressionOperator.LessThanOrEqual =>
-				new LessThanOrEqualExpressionNode(operatorLocation, left, right),
-			BinaryExpressionOperator.LogicalAnd => new LogicalAndExpressionNode(operatorLocation, left, right),
-			BinaryExpressionOperator.LogicalOr => new LogicalOrExpressionNode(operatorLocation, left, right),
-			BinaryExpressionOperator.BitwiseAnd => new BitwiseAndExpressionNode(operatorLocation, left, right),
-			BinaryExpressionOperator.BitwiseOr => new BitwiseOrExpressionNode(operatorLocation, left, right),
-			BinaryExpressionOperator.BitwiseXor => new BitwiseXorExpressionNode(operatorLocation, left, right),
-			BinaryExpressionOperator.BitwiseShiftLeft => new BitwiseShiftLeftExpressionNode(operatorLocation, left,
+				new LessThanOrEqualExpressionNode(@operator, left, right),
+			BinaryExpressionOperator.LogicalAnd => new LogicalAndExpressionNode(@operator, left, right),
+			BinaryExpressionOperator.LogicalOr => new LogicalOrExpressionNode(@operator, left, right),
+			BinaryExpressionOperator.BitwiseAnd => new BitwiseAndExpressionNode(@operator, left, right),
+			BinaryExpressionOperator.BitwiseOr => new BitwiseOrExpressionNode(@operator, left, right),
+			BinaryExpressionOperator.BitwiseXor => new BitwiseXorExpressionNode(@operator, left, right),
+			BinaryExpressionOperator.BitwiseShiftLeft => new BitwiseShiftLeftExpressionNode(@operator, left,
 				right),
-			BinaryExpressionOperator.BitwiseShiftRight => new BitwiseShiftRightExpressionNode(operatorLocation, left,
+			BinaryExpressionOperator.BitwiseShiftRight => new BitwiseShiftRightExpressionNode(@operator, left,
 				right),
-			BinaryExpressionOperator.BitwiseRotateLeft => new BitwiseRotateLeftExpressionNode(operatorLocation, left,
+			BinaryExpressionOperator.BitwiseRotateLeft => new BitwiseRotateLeftExpressionNode(@operator, left,
 				right),
-			BinaryExpressionOperator.BitwiseRotateRight => new BitwiseRotateRightExpressionNode(operatorLocation, left,
+			BinaryExpressionOperator.BitwiseRotateRight => new BitwiseRotateRightExpressionNode(@operator, left,
 				right),
 			_ => throw new NotSupportedException("Expression for operator " + binaryOperator.ToSymbol() +
 												 " not supported"),

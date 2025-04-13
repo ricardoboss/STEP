@@ -42,7 +42,7 @@ public partial class Interpreter
 						_ => indexResult.ToString(),
 					};
 
-					throw new InvalidIndexOperatorException(indexRepresentation, variable.Value.ResultType, "assign");
+					throw new InvalidIndexOperatorException(indexRepresentation, indexExpression.FirstToken, variable.Value.ResultType, "assign");
 			}
 		}
 
@@ -88,7 +88,7 @@ public partial class Interpreter
 						_ => indexResult.ToString(),
 					};
 
-					throw new InvalidIndexOperatorException(indexRepresentation, valueResult.ResultType, "access");
+					throw new InvalidIndexOperatorException(indexRepresentation, expressionNode.FirstToken, valueResult.ResultType, "access");
 				}
 		}
 	}

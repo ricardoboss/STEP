@@ -11,5 +11,5 @@ public record NativeFunctionDefinitionExpressionNode(NativeFunction Definition) 
 		return evaluator.Evaluate(this);
 	}
 
-	public override TokenLocation Location { get; } = new();
+	public override Token FirstToken { get; } = new(TokenType.Error, "");
 }

@@ -3,8 +3,8 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Parsing.Nodes.Expressions;
 
-public record AddExpressionNode(TokenLocation OperatorLocation, ExpressionNode Left, ExpressionNode Right)
-	: BinaryExpressionNode(OperatorLocation, Left, Right, BinaryExpressionOperator.Add)
+public record AddExpressionNode(Token Operator, ExpressionNode Left, ExpressionNode Right)
+	: BinaryExpressionNode(Operator, Left, Right, BinaryExpressionOperator.Add)
 {
 	public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)
 	{
