@@ -2,6 +2,7 @@ using StepLang.Expressions.Results;
 using StepLang.Parsing;
 using StepLang.Parsing.Nodes;
 using StepLang.Parsing.Nodes.Expressions;
+using StepLang.Parsing.Nodes.Import;
 using StepLang.Parsing.Nodes.Statements;
 using StepLang.Parsing.Nodes.VariableDeclarations;
 using StepLang.Tokenizing;
@@ -39,9 +40,11 @@ internal sealed class VariableDeclarationCollector : IStatementVisitor, IRootNod
 		scopes.Add(currentScope);
 	}
 
-	private void PopScope(Token closeToken)
+	private void PopScope(Token closeToken) => PopScope(closeToken.Location);
+
+	private void PopScope(TokenLocation closeTokenLocation)
 	{
-		currentScope.CloseLocation = closeToken.Location;
+		currentScope.CloseLocation = closeTokenLocation;
 
 		currentScope = currentScope.Parent ?? throw new InvalidOperationException("Cannot pop root scope");
 	}
@@ -101,9 +104,7 @@ internal sealed class VariableDeclarationCollector : IStatementVisitor, IRootNod
 
 	public void Visit(CallStatementNode statementNode)
 	{
-		TrackUsage(statementNode.CallExpression.Identifier);
-
-		Evaluate(statementNode.CallExpression.Arguments);
+		_ = statementNode.CallExpression.EvaluateUsing(this);
 	}
 
 	public void Visit(CodeBlockStatementNode statementNode)
@@ -126,9 +127,12 @@ internal sealed class VariableDeclarationCollector : IStatementVisitor, IRootNod
 
 		Evaluate(statementNode.Collection);
 
-		Visit(statementNode.Body);
+		statementNode.Body.Accept(this);
 
-		PopScope(statementNode.Body.CloseCurlyBraceToken);
+		if (statementNode.Body is CodeBlockStatementNode block)
+			PopScope(block.CloseCurlyBraceToken);
+		else
+			PopScope(statementNode.Body.Location);
 	}
 
 	public void Visit(BreakStatementNode statementNode) { }
@@ -142,9 +146,12 @@ internal sealed class VariableDeclarationCollector : IStatementVisitor, IRootNod
 
 		Evaluate(statementNode.Collection);
 
-		Visit(statementNode.Body);
+		statementNode.Body.Accept(this);
 
-		PopScope(statementNode.Body.CloseCurlyBraceToken);
+		if (statementNode.Body is CodeBlockStatementNode block)
+			PopScope(block.CloseCurlyBraceToken);
+		else
+			PopScope(statementNode.Body.Location);
 	}
 
 	public void Visit(ForeachDeclareValueStatementNode statementNode)
@@ -155,9 +162,12 @@ internal sealed class VariableDeclarationCollector : IStatementVisitor, IRootNod
 
 		Evaluate(statementNode.Collection);
 
-		Visit(statementNode.Body);
+		statementNode.Body.Accept(this);
 
-		PopScope(statementNode.Body.CloseCurlyBraceToken);
+		if (statementNode.Body is CodeBlockStatementNode block)
+			PopScope(block.CloseCurlyBraceToken);
+		else
+			PopScope(statementNode.Body.Location);
 	}
 
 	public void Visit(ForeachKeyValueStatementNode statementNode)
@@ -169,9 +179,12 @@ internal sealed class VariableDeclarationCollector : IStatementVisitor, IRootNod
 
 		Evaluate(statementNode.Collection);
 
-		Visit(statementNode.Body);
+		statementNode.Body.Accept(this);
 
-		PopScope(statementNode.Body.CloseCurlyBraceToken);
+		if (statementNode.Body is CodeBlockStatementNode block)
+			PopScope(block.CloseCurlyBraceToken);
+		else
+			PopScope(statementNode.Body.Location);
 	}
 
 	public void Visit(ForeachKeyDeclareValueStatementNode statementNode)
@@ -183,9 +196,12 @@ internal sealed class VariableDeclarationCollector : IStatementVisitor, IRootNod
 
 		Evaluate(statementNode.Collection);
 
-		Visit(statementNode.Body);
+		statementNode.Body.Accept(this);
 
-		PopScope(statementNode.Body.CloseCurlyBraceToken);
+		if (statementNode.Body is CodeBlockStatementNode block)
+			PopScope(block.CloseCurlyBraceToken);
+		else
+			PopScope(statementNode.Body.Location);
 	}
 
 	public void Visit(ForeachValueStatementNode statementNode)
@@ -196,9 +212,12 @@ internal sealed class VariableDeclarationCollector : IStatementVisitor, IRootNod
 
 		Evaluate(statementNode.Collection);
 
-		Visit(statementNode.Body);
+		statementNode.Body.Accept(this);
 
-		PopScope(statementNode.Body.CloseCurlyBraceToken);
+		if (statementNode.Body is CodeBlockStatementNode block)
+			PopScope(block.CloseCurlyBraceToken);
+		else
+			PopScope(statementNode.Body.Location);
 	}
 
 	public void Visit(IdentifierIndexAssignmentNode statementNode)
@@ -210,11 +229,11 @@ internal sealed class VariableDeclarationCollector : IStatementVisitor, IRootNod
 
 	public void Visit(IfStatementNode statementNode)
 	{
-		foreach (var (condition, statements) in statementNode.ConditionBodyMap)
+		foreach (var (condition, statement) in statementNode.ConditionBodyMap)
 		{
-			Evaluate(condition);
+			_ = condition.EvaluateUsing(this);
 
-			Visit(statements);
+			statement.Accept(this);
 		}
 	}
 
@@ -234,7 +253,7 @@ internal sealed class VariableDeclarationCollector : IStatementVisitor, IRootNod
 	{
 		Evaluate(statementNode.Condition);
 
-		Visit(statementNode.Body);
+		statementNode.Body.Accept(this);
 	}
 
 	public void Visit(IncrementStatementNode statementNode)
@@ -259,6 +278,11 @@ internal sealed class VariableDeclarationCollector : IStatementVisitor, IRootNod
 		Evaluate(discardStatementNode.Expression);
 	}
 
+	public void Visit(ErrorStatementNode errorStatementNode)
+	{
+		throw new NotImplementedException();
+	}
+
 	public ExpressionResult Evaluate(CallExpressionNode expressionNode)
 	{
 		TrackUsage(expressionNode.Identifier);
@@ -274,7 +298,7 @@ internal sealed class VariableDeclarationCollector : IStatementVisitor, IRootNod
 			TrackDeclaration(parameter);
 		}
 
-		Visit(expressionNode.Body);
+		expressionNode.Body.Accept(this);
 
 		return VoidResult.Instance;
 	}
@@ -499,7 +523,7 @@ internal sealed class VariableDeclarationCollector : IStatementVisitor, IRootNod
 			TrackDeclaration(declarationNode);
 		}
 
-		Visit(expressionNode.Body);
+		expressionNode.Body.Accept(this);
 
 		Evaluate(expressionNode.CallArguments);
 
@@ -516,8 +540,18 @@ internal sealed class VariableDeclarationCollector : IStatementVisitor, IRootNod
 		return VoidResult.Instance;
 	}
 
+	public ExpressionResult Evaluate(ErrorExpressionNode expressionNode)
+	{
+		throw new NotImplementedException();
+	}
+
 	public void Visit(ImportNode importNode)
 	{
 		throw new NotImplementedException("Cannot yet handle definitions in imported files");
+	}
+
+	public void Visit(ErrorImportNode importNode)
+	{
+		throw new NotImplementedException();
 	}
 }
