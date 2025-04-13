@@ -20,14 +20,19 @@ jobs:
   build:
     name: Build Binaries
 
-    runs-on: ubuntu-latest
-
     strategy:
       fail-fast: false
       matrix:
         os: [ linux, win, osx ]
         arch: [ x64, arm64 ]
         dotnet: [ "9.0" ]
+        exclude:
+          - os: linux
+            arch: arm64
+          - os: win
+            arch: arm64
+
+    runs-on: ${{ (matrix.os == 'win' && 'windows-latest') || (matrix.os == 'osx' && 'macos-latest') || 'ubuntu-latest' }}
 
     env:
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
@@ -93,8 +98,8 @@ jobs:
   sign-macos:
     name: Sign macOS binary
 
-    # only sign on main branch
-    if: github.ref == 'refs/heads/main'
+    # only sign on main branch or when tagged
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
 
     needs:
       - build
