@@ -154,17 +154,16 @@ internal sealed class ServerManager(
 		_ = s
 			.AddLogging(b =>
 			{
-				b
-					.SetMinimumLevel(LogLevel.Trace)
-					.AddFilter("StepLang", LogLevel.Trace)
-					.ClearProviders()
+				b.ClearProviders()
 					.AddLanguageProtocolLogging();
 
 				if (Options.UseStandardIO)
 					return;
 
 				// only when NOT using stdio, we add a logger that can use stdio for logging
-				b.AddSimpleSpectreConsole();
+				b.SetMinimumLevel(LogLevel.Trace)
+					.AddFilter("StepLang", LogLevel.Trace)
+					.AddSimpleSpectreConsole();
 			})
 			.AddSingleton<SessionState>()
 			.AddSingleton<DiagnosticsRunner>()
