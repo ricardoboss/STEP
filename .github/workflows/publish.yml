@@ -63,7 +63,8 @@ jobs:
       - name: Build
         run: dotnet publish StepLang.CLI/StepLang.CLI.csproj --configuration Release --no-restore --runtime ${{ matrix.os }}-${{ matrix.arch }} --framework net${{ matrix.dotnet }} --self-contained true /p:PublishTrimmed=true /p:PublishSingleFile=true
 
-      - name: Prepare Artifact
+      - name: Prepare Artifact (unix)
+        if: matrix.os != 'win'
         env:
           frameworkVersion: net${{ matrix.dotnet }}
           platform: ${{ matrix.os }}-${{ matrix.arch }}
@@ -71,14 +72,7 @@ jobs:
           mkdir -p publish
 
           sourceFilename="step"
-          if [[ "$platform" == "win-x64" || "$platform" == "win-arm64" ]]; then
-              sourceFilename="$sourceFilename.exe"
-          fi
-
           targetFilename="step-$platform"
-          if [[ "$platform" == "win-x64" || "$platform" == "win-arm64" ]]; then
-              targetFilename="$targetFilename.exe"
-          fi
 
           outputPath="publish/$targetFilename"
 
@@ -88,6 +82,27 @@ jobs:
           chmod +x "$outputPath"
 
           echo "Created $outputPath"
+
+      - name: Prepare Artifact (windows)
+        if: matrix.os == 'win'
+        env:
+          frameworkVersion: net${{ matrix.dotnet }}
+          platform: ${{ matrix.os }}-${{ matrix.arch }}
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+
+          $sourceFilename = "step.exe"
+          $targetFilename = "step-$env:platform.exe"
+          $outputPath = "publish\$targetFilename"
+
+          New-Item -ItemType Directory -Path "publish" -Force | Out-Null
+
+          $inputPath = "StepLang.CLI\bin\Release\$env:frameworkVersion\$env:platform\publish\$sourceFilename"
+
+          Move-Item -Path $inputPath -Destination $outputPath -Force
+
+          Write-Host "Created $outputPath"
 
       - name: Upload Artifact (step-${{ matrix.os }}-${{ matrix.arch }})
         uses: actions/upload-artifact@v4
