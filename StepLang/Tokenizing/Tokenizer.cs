@@ -260,7 +260,6 @@ public class Tokenizer
 		if (tokenValue.IsValidIdentifier())
 			return FinalizeToken(TokenType.Identifier);
 
-		// throw new InvalidIdentifierException(GetCurrentLocation(), tokenValue);
 		var errorToken = FinalizeToken(TokenType.Error);
 
 		diagnostics.AddInvalidIdentifier(errorToken);
