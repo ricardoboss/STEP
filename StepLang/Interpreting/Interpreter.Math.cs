@@ -12,7 +12,7 @@ public partial class Interpreter
 	{
 		var leftResult = expressionNode.Left.EvaluateUsing(this);
 		var rightResult = expressionNode.Right.EvaluateUsing(this);
-		var location = expressionNode.Operator.Location;
+		var location = expressionNode.OperatorToken.Location;
 
 		return (leftResult, rightResult, location);
 	}
