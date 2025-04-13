@@ -133,45 +133,30 @@ jobs:
           name: step-osx-arm64
           path: ./artifact
 
-      - name: Install the Apple certificate and provisioning profile
+      - name: Install certificate
         env:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
           P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
-          BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64 }}
-          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+          KEYCHAIN_PASSWORD: temp-password
         run: |
-          # create variables
-          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
-          PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
-          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          CERT_PATH=$RUNNER_TEMP/cert.p12
+          KEYCHAIN_PATH=$RUNNER_TEMP/signing.keychain-db
 
-          # import certificate and provisioning profile from secrets
-          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
-          echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
+          echo "$BUILD_CERTIFICATE_BASE64" | base64 --decode > "$CERT_PATH"
 
-          # create temporary keychain
-          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
-          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$CERT_PATH" -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security list-keychain -d user -s "$KEYCHAIN_PATH"
 
-          # import certificate to keychain
-          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
-          security list-keychains -d user -s $KEYCHAIN_PATH
-          security default-keychain -d user -s $KEYCHAIN_PATH
-
-          # apply provisioning profile
-          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+          echo "Available identities:"
+          security find-identity -v -p codesigning "$KEYCHAIN_PATH"
 
       - name: Code Sign Binary
         env:
           APPLE_SIGNING_ID: ${{ secrets.APPLE_SIGNING_ID }}
-        shell: bash
-        run: |
-          # ensure identity was imported
-          security find-identity -v -p codesigning $KEYCHAIN_PATH
-
-          codesign --force --timestamp --options=runtime --entitlements StepLang.CLI/entitlements.plist --sign "$APPLE_SIGNING_ID" ./artifact/step-osx-arm64
+        run: codesign --force --timestamp --options=runtime --entitlements StepLang.CLI/entitlements.plist --sign "$APPLE_SIGNING_ID" ./artifact/step-osx-arm64
 
       - name: Notarize Binary
         uses: lando/notarize-action@v2
@@ -184,7 +169,6 @@ jobs:
           verbose: true
 
       - name: Verify notarization
-        shell: bash
         run: codesign -vvvv -R="notarized" --check-notarization ./artifact/step-osx-arm64
 
       - name: Upload Artifacts (step-osx-arm64-signed)
