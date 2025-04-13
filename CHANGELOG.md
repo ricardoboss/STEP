@@ -1,5 +1,7 @@
 # Unreleased
 
+# v2.1.0
+
 * (internal) Workflow now checks the built binaries before publishing
 * Track and report core and CLI build metadata separately by @ricardoboss in https://github.com/ricardoboss/STEP/pull/131
 * (internal) Replace custom coverage summary reporting with coveralls by @ricardoboss in https://github.com/ricardoboss/STEP/pull/133
@@ -8,9 +10,6 @@
 * (internal) Upgraded to xunit v3 core by @ricardoboss in https://github.com/ricardoboss/STEP/pull/140
 * Added `env` function by @ricardoboss in https://github.com/ricardoboss/STEP/pull/144
 * Added new error handling for collecting and reporting diagnostics by @ricardoboss in https://github.com/ricardoboss/STEP/pull/145
-
-# v2.1.0
-
 * Changed "power" operator from `^` to `**` by @ricardoboss in https://github.com/ricardoboss/STEP/pull/107
 * Added support for nullable type declarations by @ricardoboss in https://github.com/ricardoboss/STEP/pull/102
 * Major rewrite of the parser and interpreter to achieve more abstraction and better error reporting by @ricardoboss
