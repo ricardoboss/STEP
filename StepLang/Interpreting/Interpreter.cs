@@ -1,3 +1,4 @@
+using StepLang.Diagnostics;
 using StepLang.Expressions.Results;
 using StepLang.Parsing;
 using StepLang.Parsing.Nodes;
@@ -12,6 +13,9 @@ public partial class Interpreter : IRootNodeVisitor, IStatementVisitor, IExpress
 	public TextWriter? StdErr { get; }
 	public TextReader? StdIn { get; }
 	public TextWriter? DebugOut { get; }
+
+	public DiagnosticCollection Diagnostics { get; }
+
 	public int ExitCode { get; set; }
 
 	private readonly Stack<Scope> scopes = new();
@@ -26,12 +30,13 @@ public partial class Interpreter : IRootNodeVisitor, IStatementVisitor, IExpress
 	public Random Random => random.Value;
 
 	public Interpreter(TextWriter? stdOut = null, TextWriter? stdErr = null, TextReader? stdIn = null,
-		TextWriter? debugOut = null)
+		TextWriter? debugOut = null, DiagnosticCollection? diagnostics = null)
 	{
 		StdOut = stdOut;
 		StdErr = stdErr;
 		StdIn = stdIn;
 		DebugOut = debugOut;
+		Diagnostics = diagnostics ?? [];
 
 		_ = PushScope(Scope.GlobalScope);
 	}

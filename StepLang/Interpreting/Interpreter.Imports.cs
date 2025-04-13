@@ -40,11 +40,10 @@ public partial class Interpreter : IImportNodeVisitor
 		}
 
 		var source = CharacterSource.FromFile(importedFile);
-		// TODO: handle diagnostics differently?
-		var tokenizer = new Tokenizer(source, []);
+		var tokenizer = new Tokenizer(source, Diagnostics);
 		var tokens = tokenizer.Tokenize();
 
-		var parser = new Parser(tokens, []);
+		var parser = new Parser(tokens, Diagnostics);
 		var root = parser.ParseRoot();
 
 		Visit(root);
