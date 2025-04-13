@@ -7,5 +7,5 @@ public interface IBinaryExpressionNode
 	ExpressionNode Left { get; }
 	ExpressionNode Right { get; }
 	BinaryExpressionOperator Op { get; }
-	Token Operator { get; }
+	Token OperatorToken { get; }
 }
