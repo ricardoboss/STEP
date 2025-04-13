@@ -183,7 +183,7 @@ jobs:
         run: codesign -vvvv -R="notarized" --check-notarization ./artifact/step-osx-arm64
 
       - name: Upload Artifacts (step-osx-arm64-signed)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: step-osx-arm64-signed
           path: ./artifact/step-osx-arm64
