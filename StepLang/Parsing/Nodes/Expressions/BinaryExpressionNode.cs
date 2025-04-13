@@ -8,7 +8,7 @@ public abstract record BinaryExpressionNode(
 	ExpressionNode Right,
 	BinaryExpressionOperator Op) : ExpressionNode, IBinaryExpressionNode
 {
-	public override Token? FirstToken => Operator;
+	public override Token FirstToken => Operator;
 
 	public override TokenLocation Location => Operator.Location;
 }
