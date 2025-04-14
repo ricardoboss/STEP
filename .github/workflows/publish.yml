@@ -145,7 +145,7 @@ jobs:
       - name: Prepare Artifact
         run: |
           # zip and exclude native binary
-          zip -r step.zip "StepLang.CLI/bin/Release/9.0/publish/" -x "step"
+          zip -x "step" -r step.zip ./StepLang.CLI/bin/Release/9.0/publish/
 
           echo "Created step.zip"
 
