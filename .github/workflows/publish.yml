@@ -126,7 +126,7 @@ jobs:
       - name: Install .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ matrix.dotnet }}
+          dotnet-version: 9.0
 
       - name: Cache NuGet packages
         uses: actions/cache@v4
@@ -140,14 +140,12 @@ jobs:
         run: dotnet restore --nologo --force-evaluate
 
       - name: Build
-        run: dotnet publish StepLang.CLI/StepLang.CLI.csproj --configuration Release --no-restore --framework net${{ matrix.dotnet }} /p:PublishAot=false
+        run: dotnet publish StepLang.CLI/StepLang.CLI.csproj --configuration Release --no-restore --framework net9.0 /p:PublishAot=false
 
       - name: Prepare Artifact
-        env:
-          frameworkVersion: net${{ matrix.dotnet }}
         run: |
           # zip and exclude native binary
-          zip -r step.zip "StepLang.CLI/bin/Release/$frameworkVersion/publish/" -x "step"
+          zip -r step.zip "StepLang.CLI/bin/Release/9.0/publish/" -x "step"
 
           echo "Created step.zip"
 
