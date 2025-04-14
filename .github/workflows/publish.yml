@@ -17,8 +17,8 @@ on:
       - "StepLang.CLI/publish.sh"
 
 jobs:
-  build:
-    name: Build Binaries
+  build-aot:
+    name: Build AOT Binaries
 
     strategy:
       fail-fast: false
@@ -45,12 +45,12 @@ jobs:
           fetch-depth: 0
 
       - name: Install .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ matrix.dotnet }}
 
       - name: Cache NuGet packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.nuget/packages
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
@@ -110,14 +110,62 @@ jobs:
           name: step-${{ matrix.os }}-${{ matrix.arch }}
           path: publish/step-${{ matrix.os }}-${{ matrix.arch }}*
 
+  build-framework-dependent:
+    name: Build .NET-dependent
+
+    runs-on: ubuntu-latest
+
+    env:
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ matrix.dotnet }}
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore Dependencies
+        run: dotnet restore --nologo --force-evaluate
+
+      - name: Build
+        run: dotnet publish StepLang.CLI/StepLang.CLI.csproj --configuration Release --no-restore --framework net${{ matrix.dotnet }} /p:PublishAot=false
+
+      - name: Prepare Artifact
+        env:
+          frameworkVersion: net${{ matrix.dotnet }}
+        run: |
+          # zip and exclude native binary
+          zip -r step.zip "StepLang.CLI/bin/Release/$frameworkVersion/publish/" -x "step"
+
+          echo "Created step.zip"
+
+      - name: Upload Artifact (step)
+        uses: actions/upload-artifact@v4
+        with:
+          name: step
+          path: step.zip
+
   sign-macos:
     name: Sign macOS binary
 
     # only sign on main branch or when tagged
     if: false && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
 
-    needs:
-      - build
+    needs: [ build-aot ]
 
     runs-on: macos-latest
 
@@ -177,11 +225,10 @@ jobs:
           name: step-osx-arm64-signed
           path: ./artifact/step-osx-arm64
 
-  test-binaries:
-    name: Test Binaries
+  test-aot-binaries:
+    name: Test AOT Binaries
 
-    needs:
-      - build
+    needs: [ build-aot ]
 
     strategy:
       fail-fast: false
@@ -203,18 +250,61 @@ jobs:
           name: step-${{ matrix.os }}-${{ matrix.arch }}
           path: ./artifact
 
-      - name: Test (unix)
+      - name: Get Info (unix)
         shell: bash
         if: matrix.os != 'win'
         run: |
           chmod +x ./artifact/step-${{ matrix.os }}-${{ matrix.arch }}
           ./artifact/step-${{ matrix.os }}-${{ matrix.arch }} --info
 
-      - name: Test (win)
+      - name: Get Info (win)
         shell: pwsh
         if: matrix.os == 'win'
         run: |
           & ./artifact/step-${{ matrix.os }}-${{ matrix.arch }}.exe --info
+
+  test-framework-dependent:
+    name: Test .NET-dependent Binaries
+
+    needs: [ build-framework-dependent ]
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ linux, win, osx ]
+        arch: [ x64, arm64 ]
+        dotnet: [ "9.0" ]
+
+    runs-on: ${{ (matrix.os == 'win' && 'windows-latest') || (matrix.os == 'osx' && 'macos-latest') || 'ubuntu-latest' }}
+
+    env:
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+    steps:
+      - name: Install .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ matrix.dotnet }}
+
+      - name: Download binary
+        uses: actions/download-artifact@v4
+        with:
+          name: step
+          path: ./step.zip
+
+      - name: Unzip (unix)
+        shell: bash
+        if: matrix.os != 'win'
+        run: unzip ./step.zip -d publish/
+
+      - name: Unzip (win)
+        shell: pwsh
+        if: matrix.os == 'win'
+        run: Expand-Archive ./step.zip -DestinationPath publish/
+
+      - name: Get Info
+        run: dotnet ./publish/step.dll --info
 
   release:
     name: Create GitHub Release
@@ -222,9 +312,9 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
 
     needs:
-      - build
+      - test-aot-binaries
+      - test-framework-dependent
 #      - sign-macos
-      - test-binaries
 
     runs-on: ubuntu-latest
 
