@@ -287,7 +287,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: step
-          path: ./step.zip
 
       - name: Unzip (unix)
         shell: bash
@@ -318,48 +317,12 @@ jobs:
       contents: write
 
     steps:
-      - name: Download binaries (step)
+      - name: Download binaries
         uses: actions/download-artifact@v4
         with:
-          name: step
+          pattern: step*
           path: ./artifacts
-
-      - name: Download binaries (step-linux-x64)
-        uses: actions/download-artifact@v4
-        with:
-          name: step-linux-x64
-          path: ./artifacts
-
-      - name: Download binaries (step-linux-arm64)
-        uses: actions/download-artifact@v4
-        with:
-          name: step-linux-arm64
-          path: ./artifacts
-
-      - name: Download binaries (step-win-x64)
-        uses: actions/download-artifact@v4
-        with:
-          name: step-windows-x64
-          path: ./artifacts
-
-      - name: Download binaries (step-win-arm64)
-        uses: actions/download-artifact@v4
-        with:
-          name: step-windows-arm64
-          path: ./artifacts
-
-      - name: Download binaries (step-osx-x64)
-        uses: actions/download-artifact@v4
-        with:
-          name: step-osx-x64
-          path: ./artifacts
-
-      - name: Download binaries (step-osx-arm64-signed)
-        uses: actions/download-artifact@v4
-        with:
-#          name: step-osx-arm64-signed
-          name: step-osx-arm64
-          path: ./artifacts
+          merge-multiple: true
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
@@ -369,5 +332,4 @@ jobs:
           generate_release_notes: true
           fail_on_unmatched_files: true
           draft: true
-          files: |
-            StepLang.CLI/publish/*
+          files: ./artifacts/*
