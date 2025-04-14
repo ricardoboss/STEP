@@ -144,8 +144,14 @@ jobs:
 
       - name: Prepare Artifact
         run: |
+          pushd StepLang.CLI/bin/Release/net9.0/publish/
+
           # zip and exclude native binary
-          zip -x "StepLang.CLI/bin/Release/net9.0/publish/step" -r step.zip ./StepLang.CLI/bin/Release/net9.0/publish/
+          zip -x "step" -r step.zip ./
+
+          popd
+
+          cp StepLang.CLI/bin/Release/net9.0/publish/step.zip ./
 
           echo "Created step.zip"
 
