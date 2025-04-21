@@ -4,7 +4,7 @@ using StepLang.Tokenizing;
 namespace StepLang.Parsing.Nodes.Statements;
 
 public sealed record IdentifierIndexAssignmentNode(
-	Token Identifier,
+	IReadOnlyList<Token> IdentifierChain,
 	IReadOnlyList<ExpressionNode> IndexExpressions,
 	Token AssignmentToken,
 	ExpressionNode ValueExpression) : StatementNode
@@ -14,5 +14,5 @@ public sealed record IdentifierIndexAssignmentNode(
 		visitor.Visit(this);
 	}
 
-	public override TokenLocation Location => Identifier.Location;
+	public override TokenLocation Location => IdentifierChain[0].Location;
 }

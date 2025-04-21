@@ -248,7 +248,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 		public void Visit(IdentifierIndexAssignmentNode statementNode)
 		{
 			var node = root.AddNode("IdentifierIndexAssignment:");
-			node.AddNode("Identifier: " + statementNode.Identifier.ToString().EscapeMarkup());
+			node.AddNode("Identifier: " + string.Join(".", statementNode.IdentifierChain).EscapeMarkup());
 
 			var indexNode = node.AddNode("Index:");
 			var indexTreeBuilder = new ExpressionTreeBuilder(indexNode);
@@ -289,7 +289,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 		public void Visit(VariableAssignmentNode statementNode)
 		{
 			var node = root.AddNode("VariableAssignment:");
-			node.AddNode("Identifier: " + statementNode.Identifier.ToString().EscapeMarkup());
+			node.AddNode("Identifier: " + string.Join(".", statementNode.IdentifierChain).EscapeMarkup());
 
 			var expressionNode = node.AddNode("Expression:");
 			var expressionTreeBuilder = new ExpressionTreeBuilder(expressionNode);
@@ -314,7 +314,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 			var node = root.AddNode("IncrementStatement:");
 
 			_ = node.AddNode("Operator: ++");
-			_ = node.AddNode("Identifier: " + statementNode.Identifier.ToString().EscapeMarkup());
+			_ = node.AddNode("Identifier: " + string.Join(".", statementNode.IdentifierChain).EscapeMarkup());
 		}
 
 		public void Visit(DecrementStatementNode statementNode)
@@ -322,7 +322,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 			var node = root.AddNode("DecrementStatement:");
 
 			_ = node.AddNode("Operator: --");
-			_ = node.AddNode("Identifier: " + statementNode.Identifier.ToString().EscapeMarkup());
+			_ = node.AddNode("Identifier: " + string.Join(".", statementNode.IdentifierChain).EscapeMarkup());
 		}
 
 		public void Visit(VariableDeclarationStatementNode statementNode)
@@ -423,7 +423,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 		public ExpressionResult Evaluate(CallExpressionNode expressionNode)
 		{
 			var node = root.AddNode("CallExpression:");
-			node.AddNode("Identifier: " + expressionNode.Identifier.ToString().EscapeMarkup());
+			node.AddNode("Identifier: " + string.Join(".", expressionNode.IdentifierChain).EscapeMarkup());
 			if (expressionNode.Arguments.Count > 0)
 			{
 				var argumentsNode = node.AddNode("Arguments:");
@@ -461,7 +461,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 
 		public ExpressionResult Evaluate(IdentifierExpressionNode expressionNode)
 		{
-			root.AddNode("IdentifierExpression: " + expressionNode.Identifier.ToString().EscapeMarkup());
+			root.AddNode("IdentifierExpression: " + string.Join(".", expressionNode.IdentifierChain).EscapeMarkup());
 
 			return VoidResult.Instance;
 		}
@@ -790,6 +790,13 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 			{
 				tokensNode.AddNode(token.ToString().EscapeMarkup());
 			}
+
+			return VoidResult.Instance;
+		}
+
+		public ExpressionResult Evaluate(ThisExpressionNode expressionNode)
+		{
+			_ = root.AddNode("ThisExpression: this");
 
 			return VoidResult.Instance;
 		}

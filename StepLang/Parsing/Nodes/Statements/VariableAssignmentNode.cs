@@ -5,7 +5,7 @@ namespace StepLang.Parsing.Nodes.Statements;
 
 public sealed record VariableAssignmentNode(
 	TokenLocation AssignmentLocation,
-	Token Identifier,
+	IReadOnlyList<Token> IdentifierChain,
 	ExpressionNode Expression) : StatementNode
 {
 	public override void Accept(IStatementVisitor visitor)

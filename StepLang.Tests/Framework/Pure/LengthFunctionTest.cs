@@ -29,7 +29,7 @@ public class LengthFunctionTest
 
 		var function = new LengthFunction();
 		var result = function.Invoke(new(), interpreter,
-			[new IdentifierExpressionNode(new(TokenType.Identifier, "foo"))]);
+			[new IdentifierExpressionNode([new(TokenType.Identifier, "foo")])]);
 
 		Assert.That(result.Value, Is.EqualTo(5));
 	}

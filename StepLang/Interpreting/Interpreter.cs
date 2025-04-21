@@ -138,7 +138,7 @@ public partial class Interpreter : IInterpreter
 
 	public ExpressionResult Evaluate(IdentifierExpressionNode expressionNode)
 	{
-		var variable = CurrentScope.GetVariable(expressionNode.Identifier);
+		var variable = CurrentScope.GetVariable(expressionNode.IdentifierChain[0]);
 
 		return variable.Value;
 	}

@@ -44,6 +44,10 @@ public enum TokenType
 	ImportKeyword,
 	ForEachKeyword,
 	InKeyword,
+	OnKeyword,
+	ExtensionKeyword,
+	DotSymbol,
+	ThisKeyword,
 	EndOfFile,
 	Error,
 }
@@ -95,8 +99,12 @@ public static class TokenTypes
 			TokenType.ImportKeyword => "'import'",
 			TokenType.ForEachKeyword => "'foreach'",
 			TokenType.InKeyword => "'in'",
+			TokenType.OnKeyword => "'on'",
+			TokenType.ExtensionKeyword => "'extension'",
+			TokenType.DotSymbol => "'.'",
 			TokenType.EndOfFile => "end of file",
 			TokenType.Error => "error",
+			TokenType.ThisKeyword => "'this'",
 			_ => throw new ArgumentOutOfRangeException(nameof(type), type, "Unknown token type"),
 		};
 	}
@@ -136,6 +144,10 @@ public static class TokenTypes
 			TokenType.ClosingSquareBracket => "]",
 			TokenType.ForEachKeyword => "foreach",
 			TokenType.InKeyword => "in",
+			TokenType.OnKeyword => "in",
+			TokenType.ExtensionKeyword => "extension",
+			TokenType.DotSymbol => ".",
+			TokenType.ThisKeyword => "this",
 			TokenType.LiteralNull => "null",
 			_ => throw new InvalidOperationException("Token type does not have a static code representation"),
 		};
@@ -176,6 +188,15 @@ public static class TokenTypes
 				return true;
 			case "IN":
 				type = TokenType.InKeyword;
+				return true;
+			case "ON":
+				type = TokenType.OnKeyword;
+				return true;
+			case "EXTENSION":
+				type = TokenType.ExtensionKeyword;
+				return true;
+			case "THIS":
+				type = TokenType.ThisKeyword;
 				return true;
 		}
 
@@ -261,6 +282,9 @@ public static class TokenTypes
 			case ':':
 				type = TokenType.ColonSymbol;
 				return true;
+			case '.':
+				type = TokenType.DotSymbol;
+				return true;
 		}
 
 		type = null;
@@ -302,25 +326,6 @@ public static class TokenTypes
 			TokenType.PlusSymbol or TokenType.MinusSymbol or TokenType.AsteriskSymbol or TokenType.SlashSymbol
 				or TokenType.PercentSymbol or TokenType.PipeSymbol or TokenType.AmpersandSymbol or TokenType.HatSymbol
 				or TokenType.QuestionMarkSymbol => true,
-			_ => false,
-		};
-	}
-
-	public static readonly TokenType[] MathematicalOperations =
-	[
-		TokenType.PlusSymbol,
-		TokenType.MinusSymbol,
-		TokenType.AsteriskSymbol,
-		TokenType.SlashSymbol,
-		TokenType.PercentSymbol,
-	];
-
-	public static bool IsMathematicalOperation(this TokenType type)
-	{
-		return type switch
-		{
-			TokenType.PlusSymbol or TokenType.MinusSymbol or TokenType.AsteriskSymbol or TokenType.SlashSymbol
-				or TokenType.PercentSymbol => true,
 			_ => false,
 		};
 	}

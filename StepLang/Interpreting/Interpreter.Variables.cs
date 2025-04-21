@@ -50,7 +50,7 @@ public partial class Interpreter
 
 	public void Visit(VariableAssignmentNode statementNode)
 	{
-		var variable = CurrentScope.GetVariable(statementNode.Identifier);
+		var variable = CurrentScope.GetVariable(statementNode.IdentifierChain[0]);
 
 		var result = statementNode.Expression.EvaluateUsing(this);
 

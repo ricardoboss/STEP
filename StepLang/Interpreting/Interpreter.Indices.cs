@@ -11,7 +11,7 @@ public partial class Interpreter
 {
 	public void Visit(IdentifierIndexAssignmentNode statementNode)
 	{
-		BaseVariable variable = CurrentScope.GetVariable(statementNode.Identifier);
+		BaseVariable variable = CurrentScope.GetVariable(statementNode.IdentifierChain[0]);
 
 		foreach (var indexExpression in statementNode.IndexExpressions)
 		{
