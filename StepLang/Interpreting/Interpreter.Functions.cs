@@ -14,7 +14,7 @@ public partial class Interpreter
 			throw new InvalidExpressionTypeException(calledExpression.Location, "a callable expression",
 				calledExpression.GetType().Name);
 
-		var variable = CurrentScope.GetVariable(node.Identifier);
+		var variable = CurrentScope.GetVariable(node.IdentifierChain[0]);
 		if (variable.Value is not FunctionResult function)
 		{
 			throw new InvalidResultTypeException(node.Location, variable.Value, ResultType.Function);
@@ -31,7 +31,7 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(CallExpressionNode expressionNode)
 	{
-		var variable = CurrentScope.GetVariable(expressionNode.Identifier);
+		var variable = CurrentScope.GetVariable(expressionNode.IdentifierChain[0]);
 		if (variable.Value is not FunctionResult function)
 		{
 			throw new InvalidResultTypeException(expressionNode.Location, variable.Value, ResultType.Function);

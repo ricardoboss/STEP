@@ -28,7 +28,8 @@ public class ToTypeNameFunction : NativeFunction
 			throw new InvalidExpressionTypeException(callLocation, "an identifier", exp.GetType().Name);
 		}
 
-		var variable = interpreter.CurrentScope.GetVariable(varExp.Identifier);
+		// TODO: check that chain only contains one identifier
+		var variable = interpreter.CurrentScope.GetVariable(varExp.IdentifierChain.First());
 
 		return variable.TypeString;
 	}

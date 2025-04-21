@@ -7,7 +7,7 @@ public partial class Interpreter
 {
 	public void Visit(IncrementStatementNode statementNode)
 	{
-		var variable = CurrentScope.GetVariable(statementNode.Identifier);
+		var variable = CurrentScope.GetVariable(statementNode.IdentifierChain[0]);
 		var value = variable.Value;
 		if (value is not NumberResult number)
 		{
@@ -19,7 +19,7 @@ public partial class Interpreter
 
 	public void Visit(DecrementStatementNode statementNode)
 	{
-		var variable = CurrentScope.GetVariable(statementNode.Identifier);
+		var variable = CurrentScope.GetVariable(statementNode.IdentifierChain[0]);
 		var value = variable.Value;
 		if (value is not NumberResult number)
 		{

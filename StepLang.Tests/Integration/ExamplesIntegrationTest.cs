@@ -57,8 +57,14 @@ public class ExamplesIntegrationTest
 		var tokenizer = new Tokenizer(exampleFile, diagnostics);
 		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken);
 
+		if (diagnostics.ContainsErrors)
+			Assert.Fail("Tokenizing resulted in errors: " + diagnostics.Errors.First().Message);
+
 		var parser = new Parser(tokens, diagnostics);
 		var root = parser.ParseRoot();
+
+		if (diagnostics.ContainsErrors)
+			Assert.Fail("Parsing resulted in errors: " + diagnostics.Errors.First().Message);
 
 		var interpreter = new Interpreter(stdOut, stdErr, stdIn, null, diagnostics);
 		root.Accept(interpreter);

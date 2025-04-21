@@ -19,7 +19,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 		var imports = ParseImports();
 		var statements = ParseStatements(TokenType.EndOfFile);
 
-		return new RootNode(imports, statements);
+		return new(imports, statements);
 	}
 
 	private List<IImportNode> ParseImports()
@@ -101,6 +101,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 				return ParseContinueStatement();
 			case TokenType.OpeningCurlyBracket:
 				return ParseCodeBlock();
+			case TokenType.ExtensionKeyword:
+				return ParseExtensionBlock();
 			case null:
 				{
 					_ = tokens.Dequeue();
@@ -117,48 +119,51 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 		}
 	}
 
-	public StatementNode ParseIdentifierUsage()
+	private StatementNode ParseExtensionBlock()
 	{
-		var next = tokens.Peek(1);
-		if (next is null)
-		{
-			_ = tokens.Dequeue(TokenType.Identifier);
+		_ = tokens.Dequeue(TokenType.ExtensionKeyword);
+		_ = tokens.Dequeue(TokenType.OnKeyword);
 
-			return diagnostics.AddUnexpectedEndOfTokens(tokens.LastToken);
-		}
+		var extendedTypeResult = tokens.Dequeue(TokenType.TypeName);
+		if (extendedTypeResult is Err<Token> extendedTypeError)
+			return diagnostics.AddError(extendedTypeError);
 
-		switch (next.Type)
+		var block = ParseCodeBlock();
+
+		return block;
+	}
+
+	private StatementNode ParseIdentifierUsage()
+	{
+		var identifierChainResult = ParseIdentifierChain();
+		if (identifierChainResult is Err<(List<Token> chain, Token lastToken)> errResult)
+			return diagnostics.AddError((Err<Token>)errResult.Map<(List<Token> chain, Token lastToken), Token>());
+
+		var (chain, lastToken) = identifierChainResult.Value;
+
+		switch (lastToken.Type)
 		{
 			case TokenType.EqualsSymbol:
-				return ParseVariableAssignment();
+				return ParseVariableAssignment(chain, lastToken);
 			case TokenType.OpeningParentheses:
-				return ParseFunctionCall();
+				return ParseFunctionCall(chain);
 			case TokenType.OpeningSquareBracket:
-				return ParseIndexAssignment();
+				return ParseIndexAssignment(chain);
 		}
 
-		var nextNext = tokens.Peek(2);
-		if (nextNext is null)
-		{
-			_ = tokens.Dequeue(TokenType.Identifier);
-			_ = tokens.Dequeue();
-
+		var nextToken = tokens.Peek(1);
+		if (nextToken is null)
 			return diagnostics.AddUnexpectedEndOfTokens(tokens.LastToken);
-		}
 
-		if (next.Type.IsShorthandMathematicalOperation() && nextNext.Type == next.Type)
-		{
-			return ParseShorthandMathOperation();
-		}
+		if (nextToken.Type.IsShorthandMathematicalOperation() && lastToken.Type == nextToken.Type)
+			return ParseShorthandMathOperation(chain, lastToken);
 
-		if (next.Type.IsShorthandMathematicalOperationWithAssignment())
-		{
-			return ParseShorthandMathOperationExpression();
-		}
+		if (lastToken.Type.IsShorthandMathematicalOperationWithAssignment() && nextToken.Type is TokenType.EqualsSymbol)
+			return ParseShorthandMathOperationExpression(chain, lastToken);
 
-		_ = tokens.Dequeue(2);
+		_ = tokens.Dequeue();
 
-		return diagnostics.AddUnexpectedToken(tokens.LastToken!, next.Type, TokenType.EqualsSymbol);
+		return diagnostics.AddUnexpectedToken(tokens.LastToken!, lastToken.Type, TokenType.EqualsSymbol);
 	}
 
 	private StatementNode ParseDiscardStatement()
@@ -176,16 +181,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 		return new DiscardStatementNode(underscore.Location, expression);
 	}
 
-	private StatementNode ParseIndexAssignment()
+	private StatementNode ParseIndexAssignment(List<Token> identifierChain)
 	{
-		var identifierResult = tokens.Dequeue(TokenType.Identifier);
-		if (identifierResult is Err<Token> identifierError)
-			return diagnostics.AddError(identifierError);
-
-		var identifier = identifierResult.Value;
-
-		_ = tokens.Dequeue(TokenType.OpeningSquareBracket);
-
 		var initialIndex = ParseExpression();
 		var indexExpressions = new List<ExpressionNode>([initialIndex]);
 
@@ -215,50 +212,32 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 		var expression = ParseExpression();
 
-		return new IdentifierIndexAssignmentNode(identifier, indexExpressions, postIndexToken, expression);
+		return new IdentifierIndexAssignmentNode(identifierChain, indexExpressions, postIndexToken, expression);
 	}
 
-	private StatementNode ParseShorthandMathOperation()
+	private StatementNode ParseShorthandMathOperation(List<Token> identifierChain, Token operationToken)
 	{
-		var identifierResult = tokens.Dequeue(TokenType.Identifier);
-		if (identifierResult is Err<Token> identifierError)
-			return diagnostics.AddError(identifierError);
+		_ = tokens.Dequeue(operationToken.Type);
 
-		var identifier = identifierResult.Value;
-
-		var operationResult = tokens.Dequeue(TokenTypes.ShorthandMathematicalOperations);
-		if (operationResult is Err<Token> operationError)
-			return diagnostics.AddError(operationError);
-
-		var operation = operationResult.Value;
-
-		_ = tokens.Dequeue(operation.Type);
-
-		switch (operation.Type)
+		switch (operationToken.Type)
 		{
 			case TokenType.PlusSymbol:
-				return new IncrementStatementNode(identifier);
+				return new IncrementStatementNode(identifierChain);
 			case TokenType.MinusSymbol:
-				return new DecrementStatementNode(identifier);
+				return new DecrementStatementNode(identifierChain);
 			default:
-				return diagnostics.AddUnexpectedToken(operation, TokenType.PlusSymbol, TokenType.MinusSymbol);
+				return diagnostics.AddUnexpectedToken(operationToken, TokenType.PlusSymbol, TokenType.MinusSymbol);
 		}
 	}
 
-	private StatementNode ParseShorthandMathOperationExpression()
+	private StatementNode ParseShorthandMathOperationExpression(List<Token> identifierChain, Token initialOperatorToken)
 	{
-		var identifierResult = tokens.Dequeue(TokenType.Identifier);
-		if (identifierResult is Err<Token> identifierError)
-			return diagnostics.AddError(identifierError);
+		var identifierExpression = new IdentifierExpressionNode(identifierChain);
 
-		var identifier = identifierResult.Value;
-
-		var identifierExpression = new IdentifierExpressionNode(identifier);
-
-		List<Token> operatorTokens;
+		List<Token> operatorTokens = [initialOperatorToken];
 		try
 		{
-			operatorTokens = PeekContinuousOperators(TokenTypes.ShorthandMathematicalOperationsWithAssignment);
+			operatorTokens.AddRange(PeekContinuousOperators(TokenTypes.ShorthandMathematicalOperationsWithAssignment));
 		}
 		catch (UnexpectedTokenException e)
 		{
@@ -267,7 +246,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 		Debug.Assert(operatorTokens.Count > 0);
 
-		_ = tokens.Dequeue(operatorTokens.Count);
+		_ = tokens.Dequeue(operatorTokens.Count - 1);
 		var assignmentResult = tokens.Dequeue(TokenType.EqualsSymbol);
 		if (assignmentResult is Err<Token> assignmentError)
 			return diagnostics.AddError(assignmentError);
@@ -281,12 +260,12 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 		{
 			TokenType.PlusSymbol => new VariableAssignmentNode(
 				assignmentToken.Location,
-				identifier,
+				identifierChain,
 				new AddExpressionNode(firstOperator, identifierExpression, expression)
 			),
 			TokenType.MinusSymbol => new VariableAssignmentNode(
 				assignmentToken.Location,
-				identifier,
+				identifierChain,
 				new SubtractExpressionNode(
 					firstOperator,
 					identifierExpression,
@@ -297,7 +276,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 			{
 				1 => new VariableAssignmentNode(
 					assignmentToken.Location,
-					identifier,
+					identifierChain,
 					new MultiplyExpressionNode(
 						firstOperator,
 						identifierExpression,
@@ -308,7 +287,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 				{
 					TokenType.AsteriskSymbol => new VariableAssignmentNode(
 						assignmentToken.Location,
-						identifier,
+						identifierChain,
 						new PowerExpressionNode(
 							firstOperator,
 							identifierExpression,
@@ -321,7 +300,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 			},
 			TokenType.SlashSymbol => new VariableAssignmentNode(
 				assignmentToken.Location,
-				identifier,
+				identifierChain,
 				new DivideExpressionNode(
 					firstOperator,
 					identifierExpression,
@@ -330,7 +309,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 			),
 			TokenType.PercentSymbol => new VariableAssignmentNode(
 				assignmentToken.Location,
-				identifier,
+				identifierChain,
 				new ModuloExpressionNode(
 					firstOperator,
 					identifierExpression,
@@ -339,7 +318,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 			),
 			TokenType.PipeSymbol => new VariableAssignmentNode(
 				assignmentToken.Location,
-				identifier,
+				identifierChain,
 				new BitwiseOrExpressionNode(
 					firstOperator,
 					identifierExpression,
@@ -348,7 +327,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 			),
 			TokenType.AmpersandSymbol => new VariableAssignmentNode(
 				assignmentToken.Location,
-				identifier,
+				identifierChain,
 				new BitwiseAndExpressionNode(
 					firstOperator,
 					identifierExpression,
@@ -357,7 +336,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 			),
 			TokenType.HatSymbol => new VariableAssignmentNode(
 				assignmentToken.Location,
-				identifier,
+				identifierChain,
 				new BitwiseXorExpressionNode(
 					firstOperator,
 					identifierExpression,
@@ -366,7 +345,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 			),
 			TokenType.QuestionMarkSymbol => new VariableAssignmentNode(
 				assignmentToken.Location,
-				identifier,
+				identifierChain,
 				new CoalesceExpressionNode(
 					firstOperator,
 					identifierExpression,
@@ -677,11 +656,11 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 		return new IfStatementNode(ifKeyword, conditionBodyMap);
 	}
 
-	private CallStatementNode ParseFunctionCall()
+	private CallStatementNode ParseFunctionCall(List<Token> chain)
 	{
-		var callExpression = ParseFunctionCallExpression();
+		var callExpression = ParseFunctionCallExpression(chain);
 
-		return new CallStatementNode(callExpression);
+		return new(callExpression);
 	}
 
 	private IVariableDeclarationNode ParseVariableDeclaration()
@@ -735,23 +714,11 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 		return new VariableInitializationNode(assignmentToken.Location, [type], identifier, expression);
 	}
 
-	private StatementNode ParseVariableAssignment()
+	private VariableAssignmentNode ParseVariableAssignment(List<Token> identifierChain, Token equalsToken)
 	{
-		var identifierResult = tokens.Dequeue(TokenType.Identifier);
-		if (identifierResult is Err<Token> identifierError)
-			return diagnostics.AddError(identifierError);
-
-		var identifier = identifierResult.Value;
-
-		var assignmentTokenResult = tokens.Dequeue(TokenType.EqualsSymbol);
-		if (assignmentTokenResult is Err<Token> assignmentError)
-			return diagnostics.AddError(assignmentError);
-
-		var assignmentToken = assignmentTokenResult.Value;
-
 		var expression = ParseExpression();
 
-		return new VariableAssignmentNode(assignmentToken.Location, identifier, expression);
+		return new(equalsToken.Location, identifierChain, expression);
 	}
 
 	private ExpressionNode ParseExpression(int parentPrecedence = 0)
@@ -838,7 +805,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 			BinaryExpressionOperator.BitwiseRotateRight => new BitwiseRotateRightExpressionNode(@operator, left,
 				right),
 			_ => throw new NotSupportedException("Expression for operator " + binaryOperator.ToSymbol() +
-												 " not supported"),
+			                                     " not supported"),
 		};
 	}
 
@@ -1041,14 +1008,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 					};
 				}
 			case TokenType.Identifier:
-				{
-					var nextType = tokens.PeekType(1);
-					return nextType switch
-					{
-						TokenType.OpeningParentheses => ParseFunctionCallExpression(),
-						_ => ParseIdentifierExpression(),
-					};
-				}
+				return ParseIdentifierExpression();
 			case TokenType.OpeningSquareBracket:
 				return ParseListExpression();
 			case TokenType.OpeningCurlyBracket:
@@ -1063,8 +1023,12 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 				if (nullTokenResult is Err<Token> nullTokenError)
 					return diagnostics.AddErrorExpression(nullTokenError);
 
-				return new LiteralExpressionNode(new Token(TokenType.LiteralNull, nullTokenResult.Value.Value,
+				return new LiteralExpressionNode(new(TokenType.LiteralNull, nullTokenResult.Value.Value,
 					nullTokenResult.Value.Location));
+			case TokenType.ThisKeyword:
+				var thisTokenResult = tokens.Dequeue(tokenType);
+
+				return new ThisExpressionNode(thisTokenResult.Value);
 			default:
 				return diagnostics.AddMissingExpression(tokens.LastToken);
 		}
@@ -1152,26 +1116,50 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private ExpressionNode ParseIdentifierExpression()
 	{
-		var identifierResult = tokens.Dequeue(TokenType.Identifier);
-		if (identifierResult is Err<Token> identifierError)
+		var identifierResult = ParseIdentifierChain();
+		if (identifierResult is Err<(List<Token> chain, Token lastToken)> identifierError)
 			return diagnostics.AddErrorExpression(identifierError);
 
-		return new IdentifierExpressionNode(identifierResult.Value);
+		return new IdentifierExpressionNode(identifierResult.Value.chain);
 	}
 
-	private ExpressionNode ParseFunctionCallExpression()
+	private CallExpressionNode ParseFunctionCallExpression(List<Token> identifierChain)
 	{
-		var identifierResult = tokens.Dequeue(TokenType.Identifier);
-		if (identifierResult is Err<Token> identifierError)
-			return diagnostics.AddErrorExpression(identifierError);
-
-		_ = tokens.Dequeue(TokenType.OpeningParentheses);
-
 		var arguments = ParseCallArguments();
 
 		_ = tokens.Dequeue(TokenType.ClosingParentheses);
 
-		return new CallExpressionNode(identifierResult.Value, arguments);
+		return new(identifierChain, arguments);
+	}
+
+	private Result<(List<Token> chain, Token lastToken)> ParseIdentifierChain(params TokenType[] stopTokenTypes)
+	{
+		var identifierResult = tokens.Dequeue(TokenType.Identifier);
+		if (identifierResult is Err<Token> identifierError)
+			return identifierError.Map<Token, (List<Token> chain, Token lastToken)>();
+
+		List<Token> identifierChain = [identifierResult.Value];
+		Result<Token> nextResult;
+		while ((nextResult = tokens.Dequeue([TokenType.DotSymbol, ..stopTokenTypes])) is Ok<Token>
+		       {
+			       Value.Type: TokenType.DotSymbol,
+		       })
+		{
+			identifierResult = tokens.Dequeue(TokenType.Identifier);
+			if (identifierResult is Err<Token> nestedError)
+				return nestedError.Map<Token, (List<Token> chain, Token lastToken)>();
+
+			identifierChain.Add(identifierResult.Value);
+		}
+
+		return nextResult switch
+		{
+			Err<Token> nextResultErr => nextResultErr.Map<Token, (List<Token> chain, Token lastToken)>(),
+			Ok<Token> tokenResult when stopTokenTypes.Length > 0 && !stopTokenTypes.Contains(tokenResult.Value.Type) =>
+				new UnexpectedTokenException(tokenResult.Value, stopTokenTypes)
+					.ToErr<(List<Token> chain, Token lastToken)>(),
+			_ => (chain: identifierChain, lastToken: nextResult.Value).ToResult(),
+		};
 	}
 
 	private ExpressionNode ParseNestedExpression()

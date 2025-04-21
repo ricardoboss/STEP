@@ -1,0 +1,29 @@
+extension on string {
+    function append = (string other) {
+        return this + other
+    }
+}
+
+extension on list {
+    function isEmpty = () {
+        return length(this) == 0
+    }
+
+    function first = () {
+        if (this.isEmpty()) {
+            return null
+        }
+
+        return this[0]
+    }
+}
+
+string text = "foo"
+println(text.append("bar")) // "foobar"
+
+list names = ["James"]
+string? fullName = names.first()?.append(" Gunn") // "James Gunn"
+string? noName = [].first()?.append(" Smith") // null
+
+println(fullName)
+println(noName)

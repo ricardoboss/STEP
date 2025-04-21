@@ -136,7 +136,7 @@ public partial class Interpreter : IRootNodeVisitor, IStatementVisitor, IExpress
 
 	public ExpressionResult Evaluate(IdentifierExpressionNode expressionNode)
 	{
-		var variable = CurrentScope.GetVariable(expressionNode.Identifier);
+		var variable = CurrentScope.GetVariable(expressionNode.IdentifierChain[0]);
 
 		return variable.Value;
 	}

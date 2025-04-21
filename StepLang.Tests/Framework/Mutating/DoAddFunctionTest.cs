@@ -17,12 +17,12 @@ public class DoAddFunctionTest
 
 		var interpreter = new Interpreter();
 		interpreter.CurrentScope.CreateVariable(listIdentifier, list);
-		var listVarExpression = new IdentifierExpressionNode(new Token(TokenType.Identifier, listIdentifier));
+		var listVarExpression = new IdentifierExpressionNode([new Token(TokenType.Identifier, listIdentifier)]);
 		var function = new DoAddFunction();
 
 		var previousCount = list.Value.Count;
 
-		var result = function.Invoke(new TokenLocation(), interpreter, [listVarExpression, elementExpression]);
+		var result = function.Invoke(new(), interpreter, [listVarExpression, elementExpression]);
 
 		Assert.Equal(VoidResult.Instance, result);
 		Assert.Equal(previousCount + 1, list.Value.Count);
@@ -37,7 +37,7 @@ public class DoAddFunctionTest
 			Add(ListResult.Empty, LiteralExpressionNode.FromInt32(1));
 			Add(ListResult.Empty, LiteralExpressionNode.FromBoolean(true));
 			Add(ListResult.Empty,
-				new AddExpressionNode(new Token(TokenType.PlusSymbol, "+"), LiteralExpressionNode.FromInt32(1),
+				new AddExpressionNode(new(TokenType.PlusSymbol, "+"), LiteralExpressionNode.FromInt32(1),
 					LiteralExpressionNode.FromInt32(2)));
 
 			Add(ListResult.From(BoolResult.True), LiteralExpressionNode.FromBoolean(false));

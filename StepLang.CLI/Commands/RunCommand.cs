@@ -52,9 +52,7 @@ internal sealed class RunCommand : AsyncCommand<RunCommand.Settings>
 
 		if (diagnostics.ContainsErrors)
 		{
-			AnsiConsole.MarkupLine("[bold red]The file contains errors:[/]");
-
-			ReportDiagnostics(diagnostics.Errors);
+			AnsiConsole.MarkupLine("[bold red]The file contains errors.[/]");
 
 			return -1;
 		}
