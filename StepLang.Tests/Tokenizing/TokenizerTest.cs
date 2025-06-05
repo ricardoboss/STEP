@@ -312,13 +312,23 @@ public class TokenizerTest
 		Assert.Equal(5, tokens.Count);
 		Assert.Equal(TokenType.Identifier, tokens[0].Type);
 		Assert.Equal("print", tokens[0].Value);
+		Assert.Equal(1, tokens[0].Location.Line);
+		Assert.Equal(1, tokens[0].Location.Column);
 		Assert.Equal(TokenType.OpeningParentheses, tokens[1].Type);
 		Assert.Equal("(", tokens[1].Value);
+		Assert.Equal(1, tokens[1].Location.Line);
+		Assert.Equal(6, tokens[1].Location.Column);
 		Assert.Equal(TokenType.LiteralString, tokens[2].Type);
 		Assert.Equal("\"hello\"", tokens[2].Value);
+		Assert.Equal(1, tokens[2].Location.Line);
+		Assert.Equal(7, tokens[2].Location.Column);
 		Assert.Equal(TokenType.ClosingParentheses, tokens[3].Type);
 		Assert.Equal(")", tokens[3].Value);
+		Assert.Equal(1, tokens[3].Location.Line);
+		Assert.Equal(14, tokens[3].Location.Column);
 		Assert.Equal(TokenType.EndOfFile, tokens[4].Type);
+		Assert.Equal(1, tokens[4].Location.Line);
+		Assert.Equal(source.Length + 1, tokens[4].Location.Column);
 		Assert.Empty(diagnostics);
 	}
 
