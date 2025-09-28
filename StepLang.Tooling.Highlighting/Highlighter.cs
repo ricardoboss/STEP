@@ -1,4 +1,5 @@
 using StepLang.Tokenizing;
+using System.Text;
 
 namespace StepLang.Tooling.Highlighting;
 
@@ -10,8 +11,73 @@ public class Highlighter(ColorScheme scheme)
 
 		foreach (var token in tokenizer.Tokenize())
 		{
-			yield return new StyledToken(token.Type, token.Value, GetStyle(token.Type, scheme));
+			var text = GetTokenText(token);
+
+			yield return new StyledToken(token.Type, text, GetStyle(token.Type, scheme));
 		}
+	}
+
+	private static string GetTokenText(Token token)
+	{
+		if (token.Type != TokenType.LiteralString)
+			return token.Value;
+
+		var builder = new StringBuilder(token.Value.Length);
+
+		builder.Append('"');
+
+		foreach (var character in token.StringValue)
+		{
+			switch (character)
+			{
+				case '\\':
+					builder.Append("\\\\");
+					break;
+				case '"':
+					builder.Append("\\\"");
+					break;
+				case '\n':
+					builder.Append("\\n");
+					break;
+				case '\r':
+					builder.Append("\\r");
+					break;
+				case '\t':
+					builder.Append("\\t");
+					break;
+				case '\0':
+					builder.Append("\\0");
+					break;
+				case '\a':
+					builder.Append("\\a");
+					break;
+				case '\b':
+					builder.Append("\\b");
+					break;
+				case '\f':
+					builder.Append("\\f");
+					break;
+				case '\v':
+					builder.Append("\\v");
+					break;
+				default:
+					if (char.IsControl(character))
+					{
+						builder.Append("\\u");
+						builder.Append(((int)character).ToString("x4"));
+					}
+					else
+					{
+						builder.Append(character);
+					}
+
+					break;
+			}
+		}
+
+		builder.Append('"');
+
+		return builder.ToString();
 	}
 
 	public static Style GetStyle(TokenType tokenType, ColorScheme scheme)
