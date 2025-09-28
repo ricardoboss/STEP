@@ -11,6 +11,7 @@ namespace StepLang.CLI;
 [ExcludeFromCodeCoverage]
 internal static class ErrorHandler
 {
+	[RequiresDynamicCode("Calls Spectre.Console.AnsiConsole.WriteException(Exception, ExceptionFormats)")]
 	public static void HandleException(Exception e, ITypeResolver? typeResolver)
 	{
 		if (e is StepLangException sle)

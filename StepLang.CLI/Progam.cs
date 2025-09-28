@@ -27,6 +27,8 @@ internal static class Program
 	[DynamicDependency(
 		DynamicallyAccessedMemberTypes.PublicParameterlessConstructor |
 		DynamicallyAccessedMemberTypes.PublicNestedTypes, typeof(AnalyzeCommand))]
+	[UnconditionalSuppressMessage("AOT",
+		"IL3050:Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.")]
 	public static async Task<int> Main(string[] args)
 	{
 		const string slogan = "STEP - Simple Transition to Elevated Programming";
