@@ -313,7 +313,7 @@ jobs:
           merge-multiple: true
 
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           body: |
             These release notes are generated automatically. For more information, please refer to the [CHANGELOG.md](https://github.com/ricardoboss/STEP/blob/main/CHANGELOG.md).
