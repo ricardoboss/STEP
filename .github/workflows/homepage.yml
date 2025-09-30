@@ -36,7 +36,7 @@ jobs:
           git fetch --prune --unshallow
 
       - name: Dotnet Setup
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 9.x
 
