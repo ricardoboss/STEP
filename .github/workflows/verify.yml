@@ -40,6 +40,6 @@ jobs:
     if: ${{ github.event_name != 'pull_request' || github.actor != 'dependabot[bot]' }}
 
     steps:
-      - uses: tarides/changelog-check-action@v2
+      - uses: tarides/changelog-check-action@v3
         with:
           changelog: CHANGELOG.md
