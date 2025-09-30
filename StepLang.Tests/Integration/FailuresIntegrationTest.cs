@@ -65,6 +65,7 @@ public class FailuresIntegrationTest
 		AssertException(e, exampleFile, details);
 	}
 
+	[SuppressMessage("ReSharper", "ParameterOnlyUsedForPreconditionCheck.Local")]
 	private static void AssertErrors(DiagnosticCollection diagnostics, FileInfo sourceFile,
 		List<ExceptionDetails> details)
 	{
