@@ -45,6 +45,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StepLang.Tooling.Formatting.Tests", "StepLang.Tooling.Formatting.Tests\StepLang.Tooling.Formatting.Tests.csproj", "{0DC701B1-15E9-4776-AFF5-9BBEA1C7D55B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{83F45B93-DF47-468E-A956-38826263C018}"
+	ProjectSection(SolutionItems) = preProject
+		.github\dependabot.yml = .github\dependabot.yml
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ISSUE_TEMPLATE", "ISSUE_TEMPLATE", "{851A3A44-33F7-45C6-86E9-914C5A76749B}"
 	ProjectSection(SolutionItems) = preProject
@@ -61,6 +64,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang.Tooling.CLI.Tests", "StepLang.Tooling.CLI.Tests\StepLang.Tooling.CLI.Tests.csproj", "{3741C6C6-D6E5-4958-B641-E47CCBDF77E2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StepLang.Tooling.Meta", "StepLang.Tooling.Meta\StepLang.Tooling.Meta.csproj", "{ED6BF278-19C3-44DD-A504-E372B6F45C4C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PULL_REQUEST_TEMPLATE", "PULL_REQUEST_TEMPLATE", "{092CC602-65BA-4F96-AADB-79064F388A6D}"
+	ProjectSection(SolutionItems) = preProject
+		.github\PULL_REQUEST_TEMPLATE\pull_request_template.md = .github\PULL_REQUEST_TEMPLATE\pull_request_template.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -140,5 +148,6 @@ Global
 		{2C69A7EE-9A33-4E2B-90AB-4F138F4B8479} = {A9BE3B66-38F1-454B-9A12-E1BF21E307CF}
 		{3741C6C6-D6E5-4958-B641-E47CCBDF77E2} = {A9BE3B66-38F1-454B-9A12-E1BF21E307CF}
 		{ED6BF278-19C3-44DD-A504-E372B6F45C4C} = {A9BE3B66-38F1-454B-9A12-E1BF21E307CF}
+		{092CC602-65BA-4F96-AADB-79064F388A6D} = {83F45B93-DF47-468E-A956-38826263C018}
 	EndGlobalSection
 EndGlobal

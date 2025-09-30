@@ -43,3 +43,26 @@ jobs:
       - uses: tarides/changelog-check-action@v3
         with:
           changelog: CHANGELOG.md
+
+  lockfiles:
+    name: Package lock files
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.x
+
+      - name: Restore and regenerate lock files
+        run: dotnet restore --force-evaluate
+
+      - name: Check for modified lock files
+        run: |
+          if ! git diff --exit-code -- packages.lock.json '**/packages.lock.json'; then
+            echo "Lock files are out of date. Run 'dotnet restore --force-evaluate' and commit changes."
+            exit 1
+          fi
