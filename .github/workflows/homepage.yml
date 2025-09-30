@@ -1,4 +1,4 @@
-name: Generate & Deploy Homepage
+name: Homepage
 
 on:
   pull_request:
