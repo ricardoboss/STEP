@@ -34,7 +34,7 @@ internal static class Program
 		const string slogan = "STEP - Simple Transition to Elevated Programming";
 
 		var app = new CommandApp<DefaultCommand>()
-				.WithDescription(slogan + Environment.NewLine + "Version: " + GitVersionInformation.FullSemVer)
+				.WithDescription(slogan + Environment.NewLine + "Version: " + CliMetadataProvider.Instance.FullSemVer)
 			;
 
 		app.Configure(config =>
@@ -49,7 +49,7 @@ internal static class Program
 
 			config
 				.SetApplicationName("step")
-				.SetApplicationVersion(GitVersionInformation.FullSemVer)
+				.SetApplicationVersion(CliMetadataProvider.Instance.FullSemVer)
 				.CaseSensitivity(CaseSensitivity.None)
 				.UseStrictParsing()
 #if DEBUG

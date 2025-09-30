@@ -10,11 +10,14 @@
 
 	<ItemGroup>
 		<PackageReference Include="Baugen" />
+		<PackageReference Include="System.Linq.Async"/>
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(Configuration)' == 'Release'">
 		<PackageReference Include="GitVersion.MsBuild">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="System.Linq.Async"/>
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(Configuration)' != 'Release'">

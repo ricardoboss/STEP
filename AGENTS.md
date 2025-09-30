@@ -6,6 +6,7 @@
 * Repository root contains the solution file (`*.sln`).
 * `.editorconfig` defines code style and formatting rules.
 * Main entrypoint is the CLI project at `StepLang.CLI/StepLang.CLI.csproj`.
+* You cannot create `Release` builds, because that requires a regular clone of the repository.
 
 ## Testing instructions
 
@@ -15,14 +16,14 @@
   dotnet test --configuration Release --no-build
   ```
 * All tests must pass before merging.
-* Use `dotnet format --verify-no-changes` to ensure code style compliance. This must succeed before committing.
+* Use `dotnet format --verify-no-changes` to ensure code style compliance. This must succeed before committing (warnings allowed).
 
 ## Build instructions
 
 * Build the solution in release mode:
 
   ```sh
-  dotnet build --configuration Release
+  dotnet build --configuration Debug
   ```
 
 ## Run instructions
