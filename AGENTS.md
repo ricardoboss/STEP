@@ -13,14 +13,14 @@
 * Run all test projects:
 
   ```sh
-  dotnet test --configuration Release --no-build
+  dotnet test --configuration Debug --no-build
   ```
 * All tests must pass before merging.
 * Use `dotnet format --verify-no-changes` to ensure code style compliance. This must succeed before committing (warnings allowed).
 
 ## Build instructions
 
-* Build the solution in release mode:
+* Build the solution in debug mode:
 
   ```sh
   dotnet build --configuration Debug
