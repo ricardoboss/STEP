@@ -14,6 +14,10 @@ on:
     paths:
       - ".github/workflows/publish.yml"
 
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
 jobs:
   build-aot:
     name: Build AOT Binaries
@@ -26,10 +30,6 @@ jobs:
         dotnet: [ "9.0" ]
 
     runs-on: ${{ (matrix.os == 'win' && (matrix.arch == 'arm64' && 'windows-11-arm' || 'windows-latest')) || (matrix.os == 'osx' && (matrix.arch == 'x64' && 'macos-13' || 'macos-latest')) || (matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest') }}
-
-    env:
-      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-      DOTNET_CLI_TELEMETRY_OPTOUT: true
 
     steps:
       - name: Checkout
@@ -107,10 +107,6 @@ jobs:
     name: Build .NET-dependent
 
     runs-on: ubuntu-latest
-
-    env:
-      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-      DOTNET_CLI_TELEMETRY_OPTOUT: true
 
     steps:
       - name: Checkout
@@ -268,10 +264,6 @@ jobs:
         dotnet: [ "9.0" ]
 
     runs-on: ${{ (matrix.os == 'win' && (matrix.arch == 'arm64' && 'windows-11-arm' || 'windows-latest')) || (matrix.os == 'osx' && (matrix.arch == 'x64' && 'macos-13' || 'macos-latest')) || (matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest') }}
-
-    env:
-      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-      DOTNET_CLI_TELEMETRY_OPTOUT: true
 
     steps:
       - name: Install .NET
