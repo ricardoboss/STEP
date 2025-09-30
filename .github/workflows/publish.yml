@@ -169,7 +169,7 @@ jobs:
           fetch-depth: 0
 
       - name: Download artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: step-osx-arm64
           path: ./artifact
@@ -233,7 +233,7 @@ jobs:
 
     steps:
       - name: Download binary
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: step-${{ matrix.os }}-${{ matrix.arch }}
           path: ./artifact
@@ -272,7 +272,7 @@ jobs:
           dotnet-version: ${{ matrix.dotnet }}
 
       - name: Download binary
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: step
 
@@ -306,7 +306,7 @@ jobs:
 
     steps:
       - name: Download binaries
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           pattern: step*
           path: ./artifacts
