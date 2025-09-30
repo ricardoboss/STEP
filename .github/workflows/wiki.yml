@@ -3,7 +3,7 @@ name: Synchronize Wiki
 on:
   push:
     paths:
-      - StepLang.Wiki/**
+      - docs/StepLang.Wiki/**
       - .github/workflows/wiki.yml
     branches:
       - main
@@ -26,4 +26,4 @@ jobs:
           fetch-depth: 0
 
       - name: Run sync script
-        run: chmod +x StepLang.Wiki/sync.sh && StepLang.Wiki/sync.sh
+        run: chmod +x docs/StepLang.Wiki/sync.sh && docs/StepLang.Wiki/sync.sh

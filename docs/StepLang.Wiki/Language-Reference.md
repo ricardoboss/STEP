@@ -280,5 +280,5 @@ if (toTypeName(a) == "null") {
 
 ## Functions
 
-Check out the [Functions](https://github.com/ricardoboss/STEP/tree/main/StepLang.Wiki/Functions) folder for more
+Check out the [Functions](https://github.com/ricardoboss/STEP/tree/main/docs/StepLang.Wiki/Functions) folder for more
 information on the built-in functions.

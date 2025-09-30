@@ -6,13 +6,13 @@ on:
       - main
     paths:
       - '.github/workflows/homepage.yml'
-      - 'StepLang.Homepage/**'
+      - 'docs/StepLang.Homepage/**'
   push:
     branches:
       - main
     paths:
       - '.github/workflows/homepage.yml'
-      - 'StepLang.Homepage/**'
+      - 'docs/StepLang.Homepage/**'
   workflow_dispatch:
 
 jobs:
@@ -43,11 +43,11 @@ jobs:
         run: dotnet build StepLang/StepLang.csproj -c Release
 
       - name: Generate Homepage
-        run: docfx StepLang.Homepage/docfx.json
+        run: docfx docs/StepLang.Homepage/docfx.json
 
       - name: Fix permissions
         run: |
-          chmod -c -R +rX "StepLang.Homepage/_site/" | while read line; do
+          chmod -c -R +rX "docs/StepLang.Homepage/_site/" | while read line; do
             echo "::debug title=Invalid file permissions automatically fixed::$line"
           done
 
@@ -55,7 +55,7 @@ jobs:
         uses: actions/upload-pages-artifact@v2
         with:
           name: site
-          path: StepLang.Homepage/_site
+          path: docs/StepLang.Homepage/_site
 
   deploy:
     name: Deploy Homepage

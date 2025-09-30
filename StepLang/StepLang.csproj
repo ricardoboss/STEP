@@ -35,7 +35,7 @@
 
 	<Target Name="Copy DLLs to Homepage" AfterTargets="Build">
 		<PropertyGroup>
-			<HomepageBinDir>$(SolutionDir)StepLang.Homepage\bin</HomepageBinDir>
+			<HomepageBinDir>$(SolutionDir)docs\StepLang.Homepage\bin</HomepageBinDir>
 		</PropertyGroup>
 
 		<ItemGroup>

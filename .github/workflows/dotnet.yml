@@ -6,13 +6,11 @@ name: .NET
 on:
   push:
     paths-ignore:
-      - "StepLang.Wiki/**"
-      - "StepLang.Homepage/**"
+      - "docs/**"
     branches: [ "main" ]
   pull_request:
     paths-ignore:
-      - "StepLang.Wiki/**"
-      - "StepLang.Homepage/**"
+      - "docs/**"
     branches: [ "main" ]
 
 env:
