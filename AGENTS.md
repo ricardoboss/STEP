@@ -8,16 +8,6 @@
 * Main entrypoint is the CLI project at `StepLang.CLI/StepLang.CLI.csproj`.
 * You cannot create `Release` builds, because that requires a regular clone of the repository.
 
-## Testing instructions
-
-* Run all test projects:
-
-  ```sh
-  dotnet test --configuration Debug --no-build
-  ```
-* All tests must pass before merging.
-* Use `dotnet format --verify-no-changes` to ensure code style compliance. This must succeed before committing (warnings allowed).
-
 ## Build instructions
 
 * Build the solution in debug mode:
@@ -25,6 +15,16 @@
   ```sh
   dotnet build --configuration Debug
   ```
+
+## Testing instructions
+
+* Run all test projects:
+
+  ```sh
+  dotnet test --configuration Test
+  ```
+* All tests must pass before merging.
+* Use `dotnet format --verify-no-changes` to ensure code style compliance. This must succeed before committing (warnings allowed).
 
 ## Run instructions
 

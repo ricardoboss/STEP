@@ -12,7 +12,7 @@ public sealed class CoreMetadataProvider : IMetadataProvider
 
 	public DateTimeOffset BuildTime => BuildMetadata.BuildTimestamp;
 
-#if RELEASE
+#if RELEASE && !TEST
 	public string FullSemVer => GitVersionInformation.FullSemVer;
 
 	public string Sha => GitVersionInformation.Sha;
