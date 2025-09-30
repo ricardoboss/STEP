@@ -37,6 +37,8 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    if: ${{ github.event_name != 'pull_request' || github.actor != 'dependabot[bot]' }}
+
     steps:
       - uses: tarides/changelog-check-action@v2
         with:
