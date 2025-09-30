@@ -51,10 +51,10 @@ jobs:
             ${{ runner.os }}-nuget-
 
       - name: Restore Dependencies
-        run: dotnet restore --nologo --force-evaluate --runtime ${{ matrix.os }}-${{ matrix.arch }}
+        run: dotnet restore --force-evaluate --runtime ${{ matrix.os }}-${{ matrix.arch }}
 
       - name: Build
-        run: dotnet publish StepLang.CLI/StepLang.CLI.csproj --configuration Release --no-restore --runtime ${{ matrix.os }}-${{ matrix.arch }} --framework net${{ matrix.dotnet }} --self-contained true /p:PublishTrimmed=true /p:PublishSingleFile=true
+        run: dotnet publish StepLang.CLI/StepLang.CLI.csproj --configuration Release --runtime ${{ matrix.os }}-${{ matrix.arch }} --framework net${{ matrix.dotnet }} --self-contained true /p:PublishTrimmed=true /p:PublishSingleFile=true
 
       - name: Prepare Artifact (unix)
         if: matrix.os != 'win'
@@ -128,10 +128,10 @@ jobs:
             ${{ runner.os }}-nuget-
 
       - name: Restore Dependencies
-        run: dotnet restore --nologo --force-evaluate
+        run: dotnet restore --force-evaluate
 
       - name: Build
-        run: dotnet publish StepLang.CLI/StepLang.CLI.csproj --configuration Release --no-restore --framework net9.0 /p:PublishAot=false
+        run: dotnet publish StepLang.CLI/StepLang.CLI.csproj --configuration Release --framework net9.0 /p:PublishAot=false
 
       - name: Prepare Artifact
         run: |
