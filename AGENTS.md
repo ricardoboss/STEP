@@ -2,30 +2,29 @@
 
 ## Dev environment tips
 
-* Requires the .NET 9 SDK (`dotnet`). Run `dotnet --info` if you need to confirm the version.
-* The repository root contains the solution file (`STEP.sln`).
-* `.editorconfig` defines code style and formatting rules.
+* Install the .NET 9 SDK (`dotnet`). Run `dotnet --info` and confirm an SDK version that starts with `9.`.
+* Run the commands below from the repository root (where `STEP.sln` lives).
+* `.editorconfig` defines code style and formatting rules that `dotnet format` will enforce.
 * The CLI entry point is `StepLang.CLI/StepLang.CLI.csproj`.
 * Creating `Release` builds is unsupported in this environment.
 
 ## Build instructions
 
-* Restore dependencies and build the solution in debug mode:
+* Restore dependencies and build the solution in Debug mode:
 
   ```sh
   dotnet restore
   dotnet build --configuration Debug
   ```
 
-## Testing instructions
+## Testing and formatting
 
-* Run all test projects (matches CI configuration):
+* Match the CI pipeline locally:
 
   ```sh
+  dotnet format --verify-no-changes
   dotnet test --configuration Test
   ```
-* All tests must pass before merging.
-* Use `dotnet format --verify-no-changes` to ensure code style compliance. This must succeed before committing (warnings are allowed).
 
 ## Run instructions
 
@@ -38,7 +37,7 @@
   expected prompts and output):
 
   ```sh
-  dotnet run --project ./StepLang.CLI/StepLang.CLI.csproj -- StepLang/Examples/<filename>
+  dotnet run --project ./StepLang.CLI/StepLang.CLI.csproj -- StepLang/Examples/strings.step
   ```
 
 ## CI / Publish
@@ -59,4 +58,5 @@
 ## Release notes requirement
 
 * **Every change must add a one-line summary to the `# Unreleased` section of `CHANGELOG.md` before it is merged.**
+* Prefix entries with `(internal)` if they only affect contributors, tooling, or infrastructure.
 * Reviewers will block pull requests that do not include this update, so double-check before committing.
