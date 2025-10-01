@@ -1,0 +1,9 @@
+// Exercises edge cases described in the substring documentation
+string subject = "Hello, world!"
+
+println("substring(subject, 7, 1.5):", substring(subject, 7, 1.5))
+println("substring(subject, 7.5, 1):", substring(subject, 7.5, 1))
+println("substring(subject, -3, 3):", substring(subject, -3, 3))
+println("substring(subject, -14, 5):", substring(subject, -14, 5))
+println("substring(subject, 14, 5):", substring(subject, 14, 5))
+println("substring(subject, 7, 0):", substring(subject, 7, 0))

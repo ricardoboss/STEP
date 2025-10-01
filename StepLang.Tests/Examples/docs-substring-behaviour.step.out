@@ -1,0 +1,6 @@
+substring(subject, 7, 1.5):wo
+substring(subject, 7.5, 1):o
+substring(subject, -3, 3):ld!
+substring(subject, -14, 5):
+substring(subject, 14, 5):
+substring(subject, 7, 0):
