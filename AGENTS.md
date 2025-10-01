@@ -51,5 +51,6 @@
 
 ## Documentation
 
-* Extensive documentation is available in the `StepLang.Wiki` directory as Markdown files.
+* Extensive documentation is available in the `docs/StepLang.Wiki` directory as Markdown files.
 * Additional information on contributing can be found in `CONTRIBUTING.md`.
+* When finalizing your changes, always add a one-liner summary of what you changed to `CHANGELOG.md`
