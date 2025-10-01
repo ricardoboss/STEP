@@ -1,5 +1,7 @@
 # Unreleased
 
+* Highlighted the mandatory changelog update step in contributor documentation to prevent future omissions.
+
 # v2.1.0
 
 * (internal) Workflow now checks the built binaries before publishing

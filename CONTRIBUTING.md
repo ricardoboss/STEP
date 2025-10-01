@@ -89,6 +89,11 @@ all contributors.
           `StepLang.Tests/Examples` folder
     - To add unit tests, create new Xunit tests in the appropriate `StepLang.Tests` folder
 
+4. Document your changes
+    - Add a concise, human-readable bullet point under the `# Unreleased` heading in `CHANGELOG.md` summarizing your
+      contribution.
+    - If your change affects multiple areas, group related updates into a single entry where possible.
+
 ### Coding Guidelines
 
 Make sure your code is properly formatted and follows our coding guidelines:
@@ -100,7 +105,7 @@ Make sure your code is properly formatted and follows our coding guidelines:
 
 ### Verify your changes
 
-Before opening a pull request, make sure the automated checks pass locally:
+Before opening a pull request, make sure the changelog is updated and the automated checks pass locally:
 
 ```bash
 dotnet format --verify-no-changes
@@ -118,8 +123,9 @@ dotnet run --project ./StepLang.CLI/StepLang.CLI.csproj -- StepLang/Examples/ass
 ## Submitting a Pull Request
 
 1. Commit and push your changes to your forked repository.
-2. Create a Pull Request from your branch to the main repository's `main` branch.
-3. Provide a clear description of your changes and the problem it solves.
+2. Ensure your Pull Request description calls out the new `CHANGELOG.md` entry so reviewers can verify it quickly.
+3. Create a Pull Request from your branch to the main repository's `main` branch.
+4. Provide a clear description of your changes and the problem it solves.
 
 ## Code Review
 
