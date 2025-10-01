@@ -39,7 +39,7 @@
 ### From package managers
 
 Currently, there are no packages available for STEP on any package managers.
-An proposal add this
+A proposal to add this
 is [here](https://github.com/users/ricardoboss/projects/2/views/3?sliceBy%5Bvalue%5D=_noValue&pane=issue&itemId=37606480).
 
 ## Usage
@@ -50,8 +50,12 @@ step <command or path> [options]
 
 ### Commands
 
-- `run <file>`: Run a .step file
-- `format <file-or-dir>`: Format a .step file or a directory of .step files
+- `<file>`: Running the CLI with a file path (without specifying `run`) executes the file directly.
+- `run <file>`: Run a .step file.
+- `format <file-or-dir>`: Format a .step file or a directory of .step files.
+- `highlight <file>`: Print a syntax-highlighted version of a .step file. Use `--list-themes` to see available themes.
+- `parse <file>`: Parse a .step file and print the resulting AST.
+- `analyze [<file-or-dir>]`: Analyze a .step file or directory for diagnostics (alias: `analyse`).
 
 ### Options
 

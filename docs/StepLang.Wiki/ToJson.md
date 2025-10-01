@@ -14,6 +14,8 @@ toJson(any value)
 
 - the `toJson` function is the inverse of the [`fromJson`](./FromJson.md) function
 - the returned value is always a string
+- complex values (`list`, `map`) are serialized with indentation and new lines so the
+  output is human-readable JSON rather than a single line
 
 # Examples
 
@@ -22,6 +24,6 @@ toJson(1) // returns "1"
 toJson("hello") // returns "\"hello\""
 toJson(true) // returns "true"
 toJson(null) // returns "null"
-toJson([1, 2, 3]) // returns "[1, 2, 3]"
-toJson({"a": 1, "b": 2}) // returns "{\"a\": 1, \"b\": 2}"
+toJson([1, 2, 3]) // returns "[\n  1,\n  2,\n  3\n]"
+toJson({"a": 1, "b": 2}) // returns "{\n  \"a\": 1,\n  \"b\": 2\n}"
 ```

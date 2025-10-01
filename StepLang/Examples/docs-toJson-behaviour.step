@@ -1,0 +1,11 @@
+// Demonstrates the actual formatting produced by toJson
+string listJson = toJson([1, 2, 3])
+println("listJson start")
+println(listJson)
+println("listJson end")
+println("")
+
+string mapJson = toJson({"a": 1, "b": 2})
+println("mapJson start")
+println(mapJson)
+println("mapJson end")
