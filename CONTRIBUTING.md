@@ -49,11 +49,20 @@ all contributors.
 
 ### Setting Up Your Local Environment
 
-1. Install [.NET](https://dotnet.microsoft.com/en-us/download)
-2. (optional) Get an IDE and set it up
+1. Install [.NET 9 SDK](https://dotnet.microsoft.com/en-us/download)
+   ```bash
+   dotnet --info
+   ```
+   The output should list an SDK version that starts with `9.`.
+2. Restore the dependencies and build once to make sure everything compiles:
+   ```bash
+   dotnet restore
+   dotnet build --configuration Debug
+   ```
+3. (optional) Get an IDE and set it up
     - [JetBrains Rider](https://www.jetbrains.com/rider/)
     - [Microsoft Visual Studio](https://visualstudio.microsoft.com/)
-3. Open your cloned repository
+4. Open your cloned repository
 
 ## Making Changes
 
@@ -88,6 +97,23 @@ Make sure your code is properly formatted and follows our coding guidelines:
 - Follow
   the [C# Coding Conventions](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions)
 - Follow the [.NET Design Guidelines](https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/)
+
+### Verify your changes
+
+Before opening a pull request, make sure the automated checks pass locally:
+
+```bash
+dotnet format --verify-no-changes
+dotnet test --configuration Test
+dotnet run --project ./StepLang.CLI/StepLang.CLI.csproj -- --version
+```
+
+If you want to try a sample program, run one of the files in `StepLang/Examples/`. Expected inputs and outputs are
+mirrored in `StepLang.Tests/Examples/` as `.step.in` / `.step.out` fixtures:
+
+```bash
+dotnet run --project ./StepLang.CLI/StepLang.CLI.csproj -- StepLang/Examples/assignment.step
+```
 
 ## Submitting a Pull Request
 
