@@ -55,4 +55,8 @@
 
 * Extensive documentation is available in the `docs/StepLang.Wiki` directory as Markdown files.
 * Additional information on contributing can be found in `CONTRIBUTING.md`.
-* When finalizing your changes, always add a one-liner summary of what you changed to `CHANGELOG.md`
+
+## Release notes requirement
+
+* **Every change must add a one-line summary to the `# Unreleased` section of `CHANGELOG.md` before it is merged.**
+* Reviewers will block pull requests that do not include this update, so double-check before committing.
