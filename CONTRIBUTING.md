@@ -54,7 +54,8 @@ all contributors.
    dotnet --info
    ```
    The output should list an SDK version that starts with `9.`.
-2. Restore the dependencies and build once to make sure everything compiles:
+2. Restore the dependencies and build once to make sure everything compiles (run all commands from the repository
+   root):
    ```bash
    dotnet restore
    dotnet build --configuration Debug
@@ -93,6 +94,7 @@ all contributors.
     - Add a concise, human-readable bullet point under the `# Unreleased` heading in `CHANGELOG.md` summarizing your
       contribution.
     - If your change affects multiple areas, group related updates into a single entry where possible.
+    - Prefix the entry with `(internal)` if it only affects contributors, tooling, or project infrastructure.
 
 ### Coding Guidelines
 
@@ -117,15 +119,16 @@ If you want to try a sample program, run one of the files in `StepLang/Examples/
 mirrored in `StepLang.Tests/Examples/` as `.step.in` / `.step.out` fixtures:
 
 ```bash
-dotnet run --project ./StepLang.CLI/StepLang.CLI.csproj -- StepLang/Examples/assignment.step
+dotnet run --project ./StepLang.CLI/StepLang.CLI.csproj -- StepLang/Examples/strings.step
 ```
+The example above prints several string operations; pick a different file if you want to explore other language features or
+to test interactive input using the corresponding `.step.in` fixture.
 
 ## Submitting a Pull Request
 
 1. Commit and push your changes to your forked repository.
-2. Ensure your Pull Request description calls out the new `CHANGELOG.md` entry so reviewers can verify it quickly.
-3. Create a Pull Request from your branch to the main repository's `main` branch.
-4. Provide a clear description of your changes and the problem it solves.
+2. Create a Pull Request from your branch to the main repository's `main` branch.
+3. Provide a clear description of your changes and the problem it solves.
 
 ## Code Review
 

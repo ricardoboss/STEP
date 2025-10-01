@@ -1,6 +1,6 @@
 # Unreleased
 
-* Highlighted the mandatory changelog update step in contributor documentation to prevent future omissions.
+* (internal) Clarified the changelog reminder in contributor docs so it is harder to miss.
 
 # v2.1.0
 
