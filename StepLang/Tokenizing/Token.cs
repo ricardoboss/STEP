@@ -17,6 +17,10 @@ public class Token
 		Location = location ?? new TokenLocation();
 	}
 
+	/// <summary>
+	/// The same as <see cref="Value"/>, but if this token is a <see cref="TokenType.LiteralString"/>, the string
+	/// without quotes.
+	/// </summary>
 	public string StringValue => Type switch
 	{
 		TokenType.LiteralString => Value[1..^1], // cut off the quotes
