@@ -5,21 +5,22 @@ namespace StepLang.Tooling.Formatting.Analyzers;
 
 public class FileEncodingAnalyzer : IFileAnalyzer
 {
-	private static readonly Encoding DefaultEncoding = Encoding.UTF8;
+	public static readonly Encoding DefaultEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
 	public async Task<FileAnalysisResult> AnalyzeAsync(FileInfo original, CancellationToken cancellationToken = default)
 	{
-		await using var stream = new FileStream(original.FullName, FileMode.Open, FileAccess.Read);
+		await using var originalStream = new FileStream(original.FullName, FileMode.Open, FileAccess.Read);
 
-		var usedEncoding = GetEncoding(stream, DefaultEncoding);
+		var usedEncoding = GetEncoding(originalStream, DefaultEncoding);
 		if (usedEncoding.Equals(DefaultEncoding))
 			return FileAnalysisResult.RetainOriginal();
 
 		var tempFile = Path.GetTempFileName();
 
 		await using var tempWriter = new StreamWriter(tempFile, false, DefaultEncoding);
-		using var fileReader = new StreamReader(stream, usedEncoding);
-		await tempWriter.WriteAsync(await fileReader.ReadToEndAsync(cancellationToken));
+		using var fileReader = new StreamReader(originalStream, usedEncoding);
+		var originalContents = await fileReader.ReadToEndAsync(cancellationToken);
+		await tempWriter.WriteAsync(originalContents);
 		await tempWriter.FlushAsync(cancellationToken);
 
 		return FileAnalysisResult.FixedAt(AnalysisSeverity.Warning, new FileInfo(tempFile));
@@ -27,12 +28,24 @@ public class FileEncodingAnalyzer : IFileAnalyzer
 
 	public static Encoding GetEncoding(Stream stream, Encoding fallback)
 	{
-		using var reader = new StreamReader(stream, fallback, true);
+		if (!stream.CanSeek)
+			throw new ArgumentException(
+				"Detecting file encoding requires seeking through the stream; the given stream does not support seeking",
+				nameof(stream)
+			);
 
-		// Detect byte order mark if any - otherwise assume default
-		_ = reader.Peek();
+		Encoding actualEncoding;
+		using (var reader = new StreamReader(stream, fallback, detectEncodingFromByteOrderMarks: true, leaveOpen: true))
+		{
+			// Detect byte order mark if any - otherwise assume default
+			_ = reader.Peek();
 
-		return reader.CurrentEncoding;
+			actualEncoding = reader.CurrentEncoding;
+		}
+
+		stream.Position = 0;
+
+		return actualEncoding;
 	}
 
 	public string Name => "File Encoding";
