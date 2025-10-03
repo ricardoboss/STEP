@@ -25,7 +25,7 @@ public class FileEncodingAnalyzer : IFileAnalyzer
 		return FileAnalysisResult.FixedAt(AnalysisSeverity.Warning, new FileInfo(tempFile));
 	}
 
-	private static Encoding GetEncoding(Stream stream, Encoding fallback)
+	public static Encoding GetEncoding(Stream stream, Encoding fallback)
 	{
 		using var reader = new StreamReader(stream, fallback, true);
 
