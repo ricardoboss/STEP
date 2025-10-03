@@ -3,21 +3,18 @@ using StepLang.Interpreting;
 using StepLang.Parsing.Nodes.Expressions;
 using StepLang.Tokenizing;
 
-namespace StepLang.Framework.Conversion;
+namespace StepLang.Framework.Pure;
 
-public class ToTypeNameFunction : NativeFunction
+public class IssetFunction : NativeFunction
 {
-	public const string Identifier = "toTypeName";
+	public const string Identifier = "isset";
 
 	protected override IEnumerable<NativeParameter> NativeParameters { get; } =
 	[
-		new(AnyType, "value"),
+		new(AnyType, "variable"),
 	];
 
-	protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyString;
-
-	/// <inheritdoc />
-	public override StringResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	public override BoolResult Invoke(TokenLocation callLocation, Interpreter interpreter,
 		IReadOnlyList<ExpressionNode> arguments)
 	{
 		CheckArgumentCount(callLocation, arguments);
@@ -26,8 +23,6 @@ public class ToTypeNameFunction : NativeFunction
 		if (exp is not IdentifierExpressionNode varExp)
 			throw new InvalidExpressionTypeException(callLocation, "an identifier", exp.GetType().Name);
 
-		var variable = interpreter.CurrentScope.GetVariable(varExp.Identifier);
-
-		return variable.TypeString;
+		return interpreter.CurrentScope.TryGetVariable(varExp.Identifier.Value, out _);
 	}
 }
