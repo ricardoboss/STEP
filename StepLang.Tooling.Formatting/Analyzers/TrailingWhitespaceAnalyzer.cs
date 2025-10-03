@@ -10,7 +10,7 @@ public class TrailingWhitespaceAnalyzer : IStringAnalyzer
 
 		var fixedString = input.WithoutTrailingWhitespace();
 
-		return Task.FromResult(StringAnalysisResult.FromInputAndFix(AnalysisSeverity.Suggestion, input, fixedString));
+		return Task.FromResult(StringAnalysisResult.FromInputAndFix(input, fixedString));
 	}
 
 	public string Name => "Trailing Whitespace";

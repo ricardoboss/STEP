@@ -23,7 +23,7 @@ public class FileEncodingAnalyzer : IFileAnalyzer
 		await tempWriter.WriteAsync(originalContents);
 		await tempWriter.FlushAsync(cancellationToken);
 
-		return FileAnalysisResult.FixedAt(AnalysisSeverity.Warning, new FileInfo(tempFile));
+		return FileAnalysisResult.FixedAt(new FileInfo(tempFile));
 	}
 
 	public static Encoding GetEncoding(Stream stream, Encoding fallback)
