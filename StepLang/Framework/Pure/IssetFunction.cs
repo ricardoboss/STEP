@@ -1,28 +1,20 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
-using StepLang.Parsing.Nodes.Expressions;
 using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Pure;
 
-public class IssetFunction : NativeFunction
+public class IssetFunction : GenericFunction<StringResult>
 {
 	public const string Identifier = "isset";
 
 	protected override IEnumerable<NativeParameter> NativeParameters { get; } =
 	[
-		new(AnyType, "variable"),
+		new(OnlyString, "variableName"),
 	];
 
-	public override BoolResult Invoke(TokenLocation callLocation, Interpreter interpreter,
-		IReadOnlyList<ExpressionNode> arguments)
+	protected override BoolResult Invoke(TokenLocation callLocation, Interpreter interpreter, StringResult argument1)
 	{
-		CheckArgumentCount(callLocation, arguments);
-
-		var exp = arguments.Single();
-		if (exp is not IdentifierExpressionNode varExp)
-			throw new InvalidExpressionTypeException(callLocation, "an identifier", exp.GetType().Name);
-
-		return interpreter.CurrentScope.TryGetVariable(varExp.Identifier.Value, out _);
+		return interpreter.CurrentScope.Exists(argument1.Value, includeParent: true);
 	}
 }

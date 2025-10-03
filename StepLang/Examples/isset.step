@@ -1,4 +1,10 @@
 number n = 0
 
-println(isset(n))
-println(isset(o))
+println(isset("n"))
+println(isset("o"))
+
+string name = "n"
+println(isset(name))
+
+name = "o"
+println(isset(name))
