@@ -1,6 +1,7 @@
 # Unreleased
 
 * (internal) Clarified the changelog reminder in contributor docs so it is harder to miss.
+* Added `isset` function by @ricardoboss in `// TODO`
 
 # v2.1.0
 
