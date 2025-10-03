@@ -75,6 +75,7 @@ public class Scope
 		CreateVariable(CompareToFunction.Identifier, new CompareToFunction().ToResult());
 		CreateVariable(SplitFunction.Identifier, new SplitFunction().ToResult());
 		CreateVariable(ZippedFunction.Identifier, new ZippedFunction().ToResult());
+		CreateVariable(IssetFunction.Identifier, new IssetFunction().ToResult());
 
 		// conversion functions
 		CreateVariable(ToJsonFunction.Identifier, new ToJsonFunction().ToResult());
