@@ -2,7 +2,7 @@
 
 * (internal) Clarified the changelog reminder in contributor docs so it is harder to miss.
 * Added `isset` function by @ricardoboss in https://github.com/ricardoboss/STEP/pull/166
-* (internal) Improved testing infrastructure for analyzers by @ricardoboss in `TODO`
+* (internal) Improved testing infrastructure for analyzers by @ricardoboss in https://github.com/ricardoboss/STEP/pull/168
 
 # v2.1.0
 
