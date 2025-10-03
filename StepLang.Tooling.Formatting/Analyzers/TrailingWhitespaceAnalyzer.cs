@@ -12,4 +12,6 @@ public class TrailingWhitespaceAnalyzer : IStringAnalyzer
 
 		return Task.FromResult(StringAnalysisResult.FromInputAndFix(AnalysisSeverity.Suggestion, input, fixedString));
 	}
+
+	public string Name => "Trailing Whitespace";
 }

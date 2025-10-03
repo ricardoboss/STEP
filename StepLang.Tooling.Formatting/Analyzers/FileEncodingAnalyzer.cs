@@ -34,4 +34,6 @@ public class FileEncodingAnalyzer : IFileAnalyzer
 
 		return reader.CurrentEncoding;
 	}
+
+	public string Name => "File Encoding";
 }

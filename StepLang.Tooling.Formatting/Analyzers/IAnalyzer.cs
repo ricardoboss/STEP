@@ -8,7 +8,7 @@ namespace StepLang.Tooling.Formatting.Analyzers;
 /// </summary>
 public interface IAnalyzer
 {
-	string Name => GetType().Name;
+	string Name { get; }
 
 	/// <summary>
 	/// Analyzes the given <paramref name="source"/> and returns a result detailing whether a fix is required and
