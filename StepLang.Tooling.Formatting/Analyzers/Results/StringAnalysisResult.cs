@@ -5,23 +5,20 @@ namespace StepLang.Tooling.Formatting.Analyzers.Results;
 
 public record StringAnalysisResult : IApplicableAnalysisResult
 {
-	public static StringAnalysisResult FromInputAndFix(AnalysisSeverity severity, string input, string fixedString)
+	public static StringAnalysisResult FromInputAndFix(string input, string fixedString)
 	{
 		var inputChanged = !string.Equals(input, fixedString, StringComparison.Ordinal);
 
-		return new StringAnalysisResult(severity, inputChanged, inputChanged ? fixedString : null);
+		return new StringAnalysisResult(inputChanged, inputChanged ? fixedString : null);
 	}
 
-	private StringAnalysisResult(AnalysisSeverity severity, bool shouldFix, string? fixedString)
+	private StringAnalysisResult(bool shouldFix, string? fixedString)
 	{
-		Severity = severity;
 		FixedString = fixedString;
 		ShouldFix = shouldFix;
 	}
 
 	public string? FixedString { get; }
-
-	public AnalysisSeverity Severity { get; }
 
 	public bool ShouldFix { get; }
 

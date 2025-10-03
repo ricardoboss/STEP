@@ -17,7 +17,7 @@ public class TypeNameCasingAnalyzer : IStringAnalyzer
 			return word;
 		});
 
-		return Task.FromResult(StringAnalysisResult.FromInputAndFix(AnalysisSeverity.Warning, input, fixedString));
+		return Task.FromResult(StringAnalysisResult.FromInputAndFix(input, fixedString));
 	}
 
 	public string Name => "Type Name Casing";

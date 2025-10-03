@@ -26,7 +26,7 @@ public static class FileAnalysisResultTest
 				.Returns(new FileInfo(targetFileName))
 				.Verifiable();
 
-			var result = FileAnalysisResult.FixedAt(AnalysisSeverity.None, new FileInfo(fixedFileName));
+			var result = FileAnalysisResult.FixedAt(new FileInfo(fixedFileName));
 
 			await result.ApplyFixAsync(fixerSourceMock.Object, CancellationToken.None);
 

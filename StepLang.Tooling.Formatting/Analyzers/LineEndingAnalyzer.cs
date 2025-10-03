@@ -12,7 +12,7 @@ public class LineEndingAnalyzer : IStringAnalyzer
 
 		var fixedString = string.Join(DefaultLineEnding, input.SplitLines());
 
-		return Task.FromResult(StringAnalysisResult.FromInputAndFix(AnalysisSeverity.Suggestion, input, fixedString));
+		return Task.FromResult(StringAnalysisResult.FromInputAndFix(input, fixedString));
 	}
 
 	public string Name => "Line Ending";

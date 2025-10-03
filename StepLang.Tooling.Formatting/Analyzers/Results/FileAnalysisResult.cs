@@ -4,26 +4,23 @@ namespace StepLang.Tooling.Formatting.Analyzers.Results;
 
 public record FileAnalysisResult : IApplicableAnalysisResult
 {
-	public static FileAnalysisResult FixedAt(AnalysisSeverity severity, FileInfo fixedFile)
+	public static FileAnalysisResult FixedAt(FileInfo fixedFile)
 	{
-		return new FileAnalysisResult(severity, true, fixedFile);
+		return new FileAnalysisResult(true, fixedFile);
 	}
 
 	public static FileAnalysisResult RetainOriginal()
 	{
-		return new FileAnalysisResult(AnalysisSeverity.None, false, null);
+		return new FileAnalysisResult(false, null);
 	}
 
-	private FileAnalysisResult(AnalysisSeverity severity, bool shouldFix, FileInfo? fixedFile)
+	private FileAnalysisResult(bool shouldFix, FileInfo? fixedFile)
 	{
-		Severity = severity;
 		FixedFile = fixedFile;
 		ShouldFix = shouldFix;
 	}
 
 	public FileInfo? FixedFile { get; }
-
-	public AnalysisSeverity Severity { get; }
 
 	public bool ShouldFix { get; }
 

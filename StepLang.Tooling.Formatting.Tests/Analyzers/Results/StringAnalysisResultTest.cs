@@ -24,7 +24,7 @@ public static class StringAnalysisResultTest
 				.Returns(new FileInfo(targetFileName))
 				.Verifiable();
 
-			var result = StringAnalysisResult.FromInputAndFix(AnalysisSeverity.None, "Original", "Fixed");
+			var result = StringAnalysisResult.FromInputAndFix("Original", "Fixed");
 
 			await result.ApplyFixAsync(fixerSourceMock.Object, CancellationToken.None);
 
@@ -59,7 +59,7 @@ public static class StringAnalysisResultTest
 				.Returns(new FileInfo(targetFileName))
 				.Verifiable();
 
-			var result = StringAnalysisResult.FromInputAndFix(AnalysisSeverity.None, "Original", "Fixed");
+			var result = StringAnalysisResult.FromInputAndFix("Original", "Fixed");
 
 			await result.ApplyFixAsync(fixerSourceMock.Object, CancellationToken.None);
 
@@ -84,7 +84,7 @@ public static class StringAnalysisResultTest
 	{
 		var fixerSourceMock = new Mock<IFixerSource>();
 
-		var result = StringAnalysisResult.FromInputAndFix(AnalysisSeverity.None, "Original", "Original");
+		var result = StringAnalysisResult.FromInputAndFix("Original", "Original");
 
 		var ex = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
 			await result.ApplyFixAsync(fixerSourceMock.Object, CancellationToken.None));
