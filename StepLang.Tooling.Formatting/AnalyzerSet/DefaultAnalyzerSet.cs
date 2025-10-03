@@ -2,7 +2,7 @@ using StepLang.Tooling.Formatting.Analyzers;
 
 namespace StepLang.Tooling.Formatting.AnalyzerSet;
 
-public class DefaultAnalyzerSet : BaseAnalyzerSet
+public sealed class DefaultAnalyzerSet : BaseAnalyzerSet
 {
 	/// <inheritdoc />
 	public override IEnumerator<IAnalyzer> GetEnumerator()

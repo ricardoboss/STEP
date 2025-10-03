@@ -1,12 +1,14 @@
 using StepLang.Tooling.Formatting.Analyzers.Results;
+using StepLang.Tooling.Formatting.Analyzers.Source;
 
 namespace StepLang.Tooling.Formatting.Fixers;
 
 public class DryRunFixer : BaseFixer
 {
-	protected override Task<FixerResult> ApplyResult(AnalysisResult result, FileInfo file,
+	protected override Task<FixerResult> ApplyResultAsync(IApplicableAnalysisResult result, IFixerSource source,
 		CancellationToken cancellationToken)
 	{
-		return Task.FromResult(FixerResult.Applied(1, TimeSpan.Zero));
+		// act as if a fix was applied to count number of potential fixes
+		return Task.FromResult(FixerResult.Applied(TimeSpan.Zero));
 	}
 }

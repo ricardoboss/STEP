@@ -1,35 +1,24 @@
 using StepLang.Tooling.Formatting.Analyzers;
+using StepLang.Tooling.Formatting.Analyzers.Source;
 
 namespace StepLang.Tooling.Formatting.Fixers;
 
 public interface IFixer
 {
-	public event EventHandler<BeforeFixerRanEventArgs>? OnCheck;
+	event EventHandler<BeforeFixerRanEventArgs>? OnCheck;
 
-	public event EventHandler<AfterFixerRanEventArgs>? OnFixed;
+	event EventHandler<UnfixableEventArgs>? OnUnfixable;
 
-	public bool ThrowOnFailure { get; init; }
+	event EventHandler<AfterFixerRanEventArgs>? OnFixed;
 
-	public Task<FixerResult> FixAsync(IAnalyzer analyzer, FileInfo file, CancellationToken cancellationToken = default);
+	bool ThrowOnFailure { get; init; }
 
-	public Task<FixerResult> FixAsync(IEnumerable<IAnalyzer> analyzers, FileInfo file,
+	Task<FixerResult> FixAsync(IEnumerable<IAnalyzer> analyzers, IFixerSource source,
 		CancellationToken cancellationToken = default);
 
-	public Task<FixerResult> FixAsync(IAnalyzer analyzer, DirectoryInfo directory,
+	Task<FixerResult> FixAsync(IEnumerable<IAnalyzer> analyzers, FileInfo file,
 		CancellationToken cancellationToken = default);
 
-	public Task<FixerResult> FixAsync(IEnumerable<IAnalyzer> analyzers, DirectoryInfo directory,
-		CancellationToken cancellationToken = default);
-
-	public Task<FixerResult> FixAsync(IAnalyzer analyzer, IEnumerable<FileInfo> files,
-		CancellationToken cancellationToken = default);
-
-	public Task<FixerResult> FixAsync(IEnumerable<IAnalyzer> analyzers, IEnumerable<FileInfo> files,
-		CancellationToken cancellationToken = default);
-
-	public Task<FixerResult> FixAsync(IAnalyzer analyzer, IEnumerable<DirectoryInfo> directories,
-		CancellationToken cancellationToken = default);
-
-	public Task<FixerResult> FixAsync(IEnumerable<IAnalyzer> analyzers, IEnumerable<DirectoryInfo> directories,
+	Task<FixerResult> FixAsync(IEnumerable<IAnalyzer> analyzers, DirectoryInfo directory,
 		CancellationToken cancellationToken = default);
 }

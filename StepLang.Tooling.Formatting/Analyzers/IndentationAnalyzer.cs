@@ -33,6 +33,6 @@ public class IndentationAnalyzer : IStringAnalyzer
 			}
 		}
 
-		return Task.FromResult(StringAnalysisResult.FromInputAndFix(input, builder.ToString()));
+		return Task.FromResult(StringAnalysisResult.FromInputAndFix(AnalysisSeverity.Suggestion, input, builder.ToString()));
 	}
 }

@@ -22,6 +22,6 @@ public class IndentationAnalyzerTest
 		var result = await fixer.AnalyzeAsync(input, CancellationToken.None);
 
 		Assert.Equal(output, result.FixedString);
-		Assert.Equal(!string.Equals(input, output, StringComparison.Ordinal), result.FixRequired);
+		Assert.Equal(!string.Equals(input, output, StringComparison.Ordinal), result.ShouldFix);
 	}
 }

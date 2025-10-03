@@ -10,9 +10,14 @@ public record FixerResult
 
 	public static FixerResult None { get; } = new(0, TimeSpan.Zero);
 
-	public static FixerResult Applied(int count, TimeSpan elapsed)
+	public static FixerResult Applied(TimeSpan elapsed)
 	{
-		return new FixerResult(count, elapsed);
+		return new FixerResult(1, elapsed);
+	}
+
+	public static FixerResult NotApplied(TimeSpan elapsed)
+	{
+		return new FixerResult(0, elapsed);
 	}
 
 	public int AppliedFixes { get; init; }
