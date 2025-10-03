@@ -36,6 +36,10 @@ public record StringAnalysisResult : IApplicableAnalysisResult
 			throw new ArgumentException("The source does not point to an actual file; no way to apply fixes",
 				nameof(source));
 
-		await File.WriteAllTextAsync(targetFile.FullName, FixedString, Encoding.UTF8, cancellationToken);
+		Encoding originalEncoding;
+		await using (var stream = targetFile.OpenRead())
+			originalEncoding = FileEncodingAnalyzer.GetEncoding(stream, FileEncodingAnalyzer.DefaultEncoding);
+
+		await File.WriteAllTextAsync(targetFile.FullName, FixedString, originalEncoding, cancellationToken);
 	}
 }
