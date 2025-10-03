@@ -1,5 +1,6 @@
 using StepLang.Tooling.Formatting.Analyzers;
 using StepLang.Tooling.Formatting.Analyzers.Results;
+using StepLang.Tooling.Formatting.Analyzers.Source;
 using System.Diagnostics;
 
 namespace StepLang.Tooling.Formatting.Fixers;
@@ -10,81 +11,64 @@ public abstract class BaseFixer : IFixer
 
 	public virtual bool ThrowOnFailure { get; init; } = true;
 
-	public Task<FixerResult> FixAsync(IAnalyzer analyzer, DirectoryInfo directory,
-		CancellationToken cancellationToken = default)
-	{
-		return FixAsync([analyzer], [directory], cancellationToken);
-	}
-
-	public Task<FixerResult> FixAsync(IEnumerable<IAnalyzer> analyzers, DirectoryInfo directory,
-		CancellationToken cancellationToken = default)
-	{
-		return FixAsync(analyzers, [directory], cancellationToken);
-	}
-
-	public Task<FixerResult> FixAsync(IAnalyzer analyzer, IEnumerable<FileInfo> files,
-		CancellationToken cancellationToken = default)
-	{
-		return FixAsync([analyzer], files, cancellationToken);
-	}
-
-	public Task<FixerResult> FixAsync(IAnalyzer analyzer, IEnumerable<DirectoryInfo> directories,
-		CancellationToken cancellationToken = default)
-	{
-		return FixAsync([analyzer], directories, cancellationToken);
-	}
-
-	public Task<FixerResult> FixAsync(IEnumerable<IAnalyzer> analyzers,
-		IEnumerable<DirectoryInfo> directories, CancellationToken cancellationToken = default)
-	{
-		var files = directories.SelectMany(d =>
-			d.EnumerateFiles(DefaultSearchPattern, new EnumerationOptions { RecurseSubdirectories = true }));
-
-		return FixAsync(analyzers, files, cancellationToken);
-	}
-
-	public async Task<FixerResult> FixAsync(IEnumerable<IAnalyzer> analyzers, IEnumerable<FileInfo> files,
-		CancellationToken cancellationToken = default)
-	{
-		var fixerList = analyzers.ToList();
-
-		return await files.ToAsyncEnumerable().AggregateAwaitAsync(FixerResult.None,
-			async (total, file) => total + await FixAsync(fixerList, file, cancellationToken),
-			cancellationToken
-		);
-	}
-
-	public async Task<FixerResult> FixAsync(IEnumerable<IAnalyzer> analyzers, FileInfo file,
-		CancellationToken cancellationToken = default)
-	{
-		return await analyzers.ToAsyncEnumerable().AggregateAwaitAsync(FixerResult.None,
-			async (total, fixer) => total + await FixAsync(fixer, file, cancellationToken),
-			cancellationToken
-		);
-	}
-
 	public event EventHandler<BeforeFixerRanEventArgs>? OnCheck;
+
+	public event EventHandler<UnfixableEventArgs>? OnUnfixable;
 
 	public event EventHandler<AfterFixerRanEventArgs>? OnFixed;
 
-	public virtual async Task<FixerResult> FixAsync(IAnalyzer analyzer, FileInfo file,
+	public async Task<FixerResult> FixAsync(IEnumerable<IAnalyzer> analyzers, DirectoryInfo directory, CancellationToken cancellationToken = default)
+	{
+		var analyzerList = analyzers.ToList();
+
+		return await directory
+			.EnumerateFiles(DefaultSearchPattern, SearchOption.AllDirectories)
+			.ToAsyncEnumerable()
+			.AggregateAwaitAsync(
+				FixerResult.None,
+				async (result, file) => result + await FixAsync(analyzerList, file, cancellationToken),
+				cancellationToken
+			);
+	}
+
+	public async Task<FixerResult> FixAsync(IEnumerable<IAnalyzer> analyzers, FileInfo file, CancellationToken cancellationToken = default)
+	{
+		var source = new FileFixerSource(file);
+
+		return await analyzers
+			.ToAsyncEnumerable()
+			.AggregateAwaitAsync(
+				FixerResult.None,
+				async (result, analyzer) => result + await FixAsync(analyzer, source, cancellationToken),
+				cancellationToken
+			);
+	}
+
+	public virtual async Task<FixerResult> FixAsync(IEnumerable<IAnalyzer> analyzers, IFixerSource source,
 		CancellationToken cancellationToken = default)
 	{
-		OnCheck?.Invoke(this, new BeforeFixerRanEventArgs(file, analyzer));
+		return await analyzers
+			.ToAsyncEnumerable()
+			.AggregateAwaitAsync(
+				FixerResult.None,
+				async (result, analyzer) => result + await FixAsync(analyzer, source, cancellationToken),
+				cancellationToken
+			);
+	}
+
+	public virtual async Task<FixerResult> FixAsync(IAnalyzer analyzer, IFixerSource source,
+		CancellationToken cancellationToken = default)
+	{
+		OnCheck?.Invoke(this, new BeforeFixerRanEventArgs(source, analyzer));
 
 		Stopwatch sw = new();
 
 		sw.Start();
 
-		AnalysisResult analysisResult;
+		IAnalysisResult analysisResult;
 		try
 		{
-			analysisResult = analyzer switch
-			{
-				IStringAnalyzer stringFixer => await RunStringAnalyzer(stringFixer, file, cancellationToken),
-				IFileAnalyzer fileFixer => await RunFileAnalyzer(fileFixer, file, cancellationToken),
-				_ => throw new NotSupportedException($"Unknown analyzer type '{analyzer.GetType().FullName}'"),
-			};
+			analysisResult = await analyzer.AnalyzeAsync(source, cancellationToken);
 
 			sw.Stop();
 		}
@@ -95,40 +79,31 @@ public abstract class BaseFixer : IFixer
 			if (ThrowOnFailure)
 			{
 				throw new FixerException(analyzer,
-					$"Failed to run analyzer '{analyzer.Name}' on file '{file.FullName}'", e);
+					$"Failed to run analyzer '{analyzer.Name}' on file '{source.Uri}'", e);
 			}
 
-			return FixerResult.Applied(0, sw.Elapsed);
+			return FixerResult.NotApplied(sw.Elapsed);
 		}
 
-		var runDuration = sw.Elapsed;
+		var analysisDuration = sw.Elapsed;
 
-		if (!analysisResult.FixRequired)
+		if (!analysisResult.ShouldFix)
+			return FixerResult.NotApplied(analysisDuration);
+
+		if (analysisResult is not IApplicableAnalysisResult { FixAvailable: true } applicableAnalysisResult)
 		{
-			return FixerResult.Applied(0, runDuration);
+			OnUnfixable?.Invoke(this, new UnfixableEventArgs(source, analyzer));
+
+			return FixerResult.NotApplied(analysisDuration);
 		}
 
-		var fixApplicatorResult = await ApplyResult(analysisResult, file, cancellationToken);
+		var result = await ApplyResultAsync(applicableAnalysisResult, source, cancellationToken);
 
-		OnFixed?.Invoke(this, new AfterFixerRanEventArgs(file, analyzer));
+		OnFixed?.Invoke(this, new AfterFixerRanEventArgs(source, analyzer));
 
-		return fixApplicatorResult with { Elapsed = fixApplicatorResult.Elapsed + runDuration };
+		return result with { Elapsed = result.Elapsed + analysisDuration };
 	}
 
-	private static Task<FileAnalysisResult> RunFileAnalyzer(IFileAnalyzer analyzer, FileInfo file,
-		CancellationToken cancellationToken)
-	{
-		return analyzer.AnalyzeAsync(file, cancellationToken);
-	}
-
-	private static async Task<StringAnalysisResult> RunStringAnalyzer(IStringAnalyzer analyzer, FileSystemInfo file,
-		CancellationToken cancellationToken)
-	{
-		var contents = await File.ReadAllTextAsync(file.FullName, cancellationToken);
-
-		return await analyzer.AnalyzeAsync(contents, cancellationToken);
-	}
-
-	protected abstract Task<FixerResult> ApplyResult(AnalysisResult result, FileInfo file,
+	protected abstract Task<FixerResult> ApplyResultAsync(IApplicableAnalysisResult result, IFixerSource source,
 		CancellationToken cancellationToken);
 }

@@ -46,17 +46,22 @@ internal sealed class FormatCommand : AsyncCommand<FormatCommand.Settings>
 
 		IFixer fixer = settings.DryRun ? new DryRunFixer() : new DefaultFixer();
 
-		var checkedFiles = new HashSet<FileInfo>();
-		var fixedFiles = new HashSet<FileInfo>();
+		var checkedFiles = new HashSet<Uri>();
+		var fixedFiles = new HashSet<Uri>();
 
-		fixer.OnCheck += (_, f) => checkedFiles.Add(f.File);
+		fixer.OnCheck += (__, f) =>
+		{
+			if (f.Source.Uri is { } sourceUri)
+				_ = checkedFiles.Add(sourceUri);
+		};
 
 		fixer.OnFixed += (__, f) =>
 		{
-			_ = fixedFiles.Add(f.File);
+			if (f.Source.Uri is { } sourceUri)
+				_ = fixedFiles.Add(sourceUri);
 
 			AnsiConsole.MarkupLineInterpolated(
-				$"Applied analyzer [darkmagenta]'{f.Analyzer.Name}'[/] to [cyan]'{f.File.Name}'[/]");
+				$"Applied analyzer [darkmagenta]'{f.Analyzer.Name}'[/] to [cyan]'{f.Source.Uri}'[/]");
 		};
 
 		var analyzers = new DefaultAnalyzerSet();
@@ -79,8 +84,7 @@ internal sealed class FormatCommand : AsyncCommand<FormatCommand.Settings>
 		return 0;
 	}
 
-	private static async Task<FixerResult> Fix(string fileOrDir, IFixer fixer,
-		IAnalyzerSet analyzers)
+	private static async Task<FixerResult> Fix(string fileOrDir, IFixer fixer, IAnalyzerSet analyzers)
 	{
 		FixerResult result;
 		if (File.Exists(fileOrDir))

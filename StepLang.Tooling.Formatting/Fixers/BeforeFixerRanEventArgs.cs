@@ -1,9 +1,11 @@
 using StepLang.Tooling.Formatting.Analyzers;
+using StepLang.Tooling.Formatting.Analyzers.Source;
 
 namespace StepLang.Tooling.Formatting.Fixers;
 
-public class BeforeFixerRanEventArgs(FileInfo File, IAnalyzer Analyzer) : EventArgs
+public class BeforeFixerRanEventArgs(IFixerSource source, IAnalyzer analyzer) : EventArgs
 {
-	public FileInfo File { get; } = File;
-	public IAnalyzer Analyzer { get; } = Analyzer;
+	public IFixerSource Source { get; } = source;
+
+	public IAnalyzer Analyzer { get; } = analyzer;
 }

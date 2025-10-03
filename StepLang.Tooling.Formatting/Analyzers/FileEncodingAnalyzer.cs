@@ -12,10 +12,8 @@ public class FileEncodingAnalyzer : IFileAnalyzer
 		await using var stream = new FileStream(original.FullName, FileMode.Open, FileAccess.Read);
 
 		var usedEncoding = GetEncoding(stream, DefaultEncoding);
-		if (Equals(usedEncoding, DefaultEncoding))
-		{
-			return FileAnalysisResult.RetainOriginal(original);
-		}
+		if (usedEncoding.Equals(DefaultEncoding))
+			return FileAnalysisResult.RetainOriginal();
 
 		var tempFile = Path.GetTempFileName();
 
@@ -24,7 +22,7 @@ public class FileEncodingAnalyzer : IFileAnalyzer
 		await tempWriter.WriteAsync(await fileReader.ReadToEndAsync(cancellationToken));
 		await tempWriter.FlushAsync(cancellationToken);
 
-		return FileAnalysisResult.FixedAt(new FileInfo(tempFile));
+		return FileAnalysisResult.FixedAt(AnalysisSeverity.Warning, new FileInfo(tempFile));
 	}
 
 	private static Encoding GetEncoding(Stream stream, Encoding fallback)

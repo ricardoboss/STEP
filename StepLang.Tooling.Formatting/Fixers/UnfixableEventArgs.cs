@@ -3,7 +3,7 @@ using StepLang.Tooling.Formatting.Analyzers.Source;
 
 namespace StepLang.Tooling.Formatting.Fixers;
 
-public class AfterFixerRanEventArgs(IFixerSource source, IAnalyzer analyzer) : EventArgs
+public class UnfixableEventArgs(IFixerSource source, IAnalyzer analyzer) : EventArgs
 {
 	public IFixerSource Source { get; } = source;
 

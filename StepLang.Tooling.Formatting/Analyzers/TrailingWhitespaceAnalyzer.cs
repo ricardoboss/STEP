@@ -10,6 +10,6 @@ public class TrailingWhitespaceAnalyzer : IStringAnalyzer
 
 		var fixedString = input.WithoutTrailingWhitespace();
 
-		return Task.FromResult(StringAnalysisResult.FromInputAndFix(input, fixedString));
+		return Task.FromResult(StringAnalysisResult.FromInputAndFix(AnalysisSeverity.Suggestion, input, fixedString));
 	}
 }
