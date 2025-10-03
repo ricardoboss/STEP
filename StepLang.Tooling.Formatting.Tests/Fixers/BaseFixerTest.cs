@@ -140,7 +140,7 @@ public static class BaseFixerTest
 	}
 }
 
-file class TestBaseFixer(FixerResult? fixerResult = null) : BaseFixer
+file sealed class TestBaseFixer(FixerResult? fixerResult = null) : BaseFixer
 {
 	protected override Task<FixerResult> ApplyResultAsync(IApplicableAnalysisResult result, IFixerSource source,
 		CancellationToken cancellationToken)
@@ -149,4 +149,4 @@ file class TestBaseFixer(FixerResult? fixerResult = null) : BaseFixer
 	}
 }
 
-file class TestAnalysisException : Exception;
+file sealed class TestAnalysisException : Exception;
