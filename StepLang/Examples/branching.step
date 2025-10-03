@@ -1,4 +1,4 @@
-﻿print("State your name: ")
+print("State your name: ")
 string name = readline()
 
 println()

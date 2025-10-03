@@ -1,4 +1,4 @@
-﻿number a = 1 + 2
+number a = 1 + 2
 
 println(a)
 println(1 + (2))
