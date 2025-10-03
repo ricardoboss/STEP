@@ -1,7 +1,7 @@
 # Unreleased
 
 * (internal) Clarified the changelog reminder in contributor docs so it is harder to miss.
-* Added `isset` function by @ricardoboss in `// TODO`
+* Added `isset` function by @ricardoboss in https://github.com/ricardoboss/STEP/pull/166
 
 # v2.1.0
 
