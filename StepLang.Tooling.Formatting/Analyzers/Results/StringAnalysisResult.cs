@@ -7,14 +7,16 @@ public record StringAnalysisResult : IApplicableAnalysisResult
 {
 	public static StringAnalysisResult FromInputAndFix(AnalysisSeverity severity, string input, string fixedString)
 	{
-		return new StringAnalysisResult(severity, !string.Equals(input, fixedString, StringComparison.Ordinal), fixedString);
+		var inputChanged = !string.Equals(input, fixedString, StringComparison.Ordinal);
+
+		return new StringAnalysisResult(severity, inputChanged, inputChanged ? fixedString : null);
 	}
 
-	private StringAnalysisResult(AnalysisSeverity severity, bool fixRequired, string? fixedString)
+	private StringAnalysisResult(AnalysisSeverity severity, bool shouldFix, string? fixedString)
 	{
 		Severity = severity;
 		FixedString = fixedString;
-		ShouldFix = fixRequired;
+		ShouldFix = shouldFix;
 	}
 
 	public string? FixedString { get; }
@@ -23,7 +25,7 @@ public record StringAnalysisResult : IApplicableAnalysisResult
 
 	public bool ShouldFix { get; }
 
-	public bool FixAvailable => FixedString != null;
+	public bool FixAvailable => ShouldFix;
 
 	public async Task ApplyFixAsync(IFixerSource source, CancellationToken cancellationToken = default)
 	{
