@@ -62,7 +62,14 @@ jobs:
 
       - name: Check for modified lock files
         run: |
+          echo "::group::Verifying packages.lock.json files"
           if ! git diff --exit-code -- packages.lock.json '**/packages.lock.json'; then
-            echo "Lock files are out of date. Run 'dotnet restore --force-evaluate' and commit changes."
+            echo "::warning::packages.lock.json files are out of date. Run 'dotnet restore --force-evaluate' and commit the changes."
+            echo "Modified files:"
+            git diff --name-only -- packages.lock.json '**/packages.lock.json'
+            echo "::endgroup::"
             exit 1
           fi
+          echo "All lock files are up to date."
+          echo "::endgroup::"
+
