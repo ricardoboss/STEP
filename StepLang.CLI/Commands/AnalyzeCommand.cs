@@ -14,7 +14,7 @@ namespace StepLang.CLI.Commands;
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 internal sealed class AnalyzeCommand : AsyncCommand<AnalyzeCommand.Settings>
 {
-	public sealed class Settings : HiddenGlobalCommandSettings
+	public sealed class Settings : CommandSettings
 	{
 		[CommandArgument(0, "[fileOrDir]")]
 		[DefaultValue(null)]
