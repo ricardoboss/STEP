@@ -2,15 +2,9 @@ namespace StepLang.Tooling.CLI;
 
 public interface IGlobalCommandSettings
 {
-	public const string InfoOptionName = "--info";
-	public const string InfoOptionDescription =
-		"Print the version and system information. Add the output of this to bug reports.";
-	public const bool InfoOptionDefaultValue = false;
-	public const string VersionOptionName = "-v|--version";
-	public const string VersionOptionDescription = "Print the version number.";
-	public const bool VersionOptionDefaultValue = false;
+	bool Info { get; }
 
-	public bool Info { get; }
+	bool Version { get; }
 
-	public bool Version { get; }
+	bool Handled { get; set; }
 }

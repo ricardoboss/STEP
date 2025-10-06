@@ -46,12 +46,14 @@ public class OptionInterceptorTest
 		var interceptor = new OptionInterceptor(consoleMock.Object, metadataProviderMock.Object,
 			new Dictionary<string, IMetadataProvider>());
 
-		var settings = new EmptyGlobalCommandSettings { Info = false, Version = false, };
+		var settings = new EmptyGlobalCommandSettings { Info = false, Version = false };
 
 		// Act
 		interceptor.Intercept(context, settings);
 
 		// Assert
+		Assert.That(settings.Handled, Is.False);
+
 		consoleMock.VerifyAll();
 		metadataProviderMock.VerifyAll();
 		remainingArgumentsMock.VerifyAll();
@@ -83,12 +85,13 @@ public class OptionInterceptorTest
 		var interceptor = new OptionInterceptor(consoleMock.Object, metadataProviderMock.Object,
 			new Dictionary<string, IMetadataProvider>());
 
-		var settings = new EmptyGlobalCommandSettings { Info = false, Version = true, };
+		var settings = new EmptyGlobalCommandSettings { Info = false, Version = true };
 
 		// Act
 		interceptor.Intercept(context, settings);
 
 		// Assert
+		Assert.That(settings.Handled, Is.True);
 		Assert.That(writtenWidget, Is.Not.Null);
 		var text = AssertIsType<Text>(writtenWidget);
 		Assert.That(text.GetTextContent().TrimEnd(Environment.NewLine.ToCharArray()), Is.EqualTo(fullSemVer));
@@ -146,17 +149,16 @@ public class OptionInterceptorTest
 		var context = new CommandContext([], remainingArgumentsMock.Object, "test", null);
 
 		var interceptor = new OptionInterceptor(consoleMock.Object, metadataProviderMock.Object,
-			new Dictionary<string, IMetadataProvider>
-			{
-				{ metadataComponentName, metadataProviderMock.Object },
-			});
+			new Dictionary<string, IMetadataProvider> { { metadataComponentName, metadataProviderMock.Object }, });
 
-		var settings = new EmptyGlobalCommandSettings { Info = true, Version = false, };
+		var settings = new EmptyGlobalCommandSettings { Info = true, Version = false };
 
 		// Act
 		interceptor.Intercept(context, settings);
 
 		// Assert
+		Assert.That(settings.Handled, Is.True);
+
 		Assert.That(writtenWidget, Is.Not.Null);
 		var definitionList = AssertIsType<DefinitionList>(writtenWidget);
 
@@ -233,4 +235,6 @@ file sealed class EmptyGlobalCommandSettings : CommandSettings, IGlobalCommandSe
 	public required bool Info { get; init; }
 
 	public required bool Version { get; init; }
+
+	public bool Handled { get; set; }
 }
