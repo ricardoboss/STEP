@@ -4,7 +4,6 @@ using StepLang.Diagnostics;
 using StepLang.Interpreting;
 using StepLang.Parsing;
 using StepLang.Tokenizing;
-using StepLang.Tooling.CLI;
 using StepLang.Tooling.CLI.Widgets;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -15,7 +14,7 @@ namespace StepLang.CLI.Commands;
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 internal sealed class RunCommand : AsyncCommand<RunCommand.Settings>
 {
-	public sealed class Settings : HiddenGlobalCommandSettings
+	public sealed class Settings : CommandSettings
 	{
 		[CommandArgument(0, "<file>")]
 		[Description("The path to a .step-file to run.")]
@@ -29,6 +28,19 @@ internal sealed class RunCommand : AsyncCommand<RunCommand.Settings>
 	public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
 	{
 		var scriptFile = new FileInfo(settings.File);
+		if (!scriptFile.Exists)
+		{
+			if (settings.File.Equals(DefaultCommand.Settings.DefaultProgramFileName))
+			{
+				AnsiConsole.MarkupLine($"[red]No [bold]{DefaultCommand.Settings.DefaultProgramFileName}[/] found.[/]");
+
+				return 1;
+			}
+
+			AnsiConsole.MarkupLine($"[red]File [bold]{settings.File}[/] not found.[/]");
+
+			return 1;
+		}
 
 		var source = await CharacterSource.FromFileAsync(scriptFile);
 

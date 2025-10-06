@@ -4,6 +4,8 @@
 * Added `isset` function by @ricardoboss in https://github.com/ricardoboss/STEP/pull/166
 * (internal) Improved testing infrastructure for analyzers by @ricardoboss in https://github.com/ricardoboss/STEP/pull/168
 * Added `range` function to produce numeric sequences with configurable step sizes.
+* When no file to run is given, assume `program.step`
+* Removed global options `--info` and `--version` (will now only work when no command is given)
 
 # v2.1.0
 

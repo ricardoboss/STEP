@@ -20,10 +20,14 @@ public sealed class OptionInterceptor(
 		if (globalSettings.Version)
 		{
 			HandleVersionOption();
+
+			globalSettings.Handled = true;
 		}
 		else if (globalSettings.Info)
 		{
 			HandleInfoOption();
+
+			globalSettings.Handled = true;
 		}
 	}
 
