@@ -14,7 +14,7 @@ internal sealed class HighlightCommand : AsyncCommand<HighlightCommand.Settings>
 {
 	[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 	[SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
-	public sealed class Settings : HiddenGlobalCommandSettings
+	public sealed class Settings : CommandSettings
 	{
 		[CommandArgument(0, "[file]")]
 		[Description("The path to a .step-file to highlight and print to the console.")]

@@ -14,7 +14,7 @@ internal sealed class FormatCommand : AsyncCommand<FormatCommand.Settings>
 {
 	[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 	[SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
-	public sealed class Settings : HiddenGlobalCommandSettings
+	public sealed class Settings : CommandSettings
 	{
 		[CommandArgument(0, "[file-or-dir]")]
 		[Description("One or more paths to files or directories to format.")]

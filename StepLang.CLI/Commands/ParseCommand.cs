@@ -21,7 +21,7 @@ namespace StepLang.CLI.Commands;
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 {
-	public sealed class Settings : HiddenGlobalCommandSettings
+	public sealed class Settings : CommandSettings
 	{
 		[CommandArgument(0, "<file>")]
 		[Description("The path to a .step-file to run.")]

@@ -46,12 +46,14 @@ public class OptionInterceptorTest
 		var interceptor = new OptionInterceptor(consoleMock.Object, metadataProviderMock.Object,
 			new Dictionary<string, IMetadataProvider>());
 
-		var settings = new EmptyGlobalCommandSettings { Info = false, Version = false, };
+		var settings = new EmptyGlobalCommandSettings { Info = false, Version = false };
 
 		// Act
 		interceptor.Intercept(context, settings);
 
 		// Assert
+		Assert.False(settings.Handled);
+
 		consoleMock.VerifyAll();
 		metadataProviderMock.VerifyAll();
 		remainingArgumentsMock.VerifyAll();
@@ -83,12 +85,13 @@ public class OptionInterceptorTest
 		var interceptor = new OptionInterceptor(consoleMock.Object, metadataProviderMock.Object,
 			new Dictionary<string, IMetadataProvider>());
 
-		var settings = new EmptyGlobalCommandSettings { Info = false, Version = true, };
+		var settings = new EmptyGlobalCommandSettings { Info = false, Version = true };
 
 		// Act
 		interceptor.Intercept(context, settings);
 
 		// Assert
+		Assert.True(settings.Handled);
 		Assert.NotNull(writtenWidget);
 		var text = Assert.IsType<Text>(writtenWidget);
 		Assert.Equal(fullSemVer, text.GetTextContent().TrimEnd(Environment.NewLine.ToCharArray()));
@@ -146,17 +149,16 @@ public class OptionInterceptorTest
 		var context = new CommandContext([], remainingArgumentsMock.Object, "test", null);
 
 		var interceptor = new OptionInterceptor(consoleMock.Object, metadataProviderMock.Object,
-			new Dictionary<string, IMetadataProvider>
-			{
-				{ metadataComponentName, metadataProviderMock.Object },
-			});
+			new Dictionary<string, IMetadataProvider> { { metadataComponentName, metadataProviderMock.Object }, });
 
-		var settings = new EmptyGlobalCommandSettings { Info = true, Version = false, };
+		var settings = new EmptyGlobalCommandSettings { Info = true, Version = false };
 
 		// Act
 		interceptor.Intercept(context, settings);
 
 		// Assert
+		Assert.True(settings.Handled);
+
 		Assert.NotNull(writtenWidget);
 		var definitionList = Assert.IsType<DefinitionList>(writtenWidget);
 
@@ -214,7 +216,8 @@ public class OptionInterceptorTest
 		var osVersionHeaderText = Assert.IsType<Text>(osVersionHeader);
 		Assert.Equal("OS Version", osVersionHeaderText.GetTextContent());
 		var osVersionValueText = Assert.IsType<Text>(osVersionValue);
-		Assert.Equal($"{RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})", osVersionValueText.GetTextContent());
+		Assert.Equal($"{RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})",
+			osVersionValueText.GetTextContent());
 
 		consoleMock.VerifyAll();
 		metadataProviderMock.VerifyAll();
@@ -227,4 +230,6 @@ file sealed class EmptyGlobalCommandSettings : CommandSettings, IGlobalCommandSe
 	public required bool Info { get; init; }
 
 	public required bool Version { get; init; }
+
+	public bool Handled { get; set; }
 }
