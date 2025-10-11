@@ -27,9 +27,6 @@ internal static class Program
 	[DynamicDependency(
 		DynamicallyAccessedMemberTypes.PublicParameterlessConstructor |
 		DynamicallyAccessedMemberTypes.PublicNestedTypes, typeof(AnalyzeCommand))]
-	[DynamicDependency(
-		DynamicallyAccessedMemberTypes.PublicParameterlessConstructor |
-		DynamicallyAccessedMemberTypes.PublicNestedTypes, typeof(LspCommand))]
 	[UnconditionalSuppressMessage("AOT",
 		"IL3050:Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.")]
 	public static async Task<int> Main(string[] args)
@@ -106,11 +103,6 @@ internal static class Program
 				.WithDescription("Analyze the current folder or a .step-file and print the diagnostics to the console.")
 				.WithExample("analyze")
 				.WithExample("analyze my-script.step")
-				;
-
-			config.AddCommand<LspCommand>("lsp")
-				.WithDescription("Start the LSP server.")
-				.WithExample("lsp")
 				;
 		});
 

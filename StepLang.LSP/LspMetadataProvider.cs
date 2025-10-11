@@ -1,4 +1,3 @@
-using cmdwtf;
 using StepLang.Tooling.Meta;
 
 namespace StepLang.LSP;
@@ -9,7 +8,7 @@ internal sealed class LspMetadataProvider : IMetadataProvider
 
 	private LspMetadataProvider() { }
 
-	public DateTimeOffset BuildTime => BuildTimestamp.BuildTimeDto;
+	public DateTimeOffset BuildTime => BuildMetadata.BuildTimestamp;
 
 	public string FullSemVer => GitVersionInformation.FullSemVer;
 

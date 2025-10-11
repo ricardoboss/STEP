@@ -137,7 +137,8 @@ internal sealed class SessionState(
 	{
 		logger.LogTrace("Tokenizing document {Document}", documentState);
 
-		var tokens = new Tokenizer(documentState.Text, strict: false).Tokenize().ToArray();
+		// TODO: report diagnostics
+		var tokens = new Tokenizer(documentState.Text, []).Tokenize().ToArray();
 
 		return new TokenCollection(tokens);
 	}
@@ -146,7 +147,8 @@ internal sealed class SessionState(
 	{
 		logger.LogTrace("Parsing AST for document {Document}", documentState);
 
-		var parser = new Parser(tokens);
+		// TODO: report diagnostics
+		var parser = new Parser(tokens, []);
 
 		return parser.ParseRoot();
 	}
