@@ -278,10 +278,7 @@ internal sealed class VariableDeclarationCollector : IStatementVisitor, IRootNod
 		Evaluate(discardStatementNode.Expression);
 	}
 
-	public void Visit(ErrorStatementNode errorStatementNode)
-	{
-		throw new NotImplementedException();
-	}
+	public void Visit(ErrorStatementNode errorStatementNode) { }
 
 	public ExpressionResult Evaluate(CallExpressionNode expressionNode)
 	{
