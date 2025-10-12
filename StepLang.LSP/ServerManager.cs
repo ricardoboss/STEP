@@ -167,6 +167,7 @@ internal sealed class ServerManager(
 			})
 			.AddSingleton<SessionState>()
 			.AddSingleton<DiagnosticsRunner>()
-			.AddTransient<IAnalyzer, UnusedDeclarationsAnalyzer>();
+			.AddTransient<IDiagnosticsAnalyzer, UnusedDeclarationsDiagnosticsAnalyzer>()
+			;
 	}
 }

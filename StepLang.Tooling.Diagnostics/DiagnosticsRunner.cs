@@ -6,9 +6,10 @@ namespace StepLang.Tooling.Diagnostics;
 
 public sealed class DiagnosticsRunner(IServiceProvider services, ILogger<DiagnosticsRunner> logger)
 {
-	private readonly Lazy<IAnalyzer[]> lazyAnalyzers = new(() => services.GetServices<IAnalyzer>().ToArray());
+	private readonly Lazy<IDiagnosticsAnalyzer[]> lazyAnalyzers =
+		new(() => services.GetServices<IDiagnosticsAnalyzer>().ToArray());
 
-	private IAnalyzer[] Analyzers => lazyAnalyzers.Value;
+	private IDiagnosticsAnalyzer[] Analyzers => lazyAnalyzers.Value;
 
 	public void Dispatch(SessionState session, DocumentState document)
 	{

@@ -3,17 +3,19 @@ using StepLang.Diagnostics;
 
 namespace StepLang.Tooling.Diagnostics.Analyzers;
 
-public sealed class UnusedDeclarationsAnalyzer(ILogger<UnusedDeclarationsAnalyzer> logger) : IAnalyzer
+public sealed class UnusedDeclarationsDiagnosticsAnalyzer(ILogger<UnusedDeclarationsDiagnosticsAnalyzer> logger)
+	: IDiagnosticsAnalyzer
 {
 	private const string DiagnosticCode = "unused-declaration";
 
 	public Task AnalyzeAsync(SessionState sessionState, DocumentState documentState,
-		CancellationToken cancellationToken)
+		CancellationToken cancellationToken = default)
 	{
 		var symbols = documentState.Symbols;
 		if (symbols is null)
 		{
-			logger.LogWarning("Document {Document} has no symbols; skipping unused declarations analysis", documentState);
+			logger.LogWarning("Document {Document} has no symbols; skipping unused declarations analysis",
+				documentState);
 
 			return Task.CompletedTask;
 		}
