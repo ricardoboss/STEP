@@ -53,6 +53,8 @@ internal sealed class SemanticTokensHandler(ILogger<SemanticTokensHandler> logge
 	protected override SemanticTokensRegistrationOptions CreateRegistrationOptions(SemanticTokensCapability? capability,
 		ClientCapabilities clientCapabilities)
 	{
+		logger.LogTrace($"Creating registration options for {nameof(SemanticTokensHandler)}");
+
 		var legend = new SemanticTokensLegend
 		{
 			TokenModifiers = Container.From(Array.Empty<SemanticTokenModifier>()),
