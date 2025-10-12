@@ -17,10 +17,11 @@ export async function activate(context: vscode.ExtensionContext) {
       socket.on("error", reject);
     });
 
-  const client = new LanguageClient("step", "STEP LSP Client", serverOptions, clientOptions);
+  client = new LanguageClient("step", "STEP LSP Client", serverOptions, clientOptions);
+
   await client.start();
 
-  context.subscriptions.push({ dispose: () => client.stop() });
+  context.subscriptions.push({ dispose: () => client?.stop() });
 }
 
 export function deactivate(): Thenable<void> | undefined {
