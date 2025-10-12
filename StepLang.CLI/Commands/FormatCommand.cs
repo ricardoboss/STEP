@@ -1,8 +1,8 @@
 using Spectre.Console;
 using Spectre.Console.Cli;
 using StepLang.Tooling.CLI;
-using StepLang.Tooling.Formatting.AnalyzerSet;
-using StepLang.Tooling.Formatting.Fixers;
+using StepLang.Tooling.Analysis.AnalyzerSet;
+using StepLang.Tooling.Analysis.Fixers;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;

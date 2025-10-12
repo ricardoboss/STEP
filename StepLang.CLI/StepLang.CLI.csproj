@@ -26,7 +26,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\StepLang.Tooling.CLI\StepLang.Tooling.CLI.csproj" />
-		<ProjectReference Include="..\StepLang.Tooling.Formatting\StepLang.Tooling.Formatting.csproj"/>
+		<ProjectReference Include="..\StepLang.Tooling.Analysis\StepLang.Tooling.Analysis.csproj" />
 		<ProjectReference Include="..\StepLang.Tooling.Highlighting\StepLang.Tooling.Highlighting.csproj"/>
 		<ProjectReference Include="..\StepLang\StepLang.csproj"/>
 	</ItemGroup>

@@ -38,11 +38,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		.github\workflows\verify.yml = .github\workflows\verify.yml
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StepLang.Tooling.Formatting", "StepLang.Tooling.Formatting\StepLang.Tooling.Formatting.csproj", "{728ABD46-2621-45BC-ACB1-0EF00267DCCC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StepLang.Tooling.Analysis", "StepLang.Tooling.Analysis\StepLang.Tooling.Analysis.csproj", "{728ABD46-2621-45BC-ACB1-0EF00267DCCC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tooling", "Tooling", "{A9BE3B66-38F1-454B-9A12-E1BF21E307CF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StepLang.Tooling.Formatting.Tests", "StepLang.Tooling.Formatting.Tests\StepLang.Tooling.Formatting.Tests.csproj", "{0DC701B1-15E9-4776-AFF5-9BBEA1C7D55B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StepLang.Tooling.Analysis.Tests", "StepLang.Tooling.Analysis.Tests\StepLang.Tooling.Analysis.Tests.csproj", "{0DC701B1-15E9-4776-AFF5-9BBEA1C7D55B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{83F45B93-DF47-468E-A956-38826263C018}"
 	ProjectSection(SolutionItems) = preProject

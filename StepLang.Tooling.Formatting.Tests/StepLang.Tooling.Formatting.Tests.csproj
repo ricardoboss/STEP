@@ -1,7 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-	<ItemGroup>
-		<ProjectReference Include="..\StepLang.Tooling.Formatting\StepLang.Tooling.Formatting.csproj"/>
-	</ItemGroup>
-
-</Project>

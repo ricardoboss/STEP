@@ -6,14 +6,14 @@ on:
       - main
     paths:
       - '**/*.step'
-      - 'StepLang.Tooling.Formatting/**'
+      - 'StepLang.Tooling.Analysis/**'
       - '.github/workflows/step.yml'
   pull_request:
     branches:
       - main
     paths:
       - '**/*.step'
-      - 'StepLang.Tooling.Formatting/**'
+      - 'StepLang.Tooling.Analysis/**'
 
 env:
   DOTNET_NOLOGO: true

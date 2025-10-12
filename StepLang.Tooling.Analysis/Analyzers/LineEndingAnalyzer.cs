@@ -1,0 +1,19 @@
+using StepLang.Tooling.Analysis.Analyzers.Results;
+
+namespace StepLang.Tooling.Analysis.Analyzers;
+
+public class LineEndingAnalyzer : IStringAnalyzer
+{
+	private const string DefaultLineEnding = "\n";
+
+	public Task<StringAnalysisResult> AnalyzeAsync(string input, CancellationToken cancellationToken = default)
+	{
+		cancellationToken.ThrowIfCancellationRequested();
+
+		var fixedString = string.Join(DefaultLineEnding, input.SplitLines());
+
+		return Task.FromResult(StringAnalysisResult.FromInputAndFix(input, fixedString));
+	}
+
+	public string Name => "Line Ending";
+}
