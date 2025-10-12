@@ -10,6 +10,27 @@ namespace StepLang.LSP.Handlers;
 internal sealed class SemanticTokensHandler(ILogger<SemanticTokensHandler> logger, SessionState state)
 	: SemanticTokensHandlerBase
 {
+	protected override SemanticTokensRegistrationOptions CreateRegistrationOptions(SemanticTokensCapability? capability,
+		ClientCapabilities clientCapabilities)
+	{
+		logger.LogTrace($"Creating registration options for {nameof(SemanticTokensHandler)}");
+
+		var legend = new SemanticTokensLegend
+		{
+			TokenModifiers = Container.From(Array.Empty<SemanticTokenModifier>()),
+			TokenTypes = Container.From(Enum.GetValues<TokenType>().Select(c => new SemanticTokenType(c.ToString()))
+				.ToArray()),
+		};
+
+		return new SemanticTokensRegistrationOptions
+		{
+			DocumentSelector = StepTextDocumentSelector.Instance,
+			Legend = legend,
+			Full = true,
+			Range = true,
+		};
+	}
+
 	protected override Task Tokenize(
 		SemanticTokensBuilder builder,
 		ITextDocumentIdentifierParams identifier,
@@ -40,8 +61,8 @@ internal sealed class SemanticTokensHandler(ILogger<SemanticTokensHandler> logge
 		return Task.CompletedTask;
 	}
 
-	protected override async Task<SemanticTokensDocument> GetSemanticTokensDocument(ITextDocumentIdentifierParams @params,
-		CancellationToken cancellationToken)
+	protected override async Task<SemanticTokensDocument> GetSemanticTokensDocument(
+		ITextDocumentIdentifierParams @params, CancellationToken cancellationToken)
 	{
 		var document = new SemanticTokensDocument(RegistrationOptions.Legend);
 		var builder = new SemanticTokensBuilder(document, RegistrationOptions.Legend);
@@ -49,23 +70,5 @@ internal sealed class SemanticTokensHandler(ILogger<SemanticTokensHandler> logge
 		await Tokenize(builder, @params, cancellationToken);
 
 		return builder.Commit();
-	}
-
-	protected override SemanticTokensRegistrationOptions CreateRegistrationOptions(SemanticTokensCapability? capability,
-		ClientCapabilities clientCapabilities)
-	{
-		logger.LogTrace($"Creating registration options for {nameof(SemanticTokensHandler)}");
-
-		var legend = new SemanticTokensLegend
-		{
-			TokenModifiers = Container.From(Array.Empty<SemanticTokenModifier>()),
-			TokenTypes = Container.From(Enum.GetValues<TokenType>().Select(c => new SemanticTokenType(c.ToString()))
-				.ToArray()),
-		};
-
-		return new SemanticTokensRegistrationOptions
-		{
-			DocumentSelector = StepTextDocumentSelector.Instance, Legend = legend, Full = true, Range = true,
-		};
 	}
 }
