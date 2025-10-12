@@ -13,6 +13,7 @@
 		</PackageReference>
 		<PackageReference Include="JetBrains.Annotations"/>
 		<PackageReference Include="Lunet.Extensions.Logging.SpectreConsole" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
 		<PackageReference Include="OmniSharp.Extensions.LanguageServer"/>
 	</ItemGroup>
 
@@ -25,6 +26,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\StepLang.Tooling.CLI\StepLang.Tooling.CLI.csproj" />
+		<ProjectReference Include="..\StepLang.Tooling.Diagnostics\StepLang.Tooling.Diagnostics.csproj" />
 		<ProjectReference Include="..\StepLang\StepLang.csproj"/>
 	</ItemGroup>
 

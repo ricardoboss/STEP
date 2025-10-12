@@ -1,10 +1,9 @@
-using StepLang.LSP.Diagnostics;
 using StepLang.Parsing.Nodes;
 using StepLang.Tokenizing;
 
-namespace StepLang.LSP;
+namespace StepLang.Tooling.Diagnostics;
 
-internal sealed class DocumentState
+public sealed class DocumentState
 {
 	public required Uri DocumentUri { get; init; }
 

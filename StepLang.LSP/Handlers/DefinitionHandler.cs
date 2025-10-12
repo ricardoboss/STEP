@@ -2,8 +2,8 @@ using Microsoft.Extensions.Logging;
 using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Document;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
-using StepLang.LSP.Diagnostics;
 using StepLang.Tokenizing;
+using StepLang.Tooling.Diagnostics;
 using Range = OmniSharp.Extensions.LanguageServer.Protocol.Models.Range;
 
 namespace StepLang.LSP.Handlers;

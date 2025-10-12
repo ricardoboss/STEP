@@ -1,10 +1,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using StepLang.LSP.Diagnostics.Analyzers;
+using StepLang.Tooling.Diagnostics.Analyzers;
 
-namespace StepLang.LSP.Diagnostics;
+namespace StepLang.Tooling.Diagnostics;
 
-internal sealed class DiagnosticsRunner(IServiceProvider services, ILogger<DiagnosticsRunner> logger)
+public sealed class DiagnosticsRunner(IServiceProvider services, ILogger<DiagnosticsRunner> logger)
 {
 	private readonly Lazy<IAnalyzer[]> lazyAnalyzers = new(() => services.GetServices<IAnalyzer>().ToArray());
 

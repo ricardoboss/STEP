@@ -1,22 +1,15 @@
 using Microsoft.Extensions.Logging;
-using OmniSharp.Extensions.LanguageServer.Protocol.Document;
-using OmniSharp.Extensions.LanguageServer.Protocol.Models;
-using OmniSharp.Extensions.LanguageServer.Protocol.Server;
-using StepLang.LSP.Diagnostics;
+using StepLang.Diagnostics;
 using StepLang.Parsing;
 using StepLang.Parsing.Nodes;
 using StepLang.Tokenizing;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
-using Range = OmniSharp.Extensions.LanguageServer.Protocol.Models.Range;
 
-namespace StepLang.LSP;
+namespace StepLang.Tooling.Diagnostics;
 
-internal sealed class SessionState(
-	ILogger<SessionState> logger,
-	DiagnosticsRunner diagnosticsRunner,
-	ILanguageServerFacade server)
+public sealed class SessionState(ILogger<SessionState> logger, DiagnosticsRunner diagnosticsRunner)
 {
 	private readonly ConcurrentDictionary<Uri, DocumentState> documents = new();
 	public IReadOnlyDictionary<Uri, DocumentState> Documents => documents;
@@ -28,6 +21,8 @@ internal sealed class SessionState(
 
 	public ConcurrentDictionary<Uri, ObservableCollection<Diagnostic>> Diagnostics { get; } = new();
 
+	public event DiagnosticsPublishedEventHandler? OnDiagnosticsPublished;
+
 	public void AddDocument(DocumentState documentState)
 	{
 		logger.LogDebug("Adding document {DocumentUri} to session", documentState.DocumentUri);
@@ -38,7 +33,7 @@ internal sealed class SessionState(
 		}
 
 		var collection = Diagnostics.AddOrUpdate(documentState.DocumentUri, [], (_, _) => []);
-		collection.CollectionChanged += (_, _) => SendDiagnostics(documentState.DocumentUri);
+		collection.CollectionChanged += (_, _) => PublishDiagnostics(documentState.DocumentUri);
 
 		RecalculateDocument(documentState);
 
@@ -59,7 +54,7 @@ internal sealed class SessionState(
 		}
 
 		var collection = Diagnostics.AddOrUpdate(documentUri, [], (_, _) => []);
-		collection.CollectionChanged += (_, _) => SendDiagnostics(documentUri);
+		collection.CollectionChanged += (_, _) => PublishDiagnostics(documentUri);
 
 		var text = textUpdater(oldDocument.Text);
 
@@ -74,16 +69,18 @@ internal sealed class SessionState(
 		QueueAnalysis(newDocumentState);
 	}
 
-	private void SendDiagnostics(Uri documentUri)
+	private void PublishDiagnostics(Uri documentUri)
 	{
 		logger.LogTrace("Sending diagnostics for document {DocumentUri}", documentUri);
 
-		var diagnosticParams = new PublishDiagnosticsParams
+		var args = new DiagnosticsPublishedEventArgs
 		{
-			Uri = documentUri, Diagnostics = Diagnostics[documentUri], Version = Documents[documentUri].Version,
+			DocumentUri = documentUri,
+			Diagnostics = Diagnostics[documentUri],
+			Version = Documents[documentUri].Version,
 		};
 
-		server.TextDocument.PublishDiagnostics(diagnosticParams);
+		OnDiagnosticsPublished?.Invoke(args);
 	}
 
 	private void RecalculateDocument(DocumentState documentState)
@@ -115,12 +112,12 @@ internal sealed class SessionState(
 		{
 			Code = e.ErrorCode,
 			Message = e.Message,
-			Severity = DiagnosticSeverity.Error,
-			Range = e.Location?.ToRange() ?? new Range(),
-			CodeDescription = new CodeDescription
-			{
-				Href = new Uri(e.HelpLink ?? "https://github.com/ricardoboss/STEP/wiki"),
-			},
+			Severity = Severity.Error,
+			Location = e.Location,
+			// CodeDescription = new CodeDescription
+			// {
+			// 	Href = new Uri(e.HelpLink ?? "https://github.com/ricardoboss/STEP/wiki"),
+			// },
 		};
 
 		Diagnostics[documentState.DocumentUri].Add(diagnostic);

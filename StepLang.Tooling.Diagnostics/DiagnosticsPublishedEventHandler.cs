@@ -1,0 +1,3 @@
+namespace StepLang.Tooling.Diagnostics;
+
+public delegate EventHandler<DiagnosticsPublishedEventArgs> DiagnosticsPublishedEventHandler(DiagnosticsPublishedEventArgs e);

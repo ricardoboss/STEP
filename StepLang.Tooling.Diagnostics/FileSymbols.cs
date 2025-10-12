@@ -1,6 +1,6 @@
-namespace StepLang.LSP.Diagnostics;
+namespace StepLang.Tooling.Diagnostics;
 
-internal sealed class FileSymbols
+public sealed class FileSymbols
 {
 	public required Uri DocumentUri { get; init; }
 

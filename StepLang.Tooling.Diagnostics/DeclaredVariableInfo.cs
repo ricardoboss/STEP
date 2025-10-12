@@ -1,8 +1,8 @@
 using StepLang.Parsing.Nodes.VariableDeclarations;
 
-namespace StepLang.LSP.Diagnostics;
+namespace StepLang.Tooling.Diagnostics;
 
-internal sealed class DeclaredVariableInfo
+public sealed class DeclaredVariableInfo
 {
 	public required string Name { get; init; }
 

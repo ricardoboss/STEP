@@ -1,9 +1,9 @@
 using Microsoft.Extensions.Logging;
-using OmniSharp.Extensions.LanguageServer.Protocol.Models;
+using StepLang.Diagnostics;
 
-namespace StepLang.LSP.Diagnostics.Analyzers;
+namespace StepLang.Tooling.Diagnostics.Analyzers;
 
-internal sealed class UnusedDeclarationsAnalyzer(ILogger<UnusedDeclarationsAnalyzer> logger) : IAnalyzer
+public sealed class UnusedDeclarationsAnalyzer(ILogger<UnusedDeclarationsAnalyzer> logger) : IAnalyzer
 {
 	private const string DiagnosticCode = "unused-declaration";
 
@@ -48,12 +48,12 @@ internal sealed class UnusedDeclarationsAnalyzer(ILogger<UnusedDeclarationsAnaly
 	{
 		logger.LogTrace("Creating diagnostic for unused declaration {Declaration}", unusedDeclaration);
 
-		return new Diagnostic
+		return new()
 		{
-			Code = new DiagnosticCode(DiagnosticCode),
+			Code = DiagnosticCode,
 			Message = $"Unused declaration '{unusedDeclaration.Name}'",
-			Severity = DiagnosticSeverity.Hint,
-			Range = unusedDeclaration.Declaration.Location.ToRangeStart(),
+			Severity = Severity.Hint,
+			Token = unusedDeclaration.Declaration.Identifier,
 		};
 	}
 }

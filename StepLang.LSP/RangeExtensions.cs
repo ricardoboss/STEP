@@ -2,7 +2,7 @@ using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using StepLang.Tokenizing;
 using Range = OmniSharp.Extensions.LanguageServer.Protocol.Models.Range;
 
-namespace StepLang.LSP.Diagnostics;
+namespace StepLang.LSP;
 
 internal static class RangeExtensions
 {
