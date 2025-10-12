@@ -120,7 +120,7 @@ internal sealed class ServerManager(
 	[MustDisposeResource]
 	private async Task<LanguageServer> CreateServerAsync(Stream input, Stream output)
 	{
-		var info = new ServerInfo { Name = "STEP", Version = GitVersionInformation.FullSemVer };
+		var info = new ServerInfo { Name = "STEP", Version = LspMetadataProvider.Instance.FullSemVer };
 
 		var server = await LanguageServer.From(o =>
 			{

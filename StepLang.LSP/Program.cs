@@ -9,14 +9,14 @@ using StepLang.Tooling.Meta;
 const string slogan = "STEP LSP - LSP Server for STEP";
 
 var app = new CommandApp<DefaultCommand>()
-		.WithDescription(slogan + Environment.NewLine + "Version: " + GitVersionInformation.FullSemVer)
+		.WithDescription(slogan + Environment.NewLine + "Version: " + LspMetadataProvider.Instance.FullSemVer)
 	;
 
 app.Configure(config =>
 {
 	config
 		.SetApplicationName("step-lsp")
-		.SetApplicationVersion(GitVersionInformation.FullSemVer)
+		.SetApplicationVersion(LspMetadataProvider.Instance.FullSemVer)
 		.CaseSensitivity(CaseSensitivity.None)
 		.UseStrictParsing()
 #if DEBUG
