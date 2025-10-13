@@ -24,6 +24,19 @@ public class HighlighterTest
 		Assert.That(style.IsDefault, Is.False);
 	}
 
+	[Fact]
+	public void TestHighlighterKeepsEscapesInStrings()
+	{
+		const string source = "string a = \"message: \\\"Hello, World!\\\"\";";
+
+		var highlighter = new Highlighter(ColorScheme.Mono);
+		var tokens = highlighter.Highlight(source).ToList();
+
+		var literal = Assert.Single(tokens, t => t.Type == TokenType.LiteralString);
+
+		Assert.Equal("\"message: \\\"Hello, World!\\\"\"", literal.Text);
+	}
+
 	public static IEnumerable<object[]> ExplicitlyStyledTokenTypes()
 	{
 		return Enum.GetValues<TokenType>()
