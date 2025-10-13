@@ -6,5 +6,5 @@ internal sealed class ServerOptions
 
 	public int Port { get; set; } = 14246;
 
-	public bool UseStandardIO { get; set; }
+	public bool UseStandardIo { get; set; }
 }

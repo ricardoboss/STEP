@@ -17,14 +17,14 @@ namespace StepLang.LSP;
 internal sealed class ServerManager(
 	ILogger<ServerManager> logger,
 	IOptions<ServerOptions> delegateOptions,
-	IServiceProvider
-		services)
+	IServiceProvider services
+)
 {
 	private ServerOptions Options => delegateOptions.Value;
 
 	public async Task<int> RunAsync(CancellationToken cancellationToken = default)
 	{
-		if (Options.UseStandardIO)
+		if (Options.UseStandardIo)
 		{
 			return await HandleStandardIoAsync(cancellationToken);
 		}
@@ -75,7 +75,9 @@ internal sealed class ServerManager(
 
 			await HandleServerShutdownAsync(server, cancellationToken);
 		}
+#pragma warning disable CA1031
 		catch (Exception e)
+#pragma warning restore CA1031
 		{
 			logger.LogError(e, "Client handling failed");
 		}
@@ -120,7 +122,10 @@ internal sealed class ServerManager(
 	[MustDisposeResource]
 	private async Task<LanguageServer> CreateServerAsync(Stream input, Stream output)
 	{
-		var info = new ServerInfo { Name = "STEP", Version = LspMetadataProvider.Instance.FullSemVer };
+		var info = new ServerInfo
+		{
+			Name = "STEP", Version = LspMetadataProvider.Instance.FullSemVer
+		};
 
 		var server = await LanguageServer.From(o =>
 			{
@@ -155,23 +160,23 @@ internal sealed class ServerManager(
 	private void ConfigureServices(IServiceCollection s)
 	{
 		_ = s
-			.AddLogging(b =>
-			{
-				b.ClearProviders()
-					.AddLanguageProtocolLogging();
+				.AddLogging(b =>
+				{
+					b.ClearProviders()
+						.AddLanguageProtocolLogging();
 
-				if (Options.UseStandardIO)
-					return;
+					if (Options.UseStandardIo)
+						return;
 
-				// only when NOT using stdio, we add a logger that can use stdio for logging
-				b.SetMinimumLevel(LogLevel.Trace)
-					.AddFilter("StepLang", LogLevel.Trace)
-					.AddSimpleSpectreConsole();
-			})
-			.AddSingleton<SessionState>()
-			.AddSingleton<DiagnosticsRunner>()
-			.AddSingleton<DiagnosticsPublisher>()
-			.AddTransient<IDiagnosticsAnalyzer, UnusedDeclarationsDiagnosticsAnalyzer>()
+					// only when NOT using stdio, we add a logger that can use stdio for logging
+					b.SetMinimumLevel(LogLevel.Trace)
+						.AddFilter("StepLang", LogLevel.Trace)
+						.AddSimpleSpectreConsole();
+				})
+				.AddSingleton<SessionState>()
+				.AddSingleton<DiagnosticsRunner>()
+				.AddSingleton<DiagnosticsPublisher>()
+				.AddTransient<IDiagnosticsAnalyzer, UnusedDeclarationsDiagnosticsAnalyzer>()
 			;
 	}
 }

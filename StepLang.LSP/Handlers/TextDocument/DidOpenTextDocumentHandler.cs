@@ -11,10 +11,12 @@ internal sealed class DidOpenTextDocumentHandler(ILogger<DidOpenTextDocumentHand
 	: DidOpenTextDocumentHandlerBase
 {
 	protected override TextDocumentOpenRegistrationOptions CreateRegistrationOptions(
-		TextSynchronizationCapability capability,
-		ClientCapabilities clientCapabilities)
+		TextSynchronizationCapability capability, ClientCapabilities clientCapabilities)
 	{
-		return new TextDocumentOpenRegistrationOptions { DocumentSelector = StepTextDocumentSelector.Instance, };
+		return new TextDocumentOpenRegistrationOptions
+		{
+			DocumentSelector = StepTextDocumentSelector.Instance,
+		};
 	}
 
 	public override Task<Unit> Handle(DidOpenTextDocumentParams request, CancellationToken cancellationToken)
@@ -30,9 +32,7 @@ internal sealed class DidOpenTextDocumentHandler(ILogger<DidOpenTextDocumentHand
 	{
 		var documentState = new DocumentState
 		{
-			DocumentUri = document.Uri.ToUri(),
-			Version = document.Version ?? 0,
-			Text = document.Text,
+			DocumentUri = document.Uri.ToUri(), Version = document.Version ?? 0, Text = document.Text,
 		};
 
 		state.AddDocument(documentState);

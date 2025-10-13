@@ -19,13 +19,6 @@ internal static class RangeExtensions
 		return new Range(start, end);
 	}
 
-	public static Range ToRangeStart(this TokenLocation location)
-	{
-		var start = location.ToPosition();
-
-		return new Range(start, start);
-	}
-
 	public static Position ToPosition(this TokenLocation location)
 	{
 		// STEP is 1-indexed; LSP is 0-indexed

@@ -51,7 +51,7 @@ internal sealed class DefaultCommand : AsyncCommand<DefaultCommand.Settings>
 			{
 				o.Host = settings.Host ?? "127.0.0.1";
 				o.Port = settings.Port ?? 14246;
-				o.UseStandardIO = settings.Stdio;
+				o.UseStandardIo = settings.Stdio;
 			});
 
 		services.AddLogging(
