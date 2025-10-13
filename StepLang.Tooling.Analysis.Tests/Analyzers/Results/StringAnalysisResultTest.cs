@@ -7,7 +7,7 @@ namespace StepLang.Tooling.Analysis.Tests.Analyzers.Results;
 
 public static class StringAnalysisResultTest
 {
-	[Fact]
+	[Test]
 	public static async Task TestOverwritesSourceFileOnFixApplication()
 	{
 		var targetFileName = Path.GetTempFileName();
@@ -29,7 +29,7 @@ public static class StringAnalysisResultTest
 			await result.ApplyFixAsync(fixerSourceMock.Object, CancellationToken.None);
 
 			var targetFileContents = await File.ReadAllTextAsync(targetFileName, CancellationToken.None);
-			Assert.Equal("Fixed", targetFileContents.TrimEnd());
+			Assert.That(targetFileContents.TrimEnd(), Is.EqualTo("Fixed"));
 
 			fixerSourceMock.VerifyAll();
 		}
@@ -39,7 +39,7 @@ public static class StringAnalysisResultTest
 		}
 	}
 
-	[Fact]
+	[Test]
 	public static async Task TestKeepsOriginalEncoding()
 	{
 		var targetFileName = Path.GetTempFileName();
@@ -68,7 +68,7 @@ public static class StringAnalysisResultTest
 				// explicitly specify a different default encoding
 				var actualEncoding = FileEncodingAnalyzer.GetEncoding(stream, fallbackEncoding);
 
-				Assert.Equal(intendedEncoding, actualEncoding);
+				Assert.That(actualEncoding, Is.EqualTo(intendedEncoding));
 			}
 
 			fixerSourceMock.VerifyAll();
@@ -79,17 +79,17 @@ public static class StringAnalysisResultTest
 		}
 	}
 
-	[Fact]
-	public static async Task TestThrowsWhenApplyingFixWithRetainOriginalResult()
+	[Test]
+	public static void TestThrowsWhenApplyingFixWithRetainOriginalResult()
 	{
 		var fixerSourceMock = new Mock<IFixerSource>();
 
 		var result = StringAnalysisResult.FromInputAndFix("Original", "Original");
 
-		var ex = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
-			await result.ApplyFixAsync(fixerSourceMock.Object, CancellationToken.None));
+		var ex = Assert.ThrowsAsync<InvalidOperationException>(() =>
+				result.ApplyFixAsync(fixerSourceMock.Object, CancellationToken.None));
 
-		Assert.Equal("No fix is available for this result", ex.Message);
+		Assert.That(ex.Message, Is.EqualTo("No fix is available for this result"));
 
 		fixerSourceMock.VerifyAll();
 	}

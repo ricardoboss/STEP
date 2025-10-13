@@ -4,30 +4,30 @@ namespace StepLang.Tests.Tokenizing;
 
 public class CharacterSourceTest
 {
-	[Fact]
+	[Test]
 	public void TestLocation()
 	{
 		var source = new CharacterSource("a\nb");
 
-		Assert.Equal(1, source.Line);
-		Assert.Equal(1, source.Column);
+		Assert.That(source.Line, Is.EqualTo(1));
+		Assert.That(source.Column, Is.EqualTo(1));
 
-		Assert.True(source.TryConsume(out var first));
-		Assert.Equal('a', first);
+		Assert.That(source.TryConsume(out var first), Is.True);
+		Assert.That(first, Is.EqualTo('a'));
 
-		Assert.Equal(1, source.Line);
-		Assert.Equal(2, source.Column);
+		Assert.That(source.Line, Is.EqualTo(1));
+		Assert.That(source.Column, Is.EqualTo(2));
 
-		Assert.True(source.TryConsume(out var second));
-		Assert.Equal('\n', second);
+		Assert.That(source.TryConsume(out var second), Is.True);
+		Assert.That(second, Is.EqualTo('\n'));
 
-		Assert.Equal(2, source.Line);
-		Assert.Equal(1, source.Column);
+		Assert.That(source.Line, Is.EqualTo(2));
+		Assert.That(source.Column, Is.EqualTo(1));
 
-		Assert.True(source.TryConsume(out var third));
-		Assert.Equal('b', third);
+		Assert.That(source.TryConsume(out var third), Is.True);
+		Assert.That(third, Is.EqualTo('b'));
 
-		Assert.Equal(2, source.Line);
-		Assert.Equal(2, source.Column);
+		Assert.That(source.Line, Is.EqualTo(2));
+		Assert.That(source.Column, Is.EqualTo(2));
 	}
 }

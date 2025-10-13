@@ -12,7 +12,7 @@ internal static class TestHelper
 	{
 		var tokenizer = new Tokenizer(code, diagnostics ?? []);
 
-		return tokenizer.Tokenize(TestContext.Current.CancellationToken);
+		return tokenizer.Tokenize(TestContext.CurrentContext.CancellationToken);
 	}
 
 	public static RootNode AsParsed(this string code, DiagnosticCollection? diagnostics = null)

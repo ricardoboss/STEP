@@ -7,7 +7,7 @@ namespace StepLang.Tooling.Analysis.Tests.Fixers;
 
 public static class BaseFixerTest
 {
-	[Fact]
+	[Test]
 	public static async Task TestInvokesOnUnfixable()
 	{
 		var analyzerMock = new Mock<IAnalyzer>();
@@ -36,15 +36,15 @@ public static class BaseFixerTest
 
 		var result = await fixer.FixAsync(analyzerMock.Object, fixerSourceMock.Object, CancellationToken.None);
 
-		Assert.Equal(0, result.AppliedFixes);
-		Assert.True(unfixableInvoked);
+		Assert.That(result.AppliedFixes, Is.EqualTo(0));
+		Assert.That(unfixableInvoked, Is.True);
 
 		analyzerMock.VerifyAll();
 		fixerSourceMock.VerifyAll();
 		analysisResultMock.VerifyAll();
 	}
 
-	[Fact]
+	[Test]
 	public static async Task TestBailsIfShouldntFix()
 	{
 		var analyzerMock = new Mock<IAnalyzer>();
@@ -65,14 +65,14 @@ public static class BaseFixerTest
 
 		var result = await fixer.FixAsync(analyzerMock.Object, fixerSourceMock.Object, CancellationToken.None);
 
-		Assert.Equal(0, result.AppliedFixes);
+		Assert.That(result.AppliedFixes, Is.EqualTo(0));
 
 		analyzerMock.VerifyAll();
 		fixerSourceMock.VerifyAll();
 		analysisResultMock.VerifyAll();
 	}
 
-	[Fact]
+	[Test]
 	public static async Task TestDoesntThrowIfThrowOnFailureIsFalse()
 	{
 		var analyzerMock = new Mock<IAnalyzer>();
@@ -91,15 +91,15 @@ public static class BaseFixerTest
 
 		var result = await fixer.FixAsync(analyzerMock.Object, fixerSourceMock.Object, CancellationToken.None);
 
-		Assert.Equal(0, result.AppliedFixes);
+		Assert.That(result.AppliedFixes, Is.EqualTo(0));
 
 		analyzerMock.VerifyAll();
 		fixerSourceMock.VerifyAll();
 		analysisResultMock.VerifyAll();
 	}
 
-	[Fact]
-	public static async Task TestThrowsFixerExceptionIfThrowOnFailureIsTrue()
+	[Test]
+	public static void TestThrowsFixerExceptionIfThrowOnFailureIsTrue()
 	{
 		const string analyzerName = "TestAnalyzer";
 
@@ -128,11 +128,11 @@ public static class BaseFixerTest
 			ThrowOnFailure = true,
 		};
 
-		var ex = await Assert.ThrowsAsync<FixerException>(async () =>
-			await fixer.FixAsync(analyzerMock.Object, fixerSourceMock.Object, CancellationToken.None));
+		var ex = Assert.ThrowsAsync<FixerException>(() =>
+				fixer.FixAsync(analyzerMock.Object, fixerSourceMock.Object, CancellationToken.None));
 
-		Assert.Equal($"Failed to run analyzer '{analyzerName}' on file '{sourceUri}'", ex.Message);
-		_ = Assert.IsType<TestAnalysisException>(ex.InnerException);
+		Assert.That(ex.Message, Is.EqualTo($"Failed to run analyzer '{analyzerName}' on file '{sourceUri}'"));
+		Assert.That(ex.InnerException, Is.TypeOf<TestAnalysisException>());
 
 		analyzerMock.VerifyAll();
 		fixerSourceMock.VerifyAll();

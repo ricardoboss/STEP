@@ -2,12 +2,13 @@ using StepLang.Diagnostics;
 using StepLang.Parsing;
 using StepLang.Parsing.Nodes.Statements;
 using StepLang.Tokenizing;
+using System.Linq;
 
 namespace StepLang.Tests.Parsing;
 
 public class ParserTest
 {
-	[Fact]
+	[Test]
 	public void TestParseIdentifierUsageThrowForIncompleteStatement()
 	{
 		// Arrange
@@ -21,8 +22,14 @@ public class ParserTest
 		var root = parser.ParseRoot();
 
 		// Assert
-		var errorStatement = Assert.IsType<ErrorStatementNode>(root.Body.First());
-		Assert.Equal("Unexpected end of tokens", errorStatement.Description);
-		Assert.Equal(TokenType.EndOfFile, errorStatement.Tokens.First()?.Type);
+		var errorStatement = AssertIsType<ErrorStatementNode>(root.Body.First());
+		Assert.That(errorStatement.Description, Is.EqualTo("Unexpected end of tokens"));
+		Assert.That(errorStatement.Tokens.First()?.Type, Is.EqualTo(TokenType.EndOfFile));
+	}
+
+	private static T AssertIsType<T>(object? value)
+	{
+		Assert.That(value, Is.TypeOf<T>());
+		return (T)value!;
 	}
 }

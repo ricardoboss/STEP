@@ -5,7 +5,7 @@ namespace StepLang.Tooling.Analysis.Tests.Analyzers.Results;
 
 public static class FileAnalysisResultTest
 {
-	[Fact]
+	[Test]
 	public static async Task TestOverwritesOldFileOnFixApplication()
 	{
 		var fixedFileName = Path.GetTempFileName();
@@ -31,7 +31,7 @@ public static class FileAnalysisResultTest
 			await result.ApplyFixAsync(fixerSourceMock.Object, CancellationToken.None);
 
 			var targetFileContents = await File.ReadAllTextAsync(targetFileName, CancellationToken.None);
-			Assert.Equal("Fixed", targetFileContents.TrimEnd());
+			Assert.That(targetFileContents.TrimEnd(), Is.EqualTo("Fixed"));
 
 			fixerSourceMock.VerifyAll();
 		}
@@ -42,17 +42,17 @@ public static class FileAnalysisResultTest
 		}
 	}
 
-	[Fact]
-	public static async Task TestThrowsWhenApplyingFixWithRetainOriginalResult()
+	[Test]
+	public static void TestThrowsWhenApplyingFixWithRetainOriginalResult()
 	{
 		var fixerSourceMock = new Mock<IFixerSource>();
 
 		var result = FileAnalysisResult.RetainOriginal();
 
-		var ex = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
-			await result.ApplyFixAsync(fixerSourceMock.Object, CancellationToken.None));
+		var ex = Assert.ThrowsAsync<InvalidOperationException>(() =>
+				result.ApplyFixAsync(fixerSourceMock.Object, CancellationToken.None));
 
-		Assert.Equal("No fix is available for this result", ex.Message);
+		Assert.That(ex.Message, Is.EqualTo("No fix is available for this result"));
 
 		fixerSourceMock.VerifyAll();
 	}

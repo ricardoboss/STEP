@@ -5,17 +5,17 @@ namespace StepLang.Tooling.Analysis.Tests.Analyzers;
 
 public static class FileEncodingAnalyzerTest
 {
-	[Fact]
+	[Test]
 	public static void TestLeavesReaderOpenAfterGettingEncoding()
 	{
 		using var stream = new MemoryStream();
 
 		_ = FileEncodingAnalyzer.GetEncoding(stream, FileEncodingAnalyzer.DefaultEncoding);
 
-		Assert.True(stream.CanRead);
+		Assert.That(stream.CanRead, Is.True);
 	}
 
-	[Fact]
+	[Test]
 	public static async Task TestKeepsFileContents()
 	{
 		const string contents = "Hello!";
@@ -31,11 +31,11 @@ public static class FileEncodingAnalyzerTest
 
 			var result = await fixer.AnalyzeAsync(new FileInfo(targetFileName), CancellationToken.None);
 
-			Assert.NotNull(result.FixedFile);
+			Assert.That(result.FixedFile, Is.Not.Null);
 
 			var fixedFileContents = await File.ReadAllTextAsync(result.FixedFile.FullName, CancellationToken.None);
 
-			Assert.Equal(contents, fixedFileContents);
+			Assert.That(fixedFileContents, Is.EqualTo(contents));
 		}
 		finally
 		{

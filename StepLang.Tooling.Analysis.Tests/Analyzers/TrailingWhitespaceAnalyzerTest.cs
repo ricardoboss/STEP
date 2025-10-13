@@ -4,29 +4,28 @@ namespace StepLang.Tooling.Analysis.Tests.Analyzers;
 
 public class TrailingWhitespaceAnalyzerTest
 {
-	[Theory]
-	[InlineData("a", null)]
-	[InlineData("a ", "a")]
-	[InlineData(" a", null)]
-	[InlineData(" a ", " a")]
-	[InlineData("a\t", "a")]
-	[InlineData("\ta", null)]
-	[InlineData("\ta\t", "\ta")]
-	[InlineData("a\n\t", "a\n")]
-	[InlineData("a\n", null)]
-	[InlineData("a\r\n", null)]
-	[InlineData("a\r\n ", "a\r\n")]
-	[InlineData("a\r\n  ", "a\r\n")]
-	[InlineData("a\n b\n ", "a\n b\n")]
-	[InlineData("a \n b\n", "a\n b\n")]
-	[InlineData("a\t\n\tb\n", "a\n\tb\n")]
+	[TestCase("a", null)]
+	[TestCase("a ", "a")]
+	[TestCase(" a", null)]
+	[TestCase(" a ", " a")]
+	[TestCase("a\t", "a")]
+	[TestCase("\ta", null)]
+	[TestCase("\ta\t", "\ta")]
+	[TestCase("a\n\t", "a\n")]
+	[TestCase("a\n", null)]
+	[TestCase("a\r\n", null)]
+	[TestCase("a\r\n ", "a\r\n")]
+	[TestCase("a\r\n  ", "a\r\n")]
+	[TestCase("a\n b\n ", "a\n b\n")]
+	[TestCase("a \n b\n", "a\n b\n")]
+	[TestCase("a\t\n\tb\n", "a\n\tb\n")]
 	public async Task TestTrailingWhitespaceAnalyzer(string input, string? output)
 	{
 		var fixer = new TrailingWhitespaceAnalyzer();
 
 		var result = await fixer.AnalyzeAsync(input, CancellationToken.None);
 
-		Assert.Equal(output, result.FixedString);
-		Assert.Equal(output != null, result.ShouldFix);
+		Assert.That(result.FixedString, Is.EqualTo(output));
+		Assert.That(result.ShouldFix, Is.EqualTo(output != null));
 	}
 }

@@ -5,7 +5,7 @@ namespace StepLang.Tests.Interpreting;
 
 public class ScopeTest
 {
-	[Fact]
+	[Test]
 	public void TestThrowsForUndefinedIdentifiers()
 	{
 		var scope = Scope.GlobalScope;
@@ -13,6 +13,6 @@ public class ScopeTest
 		var e = Assert.Throws<UndefinedIdentifierException>(() =>
 			scope.GetVariable(new Token(TokenType.Identifier, "undefined")));
 
-		Assert.Equal("Variable 'undefined' was not declared (used at 1:1)", e.Message);
+		Assert.That(e.Message, Is.EqualTo("Variable 'undefined' was not declared (used at 1:1)"));
 	}
 }

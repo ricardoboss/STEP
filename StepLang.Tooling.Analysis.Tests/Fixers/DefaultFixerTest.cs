@@ -7,7 +7,7 @@ namespace StepLang.Tooling.Analysis.Tests.Fixers;
 
 public static class DefaultFixerTest
 {
-	[Fact]
+	[Test]
 	public static async Task TestAppliesFixes()
 	{
 		var analyzerMock = new Mock<IAnalyzer>();
@@ -33,7 +33,7 @@ public static class DefaultFixerTest
 
 		var result = await fixer.FixAsync(analyzerMock.Object, sourceMock.Object, CancellationToken.None);
 
-		Assert.Equal(1, result.AppliedFixes);
+		Assert.That(result.AppliedFixes, Is.EqualTo(1));
 
 		analyzerMock.VerifyAll();
 		sourceMock.VerifyAll();

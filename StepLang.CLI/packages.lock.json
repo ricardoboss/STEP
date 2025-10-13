@@ -134,6 +134,13 @@
           "System.Linq.Async": "[6.0.3, )"
         }
       },
+      "steplang.tooling.analysis": {
+        "type": "Project",
+        "dependencies": {
+          "SmartAnalyzers.CSharpExtensions.Annotations": "[4.2.11, )",
+          "StepLang": "[1.0.0, )"
+        }
+      },
       "steplang.tooling.cli": {
         "type": "Project",
         "dependencies": {
@@ -141,13 +148,6 @@
           "Spectre.Console.Cli": "[0.51.1, )",
           "StepLang": "[1.0.0, )",
           "StepLang.Tooling.Meta": "[1.0.0, )"
-        }
-      },
-      "steplang.tooling.formatting": {
-        "type": "Project",
-        "dependencies": {
-          "SmartAnalyzers.CSharpExtensions.Annotations": "[4.2.11, )",
-          "StepLang": "[1.0.0, )"
         }
       },
       "steplang.tooling.highlighting": {

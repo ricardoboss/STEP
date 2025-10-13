@@ -3,6 +3,7 @@ using StepLang.Interpreting;
 using StepLang.Parsing;
 using StepLang.Tokenizing;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -11,8 +12,7 @@ namespace StepLang.Tests.Integration;
 
 public class FailuresIntegrationTest
 {
-	[Theory]
-	[ClassData(typeof(FailureFiles))]
+	[TestCaseSource(typeof(FailureFiles))]
 	public async Task TestFailuresFail(string exampleFilePath)
 	{
 		// arrange
@@ -20,17 +20,18 @@ public class FailuresIntegrationTest
 		var stdInText = "";
 		if (File.Exists(exampleFile.FullName + ".in"))
 		{
-			stdInText = await File.ReadAllTextAsync(exampleFile.FullName + ".in", TestContext.Current.CancellationToken);
+			stdInText = await File.ReadAllTextAsync(exampleFile.FullName + ".in", TestContext.CurrentContext.CancellationToken);
 		}
 
 		var detailsFile = exampleFile.FullName + ".exception.json";
-		Assert.SkipUnless(File.Exists(detailsFile), $"No exception details file found for {exampleFile.FullName}");
+		Assume.That(File.Exists(detailsFile), $"No exception details file found for {exampleFile.FullName}");
 
-		var detailsContent = await File.ReadAllTextAsync(detailsFile, TestContext.Current.CancellationToken);
+		var detailsContent = await File.ReadAllTextAsync(detailsFile, TestContext.CurrentContext.CancellationToken);
 		var details =
 			JsonSerializer.Deserialize(detailsContent, ExceptionDetailsJsonContext.Default.ListExceptionDetails);
 
-		Assert.SkipWhen(details is null, $"Failed to deserialize exception details for {exampleFile.FullName}");
+		Assume.That(details, Is.Not.Null, $"Failed to deserialize exception details for {exampleFile.FullName}");
+		var parsedDetails = details!;
 
 		await using var stdOut = new StringWriter();
 		await using var stdErr = new StringWriter();
@@ -42,10 +43,10 @@ public class FailuresIntegrationTest
 		var interpreter = new Interpreter(stdOut, stdErr, stdIn, null, diagnostics);
 
 		// assert
-		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken);
+		var tokens = tokenizer.Tokenize(TestContext.CurrentContext.CancellationToken);
 		if (diagnostics.ContainsErrors)
 		{
-			AssertErrors(diagnostics, exampleFile, details);
+			AssertErrors(diagnostics, exampleFile, parsedDetails);
 
 			return;
 		}
@@ -54,36 +55,37 @@ public class FailuresIntegrationTest
 		var root = parser.ParseRoot();
 		if (diagnostics.ContainsErrors)
 		{
-			AssertErrors(diagnostics, exampleFile, details);
+			AssertErrors(diagnostics, exampleFile, parsedDetails);
 
 			return;
 		}
 
 		// no tokenizer error and no parser error means the exception must throw at runtime
-		var e = Assert.ThrowsAny<StepLangException>(() => root.Accept(interpreter));
+		var caughtException = Assert.Catch<StepLangException>(() => root.Accept(interpreter));
+		Assert.That(caughtException, Is.Not.Null);
 
-		AssertException(e, exampleFile, details);
+		AssertException(caughtException!, exampleFile, parsedDetails);
 	}
 
 	[SuppressMessage("ReSharper", "ParameterOnlyUsedForPreconditionCheck.Local")]
 	private static void AssertErrors(DiagnosticCollection diagnostics, FileInfo sourceFile,
 		List<ExceptionDetails> details)
 	{
-		Assert.Equal(details.Count, diagnostics.Count);
+		Assert.That(diagnostics.Count, Is.EqualTo(details.Count));
 
 		foreach (var (diagnostic, detail) in diagnostics.Zip(details))
 		{
 			Assert.Multiple(() =>
 			{
-				Assert.Equal(detail.Severity, diagnostic.Severity);
-				Assert.Equal(detail.Message, diagnostic.Message);
-				Assert.Equal(detail.ErrorCode, diagnostic.Code);
-				Assert.Equal(detail.Kind, diagnostic.Kind);
-				Assert.Equal(detail.Area, diagnostic.Area);
-				Assert.Equal(detail.Line, diagnostic.Line);
-				Assert.Equal(detail.Column, diagnostic.Column);
-				Assert.Equal(detail.Length, diagnostic.Length);
-				Assert.Equal(sourceFile.FullName, diagnostic.File?.FullName);
+				Assert.That(diagnostic.Severity, Is.EqualTo(detail.Severity));
+				Assert.That(diagnostic.Message, Is.EqualTo(detail.Message));
+				Assert.That(diagnostic.Code, Is.EqualTo(detail.ErrorCode));
+				Assert.That(diagnostic.Kind, Is.EqualTo(detail.Kind));
+				Assert.That(diagnostic.Area, Is.EqualTo(detail.Area));
+				Assert.That(diagnostic.Line, Is.EqualTo(detail.Line));
+				Assert.That(diagnostic.Column, Is.EqualTo(detail.Column));
+				Assert.That(diagnostic.Length, Is.EqualTo(detail.Length));
+				Assert.That(diagnostic.File?.FullName, Is.EqualTo(sourceFile.FullName));
 			});
 		}
 	}
@@ -97,35 +99,35 @@ public class FailuresIntegrationTest
 
 		Assert.Multiple(() =>
 		{
-			Assert.Equal(detail.ErrorCode, caught.ErrorCode);
-			Assert.Equal(detail.Message, caught.Message);
-			Assert.Equal(detail.HelpText, caught.HelpText);
+			Assert.That(caught.ErrorCode, Is.EqualTo(detail.ErrorCode));
+			Assert.That(caught.Message, Is.EqualTo(detail.Message));
+			Assert.That(caught.HelpText, Is.EqualTo(detail.HelpText));
 
 			if (caught.Location is { } location)
 			{
-				Assert.Equal(detail.Line, location.Line);
-				Assert.Equal(detail.Column, location.Column);
-				Assert.Equal(detail.Length, location.Length);
-				Assert.Equal(sourceFile.FullName, location.File?.FullName);
+				Assert.That(location.Line, Is.EqualTo(detail.Line));
+				Assert.That(location.Column, Is.EqualTo(detail.Column));
+				Assert.That(location.Length, Is.EqualTo(detail.Length));
+				Assert.That(location.File?.FullName, Is.EqualTo(sourceFile.FullName));
 			}
 			else
 			{
-				Assert.Null(detail.Line);
-				Assert.Null(detail.Column);
-				Assert.Null(detail.Length);
+				Assert.That(detail.Line, Is.Null);
+				Assert.That(detail.Column, Is.Null);
+				Assert.That(detail.Length, Is.Null);
 			}
 		});
 	}
 
-	[SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Used by xUnit")]
-	private sealed class FailureFiles : IEnumerable<TheoryDataRow<string>>
+	[SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Instantiated by NUnit")]
+	private sealed class FailureFiles : IEnumerable<TestCaseData>
 	{
-		public IEnumerator<TheoryDataRow<string>> GetEnumerator()
+		public IEnumerator<TestCaseData> GetEnumerator()
 		{
 			return Directory
-				.EnumerateFiles("Failures", "*.step")
-				.Select(file => new TheoryDataRow<string>(file))
-				.GetEnumerator();
+					.EnumerateFiles("Failures", "*.step")
+					.Select(file => new TestCaseData(file))
+					.GetEnumerator();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()

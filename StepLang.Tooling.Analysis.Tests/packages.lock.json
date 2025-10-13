@@ -241,6 +241,13 @@
           "System.Linq.Async": "[6.0.3, )"
         }
       },
+      "steplang.tooling.analysis": {
+        "type": "Project",
+        "dependencies": {
+          "SmartAnalyzers.CSharpExtensions.Annotations": "[4.2.11, )",
+          "StepLang": "[1.0.0, )"
+        }
+      },
       "steplang.tooling.meta": {
         "type": "Project",
         "dependencies": {

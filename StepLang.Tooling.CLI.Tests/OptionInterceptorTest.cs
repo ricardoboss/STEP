@@ -9,7 +9,7 @@ namespace StepLang.Tooling.CLI.Tests;
 
 public class OptionInterceptorTest
 {
-	[Fact]
+	[Test]
 	public void TestDoesNothingForNonGlobalCommandSettings()
 	{
 		// Arrange
@@ -33,7 +33,7 @@ public class OptionInterceptorTest
 		remainingArgumentsMock.VerifyAll();
 	}
 
-	[Fact]
+	[Test]
 	public void TestDoesNothingIfNoOptionsAreSet()
 	{
 		// Arrange
@@ -57,7 +57,7 @@ public class OptionInterceptorTest
 		remainingArgumentsMock.VerifyAll();
 	}
 
-	[Fact]
+	[Test]
 	public void TestPrintsVersionIfVersionOptionIsSet()
 	{
 		// Arrange
@@ -89,16 +89,16 @@ public class OptionInterceptorTest
 		interceptor.Intercept(context, settings);
 
 		// Assert
-		Assert.NotNull(writtenWidget);
-		var text = Assert.IsType<Text>(writtenWidget);
-		Assert.Equal(fullSemVer, text.GetTextContent().TrimEnd(Environment.NewLine.ToCharArray()));
+		Assert.That(writtenWidget, Is.Not.Null);
+		var text = AssertIsType<Text>(writtenWidget);
+		Assert.That(text.GetTextContent().TrimEnd(Environment.NewLine.ToCharArray()), Is.EqualTo(fullSemVer));
 
 		consoleMock.VerifyAll();
 		metadataProviderMock.VerifyAll();
 		remainingArgumentsMock.VerifyAll();
 	}
 
-	[Fact]
+	[Test]
 	public void TestPrintsInfoGridIfInfoOptionIsSet()
 	{
 		// Arrange
@@ -157,68 +157,74 @@ public class OptionInterceptorTest
 		interceptor.Intercept(context, settings);
 
 		// Assert
-		Assert.NotNull(writtenWidget);
-		var definitionList = Assert.IsType<DefinitionList>(writtenWidget);
+		Assert.That(writtenWidget, Is.Not.Null);
+		var definitionList = AssertIsType<DefinitionList>(writtenWidget);
 
-		Assert.Equal(2, definitionList.Items.Count);
+		Assert.That(definitionList.Items.Count, Is.EqualTo(2));
 
-		var metadataComponentLabel = Assert.IsType<Markup>(definitionList.Items[0].Label);
-		Assert.Equal(metadataComponentName, metadataComponentLabel.GetTextContent());
+		var metadataComponentLabel = AssertIsType<Markup>(definitionList.Items[0].Label);
+		Assert.That(metadataComponentLabel.GetTextContent(), Is.EqualTo(metadataComponentName));
 
-		var metadataGrid = Assert.IsType<Grid>(definitionList.Items[0].Definition);
-		Assert.Equal(2, metadataGrid.Columns.Count);
-		Assert.Equal(3, metadataGrid.Rows.Count);
+		var metadataGrid = AssertIsType<Grid>(definitionList.Items[0].Definition);
+		Assert.That(metadataGrid.Columns.Count, Is.EqualTo(2));
+		Assert.That(metadataGrid.Rows.Count, Is.EqualTo(3));
 
 		var buildDateRow = metadataGrid.Rows[0];
 		var buildDateHeader = buildDateRow[0];
 		var buildDateValue = buildDateRow[1];
-		var buildDateHeaderText = Assert.IsType<Text>(buildDateHeader);
-		Assert.Equal("Build Date", buildDateHeaderText.GetTextContent());
-		var buildDateValueText = Assert.IsType<Text>(buildDateValue);
-		Assert.Equal("2025-01-01 00:00:00 UTC", buildDateValueText.GetTextContent());
+		var buildDateHeaderText = AssertIsType<Text>(buildDateHeader);
+		Assert.That(buildDateHeaderText.GetTextContent(), Is.EqualTo("Build Date"));
+		var buildDateValueText = AssertIsType<Text>(buildDateValue);
+		Assert.That(buildDateValueText.GetTextContent(), Is.EqualTo("2025-01-01 00:00:00 UTC"));
 
 		var versionRow = metadataGrid.Rows[1];
 		var versionHeader = versionRow[0];
 		var versionValue = versionRow[1];
-		var versionHeaderText = Assert.IsType<Text>(versionHeader);
-		Assert.Equal("Version", versionHeaderText.GetTextContent());
-		var versionValueText = Assert.IsType<Text>(versionValue);
-		Assert.Equal($"{sha} ({fullSemVer})", versionValueText.GetTextContent());
+		var versionHeaderText = AssertIsType<Text>(versionHeader);
+		Assert.That(versionHeaderText.GetTextContent(), Is.EqualTo("Version"));
+		var versionValueText = AssertIsType<Text>(versionValue);
+		Assert.That(versionValueText.GetTextContent(), Is.EqualTo($"{sha} ({fullSemVer})"));
 
 		var branchRow = metadataGrid.Rows[2];
 		var branchHeader = branchRow[0];
 		var branchValue = branchRow[1];
-		var branchHeaderText = Assert.IsType<Text>(branchHeader);
-		Assert.Equal("Branch", branchHeaderText.GetTextContent());
-		var branchValueText = Assert.IsType<Text>(branchValue);
-		Assert.Equal(branchName, branchValueText.GetTextContent());
+		var branchHeaderText = AssertIsType<Text>(branchHeader);
+		Assert.That(branchHeaderText.GetTextContent(), Is.EqualTo("Branch"));
+		var branchValueText = AssertIsType<Text>(branchValue);
+		Assert.That(branchValueText.GetTextContent(), Is.EqualTo(branchName));
 
-		var environmentLabel = Assert.IsType<Markup>(definitionList.Items[1].Label);
-		Assert.Equal("Environment", environmentLabel.GetTextContent());
+		var environmentLabel = AssertIsType<Markup>(definitionList.Items[1].Label);
+		Assert.That(environmentLabel.GetTextContent(), Is.EqualTo("Environment"));
 
-		var environmentGrid = Assert.IsType<Grid>(definitionList.Items[1].Definition);
-		Assert.Equal(2, environmentGrid.Columns.Count);
-		Assert.Equal(2, environmentGrid.Rows.Count);
+		var environmentGrid = AssertIsType<Grid>(definitionList.Items[1].Definition);
+		Assert.That(environmentGrid.Columns.Count, Is.EqualTo(2));
+		Assert.That(environmentGrid.Rows.Count, Is.EqualTo(2));
 
 		var clrVersionRow = environmentGrid.Rows[0];
 		var clrVersionHeader = clrVersionRow[0];
 		var clrVersionValue = clrVersionRow[1];
-		var clrVersionHeaderText = Assert.IsType<Text>(clrVersionHeader);
-		Assert.Equal("CLR Version", clrVersionHeaderText.GetTextContent());
-		var clrVersionValueText = Assert.IsType<Text>(clrVersionValue);
-		Assert.Equal(Environment.Version.ToString(), clrVersionValueText.GetTextContent());
+		var clrVersionHeaderText = AssertIsType<Text>(clrVersionHeader);
+		Assert.That(clrVersionHeaderText.GetTextContent(), Is.EqualTo("CLR Version"));
+		var clrVersionValueText = AssertIsType<Text>(clrVersionValue);
+		Assert.That(clrVersionValueText.GetTextContent(), Is.EqualTo(Environment.Version.ToString()));
 
 		var osVersionRow = environmentGrid.Rows[1];
 		var osVersionHeader = osVersionRow[0];
 		var osVersionValue = osVersionRow[1];
-		var osVersionHeaderText = Assert.IsType<Text>(osVersionHeader);
-		Assert.Equal("OS Version", osVersionHeaderText.GetTextContent());
-		var osVersionValueText = Assert.IsType<Text>(osVersionValue);
-		Assert.Equal($"{RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})", osVersionValueText.GetTextContent());
+		var osVersionHeaderText = AssertIsType<Text>(osVersionHeader);
+		Assert.That(osVersionHeaderText.GetTextContent(), Is.EqualTo("OS Version"));
+		var osVersionValueText = AssertIsType<Text>(osVersionValue);
+		Assert.That(osVersionValueText.GetTextContent(), Is.EqualTo($"{RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})"));
 
 		consoleMock.VerifyAll();
 		metadataProviderMock.VerifyAll();
 		remainingArgumentsMock.VerifyAll();
+	}
+
+	private static T AssertIsType<T>(object? value)
+	{
+		Assert.That(value, Is.TypeOf<T>());
+		return (T)value!;
 	}
 }
 

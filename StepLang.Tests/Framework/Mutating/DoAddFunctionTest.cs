@@ -3,14 +3,15 @@ using StepLang.Framework.Mutating;
 using StepLang.Interpreting;
 using StepLang.Parsing.Nodes.Expressions;
 using StepLang.Tokenizing;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.Tests.Framework.Mutating;
 
 public class DoAddFunctionTest
 {
-	[Theory]
-	[ClassData(typeof(DoAddData))]
+	[TestCaseSource(typeof(DoAddData))]
 	public void TestDoAdd(ListResult list, ExpressionNode elementExpression)
 	{
 		const string listIdentifier = "mylist";
@@ -24,23 +25,28 @@ public class DoAddFunctionTest
 
 		var result = function.Invoke(new TokenLocation(), interpreter, [listVarExpression, elementExpression]);
 
-		Assert.Equal(VoidResult.Instance, result);
-		Assert.Equal(previousCount + 1, list.Value.Count);
+		Assert.That(result, Is.SameAs(VoidResult.Instance));
+		Assert.That(list.Value.Count, Is.EqualTo(previousCount + 1));
 	}
 
-	[SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Used by xUnit")]
-	private sealed class DoAddData : TheoryData<ListResult, ExpressionNode>
+	[SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Instantiated by NUnit")]
+	private sealed class DoAddData : IEnumerable<TestCaseData>
 	{
-		public DoAddData()
+		public IEnumerator<TestCaseData> GetEnumerator()
 		{
-			Add(ListResult.Empty, LiteralExpressionNode.FromString("test"));
-			Add(ListResult.Empty, LiteralExpressionNode.FromInt32(1));
-			Add(ListResult.Empty, LiteralExpressionNode.FromBoolean(true));
-			Add(ListResult.Empty,
-				new AddExpressionNode(new Token(TokenType.PlusSymbol, "+"), LiteralExpressionNode.FromInt32(1),
-					LiteralExpressionNode.FromInt32(2)));
+			yield return new TestCaseData(ListResult.Empty, LiteralExpressionNode.FromString("test"));
+			yield return new TestCaseData(ListResult.Empty, LiteralExpressionNode.FromInt32(1));
+			yield return new TestCaseData(ListResult.Empty, LiteralExpressionNode.FromBoolean(true));
+			yield return new TestCaseData(ListResult.Empty,
+					new AddExpressionNode(new Token(TokenType.PlusSymbol, "+"), LiteralExpressionNode.FromInt32(1),
+							LiteralExpressionNode.FromInt32(2)));
 
-			Add(ListResult.From(BoolResult.True), LiteralExpressionNode.FromBoolean(false));
+			yield return new TestCaseData(ListResult.From(BoolResult.True), LiteralExpressionNode.FromBoolean(false));
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
 		}
 	}
 }
