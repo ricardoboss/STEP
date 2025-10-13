@@ -5,22 +5,22 @@ namespace StepLang.Tests.Framework.Pure;
 
 public class IndexOfFunctionTest
 {
-	[Theory]
-	[InlineData("", "", -1)]
-	[InlineData("", "a", -1)]
-	[InlineData("a", "", 0)]
-	[InlineData("a", "a", 0)]
-	[InlineData("a", "b", -1)]
-	[InlineData("ab", "a", 0)]
-	[InlineData("ab", "b", 1)]
-	[InlineData("a🤷‍♂️b", "a", 0)]
-	[InlineData("a🤷‍♂️b", "🤷‍♂️", 1)]
-	[InlineData("a🤷‍♂️b", "b", 2)]
+	[TestCase("", "", -1)]
+	[TestCase("", "a", -1)]
+	[TestCase("a", "", 0)]
+	[TestCase("a", "a", 0)]
+	[TestCase("a", "b", -1)]
+	[TestCase("ab", "a", 0)]
+	[TestCase("ab", "b", 1)]
+	[TestCase("a🤷‍♂️b", "a", 0)]
+	[TestCase("a🤷‍♂️b", "🤷‍♂️", 1)]
+	[TestCase("a🤷‍♂️b", "b", 2)]
 	public void TestIndexOfString(string subject, string value, int expected)
 	{
 		var result = IndexOfFunction.GetResult(new StringResult(subject), new StringResult(value));
 
-		var numResult = Assert.IsType<NumberResult>(result);
-		Assert.Equal(expected, numResult.Value);
+		Assert.That(result, Is.TypeOf<NumberResult>());
+		var numResult = (NumberResult)result;
+		Assert.That(numResult.Value, Is.EqualTo(expected));
 	}
 }

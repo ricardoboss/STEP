@@ -8,13 +8,15 @@ namespace StepLang.Tests.Framework.Other;
 
 public class FileFunctionsTest
 {
-	[Theory]
-	[InlineData("Windows", @"C:\temp\test.txt")]
-	[InlineData("Linux", "/tmp/test.txt")]
-	[InlineData("macOS", "/tmp/test.txt")]
+	[TestCase("Windows", @"C:\temp\test.txt")]
+	[TestCase("Linux", "/tmp/test.txt")]
+	[TestCase("macOS", "/tmp/test.txt")]
 	public void TestFileFunctions(string platform, string filename)
 	{
-		Assert.SkipUnless(OperatingSystem.IsOSPlatform(platform), $"Test only for {platform}");
+		if (!OperatingSystem.IsOSPlatform(platform))
+		{
+			return;
+		}
 
 		const string content = "Hello World";
 
@@ -28,8 +30,8 @@ public class FileFunctionsTest
 		var preWriteExistsResult = fileExistsFunction.Invoke(new TokenLocation(), interpreter,
 			new List<ExpressionNode> { LiteralExpressionNode.FromString(filename) });
 
-		var preWriteExistsBoolResult = Assert.IsType<BoolResult>(preWriteExistsResult);
-		Assert.False(preWriteExistsBoolResult.Value);
+		var preWriteExistsBoolResult = AssertIsType<BoolResult>(preWriteExistsResult);
+		Assert.That(preWriteExistsBoolResult.Value, Is.False);
 
 		var writeArguments = new List<ExpressionNode>
 		{
@@ -38,20 +40,20 @@ public class FileFunctionsTest
 
 		var writeResult = fileWriteFunction.Invoke(new TokenLocation(), interpreter, writeArguments);
 
-		var writeBoolResult = Assert.IsType<BoolResult>(writeResult);
-		Assert.True(writeBoolResult.Value);
+		var writeBoolResult = AssertIsType<BoolResult>(writeResult);
+		Assert.That(writeBoolResult.Value, Is.True);
 
 		var postWriteExistsResult = fileExistsFunction.Invoke(new TokenLocation(), interpreter,
 			new List<ExpressionNode> { LiteralExpressionNode.FromString(filename) });
 
-		var postWriteExistsBoolResult = Assert.IsType<BoolResult>(postWriteExistsResult);
-		Assert.True(postWriteExistsBoolResult.Value);
+		var postWriteExistsBoolResult = AssertIsType<BoolResult>(postWriteExistsResult);
+		Assert.That(postWriteExistsBoolResult.Value, Is.True);
 
 		var firstReadResult = fileReadFunction.Invoke(new TokenLocation(), interpreter,
 			new List<ExpressionNode> { LiteralExpressionNode.FromString(filename) });
 
-		var firstReadStringResult = Assert.IsType<StringResult>(firstReadResult);
-		Assert.Equal(content, firstReadStringResult.Value);
+		var firstReadStringResult = AssertIsType<StringResult>(firstReadResult);
+		Assert.That(firstReadStringResult.Value, Is.EqualTo(content));
 
 		var appendArguments = new List<ExpressionNode>
 		{
@@ -62,19 +64,25 @@ public class FileFunctionsTest
 
 		var appendResult = fileWriteFunction.Invoke(new TokenLocation(), interpreter, appendArguments);
 
-		var appendBoolResult = Assert.IsType<BoolResult>(appendResult);
-		Assert.True(appendBoolResult.Value);
+		var appendBoolResult = AssertIsType<BoolResult>(appendResult);
+		Assert.That(appendBoolResult.Value, Is.True);
 
 		var secondReadResult = fileReadFunction.Invoke(new TokenLocation(), interpreter,
 			new List<ExpressionNode> { LiteralExpressionNode.FromString(filename) });
 
-		var secondReadStringResult = Assert.IsType<StringResult>(secondReadResult);
-		Assert.Equal(content + content, secondReadStringResult.Value);
+		var secondReadStringResult = AssertIsType<StringResult>(secondReadResult);
+		Assert.That(secondReadStringResult.Value, Is.EqualTo(content + content));
 
 		var deleteResult = fileDeleteFunction.Invoke(new TokenLocation(), interpreter,
 			new List<ExpressionNode> { LiteralExpressionNode.FromString(filename) });
 
-		var deleteBoolResult = Assert.IsType<BoolResult>(deleteResult);
-		Assert.True(deleteBoolResult.Value);
+		var deleteBoolResult = AssertIsType<BoolResult>(deleteResult);
+		Assert.That(deleteBoolResult.Value, Is.True);
+	}
+
+	private static T AssertIsType<T>(object? value)
+	{
+		Assert.That(value, Is.TypeOf<T>());
+		return (T)value!;
 	}
 }

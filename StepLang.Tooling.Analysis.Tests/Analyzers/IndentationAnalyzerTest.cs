@@ -4,24 +4,23 @@ namespace StepLang.Tooling.Analysis.Tests.Analyzers;
 
 public class IndentationAnalyzerTest
 {
-	[Theory]
-	[InlineData("a", null)]
-	[InlineData("  a", "a")]
-	[InlineData("{\r\n  a\r\n}", "{\r\n\ta\r\n}")]
-	[InlineData("{\n  a\n}", "{\n\ta\n}")]
-	[InlineData("{\n\ta\n}\n", null)]
-	[InlineData("{\r\n\ta\n}\r\n", null)]
-	[InlineData("  }\r\n}\r\n", "}\r\n}\r\n")]
-	[InlineData("\r\n\r\n", null)]
-	[InlineData("   \r\n\t\r\n", "\r\n\r\n")]
-	[InlineData("{\n\t\n\n}\n", "{\n\n\n}\n")]
+	[TestCase("a", null)]
+	[TestCase("  a", "a")]
+	[TestCase("{\r\n  a\r\n}", "{\r\n\ta\r\n}")]
+	[TestCase("{\n  a\n}", "{\n\ta\n}")]
+	[TestCase("{\n\ta\n}\n", null)]
+	[TestCase("{\r\n\ta\n}\r\n", null)]
+	[TestCase("  }\r\n}\r\n", "}\r\n}\r\n")]
+	[TestCase("\r\n\r\n", null)]
+	[TestCase("   \r\n\t\r\n", "\r\n\r\n")]
+	[TestCase("{\n\t\n\n}\n", "{\n\n\n}\n")]
 	public async Task TestIndentationAnalyzer(string input, string? output)
 	{
 		var fixer = new IndentationAnalyzer();
 
 		var result = await fixer.AnalyzeAsync(input, CancellationToken.None);
 
-		Assert.Equal(output, result.FixedString);
-		Assert.Equal(output != null, result.ShouldFix);
+		Assert.That(result.FixedString, Is.EqualTo(output));
+		Assert.That(result.ShouldFix, Is.EqualTo(output != null));
 	}
 }

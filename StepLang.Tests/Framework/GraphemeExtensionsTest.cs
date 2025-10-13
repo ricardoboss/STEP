@@ -1,81 +1,78 @@
 using StepLang.Framework;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.Tests.Framework;
 
 public class GraphemeExtensionsTest
 {
-	[Theory]
-	[InlineData("", 0, null)]
-	[InlineData("", -1, null)]
-	[InlineData("", 1, null)]
-	[InlineData("a", 0, "a")]
-	[InlineData("a", -1, null)]
-	[InlineData("a", 1, null)]
-	[InlineData("abc", 1, "b")]
-	[InlineData("a🤷‍♂️b", 0, "a")]
-	[InlineData("a🤷‍♂️b", 1, "🤷‍♂️")]
-	[InlineData("🤷‍♂️ab", 0, "🤷‍♂️")]
-	[InlineData("🤷‍♂️ab", 1, "a")]
-	[InlineData("a🤷‍♂️b", 2, "b")]
+	[TestCase("", 0, null)]
+	[TestCase("", -1, null)]
+	[TestCase("", 1, null)]
+	[TestCase("a", 0, "a")]
+	[TestCase("a", -1, null)]
+	[TestCase("a", 1, null)]
+	[TestCase("abc", 1, "b")]
+	[TestCase("a🤷‍♂️b", 0, "a")]
+	[TestCase("a🤷‍♂️b", 1, "🤷‍♂️")]
+	[TestCase("🤷‍♂️ab", 0, "🤷‍♂️")]
+	[TestCase("🤷‍♂️ab", 1, "a")]
+	[TestCase("a🤷‍♂️b", 2, "b")]
 	public void TestGraphemeAt(string str, int index, string? expected)
 	{
 		var actual = str.GraphemeAt(index);
 
-		Assert.Equal(expected, actual);
+		Assert.That(actual, Is.EqualTo(expected));
 	}
 
-	[Theory]
-	[InlineData("", 0)]
-	[InlineData("a", 1)]
-	[InlineData("abc", 3)]
-	[InlineData("a🤷‍♂️b", 3)]
+	[TestCase("", 0)]
+	[TestCase("a", 1)]
+	[TestCase("abc", 3)]
+	[TestCase("a🤷‍♂️b", 3)]
 	public void TestGraphemeLength(string str, int expected)
 	{
 		var actual = str.GraphemeLength();
 
-		Assert.Equal(expected, actual);
+		Assert.That(actual, Is.EqualTo(expected));
 	}
 
-	[Theory]
-	[InlineData("", 0, 0, "")]
-	[InlineData("a", 0, 1, "a")]
-	[InlineData("a", 0, 2, "a")]
-	[InlineData("a", 1, 1, "")]
-	[InlineData("abc", 1, 2, "bc")]
-	[InlineData("a🤷‍♂️b", 0, 1, "a")]
-	[InlineData("a🤷‍♂️b", 1, 1, "🤷‍♂️")]
-	[InlineData("a🤷‍♂️b", 1, 2, "🤷‍♂️b")]
-	[InlineData("a🤷‍♂️b", 0, 2, "a🤷‍♂️")]
+	[TestCase("", 0, 0, "")]
+	[TestCase("a", 0, 1, "a")]
+	[TestCase("a", 0, 2, "a")]
+	[TestCase("a", 1, 1, "")]
+	[TestCase("abc", 1, 2, "bc")]
+	[TestCase("a🤷‍♂️b", 0, 1, "a")]
+	[TestCase("a🤷‍♂️b", 1, 1, "🤷‍♂️")]
+	[TestCase("a🤷‍♂️b", 1, 2, "🤷‍♂️b")]
+	[TestCase("a🤷‍♂️b", 0, 2, "a🤷‍♂️")]
 	public void TestGraphemeSubstring(string str, int start, int length, string expected)
 	{
 		var actual = str.GraphemeSubstring(start, length);
 
-		Assert.Equal(expected, actual);
+		Assert.That(actual, Is.EqualTo(expected));
 	}
 
-	[Theory]
-	[InlineData("abc", "", new[]
+	[TestCase("abc", "", new[]
 	{
+				"a", "b",
+				"c",
+		})]
+	[TestCase("a,b,c", ",", new[]
+{
 		"a", "b",
 		"c",
 	})]
-	[InlineData("a,b,c", ",", new[]
-	{
-		"a", "b",
-		"c",
-	})]
-	[InlineData("a and b and c", " and ", new[]
-	{
+	[TestCase("a and b and c", " and ", new[]
+{
 		"a", "b",
 		"c",
 	})]
 	[SuppressMessage("Performance", "CA1861:Avoid constant arrays as arguments",
-		Justification = "Array is only created once")]
+	Justification = "Array is only created once")]
 	public void TestGraphemeSplit(string str, string separator, IEnumerable<string> expected)
 	{
 		var actual = str.GraphemeSplit(separator);
 
-		Assert.Equal(expected, actual);
+		Assert.That(actual, Is.EqualTo(expected));
 	}
 }

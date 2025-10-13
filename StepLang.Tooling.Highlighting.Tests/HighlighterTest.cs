@@ -4,7 +4,7 @@ namespace StepLang.Tooling.Highlighting.Tests;
 
 public class HighlighterTest
 {
-	[Fact]
+	[Test]
 	public void TestHighlighterHighlightsSimpleTokens()
 	{
 		const string source = "number a = 1";
@@ -12,17 +12,16 @@ public class HighlighterTest
 		var highlighter = new Highlighter(ColorScheme.Mono);
 		var tokens = highlighter.Highlight(source).ToList();
 
-		Assert.Equal(8, tokens.Count);
+		Assert.That(tokens.Count, Is.EqualTo(8));
 	}
 
-	[Theory]
-	[MemberData(nameof(ExplicitlyStyledTokenTypes))]
+	[TestCaseSource(nameof(ExplicitlyStyledTokenTypes))]
 	public void TestStyleCoversEveryTokenType(TokenType type)
 	{
 		var scheme = ColorScheme.Mono;
 		var style = Highlighter.GetStyle(type, scheme);
 
-		Assert.False(style.IsDefault);
+		Assert.That(style.IsDefault, Is.False);
 	}
 
 	public static IEnumerable<object[]> ExplicitlyStyledTokenTypes()

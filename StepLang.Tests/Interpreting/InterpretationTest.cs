@@ -5,17 +5,17 @@ namespace StepLang.Tests.Interpreting;
 
 public class InterpretationTest
 {
-	[Fact]
+	[Test]
 	public void TestUndefinedIdentifierThrows()
 	{
 		const string source = "number a = b + 1";
 
 		var exception = Assert.Throws<UndefinedIdentifierException>(() => source.Interpret());
 
-		Assert.Equal("INT001", exception.ErrorCode);
+		Assert.That(exception.ErrorCode, Is.EqualTo("INT001"));
 	}
 
-	[Fact]
+	[Test]
 	public void TestInvalidArgumentCountThrows()
 	{
 		const string source = """
@@ -28,20 +28,20 @@ public class InterpretationTest
 
 		var exception = Assert.Throws<InvalidArgumentCountException>(() => source.Interpret());
 
-		Assert.Equal("INT002", exception.ErrorCode);
+		Assert.That(exception.ErrorCode, Is.EqualTo("INT002"));
 	}
 
-	[Fact]
+	[Test]
 	public void TestInvalidExpressionTypeThrows()
 	{
 		const string source = "toTypeName(1)";
 
 		var exception = Assert.Throws<InvalidExpressionTypeException>(() => source.Interpret());
 
-		Assert.Equal("INT004", exception.ErrorCode);
+		Assert.That(exception.ErrorCode, Is.EqualTo("INT004"));
 	}
 
-	[Fact]
+	[Test]
 	public void TestListIndexOutOfBoundsThrows()
 	{
 		const string source = """
@@ -51,30 +51,30 @@ public class InterpretationTest
 
 		var exception = Assert.Throws<IndexOutOfBoundsException>(() => source.Interpret());
 
-		Assert.Equal("INT005", exception.ErrorCode);
+		Assert.That(exception.ErrorCode, Is.EqualTo("INT005"));
 	}
 
-	[Fact]
+	[Test]
 	public void TestInvalidValueAssignmentThrows()
 	{
 		const string source = "number a = \"Hello\"";
 
 		var exception = Assert.Throws<NonNullableVariableAssignmentException>(() => source.Interpret());
 
-		Assert.Equal("INT007", exception.ErrorCode);
+		Assert.That(exception.ErrorCode, Is.EqualTo("INT007"));
 	}
 
-	[Fact]
+	[Test]
 	public void TestAddWithBoolsThrowsException()
 	{
 		const string source = "string a = true + false";
 
 		var exception = Assert.Throws<IncompatibleExpressionOperandsException>(() => source.Interpret());
 
-		Assert.Equal("TYP002", exception.ErrorCode);
+		Assert.That(exception.ErrorCode, Is.EqualTo("TYP002"));
 	}
 
-	[Fact]
+	[Test]
 	public void TestInvalidArgumentTypeThrows()
 	{
 		const string source = """
@@ -87,10 +87,10 @@ public class InterpretationTest
 
 		var exception = Assert.Throws<NonNullableVariableAssignmentException>(() => source.Interpret());
 
-		Assert.Equal("INT007", exception.ErrorCode);
+		Assert.That(exception.ErrorCode, Is.EqualTo("INT007"));
 	}
 
-	[Fact]
+	[Test]
 	public void TestInvalidResultTypeThrows()
 	{
 		const string source = """
@@ -103,10 +103,10 @@ public class InterpretationTest
 
 		var exception = Assert.Throws<InvalidResultTypeException>(() => source.Interpret());
 
-		Assert.Equal("TYP004", exception.ErrorCode);
+		Assert.That(exception.ErrorCode, Is.EqualTo("TYP004"));
 	}
 
-	[Fact]
+	[Test]
 	public void TestThrowsWhenInterpretingErrorImport()
 	{
 		const string source = """
@@ -115,10 +115,10 @@ public class InterpretationTest
 
 		var exception = Assert.Throws<NotSupportedException>(() => source.Interpret());
 
-		Assert.Equal("Cannot interpret imports with errors", exception.Message);
+		Assert.That(exception.Message, Is.EqualTo("Cannot interpret imports with errors"));
 	}
 
-	[Fact]
+	[Test]
 	public void TestThrowsWhenInterpretingErrorVariableDeclaration()
 	{
 		const string source = """
@@ -127,10 +127,10 @@ public class InterpretationTest
 
 		var exception = Assert.Throws<NotSupportedException>(() => source.Interpret());
 
-		Assert.Equal("Cannot evaluate error variable declaration node", exception.Message);
+		Assert.That(exception.Message, Is.EqualTo("Cannot evaluate error variable declaration node"));
 	}
 
-	[Fact]
+	[Test]
 	public void TestThrowsWhenInterpretingErrorExpression()
 	{
 		const string source = """
@@ -139,10 +139,10 @@ public class InterpretationTest
 
 		var exception = Assert.Throws<NotSupportedException>(() => source.Interpret());
 
-		Assert.Equal("Error expression nodes cannot be interpreted", exception.Message);
+		Assert.That(exception.Message, Is.EqualTo("Error expression nodes cannot be interpreted"));
 	}
 
-	[Fact]
+	[Test]
 	public void TestThrowsWhenInterpretingErrorStatement()
 	{
 		const string source = """
@@ -151,6 +151,6 @@ public class InterpretationTest
 
 		var exception = Assert.Throws<NotSupportedException>(() => source.Interpret());
 
-		Assert.Equal("Error statement nodes cannot be interpreted", exception.Message);
+		Assert.That(exception.Message, Is.EqualTo("Error statement nodes cannot be interpreted"));
 	}
 }

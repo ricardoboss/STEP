@@ -2,7 +2,9 @@ using StepLang.Diagnostics;
 using StepLang.Interpreting;
 using StepLang.Parsing;
 using StepLang.Tokenizing;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
@@ -10,8 +12,7 @@ namespace StepLang.Tests.Integration;
 
 public class ExamplesIntegrationTest
 {
-	[Theory]
-	[ClassData(typeof(ExampleFiles))]
+	[TestCaseSource(typeof(ExampleFiles))]
 	public async Task TestExamplesSucceed(string exampleFilePath)
 	{
 		// arrange
@@ -20,7 +21,7 @@ public class ExamplesIntegrationTest
 		if (File.Exists(exampleFile.FullName + ".in"))
 		{
 			stdInText = await File.ReadAllTextAsync(exampleFile.FullName + ".in",
-				TestContext.Current.CancellationToken);
+				TestContext.CurrentContext.CancellationToken);
 		}
 
 		await using var stdOut = new StringWriter();
@@ -34,7 +35,7 @@ public class ExamplesIntegrationTest
 		if (File.Exists(exampleFile.FullName + ".exit"))
 		{
 			var exitCodeStr =
-				await File.ReadAllTextAsync(exampleFile.FullName + ".exit", TestContext.Current.CancellationToken);
+				await File.ReadAllTextAsync(exampleFile.FullName + ".exit", TestContext.CurrentContext.CancellationToken);
 
 			expectedExitCode = int.Parse(exitCodeStr, CultureInfo.InvariantCulture);
 		}
@@ -42,20 +43,20 @@ public class ExamplesIntegrationTest
 		if (File.Exists(exampleFile.FullName + ".out"))
 		{
 			expectedOutput =
-				await File.ReadAllTextAsync(exampleFile.FullName + ".out", TestContext.Current.CancellationToken);
+				await File.ReadAllTextAsync(exampleFile.FullName + ".out", TestContext.CurrentContext.CancellationToken);
 		}
 
 		if (File.Exists(exampleFile.FullName + ".err"))
 		{
 			expectedError =
-				await File.ReadAllTextAsync(exampleFile.FullName + ".err", TestContext.Current.CancellationToken);
+				await File.ReadAllTextAsync(exampleFile.FullName + ".err", TestContext.CurrentContext.CancellationToken);
 		}
 
 		// act
 		var diagnostics = new DiagnosticCollection();
 
 		var tokenizer = new Tokenizer(exampleFile, diagnostics);
-		var tokens = tokenizer.Tokenize(TestContext.Current.CancellationToken);
+		var tokens = tokenizer.Tokenize(TestContext.CurrentContext.CancellationToken);
 
 		var parser = new Parser(tokens, diagnostics);
 		var root = parser.ParseRoot();
@@ -66,22 +67,27 @@ public class ExamplesIntegrationTest
 		// assert
 		Assert.Multiple([SuppressMessage("ReSharper", "AccessToDisposedClosure")] () =>
 		{
-			Assert.Equal(expectedExitCode, interpreter.ExitCode);
-			Assert.Equal(expectedOutput, stdOut.ToString(), ignoreLineEndingDifferences: true);
-			Assert.Equal(expectedError, stdErr.ToString(), ignoreLineEndingDifferences: true);
-			Assert.Empty(diagnostics);
+			Assert.That(interpreter.ExitCode, Is.EqualTo(expectedExitCode));
+			Assert.That(NormalizeNewLines(stdOut.ToString()), Is.EqualTo(NormalizeNewLines(expectedOutput)));
+			Assert.That(NormalizeNewLines(stdErr.ToString()), Is.EqualTo(NormalizeNewLines(expectedError)));
+			Assert.That(diagnostics, Is.Empty);
 		});
 	}
 
-	[SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Used by xUnit")]
-	private sealed class ExampleFiles : IEnumerable<TheoryDataRow<string>>
+	private static string NormalizeNewLines(string value)
 	{
-		public IEnumerator<TheoryDataRow<string>> GetEnumerator()
+		return value.Replace("\r\n", "\n", StringComparison.Ordinal);
+	}
+
+	[SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Instantiated by NUnit")]
+	private sealed class ExampleFiles : IEnumerable<TestCaseData>
+	{
+		public IEnumerator<TestCaseData> GetEnumerator()
 		{
 			return Directory
-				.EnumerateFiles("Examples", "*.step", SearchOption.AllDirectories)
-				.Select(path => new TheoryDataRow<string>(path))
-				.GetEnumerator();
+					.EnumerateFiles("Examples", "*.step", SearchOption.AllDirectories)
+					.Select(path => new TestCaseData(path))
+					.GetEnumerator();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
