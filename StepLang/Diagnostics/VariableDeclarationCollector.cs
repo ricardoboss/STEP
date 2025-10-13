@@ -73,7 +73,6 @@ public sealed class VariableDeclarationCollector : IStatementVisitor, IRootNodeV
 
 		declarations.Add(declarationInfo);
 
-		// FIXME: there is probably a bug with inline function parameter declarations not having their own scope/not being declared in the function body scope but in the parent scope
 		if (!currentScope.Declarations.TryAdd(declaration.Identifier.Value, declaration))
 		{
 			// TODO: throw a better exception that results in a diagnostic
@@ -515,6 +514,8 @@ public sealed class VariableDeclarationCollector : IStatementVisitor, IRootNodeV
 
 	public ExpressionResult Evaluate(FunctionDefinitionCallExpressionNode expressionNode)
 	{
+		PushScope(expressionNode.OpenParenthesisToken);
+
 		foreach (var declarationNode in expressionNode.Parameters)
 		{
 			TrackDeclaration(declarationNode);
@@ -522,6 +523,12 @@ public sealed class VariableDeclarationCollector : IStatementVisitor, IRootNodeV
 
 		expressionNode.Body.Accept(this);
 
+		if (expressionNode.Body is CodeBlockStatementNode block)
+			PopScope(block.CloseCurlyBraceToken);
+		else
+			PopScope(expressionNode.Body.Location);
+
+		// call arguments are outside of function parameter definition scope
 		Evaluate(expressionNode.CallArguments);
 
 		return VoidResult.Instance;
