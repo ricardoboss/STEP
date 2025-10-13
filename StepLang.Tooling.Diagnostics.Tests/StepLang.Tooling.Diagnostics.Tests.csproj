@@ -1,0 +1,6 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\StepLang.Tooling.Diagnostics\StepLang.Tooling.Diagnostics.csproj" />
+    <ProjectReference Include="..\StepLang.Tooling.Tests\StepLang.Tooling.Tests.csproj" />
+  </ItemGroup>
+</Project>

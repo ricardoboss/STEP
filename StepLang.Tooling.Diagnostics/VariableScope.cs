@@ -1,7 +1,7 @@
 using StepLang.Parsing.Nodes.VariableDeclarations;
 using StepLang.Tokenizing;
 
-namespace StepLang.Diagnostics;
+namespace StepLang.Tooling.Diagnostics;
 
 public class VariableScope(TokenLocation openLocation, VariableScope? parent = null)
 {

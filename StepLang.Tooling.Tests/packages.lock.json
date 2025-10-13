@@ -247,18 +247,6 @@
           "SmartAnalyzers.CSharpExtensions.Annotations": "[4.2.11, )"
         }
       },
-      "steplang.tooling.tests": {
-        "type": "Project",
-        "dependencies": {
-          "Microsoft.NET.Test.Sdk": "[18.0.0, )",
-          "Moq": "[4.20.72, )",
-          "NUnit": "[4.4.0, )",
-          "NUnit.Analyzers": "[4.10.0, )",
-          "NUnit3TestAdapter": "[5.2.0, )",
-          "SmartAnalyzers.CSharpExtensions.Annotations": "[4.2.11, )",
-          "StepLang": "[1.0.0, )"
-        }
-      },
       "Baugen": {
         "type": "CentralTransitive",
         "requested": "[1.0.2, )",

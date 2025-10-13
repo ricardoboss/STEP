@@ -135,6 +135,11 @@
         "resolved": "18.0.0",
         "contentHash": "DFPhMrsIofgJ1DDU3ModqqRArDm15/bNl4ecmcuBspZkZ4ONYnCC0R8U27WzK7cYv6r8l6Q/fRmvg7cb+I/dJA=="
       },
+      "Microsoft.Extensions.DependencyInjection.Abstractions": {
+        "type": "Transitive",
+        "resolved": "9.0.9",
+        "contentHash": "/hymojfWbE9AlDOa0mczR44m00Jj+T3+HZO0ZnVTI032fVycI0ZbNOVFP6kqZMcXiLSYXzR2ilcwaRi6dzeGyA=="
+      },
       "Microsoft.SourceLink.Common": {
         "type": "Transitive",
         "resolved": "8.0.0",
@@ -241,6 +246,14 @@
           "System.Linq.Async": "[6.0.3, )"
         }
       },
+      "steplang.tooling.diagnostics": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Extensions.Logging.Abstractions": "[9.0.9, )",
+          "SmartAnalyzers.CSharpExtensions.Annotations": "[4.2.11, )",
+          "StepLang": "[1.0.0, )"
+        }
+      },
       "steplang.tooling.meta": {
         "type": "Project",
         "dependencies": {
@@ -266,6 +279,15 @@
         "contentHash": "AKLrW8/RiZQG9OruTFn+IPgFCTbm7eyhaQkmpyfyURucBxBpSYXsz+lG8vn1FZsXyTuBMY940bowXb7f5u+8kg==",
         "dependencies": {
           "Microsoft.CodeAnalysis.CSharp": "4.12.0"
+        }
+      },
+      "Microsoft.Extensions.Logging.Abstractions": {
+        "type": "CentralTransitive",
+        "requested": "[9.0.9, )",
+        "resolved": "9.0.9",
+        "contentHash": "FEgpSF+Z9StMvrsSViaybOBwR0f0ZZxDm8xV5cSOFiXN/t+ys+rwAlTd/6yG7Ld1gfppgvLcMasZry3GsI9lGA==",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.9"
         }
       },
       "System.Linq.Async": {

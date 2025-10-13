@@ -7,7 +7,7 @@ using StepLang.Parsing.Nodes.Statements;
 using StepLang.Parsing.Nodes.VariableDeclarations;
 using StepLang.Tokenizing;
 
-namespace StepLang.Diagnostics;
+namespace StepLang.Tooling.Diagnostics;
 
 public sealed class VariableDeclarationCollector : IStatementVisitor, IRootNodeVisitor, IExpressionEvaluator, IImportNodeVisitor
 {

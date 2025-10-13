@@ -1,7 +1,7 @@
-using StepLang.Diagnostics;
 using StepLang.Tokenizing;
+using StepLang.Tooling.Tests;
 
-namespace StepLang.Tests.Diagnostics;
+namespace StepLang.Tooling.Diagnostics.Tests;
 
 public static class VariableDeclarationCollectorTest
 {

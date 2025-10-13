@@ -2,6 +2,7 @@ using StepLang.Diagnostics;
 using StepLang.Parsing;
 using StepLang.Parsing.Nodes.Statements;
 using StepLang.Tokenizing;
+using StepLang.Tooling.Tests;
 
 namespace StepLang.Tests.Parsing;
 

@@ -4,9 +4,9 @@ using StepLang.Parsing;
 using StepLang.Parsing.Nodes;
 using StepLang.Tokenizing;
 
-namespace StepLang.Tests;
+namespace StepLang.Tooling.Tests;
 
-internal static class TestHelper
+public static class TestHelper
 {
 	public static IEnumerable<Token> AsTokens(this string code, DiagnosticCollection? diagnostics = null)
 	{
