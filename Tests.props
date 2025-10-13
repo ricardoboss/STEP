@@ -5,22 +5,22 @@
 		<NoWarn>CA1515</NoWarn>
 	</PropertyGroup>
 
-        <ItemGroup>
-                <Using Include="NUnit.Framework" />
-                <Using Include="Moq" />
-                <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
-        </ItemGroup>
+	<ItemGroup>
+		<Using Include="NUnit.Framework"/>
+		<Using Include="Moq"/>
+		<AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute"/>
+	</ItemGroup>
 
-        <ItemGroup>
-                <PackageReference Include="Microsoft.NET.Test.Sdk"/>
-                <PackageReference Include="NUnit"/>
-                <PackageReference Include="NUnit3TestAdapter"/>
-                <PackageReference Include="NUnit.Analyzers"/>
-                <PackageReference Include="coverlet.collector">
-                        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-                        <PrivateAssets>all</PrivateAssets>
-                </PackageReference>
-                <PackageReference Include="Moq"/>
-        </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk"/>
+		<PackageReference Include="NUnit"/>
+		<PackageReference Include="NUnit3TestAdapter"/>
+		<PackageReference Include="NUnit.Analyzers"/>
+		<PackageReference Include="coverlet.collector">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="Moq"/>
+	</ItemGroup>
 
 </Project>
