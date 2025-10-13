@@ -30,13 +30,13 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageVersion>
-                <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.0"/>
-                <PackageVersion Include="NUnit" Version="4.4.0"/>
-                <PackageVersion Include="NUnit3TestAdapter" Version="5.2.0"/>
-                <PackageVersion Include="NUnit.Analyzers" Version="4.10.0">
-                        <PrivateAssets>all</PrivateAssets>
-                </PackageVersion>
-                <PackageVersion Include="coverlet.collector" Version="6.0.4">
+		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.0"/>
+		<PackageVersion Include="NUnit" Version="4.4.0"/>
+		<PackageVersion Include="NUnit3TestAdapter" Version="5.2.0"/>
+		<PackageVersion Include="NUnit.Analyzers" Version="4.10.0">
+			<PrivateAssets>all</PrivateAssets>
+		</PackageVersion>
+		<PackageVersion Include="coverlet.collector" Version="6.0.4">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageVersion>
