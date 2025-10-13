@@ -32,10 +32,13 @@ public sealed class UnusedDeclarationsDiagnosticsAnalyzer(ILogger<UnusedDeclarat
 
 		if (unused.Count == 0)
 		{
-			logger.LogTrace("Document {Document} has no unused declarations", documentState);
+			logger.LogTrace("Document {@Document} has {TotalDeclarations} declarations and no unused ones",
+				documentState, declarations.Count);
 
 			return Task.CompletedTask;
 		}
+
+		logger.LogTrace("Document {@Document} has {TotalDeclarations} declarations", documentState, declarations.Count);
 
 		var diagnostics = unused.Select(CreateDiagnostic).ToList();
 		var collection = sessionState.Diagnostics[documentState.DocumentUri];

@@ -19,6 +19,7 @@ public sealed class DocumentState
 
 	public override string ToString()
 	{
-		return $"DocumentState: (v{Version}) {DocumentUri}";
+		return
+			$"DocumentState: {{ Version = {Version}, Text = [{Text.Length} chars], Tokens = {(Tokens != null ? "available" : "not available")}, AST = {(Ast != null ? "available" : "not available")}, Symbols = {(Symbols != null ? "available" : "not available")} }}";
 	}
 }

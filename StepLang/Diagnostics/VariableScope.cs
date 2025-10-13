@@ -1,14 +1,18 @@
 using StepLang.Parsing.Nodes.VariableDeclarations;
 using StepLang.Tokenizing;
 
-namespace StepLang.Tooling.Diagnostics;
+namespace StepLang.Diagnostics;
 
 public class VariableScope(TokenLocation openLocation, VariableScope? parent = null)
 {
 	public Dictionary<string, IVariableDeclarationNode> Declarations { get; } = new();
+
 	public Dictionary<string, List<Token>> Usages { get; } = new();
+
 	public VariableScope? Parent { get; } = parent;
+
 	public IReadOnlyList<VariableScope> Children => children;
+
 	private readonly List<VariableScope> children = [];
 
 	public TokenLocation OpenLocation => openLocation;

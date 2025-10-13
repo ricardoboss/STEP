@@ -21,7 +21,7 @@ public sealed class SessionState(ILogger<SessionState> logger, DiagnosticsRunner
 
 	public ConcurrentDictionary<Uri, ObservableCollection<Diagnostic>> Diagnostics { get; } = new();
 
-	public event DiagnosticsPublishedEventHandler? OnDiagnosticsPublished;
+	public event EventHandler<DiagnosticsPublishedEventArgs>? DiagnosticsPublished;
 
 	public void AddDocument(DocumentState documentState)
 	{
@@ -80,7 +80,7 @@ public sealed class SessionState(ILogger<SessionState> logger, DiagnosticsRunner
 			Version = Documents[documentUri].Version,
 		};
 
-		OnDiagnosticsPublished?.Invoke(args);
+		DiagnosticsPublished?.Invoke(this, args);
 	}
 
 	private void RecalculateDocument(DocumentState documentState)

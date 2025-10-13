@@ -35,7 +35,8 @@ internal sealed class DefinitionHandler(ILogger<DefinitionHandler> logger, Sessi
 		if (chosenToken is not { Type: TokenType.Identifier })
 			return Task.FromResult<LocationOrLocationLinks?>(null);
 
-		var declaration = new UsagesAnalyzer().FindDeclaration(documentUri, ast, chosenToken);
+		var analyzer = new UsagesAnalyzer(documentUri, ast);
+		var declaration = analyzer.FindDeclaration(chosenToken);
 		if (declaration is null)
 			return Task.FromResult<LocationOrLocationLinks?>(null);
 

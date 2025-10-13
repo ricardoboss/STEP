@@ -1,6 +1,6 @@
 using StepLang.Parsing.Nodes.VariableDeclarations;
 
-namespace StepLang.Tooling.Diagnostics;
+namespace StepLang.Diagnostics;
 
 public sealed class DeclaredVariableInfo
 {

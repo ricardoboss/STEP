@@ -1,3 +1,4 @@
+using StepLang.Diagnostics;
 using StepLang.Parsing.Nodes;
 using StepLang.Parsing.Nodes.VariableDeclarations;
 using StepLang.Tokenizing;
@@ -6,14 +7,19 @@ namespace StepLang.Tooling.Diagnostics;
 
 public class UsagesAnalyzer
 {
-	public IVariableDeclarationNode? FindDeclaration(Uri documentUri, RootNode document, Token identifier)
+	private readonly VariableDeclarationCollector collector;
+
+	public UsagesAnalyzer(Uri documentUri, RootNode document)
+	{
+		collector = new VariableDeclarationCollector(documentUri);
+
+		collector.Visit(document);
+	}
+
+	public IVariableDeclarationNode? FindDeclaration(Token identifier)
 	{
 		if (identifier.Type != TokenType.Identifier)
 			throw new InvalidOperationException($"Expected identifier, got {identifier.Type}");
-
-		var collector = new VariableDeclarationCollector(documentUri);
-
-		collector.Visit(document);
 
 		// find the scope that contains the identifier
 		var allScopes = collector.Scopes;
@@ -30,10 +36,5 @@ public class UsagesAnalyzer
 		}
 
 		return tightestScope.FindDeclaration(identifier.Value);
-	}
-
-	public IEnumerable<IVariableDeclarationNode> FindUnusedDeclarations(RootNode document)
-	{
-		yield break;
 	}
 }

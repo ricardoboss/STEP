@@ -141,6 +141,9 @@ internal sealed class ServerManager(
 			services
 		);
 
+		// UGLY: this needs a better design
+		server.Services.GetRequiredService<DiagnosticsPublisher>().Register();
+
 		return server;
 	}
 
@@ -167,6 +170,7 @@ internal sealed class ServerManager(
 			})
 			.AddSingleton<SessionState>()
 			.AddSingleton<DiagnosticsRunner>()
+			.AddSingleton<DiagnosticsPublisher>()
 			.AddTransient<IDiagnosticsAnalyzer, UnusedDeclarationsDiagnosticsAnalyzer>()
 			;
 	}

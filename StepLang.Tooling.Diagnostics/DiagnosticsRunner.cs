@@ -13,7 +13,7 @@ public sealed class DiagnosticsRunner(IServiceProvider services, ILogger<Diagnos
 
 	public void Dispatch(SessionState session, DocumentState document)
 	{
-		logger.LogDebug("Dispatching diagnostics for document {Document}", document);
+		logger.LogDebug("Dispatching diagnostics for document {@Document}", document);
 
 		_ = ThreadPool.QueueUserWorkItem(RunDiagnostics, new DiagnosticsContext(session, document));
 	}
@@ -30,12 +30,12 @@ public sealed class DiagnosticsRunner(IServiceProvider services, ILogger<Diagnos
 		if (state is not DiagnosticsContext context)
 			throw new InvalidOperationException("Unexpected state object");
 
-		logger.LogDebug("Running diagnostics for document {Document}", context.Document);
+		logger.LogDebug("Running diagnostics for document {@Document}", context.Document);
 
 		Task.WhenAll(
 				Analyzers.Select(a =>
 				{
-					logger.LogTrace("Running analyzer \"{Analyzer}\" on document {Document}", a.Name, context.Document);
+					logger.LogTrace("Running analyzer \"{Analyzer}\" on document {@Document}", a.Name, context.Document);
 
 					return a.AnalyzeAsync(context.Session, context.Document, CancellationToken.None);
 				})
@@ -44,6 +44,6 @@ public sealed class DiagnosticsRunner(IServiceProvider services, ILogger<Diagnos
 			.GetAwaiter()
 			.GetResult();
 
-		logger.LogDebug("Finished running diagnostics for document {Document}", context.Document);
+		logger.LogDebug("Finished running diagnostics for document {@Document}", context.Document);
 	}
 }
