@@ -18,8 +18,7 @@ internal sealed class SemanticTokensHandler(ILogger<SemanticTokensHandler> logge
 		var legend = new SemanticTokensLegend
 		{
 			TokenModifiers = Container.From(Array.Empty<SemanticTokenModifier>()),
-			TokenTypes = Container.From(Enum.GetValues<TokenType>().Select(c => new SemanticTokenType(c.ToString()))
-				.ToArray()),
+			TokenTypes = Container.From(Enum.GetValues<TokenType>().Select(TranslateTokenType).Distinct()),
 		};
 
 		return new SemanticTokensRegistrationOptions
@@ -53,7 +52,7 @@ internal sealed class SemanticTokensHandler(ILogger<SemanticTokensHandler> logge
 				token.Location.Line - 1,
 				token.Location.Column - 1,
 				token.Location.Length,
-				new SemanticTokenType(token.Type.ToString()),
+				TranslateTokenType(token.Type),
 				Array.Empty<SemanticTokenModifier>()
 			);
 		}
@@ -70,5 +69,40 @@ internal sealed class SemanticTokensHandler(ILogger<SemanticTokensHandler> logge
 		await Tokenize(builder, @params, cancellationToken);
 
 		return builder.Commit();
+	}
+
+	private static SemanticTokenType TranslateTokenType(TokenType type)
+	{
+		return type switch
+		{
+			TokenType.TypeName => "type",
+			TokenType.Identifier => "variable",
+			TokenType.IfKeyword => "keyword",
+			TokenType.ElseKeyword => "keyword",
+			TokenType.WhileKeyword => "keyword",
+			TokenType.BreakKeyword => "keyword",
+			TokenType.ContinueKeyword => "keyword",
+			TokenType.LineComment => "comment",
+			TokenType.ImportKeyword => "keyword",
+			TokenType.ReturnKeyword => "keyword",
+			TokenType.ForEachKeyword => "keyword",
+			TokenType.InKeyword => "keyword",
+			TokenType.LiteralNumber => "number",
+			TokenType.LiteralString => "string",
+			TokenType.EqualsSymbol => "operator",
+			TokenType.GreaterThanSymbol => "operator",
+			TokenType.LessThanSymbol => "operator",
+			TokenType.PlusSymbol => "operator",
+			TokenType.MinusSymbol => "operator",
+			TokenType.AsteriskSymbol => "operator",
+			TokenType.SlashSymbol => "operator",
+			TokenType.PercentSymbol => "operator",
+			TokenType.PipeSymbol => "operator",
+			TokenType.AmpersandSymbol => "operator",
+			TokenType.ExclamationMarkSymbol => "operator",
+			TokenType.HatSymbol => "operator",
+			TokenType.QuestionMarkSymbol => "operator",
+			_ => type.ToString(),
+		};
 	}
 }

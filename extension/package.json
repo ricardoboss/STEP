@@ -6,19 +6,91 @@
     "vscode": "^1.90.0"
   },
   "activationEvents": [
-    "onLanguage:plaintext"
+    "onLanguage:step"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "languages": [
       {
-        "id": "plaintext",
+        "id": "step",
         "aliases": [
-          "Plaintext"
+          "STEP"
         ],
         "extensions": [
-          ".txt"
+          ".step"
         ]
+      }
+    ],
+    "configurationDefaults": {
+      "[languageId]": {
+        "editor.semanticHighlighting.enabled": true
+      }
+    },
+    "semanticTokenTypes": [
+      {
+        "id": "LiteralBoolean",
+        "superType": "keyword",
+        "description": "LiteralBoolean token"
+      },
+      {
+        "id": "LiteralNull",
+        "superType": "keyword",
+        "description": "LiteralNull token"
+      },
+      {
+        "id": "OpeningCurlyBracket",
+        "superType": "keyword",
+        "description": "OpeningCurlyBracket token"
+      },
+      {
+        "id": "ClosingCurlyBracket",
+        "superType": "keyword",
+        "description": "ClosingCurlyBracket token"
+      },
+      {
+        "id": "OpeningParentheses",
+        "superType": "keyword",
+        "description": "OpeningParentheses token"
+      },
+      {
+        "id": "ClosingParentheses",
+        "superType": "keyword",
+        "description": "ClosingParentheses token"
+      },
+      {
+        "id": "CommaSymbol",
+        "superType": "keyword",
+        "description": "CommaSymbol token"
+      },
+      {
+        "id": "UnderscoreSymbol",
+        "superType": "keyword",
+        "description": "UnderscoreSymbol token"
+      },
+      {
+        "id": "OpeningSquareBracket",
+        "superType": "keyword",
+        "description": "OpeningSquareBracket token"
+      },
+      {
+        "id": "ClosingSquareBracket",
+        "superType": "keyword",
+        "description": "ClosingSquareBracket token"
+      },
+      {
+        "id": "ColonSymbol",
+        "superType": "keyword",
+        "description": "ColonSymbol token"
+      },
+      {
+        "id": "EndOfFile",
+        "superType": "keyword",
+        "description": "EndOfFile token"
+      },
+      {
+        "id": "Error",
+        "superType": "keyword",
+        "description": "Error token"
       }
     ]
   },
