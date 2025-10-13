@@ -11,7 +11,7 @@ namespace StepLang.LSP.Commands;
 [SuppressMessage("Performance", "CA1812: Avoid uninstantiated internal classes")]
 internal sealed class DefaultCommand : AsyncCommand<DefaultCommand.Settings>
 {
-	internal sealed class Settings : VisibleGlobalCommandSettings
+	internal sealed class Settings : CommandSettings, IGlobalCommandSettings
 	{
 		[CommandOption("-h|--host")]
 		[Description("The host to bind to.")]
@@ -26,10 +26,23 @@ internal sealed class DefaultCommand : AsyncCommand<DefaultCommand.Settings>
 		[CommandOption("-s|--stdio")]
 		[Description("Use stdio for input/output.")]
 		public bool Stdio { get; init; }
+
+		[CommandOption("--info")]
+		[Description("Print the version and system information. Add the output of this to bug reports.")]
+		public bool Info { get; init; }
+
+		[CommandOption("-v|--version")]
+		[Description("Print the version number.")]
+		public bool Version { get; init; }
+
+		public bool Handled { get; set; }
 	}
 
 	public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
 	{
+		if (settings is { Handled: true })
+			return 0;
+
 		var services = new ServiceCollection();
 
 		_ = services

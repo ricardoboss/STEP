@@ -31,8 +31,7 @@ app.Configure(config =>
 		{
 			{ "Core", CoreMetadataProvider.Instance },
 			{ "LSP Server", LspMetadataProvider.Instance },
-		},
-		() => Environment.Exit(0)
+		}
 	);
 
 	config.SetInterceptor(interceptor);
@@ -40,7 +39,6 @@ app.Configure(config =>
 	config.AddExample("--stdio");
 	config.AddExample("--port=12345");
 	config.AddExample("--version");
-
 });
 
 return await app.RunAsync(args);
