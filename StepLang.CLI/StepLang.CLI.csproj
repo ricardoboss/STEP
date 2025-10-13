@@ -25,6 +25,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+  	<PackageReference Include="Spectre.Console.Cli" VersionOverride="0.52.0" />
 		<ProjectReference Include="..\StepLang.Tooling.CLI\StepLang.Tooling.CLI.csproj" />
 		<ProjectReference Include="..\StepLang.Tooling.Analysis\StepLang.Tooling.Analysis.csproj" />
 		<ProjectReference Include="..\StepLang.Tooling.Highlighting\StepLang.Tooling.Highlighting.csproj"/>

@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
+  	<PackageReference Include="Spectre.Console.Cli" VersionOverride="0.52.0" />
 		<ProjectReference Include="..\StepLang.Tooling.CLI\StepLang.Tooling.CLI.csproj"/>
 	</ItemGroup>
 
