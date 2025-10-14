@@ -3,13 +3,14 @@ using StepLang.Diagnostics;
 using StepLang.Parsing;
 using StepLang.Parsing.Nodes;
 using StepLang.Tokenizing;
+using StepLang.Tooling.Diagnostics.Analyzers;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 
 namespace StepLang.Tooling.Diagnostics;
 
-public sealed class SessionState(ILogger<SessionState> logger, DiagnosticsRunner diagnosticsRunner)
+public sealed class SessionState
 {
 	private readonly ConcurrentDictionary<Uri, DocumentState> documents = new();
 	public IReadOnlyDictionary<Uri, DocumentState> Documents => documents;
@@ -23,7 +24,7 @@ public sealed class SessionState(ILogger<SessionState> logger, DiagnosticsRunner
 
 	public event EventHandler<DiagnosticsPublishedEventArgs>? DiagnosticsPublished;
 
-	public void AddDocument(DocumentState documentState)
+	public async Task AddDocumentAsync(DocumentState documentState, CancellationToken cancellationToken = default)
 	{
 		logger.LogDebug("Adding document {DocumentUri} to session", documentState.DocumentUri);
 
@@ -35,14 +36,15 @@ public sealed class SessionState(ILogger<SessionState> logger, DiagnosticsRunner
 		var collection = Diagnostics.AddOrUpdate(documentState.DocumentUri, [], (_, _) => []);
 		collection.CollectionChanged += (_, _) => PublishDiagnostics(documentState.DocumentUri);
 
-		RecalculateDocument(documentState);
+		await RecalculateDocumentAsync(documentState, cancellationToken);
 
 		RecalculateSymbols();
 
 		QueueAnalysis(documentState);
 	}
 
-	public void UpdateDocument(Uri documentUri, int version, Func<string, string> textUpdater)
+	public async Task UpdateDocumentAsync(Uri documentUri, int version, Func<string, string> textUpdater,
+		CancellationToken cancellationToken = default)
 	{
 		logger.LogDebug("Updating document {DocumentUri}", documentUri);
 
@@ -58,11 +60,14 @@ public sealed class SessionState(ILogger<SessionState> logger, DiagnosticsRunner
 
 		var text = textUpdater(oldDocument.Text);
 
-		var newDocumentState = new DocumentState { DocumentUri = documentUri, Version = version, Text = text, };
+		var newDocumentState = new DocumentState
+		{
+			DocumentUri = documentUri, Version = version, Text = text,
+		};
 
 		documents[documentUri] = newDocumentState;
 
-		RecalculateDocument(newDocumentState);
+		await RecalculateDocumentAsync(newDocumentState, cancellationToken);
 
 		RecalculateSymbols();
 
@@ -75,24 +80,22 @@ public sealed class SessionState(ILogger<SessionState> logger, DiagnosticsRunner
 
 		var args = new DiagnosticsPublishedEventArgs
 		{
-			DocumentUri = documentUri,
-			Diagnostics = Diagnostics[documentUri],
-			Version = Documents[documentUri].Version,
+			DocumentUri = documentUri, Diagnostics = Diagnostics[documentUri], Version = Documents[documentUri].Version,
 		};
 
 		DiagnosticsPublished?.Invoke(this, args);
 	}
 
-	private void RecalculateDocument(DocumentState documentState)
+	private async Task RecalculateDocumentAsync(DocumentState documentState, CancellationToken cancellationToken)
 	{
-		logger.LogTrace("Recalculating document {Document}", documentState);
+		logger.LogTrace("Recalculating document {@Document}", documentState);
 
 		try
 		{
-			var tokens = Tokenize(documentState);
+			var tokens = await TokenizeAsync(documentState, cancellationToken);
 			documentState.Tokens = tokens;
 
-			var ast = ParseAst(documentState, tokens);
+			var ast = await ParseAstAsync(documentState, tokens, cancellationToken);
 			documentState.Ast = ast;
 
 			var declarations = ScanDeclarations(documentState, ast);
@@ -106,53 +109,73 @@ public sealed class SessionState(ILogger<SessionState> logger, DiagnosticsRunner
 
 	private void ReportStepLangException(DocumentState documentState, StepLangException e)
 	{
-		logger.LogTrace("Reporting exception {ExceptionType} for document {Document}", e.GetType().Name, documentState);
+		logger.LogTrace("Reporting exception {ExceptionType} for document {@Document}", e.GetType().Name,
+			documentState);
 
 		var diagnostic = new Diagnostic
 		{
-			Code = e.ErrorCode,
-			Message = e.Message,
-			Severity = Severity.Error,
-			Location = e.Location,
-			// CodeDescription = new CodeDescription
-			// {
-			// 	Href = new Uri(e.HelpLink ?? "https://github.com/ricardoboss/STEP/wiki"),
-			// },
+			Code = e.ErrorCode, Message = e.Message, Severity = Severity.Error, Location = e.Location,
 		};
 
 		Diagnostics[documentState.DocumentUri].Add(diagnostic);
 	}
 
-	private void QueueAnalysis(DocumentState documentState)
-	{
-		logger.LogTrace("Queuing analysis for document {Document}", documentState);
+	private readonly Lazy<IDiagnosticsReporter> lazyReporter;
+	private readonly ILogger<SessionState> logger;
+	private readonly IDiagnosticsRunner diagnosticsRunner;
 
-		diagnosticsRunner.Dispatch(this, documentState);
+	public SessionState(ILogger<SessionState> logger, IDiagnosticsRunner diagnosticsRunner)
+	{
+		this.logger = logger;
+		this.diagnosticsRunner = diagnosticsRunner;
+
+		lazyReporter = new(() => new SessionStateDiagnosticsReporter(this));
 	}
 
-	private TokenCollection Tokenize(DocumentState documentState)
-	{
-		logger.LogTrace("Tokenizing document {Document}", documentState);
+	private IDiagnosticsReporter Reporter => lazyReporter.Value;
 
-		// TODO: report diagnostics
-		var tokens = new Tokenizer(documentState.Text, []).Tokenize().ToArray();
+	private void QueueAnalysis(DocumentState documentState)
+	{
+		logger.LogTrace("Queuing analysis for document {@Document}", documentState);
+
+		_ = ThreadPool.QueueUserWorkItem(_ => diagnosticsRunner
+			.RunDiagnosticsAsync(documentState, Reporter, CancellationToken.None)
+			.ConfigureAwait(true)
+			.GetAwaiter()
+			.GetResult()
+		);
+	}
+
+	private async Task<TokenCollection> TokenizeAsync(DocumentState documentState, CancellationToken cancellationToken)
+	{
+		logger.LogTrace("Tokenizing document {@Document}", documentState);
+
+		var diagnostics = new DiagnosticCollection();
+		var tokens = new Tokenizer(documentState.Text, diagnostics).Tokenize(cancellationToken).ToArray();
+
+		foreach (var diagnostic in diagnostics)
+			await Reporter.ReportAsync(documentState, diagnostic, cancellationToken);
 
 		return new TokenCollection(tokens);
 	}
 
-	private RootNode ParseAst(DocumentState documentState, TokenCollection tokens)
+	private async Task<RootNode> ParseAstAsync(DocumentState documentState, TokenCollection tokens,
+		CancellationToken cancellationToken)
 	{
-		logger.LogTrace("Parsing AST for document {Document}", documentState);
+		logger.LogTrace("Parsing AST for document {@Document}", documentState);
 
-		// TODO: report diagnostics
-		var parser = new Parser(tokens, []);
+		var diagnostics = new DiagnosticCollection();
+		var parser = new Parser(tokens, diagnostics);
+
+		foreach (var diagnostic in diagnostics)
+			await Reporter.ReportAsync(documentState, diagnostic, cancellationToken);
 
 		return parser.ParseRoot();
 	}
 
 	private FileSymbols ScanDeclarations(DocumentState documentState, RootNode ast)
 	{
-		logger.LogTrace("Scanning declarations for document {Document}", documentState);
+		logger.LogTrace("Scanning declarations for document {@Document}", documentState);
 
 		var collector = new VariableDeclarationCollector(documentState.DocumentUri);
 
@@ -160,9 +183,7 @@ public sealed class SessionState(ILogger<SessionState> logger, DiagnosticsRunner
 
 		return new FileSymbols
 		{
-			DocumentUri = documentState.DocumentUri,
-			Declarations = collector.Declarations,
-			Scopes = collector.Scopes,
+			DocumentUri = documentState.DocumentUri, Declarations = collector.Declarations, Scopes = collector.Scopes,
 		};
 	}
 

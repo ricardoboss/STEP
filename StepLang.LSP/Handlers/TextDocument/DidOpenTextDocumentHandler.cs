@@ -19,22 +19,22 @@ internal sealed class DidOpenTextDocumentHandler(ILogger<DidOpenTextDocumentHand
 		};
 	}
 
-	public override Task<Unit> Handle(DidOpenTextDocumentParams request, CancellationToken cancellationToken)
+	public override async Task<Unit> Handle(DidOpenTextDocumentParams request, CancellationToken cancellationToken)
 	{
 		logger.LogTrace("Handling DidOpenTextDocument");
 
-		AddDocumentToSession(request.TextDocument);
+		await AddDocumentToSessionAsync(request.TextDocument, cancellationToken);
 
-		return Task.FromResult(Unit.Value);
+		return Unit.Value;
 	}
 
-	private void AddDocumentToSession(TextDocumentItem document)
+	private async Task AddDocumentToSessionAsync(TextDocumentItem document, CancellationToken cancellationToken)
 	{
 		var documentState = new DocumentState
 		{
 			DocumentUri = document.Uri.ToUri(), Version = document.Version ?? 0, Text = document.Text,
 		};
 
-		state.AddDocument(documentState);
+		await state.AddDocumentAsync(documentState, cancellationToken);
 	}
 }

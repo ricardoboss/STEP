@@ -21,17 +21,18 @@ internal sealed class DidChangeTextDocumentHandler(ILogger<DidChangeTextDocument
 		};
 	}
 
-	public override Task<Unit> Handle(DidChangeTextDocumentParams request, CancellationToken cancellationToken)
+	public override async Task<Unit> Handle(DidChangeTextDocumentParams request, CancellationToken cancellationToken)
 	{
 		logger.LogTrace("Handling DidChangeTextDocument");
 
-		state.UpdateDocument(
+		await state.UpdateDocumentAsync(
 			request.TextDocument.Uri.ToUri(),
 			request.TextDocument.Version ?? 0,
-			text => UpdateText(text, request.ContentChanges)
+			text => UpdateText(text, request.ContentChanges),
+			cancellationToken
 		);
 
-		return Task.FromResult(Unit.Value);
+		return Unit.Value;
 	}
 
 	private static string UpdateText(string text, IEnumerable<TextDocumentContentChangeEvent> changes)

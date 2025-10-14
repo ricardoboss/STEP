@@ -174,8 +174,9 @@ internal sealed class ServerManager(
 						.AddSimpleSpectreConsole();
 				})
 				.AddSingleton<SessionState>()
-				.AddSingleton<DiagnosticsRunner>()
+				.AddSingleton<IDiagnosticsRunner, DefaultDiagnosticsRunner>()
 				.AddSingleton<DiagnosticsPublisher>()
+				.AddSingleton<IDiagnosticsAnalyzerProvider, ServiceProviderDiagnosticsAnalyzerProvider>()
 				.AddTransient<IDiagnosticsAnalyzer, UnusedDeclarationsDiagnosticsAnalyzer>()
 			;
 	}

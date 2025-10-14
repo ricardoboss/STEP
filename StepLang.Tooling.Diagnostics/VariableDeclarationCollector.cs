@@ -546,7 +546,7 @@ public sealed class VariableDeclarationCollector : IStatementVisitor, IRootNodeV
 
 	public ExpressionResult Evaluate(ErrorExpressionNode expressionNode)
 	{
-		throw new NotImplementedException();
+		return VoidResult.Instance;
 	}
 
 	public void Visit(ImportNode importNode)

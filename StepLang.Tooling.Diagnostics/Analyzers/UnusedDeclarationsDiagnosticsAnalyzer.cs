@@ -8,16 +8,15 @@ public sealed class UnusedDeclarationsDiagnosticsAnalyzer(ILogger<UnusedDeclarat
 {
 	private const string DiagnosticCode = "unused-declaration";
 
-	public Task AnalyzeAsync(SessionState sessionState, DocumentState documentState,
+	public async Task AnalyzeAsync(DocumentState state, IDiagnosticsReporter reporter,
 		CancellationToken cancellationToken = default)
 	{
-		var symbols = documentState.Symbols;
+		var symbols = state.Symbols;
 		if (symbols is null)
 		{
-			logger.LogWarning("Document {Document} has no symbols; skipping unused declarations analysis",
-				documentState);
+			logger.LogWarning("Document {@Document} has no symbols; skipping unused declarations analysis", state);
 
-			return Task.CompletedTask;
+			return;
 		}
 
 		var declarations = symbols.Declarations;
@@ -33,20 +32,15 @@ public sealed class UnusedDeclarationsDiagnosticsAnalyzer(ILogger<UnusedDeclarat
 		if (unused.Count == 0)
 		{
 			logger.LogTrace("Document {@Document} has {TotalDeclarations} declarations and no unused ones",
-				documentState, declarations.Count);
+				state, declarations.Count);
 
-			return Task.CompletedTask;
+			return;
 		}
 
-		logger.LogTrace("Document {@Document} has {TotalDeclarations} declarations", documentState, declarations.Count);
+		logger.LogTrace("Document {@Document} has {TotalDeclarations} declarations", state, declarations.Count);
 
-		var diagnostics = unused.Select(CreateDiagnostic).ToList();
-		var collection = sessionState.Diagnostics[documentState.DocumentUri];
-
-		foreach (var diagnostic in diagnostics)
-			collection.Add(diagnostic);
-
-		return Task.CompletedTask;
+		foreach (var diagnostic in unused.Select(CreateDiagnostic))
+			await reporter.ReportAsync(state, diagnostic, cancellationToken);
 	}
 
 	private Diagnostic CreateDiagnostic(DeclaredVariableInfo unusedDeclaration)
