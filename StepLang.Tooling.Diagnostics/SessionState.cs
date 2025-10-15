@@ -1,10 +1,10 @@
 using Microsoft.Extensions.Logging;
 using StepLang.Diagnostics;
+using StepLang.Interpreting;
 using StepLang.Parsing;
 using StepLang.Parsing.Nodes;
 using StepLang.Tokenizing;
 using StepLang.Tooling.Diagnostics.Analyzers;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
@@ -201,6 +201,10 @@ public sealed class SessionState
 		{
 			foreach (var (identifierName, usages) in currentScope.Usages)
 			{
+				var isBuiltIn = Scope.GlobalScope.Exists(identifierName, includeParent: false);
+				if (isBuiltIn)
+					continue;
+
 				var isDefinedInCurrentScope = currentScope.FindDeclaration(identifierName) != null;
 				if (isDefinedInCurrentScope)
 					continue;
