@@ -32,4 +32,9 @@ public class VariableScope(TokenLocation openLocation, VariableScope? parent = n
 	{
 		return Declarations.TryGetValue(name, out var declaration) ? declaration : Parent?.FindDeclaration(name);
 	}
+
+	public override string ToString()
+	{
+		return $"VariableScope: {{ Opened: {OpenLocation}, HasParent: {(Parent != null ? "yes" : "no")} }}";
+	}
 }
