@@ -3,7 +3,7 @@ using StepLang.Diagnostics;
 
 namespace StepLang.Tooling.Diagnostics.Analyzers;
 
-public sealed class UnusedDeclarationsDiagnosticsAnalyzer(ILogger<UnusedDeclarationsDiagnosticsAnalyzer> logger)
+public sealed class DeclarationsDiagnosticsAnalyzer(ILogger<DeclarationsDiagnosticsAnalyzer> logger)
 	: IDiagnosticsAnalyzer
 {
 	private const string DiagnosticCode = "unused-declaration";

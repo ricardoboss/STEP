@@ -177,7 +177,7 @@ internal sealed class ServerManager(
 				.AddSingleton<IDiagnosticsRunner, DefaultDiagnosticsRunner>()
 				.AddSingleton<DiagnosticsPublisher>()
 				.AddSingleton<IDiagnosticsAnalyzerProvider, ServiceProviderDiagnosticsAnalyzerProvider>()
-				.AddTransient<IDiagnosticsAnalyzer, UnusedDeclarationsDiagnosticsAnalyzer>()
+				.AddTransient<IDiagnosticsAnalyzer, DeclarationsDiagnosticsAnalyzer>()
 			;
 	}
 }

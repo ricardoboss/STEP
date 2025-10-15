@@ -79,6 +79,11 @@ public sealed class VariableDeclarationCollector : IStatementVisitor, IRootNodeV
 			throw new InvalidOperationException(
 				$"Variable '{declaration.Identifier.Value}' is already declared in the current scope");
 		}
+
+		if (declaration is IVariableInitializationNode { Expression: var initializer })
+		{
+			_ = initializer.EvaluateUsing(this);
+		}
 	}
 
 	private void Visit(IEnumerable<StatementNode> nodes)
@@ -289,12 +294,19 @@ public sealed class VariableDeclarationCollector : IStatementVisitor, IRootNodeV
 
 	public ExpressionResult Evaluate(FunctionDefinitionExpressionNode expressionNode)
 	{
+		PushScope(expressionNode.FirstToken);
+
 		foreach (var parameter in expressionNode.Parameters)
 		{
 			TrackDeclaration(parameter);
 		}
 
 		expressionNode.Body.Accept(this);
+
+		if (expressionNode.Body is CodeBlockStatementNode block)
+			PopScope(block.CloseCurlyBraceToken);
+		else
+			PopScope(expressionNode.Body.Location);
 
 		return VoidResult.Instance;
 	}

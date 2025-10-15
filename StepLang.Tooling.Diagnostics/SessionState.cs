@@ -4,6 +4,7 @@ using StepLang.Parsing;
 using StepLang.Parsing.Nodes;
 using StepLang.Tokenizing;
 using StepLang.Tooling.Diagnostics.Analyzers;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
@@ -98,7 +99,7 @@ public sealed class SessionState
 			var ast = await ParseAstAsync(documentState, tokens, cancellationToken);
 			documentState.Ast = ast;
 
-			var declarations = ScanDeclarations(documentState, ast);
+			var declarations = await ScanDeclarationsAsync(documentState, ast, cancellationToken);
 			documentState.Symbols = declarations;
 		}
 		catch (StepLangException e)
@@ -173,7 +174,8 @@ public sealed class SessionState
 		return parser.ParseRoot();
 	}
 
-	private FileSymbols ScanDeclarations(DocumentState documentState, RootNode ast)
+	private async Task<FileSymbols> ScanDeclarationsAsync(DocumentState documentState, RootNode ast,
+		CancellationToken cancellationToken)
 	{
 		logger.LogTrace("Scanning declarations for document {@Document}", documentState);
 
@@ -181,10 +183,43 @@ public sealed class SessionState
 
 		collector.Visit(ast);
 
+		await ReportUndefinedSymbolsAsync(documentState, collector, cancellationToken);
+
 		return new FileSymbols
 		{
 			DocumentUri = documentState.DocumentUri, Declarations = collector.Declarations, Scopes = collector.Scopes,
 		};
+	}
+
+	private async Task ReportUndefinedSymbolsAsync(DocumentState documentState, VariableDeclarationCollector collector,
+		CancellationToken cancellationToken)
+	{
+		var scopes = new Queue<VariableScope>();
+		scopes.Enqueue(collector.RootScope);
+
+		while (scopes.TryDequeue(out var currentScope))
+		{
+			foreach (var (identifierName, usages) in currentScope.Usages)
+			{
+				var isDefinedInCurrentScope = currentScope.FindDeclaration(identifierName) != null;
+				if (isDefinedInCurrentScope)
+					continue;
+
+				foreach (var diagnostic in usages.Select(usage => new Diagnostic
+				         {
+					         Severity = Severity.Error,
+					         Message = $"Use of undefined symbol: {identifierName}",
+					         Code = "undefined-symbol",
+					         Token = usage,
+				         }))
+				{
+					await Reporter.ReportAsync(documentState, diagnostic, cancellationToken);
+				}
+			}
+
+			foreach (var childScope in currentScope.Children)
+				scopes.Enqueue(childScope);
+		}
 	}
 
 	private void RecalculateSymbols()

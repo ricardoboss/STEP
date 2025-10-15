@@ -9,7 +9,8 @@ public sealed record NullableVariableInitializationNode(
 	IEnumerable<Token> Types,
 	Token NullabilityIndicator,
 	Token Identifier,
-	ExpressionNode Expression) : IVariableDeclarationNode
+	ExpressionNode Expression
+) : IVariableDeclarationNode, IVariableInitializationNode
 {
 	public Variable EvaluateUsing(IVariableDeclarationEvaluator evaluator)
 	{
