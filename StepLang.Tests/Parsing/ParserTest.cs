@@ -2,7 +2,6 @@ using StepLang.Diagnostics;
 using StepLang.Parsing;
 using StepLang.Parsing.Nodes.Statements;
 using StepLang.Tokenizing;
-using System.Linq;
 
 namespace StepLang.Tests.Parsing;
 
@@ -23,8 +22,11 @@ public class ParserTest
 
 		// Assert
 		var errorStatement = AssertIsType<ErrorStatementNode>(root.Body.First());
-		Assert.That(errorStatement.Description, Is.EqualTo("Unexpected end of tokens"));
-		Assert.That(errorStatement.Tokens.First()?.Type, Is.EqualTo(TokenType.EndOfFile));
+		using (Assert.EnterMultipleScope())
+		{
+			Assert.That(errorStatement.Description, Is.EqualTo("Unexpected end of tokens"));
+			Assert.That(errorStatement.Tokens.First()?.Type, Is.EqualTo(TokenType.EndOfFile));
+		}
 	}
 
 	private static T AssertIsType<T>(object? value)

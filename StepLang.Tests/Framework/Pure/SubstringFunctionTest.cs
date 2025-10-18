@@ -40,7 +40,10 @@ public class SubstringFunctionTest
 		var interpreter = new Interpreter(output);
 		root.Accept(interpreter);
 
-		Assert.That(output.ToString(), Is.EqualTo(result));
-		Assert.That(diagnostics, Is.Empty);
+		using (Assert.EnterMultipleScope())
+		{
+			Assert.That(output.ToString(), Is.EqualTo(result));
+			Assert.That(diagnostics, Is.Empty);
+		}
 	}
 }

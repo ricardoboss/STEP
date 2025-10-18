@@ -12,7 +12,7 @@ public class HighlighterTest
 		var highlighter = new Highlighter(ColorScheme.Mono);
 		var tokens = highlighter.Highlight(source).ToList();
 
-		Assert.That(tokens.Count, Is.EqualTo(8));
+		Assert.That(tokens, Has.Count.EqualTo(8));
 	}
 
 	[TestCaseSource(nameof(ExplicitlyStyledTokenTypes))]
@@ -24,7 +24,7 @@ public class HighlighterTest
 		Assert.That(style.IsDefault, Is.False);
 	}
 
-	public static IEnumerable<object[]> ExplicitlyStyledTokenTypes()
+	private static IEnumerable<object[]> ExplicitlyStyledTokenTypes()
 	{
 		return Enum.GetValues<TokenType>()
 			.Except([

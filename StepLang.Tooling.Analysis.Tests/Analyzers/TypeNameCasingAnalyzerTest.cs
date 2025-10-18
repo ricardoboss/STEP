@@ -16,7 +16,10 @@ public class TypeNameCasingAnalyzerTest
 
 		var result = await fixer.AnalyzeAsync(input, CancellationToken.None);
 
-		Assert.That(result.FixedString, Is.EqualTo(output));
-		Assert.That(result.ShouldFix, Is.EqualTo(output != null));
+		using (Assert.EnterMultipleScope())
+		{
+			Assert.That(result.FixedString, Is.EqualTo(output));
+			Assert.That(result.ShouldFix, Is.EqualTo(output != null));
+		}
 	}
 }

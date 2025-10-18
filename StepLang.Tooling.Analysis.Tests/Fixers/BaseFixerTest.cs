@@ -36,8 +36,11 @@ public static class BaseFixerTest
 
 		var result = await fixer.FixAsync(analyzerMock.Object, fixerSourceMock.Object, CancellationToken.None);
 
-		Assert.That(result.AppliedFixes, Is.EqualTo(0));
-		Assert.That(unfixableInvoked, Is.True);
+		using (Assert.EnterMultipleScope())
+		{
+			Assert.That(result.AppliedFixes, Is.Zero);
+			Assert.That(unfixableInvoked, Is.True);
+		}
 
 		analyzerMock.VerifyAll();
 		fixerSourceMock.VerifyAll();
@@ -65,7 +68,7 @@ public static class BaseFixerTest
 
 		var result = await fixer.FixAsync(analyzerMock.Object, fixerSourceMock.Object, CancellationToken.None);
 
-		Assert.That(result.AppliedFixes, Is.EqualTo(0));
+		Assert.That(result.AppliedFixes, Is.Zero);
 
 		analyzerMock.VerifyAll();
 		fixerSourceMock.VerifyAll();
@@ -91,7 +94,7 @@ public static class BaseFixerTest
 
 		var result = await fixer.FixAsync(analyzerMock.Object, fixerSourceMock.Object, CancellationToken.None);
 
-		Assert.That(result.AppliedFixes, Is.EqualTo(0));
+		Assert.That(result.AppliedFixes, Is.Zero);
 
 		analyzerMock.VerifyAll();
 		fixerSourceMock.VerifyAll();
@@ -131,8 +134,11 @@ public static class BaseFixerTest
 		var ex = Assert.ThrowsAsync<FixerException>(() =>
 				fixer.FixAsync(analyzerMock.Object, fixerSourceMock.Object, CancellationToken.None));
 
-		Assert.That(ex.Message, Is.EqualTo($"Failed to run analyzer '{analyzerName}' on file '{sourceUri}'"));
-		Assert.That(ex.InnerException, Is.TypeOf<TestAnalysisException>());
+		using (Assert.EnterMultipleScope())
+		{
+			Assert.That(ex.Message, Is.EqualTo($"Failed to run analyzer '{analyzerName}' on file '{sourceUri}'"));
+			Assert.That(ex.InnerException, Is.TypeOf<TestAnalysisException>());
+		}
 
 		analyzerMock.VerifyAll();
 		fixerSourceMock.VerifyAll();

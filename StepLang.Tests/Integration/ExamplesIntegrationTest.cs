@@ -2,9 +2,7 @@ using StepLang.Diagnostics;
 using StepLang.Interpreting;
 using StepLang.Parsing;
 using StepLang.Tokenizing;
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
@@ -65,13 +63,13 @@ public class ExamplesIntegrationTest
 		root.Accept(interpreter);
 
 		// assert
-		Assert.Multiple([SuppressMessage("ReSharper", "AccessToDisposedClosure")] () =>
+		using (Assert.EnterMultipleScope())
 		{
 			Assert.That(interpreter.ExitCode, Is.EqualTo(expectedExitCode));
 			Assert.That(NormalizeNewLines(stdOut.ToString()), Is.EqualTo(NormalizeNewLines(expectedOutput)));
 			Assert.That(NormalizeNewLines(stdErr.ToString()), Is.EqualTo(NormalizeNewLines(expectedError)));
 			Assert.That(diagnostics, Is.Empty);
-		});
+		}
 	}
 
 	private static string NormalizeNewLines(string value)

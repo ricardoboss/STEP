@@ -91,8 +91,12 @@ public class OptionInterceptorTest
 		interceptor.Intercept(context, settings);
 
 		// Assert
-		Assert.That(settings.Handled, Is.True);
-		Assert.That(writtenWidget, Is.Not.Null);
+		using (Assert.EnterMultipleScope())
+		{
+			Assert.That(settings.Handled, Is.True);
+			Assert.That(writtenWidget, Is.Not.Null);
+		}
+
 		var text = AssertIsType<Text>(writtenWidget);
 		Assert.That(text.GetTextContent().TrimEnd(Environment.NewLine.ToCharArray()), Is.EqualTo(fullSemVer));
 
@@ -149,7 +153,7 @@ public class OptionInterceptorTest
 		var context = new CommandContext([], remainingArgumentsMock.Object, "test", null);
 
 		var interceptor = new OptionInterceptor(consoleMock.Object, metadataProviderMock.Object,
-			new Dictionary<string, IMetadataProvider> { { metadataComponentName, metadataProviderMock.Object }, });
+			new Dictionary<string, IMetadataProvider> { { metadataComponentName, metadataProviderMock.Object } });
 
 		var settings = new EmptyGlobalCommandSettings { Info = true, Version = false };
 
@@ -157,19 +161,24 @@ public class OptionInterceptorTest
 		interceptor.Intercept(context, settings);
 
 		// Assert
-		Assert.That(settings.Handled, Is.True);
+		using (Assert.EnterMultipleScope())
+		{
+			Assert.That(settings.Handled, Is.True);
+			Assert.That(writtenWidget, Is.Not.Null);
+		}
 
-		Assert.That(writtenWidget, Is.Not.Null);
 		var definitionList = AssertIsType<DefinitionList>(writtenWidget);
-
-		Assert.That(definitionList.Items.Count, Is.EqualTo(2));
+		Assert.That(definitionList.Items, Has.Count.EqualTo(2));
 
 		var metadataComponentLabel = AssertIsType<Markup>(definitionList.Items[0].Label);
 		Assert.That(metadataComponentLabel.GetTextContent(), Is.EqualTo(metadataComponentName));
 
 		var metadataGrid = AssertIsType<Grid>(definitionList.Items[0].Definition);
-		Assert.That(metadataGrid.Columns.Count, Is.EqualTo(2));
-		Assert.That(metadataGrid.Rows.Count, Is.EqualTo(3));
+		using (Assert.EnterMultipleScope())
+		{
+			Assert.That(metadataGrid.Columns, Has.Count.EqualTo(2));
+			Assert.That(metadataGrid.Rows, Has.Count.EqualTo(3));
+		}
 
 		var buildDateRow = metadataGrid.Rows[0];
 		var buildDateHeader = buildDateRow[0];
@@ -199,8 +208,11 @@ public class OptionInterceptorTest
 		Assert.That(environmentLabel.GetTextContent(), Is.EqualTo("Environment"));
 
 		var environmentGrid = AssertIsType<Grid>(definitionList.Items[1].Definition);
-		Assert.That(environmentGrid.Columns.Count, Is.EqualTo(2));
-		Assert.That(environmentGrid.Rows.Count, Is.EqualTo(2));
+		using (Assert.EnterMultipleScope())
+		{
+			Assert.That(environmentGrid.Columns, Has.Count.EqualTo(2));
+			Assert.That(environmentGrid.Rows, Has.Count.EqualTo(2));
+		}
 
 		var clrVersionRow = environmentGrid.Rows[0];
 		var clrVersionHeader = clrVersionRow[0];
@@ -216,7 +228,8 @@ public class OptionInterceptorTest
 		var osVersionHeaderText = AssertIsType<Text>(osVersionHeader);
 		Assert.That(osVersionHeaderText.GetTextContent(), Is.EqualTo("OS Version"));
 		var osVersionValueText = AssertIsType<Text>(osVersionValue);
-		Assert.That(osVersionValueText.GetTextContent(), Is.EqualTo($"{RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})"));
+		Assert.That(osVersionValueText.GetTextContent(),
+			Is.EqualTo($"{RuntimeInformation.OSDescription} ({RuntimeInformation.OSArchitecture})"));
 
 		consoleMock.VerifyAll();
 		metadataProviderMock.VerifyAll();

@@ -10,8 +10,11 @@ public static class DefaultAnalyzerSetTest
 		var uniqueNames = new HashSet<string>();
 		foreach (var analyzer in new DefaultAnalyzerSet())
 		{
-			Assert.That(analyzer.Name, Is.Not.Empty);
-			Assert.That(uniqueNames.Add(analyzer.Name), Is.True);
+			using (Assert.EnterMultipleScope())
+			{
+				Assert.That(analyzer.Name, Is.Not.Empty);
+				Assert.That(uniqueNames.Add(analyzer.Name), Is.True);
+			}
 		}
 	}
 }

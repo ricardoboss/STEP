@@ -4,7 +4,6 @@ using StepLang.Interpreting;
 using StepLang.Parsing.Nodes.Expressions;
 using StepLang.Tokenizing;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.Tests.Framework.Mutating;
@@ -18,13 +17,16 @@ public class DoRemoveFunctionTest
 
 		var interpreter = new Interpreter();
 		interpreter.CurrentScope.CreateVariable(listIdentifier, list);
-		var listVarExpression = new IdentifierExpressionNode(new Token(TokenType.Identifier, listIdentifier));
+		var listVarExpression = new IdentifierExpressionNode(new(TokenType.Identifier, listIdentifier));
 		var function = new DoRemoveFunction();
 
-		var result = function.Invoke(new TokenLocation(), interpreter, [listVarExpression, elementExpression]);
+		var result = function.Invoke(new(), interpreter, [listVarExpression, elementExpression]);
 
-		Assert.That(result, Is.SameAs(VoidResult.Instance));
-		Assert.That(list.Value.Count, Is.EqualTo(resultingList.Value.Count));
+		using (Assert.EnterMultipleScope())
+		{
+			Assert.That(result, Is.SameAs(VoidResult.Instance));
+			Assert.That(list.Value, Has.Count.EqualTo(resultingList.Value.Count));
+		}
 	}
 
 	[SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Instantiated by NUnit")]
@@ -32,17 +34,17 @@ public class DoRemoveFunctionTest
 	{
 		public IEnumerator<TestCaseData> GetEnumerator()
 		{
-			yield return new TestCaseData(ListResult.Empty, LiteralExpressionNode.FromString("test"), ListResult.Empty);
-			yield return new TestCaseData(ListResult.Empty, LiteralExpressionNode.FromInt32(1), ListResult.Empty);
-			yield return new TestCaseData(ListResult.Empty, LiteralExpressionNode.FromBoolean(true), ListResult.Empty);
-			yield return new TestCaseData(ListResult.Empty,
-					new AddExpressionNode(new Token(TokenType.MinusSymbol, "-"), LiteralExpressionNode.FromInt32(1),
+			yield return new(ListResult.Empty, LiteralExpressionNode.FromString("test"), ListResult.Empty);
+			yield return new(ListResult.Empty, LiteralExpressionNode.FromInt32(1), ListResult.Empty);
+			yield return new(ListResult.Empty, LiteralExpressionNode.FromBoolean(true), ListResult.Empty);
+			yield return new(ListResult.Empty,
+					new AddExpressionNode(new(TokenType.MinusSymbol, "-"), LiteralExpressionNode.FromInt32(1),
 							LiteralExpressionNode.FromInt32(2)), ListResult.Empty);
 
-			yield return new TestCaseData(ListResult.From(BoolResult.True), LiteralExpressionNode.FromBoolean(false),
+			yield return new(ListResult.From(BoolResult.True), LiteralExpressionNode.FromBoolean(false),
 					ListResult.From(BoolResult.True));
 
-			yield return new TestCaseData(ListResult.From(BoolResult.False), LiteralExpressionNode.FromBoolean(false),
+			yield return new(ListResult.From(BoolResult.False), LiteralExpressionNode.FromBoolean(false),
 					ListResult.Empty);
 		}
 

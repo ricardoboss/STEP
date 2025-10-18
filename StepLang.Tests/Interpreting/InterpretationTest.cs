@@ -109,9 +109,7 @@ public class InterpretationTest
 	[Test]
 	public void TestThrowsWhenInterpretingErrorImport()
 	{
-		const string source = """
-		                      import 123
-		                      """;
+		const string source = "import 123";
 
 		var exception = Assert.Throws<NotSupportedException>(() => source.Interpret());
 
@@ -121,9 +119,7 @@ public class InterpretationTest
 	[Test]
 	public void TestThrowsWhenInterpretingErrorVariableDeclaration()
 	{
-		const string source = """
-		                      number = 1
-		                      """;
+		const string source = "number = 1";
 
 		var exception = Assert.Throws<NotSupportedException>(() => source.Interpret());
 
@@ -133,9 +129,7 @@ public class InterpretationTest
 	[Test]
 	public void TestThrowsWhenInterpretingErrorExpression()
 	{
-		const string source = """
-		                      number a =
-		                      """;
+		const string source = "number a =";
 
 		var exception = Assert.Throws<NotSupportedException>(() => source.Interpret());
 
@@ -145,9 +139,7 @@ public class InterpretationTest
 	[Test]
 	public void TestThrowsWhenInterpretingErrorStatement()
 	{
-		const string source = """
-		                      doSomething
-		                      """;
+		const string source = "doSomething";
 
 		var exception = Assert.Throws<NotSupportedException>(() => source.Interpret());
 

@@ -2,7 +2,6 @@ using StepLang.Expressions.Results;
 using StepLang.Framework.Other;
 using StepLang.Interpreting;
 using StepLang.Parsing.Nodes.Expressions;
-using StepLang.Tokenizing;
 
 namespace StepLang.Tests.Framework.Other;
 
@@ -27,7 +26,7 @@ public class FileFunctionsTest
 		var fileReadFunction = new FileReadFunction();
 		var fileDeleteFunction = new FileDeleteFunction();
 
-		var preWriteExistsResult = fileExistsFunction.Invoke(new TokenLocation(), interpreter,
+		var preWriteExistsResult = fileExistsFunction.Invoke(new(), interpreter,
 			new List<ExpressionNode> { LiteralExpressionNode.FromString(filename) });
 
 		var preWriteExistsBoolResult = AssertIsType<BoolResult>(preWriteExistsResult);
@@ -38,18 +37,18 @@ public class FileFunctionsTest
 			LiteralExpressionNode.FromString(filename), LiteralExpressionNode.FromString(content),
 		};
 
-		var writeResult = fileWriteFunction.Invoke(new TokenLocation(), interpreter, writeArguments);
+		var writeResult = fileWriteFunction.Invoke(new(), interpreter, writeArguments);
 
 		var writeBoolResult = AssertIsType<BoolResult>(writeResult);
 		Assert.That(writeBoolResult.Value, Is.True);
 
-		var postWriteExistsResult = fileExistsFunction.Invoke(new TokenLocation(), interpreter,
+		var postWriteExistsResult = fileExistsFunction.Invoke(new(), interpreter,
 			new List<ExpressionNode> { LiteralExpressionNode.FromString(filename) });
 
 		var postWriteExistsBoolResult = AssertIsType<BoolResult>(postWriteExistsResult);
 		Assert.That(postWriteExistsBoolResult.Value, Is.True);
 
-		var firstReadResult = fileReadFunction.Invoke(new TokenLocation(), interpreter,
+		var firstReadResult = fileReadFunction.Invoke(new(), interpreter,
 			new List<ExpressionNode> { LiteralExpressionNode.FromString(filename) });
 
 		var firstReadStringResult = AssertIsType<StringResult>(firstReadResult);
@@ -62,18 +61,18 @@ public class FileFunctionsTest
 			LiteralExpressionNode.FromBoolean(true),
 		};
 
-		var appendResult = fileWriteFunction.Invoke(new TokenLocation(), interpreter, appendArguments);
+		var appendResult = fileWriteFunction.Invoke(new(), interpreter, appendArguments);
 
 		var appendBoolResult = AssertIsType<BoolResult>(appendResult);
 		Assert.That(appendBoolResult.Value, Is.True);
 
-		var secondReadResult = fileReadFunction.Invoke(new TokenLocation(), interpreter,
+		var secondReadResult = fileReadFunction.Invoke(new(), interpreter,
 			new List<ExpressionNode> { LiteralExpressionNode.FromString(filename) });
 
 		var secondReadStringResult = AssertIsType<StringResult>(secondReadResult);
 		Assert.That(secondReadStringResult.Value, Is.EqualTo(content + content));
 
-		var deleteResult = fileDeleteFunction.Invoke(new TokenLocation(), interpreter,
+		var deleteResult = fileDeleteFunction.Invoke(new(), interpreter,
 			new List<ExpressionNode> { LiteralExpressionNode.FromString(filename) });
 
 		var deleteBoolResult = AssertIsType<BoolResult>(deleteResult);

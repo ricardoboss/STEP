@@ -3,7 +3,6 @@ using StepLang.Interpreting;
 using StepLang.Parsing;
 using StepLang.Tokenizing;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -71,11 +70,11 @@ public class FailuresIntegrationTest
 	private static void AssertErrors(DiagnosticCollection diagnostics, FileInfo sourceFile,
 		List<ExceptionDetails> details)
 	{
-		Assert.That(diagnostics.Count, Is.EqualTo(details.Count));
+		Assert.That(diagnostics, Has.Count.EqualTo(details.Count));
 
 		foreach (var (diagnostic, detail) in diagnostics.Zip(details))
 		{
-			Assert.Multiple(() =>
+			using (Assert.EnterMultipleScope())
 			{
 				Assert.That(diagnostic.Severity, Is.EqualTo(detail.Severity));
 				Assert.That(diagnostic.Message, Is.EqualTo(detail.Message));
@@ -86,7 +85,7 @@ public class FailuresIntegrationTest
 				Assert.That(diagnostic.Column, Is.EqualTo(detail.Column));
 				Assert.That(diagnostic.Length, Is.EqualTo(detail.Length));
 				Assert.That(diagnostic.File?.FullName, Is.EqualTo(sourceFile.FullName));
-			});
+			}
 		}
 	}
 
@@ -97,7 +96,7 @@ public class FailuresIntegrationTest
 
 		var detail = details[0];
 
-		Assert.Multiple(() =>
+		using (Assert.EnterMultipleScope())
 		{
 			Assert.That(caught.ErrorCode, Is.EqualTo(detail.ErrorCode));
 			Assert.That(caught.Message, Is.EqualTo(detail.Message));
@@ -116,7 +115,7 @@ public class FailuresIntegrationTest
 				Assert.That(detail.Column, Is.Null);
 				Assert.That(detail.Length, Is.Null);
 			}
-		});
+		}
 	}
 
 	[SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Instantiated by NUnit")]
