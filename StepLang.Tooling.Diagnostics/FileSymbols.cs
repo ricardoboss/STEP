@@ -1,5 +1,3 @@
-using StepLang.Diagnostics;
-
 namespace StepLang.Tooling.Diagnostics;
 
 public sealed class FileSymbols

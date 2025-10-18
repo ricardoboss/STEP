@@ -1,4 +1,3 @@
-using StepLang.Diagnostics;
 using StepLang.Parsing.Nodes;
 using StepLang.Parsing.Nodes.VariableDeclarations;
 using StepLang.Tokenizing;
