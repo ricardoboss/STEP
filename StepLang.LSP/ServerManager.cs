@@ -124,7 +124,8 @@ internal sealed class ServerManager(
 	{
 		var info = new ServerInfo
 		{
-			Name = "STEP", Version = LspMetadataProvider.Instance.FullSemVer
+			Name = "STEP",
+			Version = LspMetadataProvider.Instance.FullSemVer,
 		};
 
 		var server = await LanguageServer.From(o =>
