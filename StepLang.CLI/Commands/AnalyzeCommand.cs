@@ -3,7 +3,6 @@ using Spectre.Console.Cli;
 using StepLang.Diagnostics;
 using StepLang.Parsing;
 using StepLang.Tokenizing;
-using StepLang.Tooling.CLI;
 using StepLang.Tooling.CLI.Widgets;
 using System.Collections.Specialized;
 using System.ComponentModel;

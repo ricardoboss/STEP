@@ -10,7 +10,6 @@ using StepLang.Parsing.Nodes.Import;
 using StepLang.Parsing.Nodes.Statements;
 using StepLang.Parsing.Nodes.VariableDeclarations;
 using StepLang.Tokenizing;
-using StepLang.Tooling.CLI;
 using StepLang.Tooling.CLI.Widgets;
 using System.Collections.Specialized;
 using System.ComponentModel;
