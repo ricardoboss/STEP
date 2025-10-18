@@ -173,7 +173,7 @@ internal sealed class ServerManager(
 						.AddFilter("StepLang", LogLevel.Trace)
 						.AddSimpleSpectreConsole();
 				})
-				.AddSingleton<SessionState>()
+				.AddSingleton<DiagnosticsSessionState>()
 				.AddSingleton<IDiagnosticsRunner, DefaultDiagnosticsRunner>()
 				.AddSingleton<DiagnosticsPublisher>()
 				.AddSingleton<IDiagnosticsAnalyzerProvider, ServiceProviderDiagnosticsAnalyzerProvider>()

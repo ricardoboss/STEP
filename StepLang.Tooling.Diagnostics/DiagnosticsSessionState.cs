@@ -11,7 +11,7 @@ using System.Collections.ObjectModel;
 
 namespace StepLang.Tooling.Diagnostics;
 
-public sealed class SessionState
+public sealed class DiagnosticsSessionState
 {
 	private readonly ConcurrentDictionary<Uri, DocumentState> documents = new();
 	public IReadOnlyDictionary<Uri, DocumentState> Documents => documents;
@@ -122,10 +122,10 @@ public sealed class SessionState
 	}
 
 	private readonly Lazy<IDiagnosticsReporter> lazyReporter;
-	private readonly ILogger<SessionState> logger;
+	private readonly ILogger<DiagnosticsSessionState> logger;
 	private readonly IDiagnosticsRunner diagnosticsRunner;
 
-	public SessionState(ILogger<SessionState> logger, IDiagnosticsRunner diagnosticsRunner)
+	public DiagnosticsSessionState(ILogger<DiagnosticsSessionState> logger, IDiagnosticsRunner diagnosticsRunner)
 	{
 		this.logger = logger;
 		this.diagnosticsRunner = diagnosticsRunner;

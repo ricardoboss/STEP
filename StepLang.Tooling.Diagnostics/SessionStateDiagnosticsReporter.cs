@@ -3,12 +3,12 @@ using StepLang.Tooling.Diagnostics.Analyzers;
 
 namespace StepLang.Tooling.Diagnostics;
 
-public class SessionStateDiagnosticsReporter(SessionState sessionState) : IDiagnosticsReporter
+public class SessionStateDiagnosticsReporter(DiagnosticsSessionState diagnosticsSessionState) : IDiagnosticsReporter
 {
 	public Task ReportAsync(DocumentState documentState, Diagnostic diagnostic,
 		CancellationToken cancellationToken = default)
 	{
-		sessionState.Diagnostics[documentState.DocumentUri].Add(diagnostic);
+		diagnosticsSessionState.Diagnostics[documentState.DocumentUri].Add(diagnostic);
 
 		return Task.CompletedTask;
 	}

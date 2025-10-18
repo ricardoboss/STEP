@@ -7,7 +7,7 @@ using StepLang.Tooling.Diagnostics;
 
 namespace StepLang.LSP.Handlers.TextDocument;
 
-internal sealed class DidOpenTextDocumentHandler(ILogger<DidOpenTextDocumentHandler> logger, SessionState state)
+internal sealed class DidOpenTextDocumentHandler(ILogger<DidOpenTextDocumentHandler> logger, DiagnosticsSessionState state)
 	: DidOpenTextDocumentHandlerBase
 {
 	protected override TextDocumentOpenRegistrationOptions CreateRegistrationOptions(

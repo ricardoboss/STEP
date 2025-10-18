@@ -11,7 +11,7 @@ using OmniRange = OmniSharp.Extensions.LanguageServer.Protocol.Models.Range;
 namespace StepLang.LSP;
 
 internal sealed class DiagnosticsPublisher(
-	SessionState state,
+	DiagnosticsSessionState state,
 	ILanguageServer server,
 	ILogger<DiagnosticsPublisher> logger
 )

@@ -8,7 +8,7 @@ using Range = OmniSharp.Extensions.LanguageServer.Protocol.Models.Range;
 
 namespace StepLang.LSP.Handlers;
 
-internal sealed class DefinitionHandler(ILogger<DefinitionHandler> logger, SessionState state) : DefinitionHandlerBase
+internal sealed class DefinitionHandler(ILogger<DefinitionHandler> logger, DiagnosticsSessionState state) : DefinitionHandlerBase
 {
 	protected override DefinitionRegistrationOptions CreateRegistrationOptions(DefinitionCapability capability,
 		ClientCapabilities clientCapabilities)

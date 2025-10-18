@@ -7,7 +7,7 @@ using StepLang.Tooling.Diagnostics;
 
 namespace StepLang.LSP.Handlers;
 
-internal sealed class SemanticTokensHandler(ILogger<SemanticTokensHandler> logger, SessionState state)
+internal sealed class SemanticTokensHandler(ILogger<SemanticTokensHandler> logger, DiagnosticsSessionState state)
 	: SemanticTokensHandlerBase
 {
 	protected override SemanticTokensRegistrationOptions CreateRegistrationOptions(SemanticTokensCapability? capability,
