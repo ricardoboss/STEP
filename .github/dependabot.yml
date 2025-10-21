@@ -4,10 +4,14 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      # Check for updates to GitHub Actions every week
-      interval: "weekly"
+      interval: "monthly"
 
   - package-ecosystem: "nuget"
-    directory: "/"  # will use Directory.Packages.props
+    directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+
+  - package-ecosystem: "dotnet-sdk"
+    directory: "/"
+    schedule:
+      interval: "monthly"
