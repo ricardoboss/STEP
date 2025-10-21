@@ -27,7 +27,6 @@ jobs:
       matrix:
         os: [ linux, win, osx ]
         arch: [ x64, arm64 ]
-        dotnet: [ "9.0" ]
 
     runs-on: ${{ (matrix.os == 'win' && (matrix.arch == 'arm64' && 'windows-11-arm' || 'windows-latest')) || (matrix.os == 'osx' && (matrix.arch == 'x64' && 'macos-13' || 'macos-latest')) || (matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest') }}
 
@@ -38,9 +37,8 @@ jobs:
           fetch-depth: 0
 
       - name: Install .NET
+        id: setup
         uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: ${{ matrix.dotnet }}
 
       - name: Cache NuGet packages
         uses: actions/cache@v4
@@ -59,7 +57,6 @@ jobs:
       - name: Prepare Artifact (unix)
         if: matrix.os != 'win'
         env:
-          frameworkVersion: net${{ matrix.dotnet }}
           platform: ${{ matrix.os }}-${{ matrix.arch }}
         run: |
           mkdir -p publish
@@ -69,8 +66,8 @@ jobs:
 
           outputPath="publish/$targetFilename"
 
-          # move built binary to publish folder
-          mv "StepLang.CLI/bin/Release/$frameworkVersion/$platform/publish/$sourceFilename" "$outputPath"
+          frameworkMoniker="net$(echo ${{ steps.setup.outputs.dotnet-version }} | cut -d. -f1,2)"
+          mv "StepLang.CLI/bin/Release/$frameworkMoniker/$platform/publish/$sourceFilename" "$outputPath"
 
           chmod +x "$outputPath"
 
@@ -79,7 +76,6 @@ jobs:
       - name: Prepare Artifact (windows)
         if: matrix.os == 'win'
         env:
-          frameworkVersion: net${{ matrix.dotnet }}
           platform: ${{ matrix.os }}-${{ matrix.arch }}
         shell: pwsh
         run: |
@@ -91,7 +87,8 @@ jobs:
 
           New-Item -ItemType Directory -Path "publish" -Force | Out-Null
 
-          $inputPath = "StepLang.CLI\bin\Release\$env:frameworkVersion\$env:platform\publish\$sourceFilename"
+          $frameworkMoniker = "net$((('${{ steps.setup.outputs.dotnet-version }}' -split '\.')[0..1] -join '.'))"
+          $inputPath = "StepLang.CLI\bin\Release\$frameworkMoniker\$env:platform\publish\$sourceFilename"
 
           Move-Item -Path $inputPath -Destination $outputPath -Force
 
@@ -116,8 +113,6 @@ jobs:
 
       - name: Install .NET
         uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: 9.0
 
       - name: Cache NuGet packages
         uses: actions/cache@v4
@@ -131,18 +126,19 @@ jobs:
         run: dotnet restore --locked-mode
 
       - name: Build
-        run: dotnet publish StepLang.CLI/StepLang.CLI.csproj --configuration Release --framework net9.0 /p:PublishAot=false
+        run: dotnet publish StepLang.CLI/StepLang.CLI.csproj --configuration Release /p:PublishAot=false
 
       - name: Prepare Artifact
         run: |
-          pushd StepLang.CLI/bin/Release/net9.0/publish/
+          frameworkMoniker="net$(echo ${{ steps.setup.outputs.dotnet-version }} | cut -d. -f1,2)"
+          pushd StepLang.CLI/bin/Release/$frameworkMoniker/publish/
 
           # zip and exclude native binary
           zip -x "step" -r step.zip ./
 
           popd
 
-          cp StepLang.CLI/bin/Release/net9.0/publish/step.zip ./
+          cp StepLang.CLI/bin/Release/$frameworkMoniker/publish/step.zip ./
 
           echo "Created step.zip"
 
