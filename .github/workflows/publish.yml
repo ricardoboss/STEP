@@ -257,7 +257,7 @@ jobs:
       matrix:
         os: [ linux, win, osx ]
         arch: [ x64, arm64 ]
-        dotnet: [ "9.0" ]
+        dotnet: [ "9.0", "10.0" ]
 
     runs-on: ${{ (matrix.os == 'win' && (matrix.arch == 'arm64' && 'windows-11-arm' || 'windows-latest')) || (matrix.os == 'osx' && (matrix.arch == 'x64' && 'macos-13' || 'macos-latest')) || (matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest') }}
 
@@ -266,6 +266,7 @@ jobs:
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ matrix.dotnet }}
+          dotnet-quality: "preview"
 
       - name: Download binary
         uses: actions/download-artifact@v5
