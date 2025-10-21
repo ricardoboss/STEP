@@ -16,9 +16,9 @@
       },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
-        "requested": "[9.0.9, )",
-        "resolved": "9.0.9",
-        "contentHash": "cHi1os/s6aobEgNkbOh/jW+ru//rHuedvj4PmTh2mMY7et/mJjqphBeXeKCesDvMd0+E2JyX9EPZZC4VRKslXg=="
+        "requested": "[9.0.10, )",
+        "resolved": "9.0.10",
+        "contentHash": "sseaSJcBxKEpkc59hnB00b3NmJdGvJLfj74HK+nucHxERxbZSUREuWKjC9ywc+HdzJvJyiP2eiyEOROaGSfcPw=="
       },
       "Microsoft.NET.Test.Sdk": {
         "type": "Direct",
@@ -300,7 +300,7 @@
       },
       "Spectre.Console.Cli": {
         "type": "CentralTransitive",
-        "requested": "[0.51.1, )",
+        "requested": "[0.52.0, )",
         "resolved": "0.52.0",
         "contentHash": "50O+XG7tqtEErVGtqX00aUcsXJs7ltlSkGGAdRTI17zEgqzpQd7RRtf657eHXnPSK10SCoAuVMK0fnWPXDoVCA==",
         "dependencies": {
