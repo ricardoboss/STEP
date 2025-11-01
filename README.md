@@ -39,6 +39,8 @@ information.
 
 To get started using STEP, head over to the [Guide](https://github.com/ricardoboss/STEP/wiki/Guide).
 
+Looking for example code? Check out the [Examples](./StepLang/Examples).
+
 STEP has a standard framework of functions you can use in your programs.
 An overview of all functions can be found in the [Functions](https://github.com/ricardoboss/STEP/wiki/Function) section
 of the wiki.
