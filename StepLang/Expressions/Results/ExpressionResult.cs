@@ -62,12 +62,6 @@ public abstract class ExpressionResult(ResultType resultType) : IEquatable<Expre
 		return (int)ResultType;
 	}
 
-	/// <inheritdoc />
-	public override string ToString()
-	{
-		return ResultType.ToTypeName();
-	}
-
 	public abstract ExpressionResult DeepClone();
 
 	public bool IsTruthy()
