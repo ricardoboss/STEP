@@ -1,0 +1,1 @@
+println("it is now ", timestamp() / 1000, "s after 01.01.1970 00:00:00")
