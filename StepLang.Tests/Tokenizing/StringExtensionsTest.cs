@@ -40,4 +40,12 @@ public static class StringExtensionsTest
 			Assert.That(upperCase.UnescapeControlChars(), Is.EqualTo("\x1F"));
 		}
 	}
+
+	[Test]
+	public static void TestUnescapeControlCharsIgnoresInvalidEscapes()
+	{
+		const string value = @"\a";
+
+		Assert.That(value.UnescapeControlChars(), Is.EqualTo(value));
+	}
 }
