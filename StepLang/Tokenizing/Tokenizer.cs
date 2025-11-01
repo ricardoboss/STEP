@@ -142,7 +142,6 @@ public class Tokenizer
 
 		if (escaped)
 		{
-			tokenBuilder.Append('\\');
 			tokenBuilder.Append(c);
 
 			escaped = false;
@@ -164,11 +163,7 @@ public class Tokenizer
 		}
 
 		if (c is '\\')
-		{
 			escaped = true;
-
-			yield break;
-		}
 
 		// strings can't contain unescaped control characters
 		if (char.IsControl(c))
