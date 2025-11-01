@@ -12,6 +12,6 @@ public class TimestampFunction : GenericFunction
 
 	protected override NumberResult Invoke(TokenLocation callLocation, Interpreter interpreter)
 	{
-		return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+		return interpreter.Time.GetUtcNow().ToUnixTimeMilliseconds();
 	}
 }
