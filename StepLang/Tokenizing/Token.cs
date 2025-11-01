@@ -19,11 +19,11 @@ public class Token
 
 	/// <summary>
 	/// The same as <see cref="Value"/>, but if this token is a <see cref="TokenType.LiteralString"/>, the string
-	/// without quotes.
+	/// without quotes and escape sequences.
 	/// </summary>
 	public string StringValue => Type switch
 	{
-		TokenType.LiteralString => Value[1..^1], // cut off the quotes
+		TokenType.LiteralString => Value[1..^1].UnescapeControlChars(), // cut off the quotes, then unescape
 		_ => Value,
 	};
 

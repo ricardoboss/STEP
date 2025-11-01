@@ -15,6 +15,20 @@ public class HighlighterTest
 		Assert.That(tokens, Has.Count.EqualTo(8));
 	}
 
+	[Test]
+	public void TestHighlighterHighlightsBackslashesInStringsCorrectly()
+	{
+		const string source = """
+		                      string a = "message: \"Hello, World!\""
+		                      """;
+
+		var highlighter = new Highlighter(ColorScheme.Mono);
+		var tokens = highlighter.Highlight(source).ToList();
+
+		Assert.That(tokens, Has.Count.EqualTo(8));
+		Assert.That(tokens[6].Text, Is.EqualTo("\"message: \\\"Hello, World!\\\"\""));
+	}
+
 	[TestCaseSource(nameof(ExplicitlyStyledTokenTypes))]
 	public void TestStyleCoversEveryTokenType(TokenType type)
 	{
