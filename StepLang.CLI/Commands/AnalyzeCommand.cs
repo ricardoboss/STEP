@@ -26,7 +26,8 @@ internal sealed class AnalyzeCommand : AsyncCommand<AnalyzeCommand.Settings>
 		public bool SetExitCode { get; init; }
 	}
 
-	public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+	public override async Task<int> ExecuteAsync(CommandContext context, Settings settings,
+		CancellationToken cancellationToken)
 	{
 		var fileCount = 0;
 		var severityCounts = Enum.GetValues<Severity>().ToDictionary(severity => severity, _ => 0);
@@ -56,7 +57,7 @@ internal sealed class AnalyzeCommand : AsyncCommand<AnalyzeCommand.Settings>
 
 					try
 					{
-						var source = await CharacterSource.FromFileAsync(file);
+						var source = await CharacterSource.FromFileAsync(file, cancellationToken);
 						var tokenizer = new Tokenizer(source, diagnostics);
 						var tokens = tokenizer.Tokenize();
 						var parser = new Parser(tokens, diagnostics);

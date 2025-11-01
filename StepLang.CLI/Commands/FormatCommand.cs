@@ -30,7 +30,8 @@ internal sealed class FormatCommand : AsyncCommand<FormatCommand.Settings>
 		public bool SetExitCode { get; init; }
 	}
 
-	public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+	public override async Task<int> ExecuteAsync(CommandContext context, Settings settings,
+		CancellationToken cancellationToken)
 	{
 		if (settings.DryRun)
 		{
@@ -69,7 +70,8 @@ internal sealed class FormatCommand : AsyncCommand<FormatCommand.Settings>
 			.ToAsyncEnumerable()
 			.AggregateAwaitAsync(
 				FixerResult.None,
-				async (current, fileOrDir) => current + await Fix(fileOrDir, fixer, analyzers)
+				async (current, fileOrDir) => current + await Fix(fileOrDir, fixer, analyzers),
+				cancellationToken
 			);
 
 		AnsiConsole.MarkupLineInterpolated(

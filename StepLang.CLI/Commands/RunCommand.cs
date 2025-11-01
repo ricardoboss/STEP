@@ -25,7 +25,8 @@ internal sealed class RunCommand : AsyncCommand<RunCommand.Settings>
 		public bool NoWarn { get; init; }
 	}
 
-	public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+	public override async Task<int> ExecuteAsync(CommandContext context, Settings settings,
+		CancellationToken cancellationToken)
 	{
 		var scriptFile = new FileInfo(settings.File);
 		if (!scriptFile.Exists)
@@ -42,7 +43,7 @@ internal sealed class RunCommand : AsyncCommand<RunCommand.Settings>
 			return 1;
 		}
 
-		var source = await CharacterSource.FromFileAsync(scriptFile);
+		var source = await CharacterSource.FromFileAsync(scriptFile, cancellationToken);
 
 		var diagnostics = new DiagnosticCollection();
 		if (!settings.NoWarn)
@@ -57,7 +58,7 @@ internal sealed class RunCommand : AsyncCommand<RunCommand.Settings>
 		}
 
 		var tokenizer = new Tokenizer(source, diagnostics);
-		var tokens = tokenizer.Tokenize();
+		var tokens = tokenizer.Tokenize(cancellationToken);
 
 		var parser = new Parser(tokens, diagnostics);
 		var root = parser.ParseRoot();
