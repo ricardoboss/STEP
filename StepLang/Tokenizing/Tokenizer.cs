@@ -2,7 +2,6 @@ using StepLang.Diagnostics;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace StepLang.Tokenizing;
 
