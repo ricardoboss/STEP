@@ -40,6 +40,14 @@ jobs:
         id: setup
         uses: actions/setup-dotnet@v5
 
+      - name: Compute framework moniker
+        id: netfx
+        shell: pwsh
+        run: |
+          $v='${{ steps.setup.outputs.dotnet-version }}'
+          $p=$v.Split('.')[0..1] -join '.'
+          "moniker=net$p" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
       - name: Cache NuGet packages
         uses: actions/cache@v4
         with:
@@ -52,7 +60,7 @@ jobs:
         run: dotnet restore --locked-mode
 
       - name: Build
-        run: dotnet publish StepLang.CLI/StepLang.CLI.csproj --configuration Release --runtime ${{ matrix.os }}-${{ matrix.arch }} --framework net${{ matrix.dotnet }} --self-contained true /p:PublishTrimmed=true /p:PublishSingleFile=true
+        run: dotnet publish StepLang.CLI/StepLang.CLI.csproj --configuration Release --runtime ${{ matrix.os }}-${{ matrix.arch }} --framework ${{ steps.netfx.outputs.moniker }} --self-contained true /p:PublishTrimmed=true /p:PublishSingleFile=true
 
       - name: Prepare Artifact (unix)
         if: matrix.os != 'win'
@@ -66,8 +74,7 @@ jobs:
 
           outputPath="publish/$targetFilename"
 
-          frameworkMoniker="net$(echo ${{ steps.setup.outputs.dotnet-version }} | cut -d. -f1,2)"
-          mv "StepLang.CLI/bin/Release/$frameworkMoniker/$platform/publish/$sourceFilename" "$outputPath"
+          mv "StepLang.CLI/bin/Release/${{ steps.netfx.outputs.moniker }}/$platform/publish/$sourceFilename" "$outputPath"
 
           chmod +x "$outputPath"
 
@@ -87,8 +94,7 @@ jobs:
 
           New-Item -ItemType Directory -Path "publish" -Force | Out-Null
 
-          $frameworkMoniker = "net$((('${{ steps.setup.outputs.dotnet-version }}' -split '\.')[0..1] -join '.'))"
-          $inputPath = "StepLang.CLI\bin\Release\$frameworkMoniker\$env:platform\publish\$sourceFilename"
+          $inputPath = "StepLang.CLI\bin\Release\${{ steps.netfx.outputs.moniker }}\$env:platform\publish\$sourceFilename"
 
           Move-Item -Path $inputPath -Destination $outputPath -Force
 
@@ -130,15 +136,14 @@ jobs:
 
       - name: Prepare Artifact
         run: |
-          frameworkMoniker="net$(echo ${{ steps.setup.outputs.dotnet-version }} | cut -d. -f1,2)"
-          pushd StepLang.CLI/bin/Release/$frameworkMoniker/publish/
+          pushd StepLang.CLI/bin/Release/${{ steps.netfx.outputs.moniker }}/publish/
 
           # zip and exclude native binary
           zip -x "step" -r step.zip ./
 
           popd
 
-          cp StepLang.CLI/bin/Release/$frameworkMoniker/publish/step.zip ./
+          cp StepLang.CLI/bin/Release/${{ steps.netfx.outputs.moniker }}/publish/step.zip ./
 
           echo "Created step.zip"
 
