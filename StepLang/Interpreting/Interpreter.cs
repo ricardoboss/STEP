@@ -29,6 +29,8 @@ public partial class Interpreter : IRootNodeVisitor, IStatementVisitor, IExpress
 
 	public Random Random => random.Value;
 
+	public TimeProvider Time { get; } = TimeProvider.System;
+
 	public Interpreter(TextWriter? stdOut = null, TextWriter? stdErr = null, TextReader? stdIn = null,
 		TextWriter? debugOut = null, DiagnosticCollection? diagnostics = null)
 	{
