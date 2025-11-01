@@ -88,9 +88,7 @@ public static partial class StringExtensions
 				"n" => "\n",
 				"r" => "\r",
 				"t" => "\t",
-				_ when token.StartsWith('x') || token.StartsWith('X')
-					=> ((char)Convert.ToInt32(token[1..], 16)).ToString(),
-				_ => m.Value,
+				_ => ((char)Convert.ToInt32(token[1..], 16)).ToString(),
 			};
 		});
 	}
