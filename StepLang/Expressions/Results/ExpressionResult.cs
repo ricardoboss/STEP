@@ -2,6 +2,7 @@ using StepLang.Framework;
 using StepLang.Framework.Conversion;
 using StepLang.Parsing.Nodes.Expressions;
 using StepLang.Tokenizing;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
 namespace StepLang.Expressions.Results;
@@ -61,6 +62,10 @@ public abstract class ExpressionResult(ResultType resultType) : IEquatable<Expre
 	{
 		return (int)ResultType;
 	}
+
+	/// <inheritdoc />
+	[ExcludeFromCodeCoverage]
+	public override string ToString() => ResultType.ToTypeName();
 
 	public abstract ExpressionResult DeepClone();
 
