@@ -15,7 +15,7 @@ public class FileExistsFunction : GenericFunction<StringResult>
 
 	protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyBool;
 
-	protected override BoolResult Invoke(TokenLocation callLocation, Interpreter interpreter, StringResult argument1)
+	protected override BoolResult Invoke(TokenLocation callLocation, IInterpreter interpreter, StringResult argument1)
 	{
 		var path = argument1.Value;
 		var info = callLocation.GetFileInfoFromPath(path);

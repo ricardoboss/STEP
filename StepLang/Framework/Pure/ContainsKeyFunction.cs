@@ -16,7 +16,7 @@ public class ContainsKeyFunction : GenericFunction<MapResult, StringResult>
 
 	protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyBool;
 
-	protected override BoolResult Invoke(TokenLocation callLocation, Interpreter interpreter, MapResult argument1,
+	protected override BoolResult Invoke(TokenLocation callLocation, IInterpreter interpreter, MapResult argument1,
 		StringResult argument2)
 	{
 		return argument1.Value.ContainsKey(argument2.Value);

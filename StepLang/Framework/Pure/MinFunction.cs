@@ -16,7 +16,7 @@ public class MinFunction : NativeFunction
 
 	protected override IEnumerable<ResultType> ReturnTypes { get; } = [ResultType.Number];
 
-	public override NumberResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	public override NumberResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		IReadOnlyList<ExpressionNode> arguments)
 	{
 		CheckArgumentCount(callLocation, arguments, 1, int.MaxValue);

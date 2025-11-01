@@ -10,7 +10,7 @@ public class TimestampFunction : GenericFunction
 
 	protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyNumber;
 
-	protected override NumberResult Invoke(TokenLocation callLocation, Interpreter interpreter)
+	protected override NumberResult Invoke(TokenLocation callLocation, IInterpreter interpreter)
 	{
 		return interpreter.Time.GetUtcNow().ToUnixTimeMilliseconds();
 	}

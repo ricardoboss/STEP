@@ -20,7 +20,7 @@ public class RegexMatchFunction : GenericFunction<StringResult, StringResult, Ex
 
 	protected override IEnumerable<ResultType> ReturnTypes => OnlyMap;
 
-	protected override ListResult Invoke(TokenLocation callLocation, Interpreter interpreter, StringResult argument1,
+	protected override ListResult Invoke(TokenLocation callLocation, IInterpreter interpreter, StringResult argument1,
 		StringResult argument2, ExpressionResult argument3)
 	{
 		var options = RegexOptions.None;

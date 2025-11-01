@@ -19,7 +19,7 @@ public class AggregateFunction : GenericFunction<ExpressionResult, ListResult, F
 
 	protected override IEnumerable<ResultType> ReturnTypes => AnyValueType;
 
-	protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ExpressionResult argument1,
 		ListResult argument2, FunctionResult argument3)
 	{

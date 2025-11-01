@@ -13,7 +13,7 @@ public class IssetFunction : GenericFunction<StringResult>
 		new(OnlyString, "variableName"),
 	];
 
-	protected override BoolResult Invoke(TokenLocation callLocation, Interpreter interpreter, StringResult argument1)
+	protected override BoolResult Invoke(TokenLocation callLocation, IInterpreter interpreter, StringResult argument1)
 	{
 		return interpreter.CurrentScope.Exists(argument1.Value, includeParent: true);
 	}

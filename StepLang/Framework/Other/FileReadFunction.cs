@@ -16,7 +16,7 @@ public class FileReadFunction : GenericFunction<StringResult>
 
 	protected override IEnumerable<ResultType> ReturnTypes { get; } = NullableString;
 
-	protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		StringResult argument1)
 	{
 		var path = argument1.Value;

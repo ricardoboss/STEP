@@ -15,7 +15,7 @@ public abstract class ListManipulationFunction : GenericFunction<ListResult, Fun
 		new(OnlyFunction, "callback"),
 	];
 
-	protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ListResult argument1, FunctionResult argument2)
 	{
 		var list = argument1.DeepClone().Value;
@@ -64,5 +64,5 @@ public abstract class ListManipulationFunction : GenericFunction<ListResult, Fun
 	}
 
 	protected abstract IEnumerable<ExpressionResult> EvaluateListManipulation(TokenLocation callLocation,
-		Interpreter interpreter, IEnumerable<ExpressionNode[]> arguments, FunctionDefinition callback);
+		IInterpreter interpreter, IEnumerable<ExpressionNode[]> arguments, FunctionDefinition callback);
 }

@@ -31,7 +31,7 @@ public class UserDefinedFunctionDefinition(
 
 	private int TotalParametersCount => parameters.Count;
 
-	public override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	public override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		IReadOnlyList<ExpressionNode> arguments)
 	{
 		if (arguments.Count < RequiredParametersCount || arguments.Count > TotalParametersCount)

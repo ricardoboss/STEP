@@ -11,7 +11,7 @@ public class FilteredFunction : ListManipulationFunction
 	public const string Identifier = "filtered";
 
 	protected override IEnumerable<ExpressionResult> EvaluateListManipulation(TokenLocation callLocation,
-		Interpreter interpreter, IEnumerable<ExpressionNode[]> arguments, FunctionDefinition callback)
+		IInterpreter interpreter, IEnumerable<ExpressionNode[]> arguments, FunctionDefinition callback)
 	{
 		return arguments.Where(args =>
 		{

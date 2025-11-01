@@ -28,7 +28,7 @@ public class FunctionResult : ValueExpressionResult<FunctionDefinition>
 	{
 		protected override string DebugBodyString => "";
 
-		public override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+		public override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 			IReadOnlyList<ExpressionNode> arguments)
 		{
 			return VoidResult.Instance;

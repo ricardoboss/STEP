@@ -15,7 +15,7 @@ public class DoShiftFunction : GenericFunction<ListResult>
 
 	protected override IEnumerable<ResultType> ReturnTypes => AnyValueType;
 
-	protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ListResult argument1)
 	{
 		var list = argument1.Value;

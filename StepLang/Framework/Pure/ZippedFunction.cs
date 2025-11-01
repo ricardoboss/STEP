@@ -17,7 +17,7 @@ public class ZippedFunction : GenericFunction<ListResult, ListResult, FunctionRe
 
 	protected override IEnumerable<ResultType> ReturnTypes => OnlyList;
 
-	protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ListResult argument1,
 		ListResult argument2,
 		FunctionResult argument3

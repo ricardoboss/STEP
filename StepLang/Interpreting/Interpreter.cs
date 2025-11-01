@@ -1,16 +1,15 @@
 using StepLang.Diagnostics;
 using StepLang.Expressions.Results;
-using StepLang.Parsing;
 using StepLang.Parsing.Nodes;
 using StepLang.Parsing.Nodes.Expressions;
 using StepLang.Parsing.Nodes.Statements;
+using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.Interpreting;
 
-public partial class Interpreter : IRootNodeVisitor, IStatementVisitor, IExpressionEvaluator
+public partial class Interpreter : IInterpreter
 {
 	public TextWriter? StdOut { get; }
-	public TextWriter? StdErr { get; }
 	public TextReader? StdIn { get; }
 	public TextWriter? DebugOut { get; }
 
@@ -27,15 +26,16 @@ public partial class Interpreter : IRootNodeVisitor, IStatementVisitor, IExpress
 		random = new Lazy<Random>(() => new Random(value));
 	}
 
-	public Random Random => random.Value;
+	[SuppressMessage("Security", "CA5394:Do not use insecure randomness",
+		Justification = "This is not for security purposes")]
+	public double NextRandom() => random.Value.NextDouble();
 
 	public TimeProvider Time { get; } = TimeProvider.System;
 
-	public Interpreter(TextWriter? stdOut = null, TextWriter? stdErr = null, TextReader? stdIn = null,
-		TextWriter? debugOut = null, DiagnosticCollection? diagnostics = null)
+	public Interpreter(TextWriter? stdOut = null, TextReader? stdIn = null, TextWriter? debugOut = null,
+		DiagnosticCollection? diagnostics = null)
 	{
 		StdOut = stdOut;
-		StdErr = stdErr;
 		StdIn = stdIn;
 		DebugOut = debugOut;
 		Diagnostics = diagnostics ?? [];
@@ -63,7 +63,7 @@ public partial class Interpreter : IRootNodeVisitor, IStatementVisitor, IExpress
 		return scopes.Pop();
 	}
 
-	public void Execute(IEnumerable<StatementNode> statements)
+	private void Execute(IEnumerable<StatementNode> statements)
 	{
 		foreach (var statement in statements)
 		{

@@ -17,7 +17,7 @@ public class ToNumberFunction : GenericFunction<StringResult, NumberResult>
 
 	protected override IEnumerable<ResultType> ReturnTypes { get; } = NullableNumber;
 
-	protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		StringResult argument1, NumberResult argument2)
 	{
 		var value = argument1.Value;

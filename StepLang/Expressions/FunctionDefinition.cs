@@ -69,7 +69,7 @@ public abstract class FunctionDefinition
 		return new FunctionResult(this);
 	}
 
-	public abstract ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	public abstract ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		IReadOnlyList<ExpressionNode> arguments);
 
 	public abstract IReadOnlyList<IVariableDeclarationNode> Parameters { get; }

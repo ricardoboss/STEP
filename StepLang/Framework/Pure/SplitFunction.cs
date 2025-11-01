@@ -14,7 +14,7 @@ public class SplitFunction : GenericFunction<StringResult, StringResult>
 		new(OnlyString, "separator", new StringResult("")),
 	];
 
-	protected override ListResult Invoke(TokenLocation callLocation, Interpreter interpreter, StringResult argument1,
+	protected override ListResult Invoke(TokenLocation callLocation, IInterpreter interpreter, StringResult argument1,
 		StringResult argument2)
 	{
 		var source = argument1.Value;
