@@ -4,4 +4,11 @@
 		<ProjectReference Include="..\StepLang.Tooling.CLI\StepLang.Tooling.CLI.csproj"/>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <PackageReference Update="NUnit.Analyzers">
+	    <PrivateAssets>all</PrivateAssets>
+	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	</ItemGroup>
+
 </Project>
