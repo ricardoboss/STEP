@@ -18,7 +18,7 @@ public class DoSwapFunction : GenericFunction<ExpressionResult, ExpressionResult
 
 	protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyBool;
 
-	protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ExpressionResult argument1, ExpressionResult argument2, ExpressionResult argument3)
 	{
 		return argument1 switch

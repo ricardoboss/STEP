@@ -19,7 +19,7 @@ public class FileResponseFunction : GenericFunction<StringResult, ExpressionResu
 	protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyMap;
 
 	/// <inheritdoc />
-	protected override MapResult Invoke(TokenLocation callLocation, Interpreter interpreter, StringResult argument1,
+	protected override MapResult Invoke(TokenLocation callLocation, IInterpreter interpreter, StringResult argument1,
 		ExpressionResult argument2)
 	{
 		var path = argument1.Value;

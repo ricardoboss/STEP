@@ -16,7 +16,7 @@ public class ToJsonFunction : GenericFunction<ExpressionResult>
 
 	protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyString;
 
-	protected override StringResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	protected override StringResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ExpressionResult argument1)
 	{
 		return JsonSerializer.Serialize(argument1, JsonConversionContext.Default.ExpressionResult);

@@ -15,7 +15,7 @@ public class ToValuesFunction : GenericFunction<MapResult>
 
 	protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyList;
 
-	protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter, MapResult argument1)
+	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter, MapResult argument1)
 	{
 		var map = argument1.Value;
 

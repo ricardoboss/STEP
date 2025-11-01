@@ -14,7 +14,7 @@ public class DoRemoveFunction : GenericFunction<ListResult, ExpressionResult>
 		new(AnyValueType, "element"),
 	];
 
-	protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ListResult argument1, ExpressionResult argument2)
 	{
 		var list = argument1.Value;

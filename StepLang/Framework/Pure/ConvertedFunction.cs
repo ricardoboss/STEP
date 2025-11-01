@@ -11,7 +11,7 @@ public class ConvertedFunction : ListManipulationFunction
 	public const string Identifier = "converted";
 
 	protected override IEnumerable<ExpressionResult> EvaluateListManipulation(TokenLocation callLocation,
-		Interpreter interpreter, IEnumerable<ExpressionNode[]> arguments, FunctionDefinition callback)
+		IInterpreter interpreter, IEnumerable<ExpressionNode[]> arguments, FunctionDefinition callback)
 	{
 		return arguments.Select(args => callback.Invoke(callLocation, interpreter, args));
 	}

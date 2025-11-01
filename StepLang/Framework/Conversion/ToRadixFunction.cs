@@ -16,7 +16,7 @@ public class ToRadixFunction : GenericFunction<NumberResult, NumberResult>
 
 	protected override IEnumerable<ResultType> ReturnTypes { get; } = NullableString;
 
-	protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		NumberResult argument1, NumberResult argument2)
 	{
 		var number = argument1;

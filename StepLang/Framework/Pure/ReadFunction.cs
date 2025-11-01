@@ -10,7 +10,7 @@ public class ReadFunction : GenericFunction
 
 	protected override IEnumerable<ResultType> ReturnTypes { get; } = NullableString;
 
-	protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter)
+	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter)
 	{
 		if (interpreter.StdIn is not { } stdIn)
 		{

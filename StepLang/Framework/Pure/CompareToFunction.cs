@@ -16,7 +16,7 @@ public class CompareToFunction : GenericFunction<ExpressionResult, ExpressionRes
 
 	protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyNumber;
 
-	protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ExpressionResult argument1, ExpressionResult argument2)
 	{
 		return GetResult(callLocation, argument1, argument2);

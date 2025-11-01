@@ -13,7 +13,7 @@ public class SqrtFunction : GenericFunction<NumberResult>
 
 	protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyNumber;
 
-	protected override NumberResult Invoke(TokenLocation callLocation, Interpreter interpreter, NumberResult argument1)
+	protected override NumberResult Invoke(TokenLocation callLocation, IInterpreter interpreter, NumberResult argument1)
 	{
 		return Math.Sqrt(argument1);
 	}

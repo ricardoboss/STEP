@@ -11,7 +11,7 @@ public class SortedFunction : ListManipulationFunction
 {
 	public const string Identifier = "sorted";
 
-	public override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	public override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		IReadOnlyList<ExpressionNode> arguments)
 	{
 		CheckArgumentCount(callLocation, arguments, 1, 2);
@@ -45,7 +45,7 @@ public class SortedFunction : ListManipulationFunction
 	}
 
 	protected override IEnumerable<ExpressionResult> EvaluateListManipulation(TokenLocation callLocation,
-		Interpreter interpreter, IEnumerable<ExpressionNode[]> arguments, FunctionDefinition callback)
+		IInterpreter interpreter, IEnumerable<ExpressionNode[]> arguments, FunctionDefinition callback)
 	{
 		var arr = arguments.ToArray();
 

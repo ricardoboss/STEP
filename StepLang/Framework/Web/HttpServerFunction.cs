@@ -21,7 +21,7 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
 	];
 
 	/// <inheritdoc />
-	protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ExpressionResult argument1, FunctionResult argument2)
 	{
 		int port;
@@ -89,7 +89,7 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
 		}
 	}
 
-	private static async Task Serve(TokenLocation callLocation, Interpreter interpreter, int port,
+	private static async Task Serve(TokenLocation callLocation, IInterpreter interpreter, int port,
 		Dictionary<string, ExpressionResult> options, FunctionDefinition callback, CancellationToken cancellationToken)
 	{
 		var url = $"http://localhost:{port}/";
@@ -142,7 +142,7 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
 
 	private sealed class RequestHandler(
 		int workerId,
-		Interpreter interpreter,
+		IInterpreter interpreter,
 		Dictionary<string, string> defaultResponseHeaders,
 		FunctionDefinition callback)
 	{

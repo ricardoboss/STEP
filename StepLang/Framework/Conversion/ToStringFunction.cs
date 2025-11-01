@@ -19,7 +19,7 @@ public class ToStringFunction : GenericFunction<ExpressionResult, ExpressionResu
 
 	protected override IEnumerable<ResultType> ReturnTypes => OnlyString;
 
-	protected override StringResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	protected override StringResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ExpressionResult argument1, ExpressionResult argument2)
 	{
 		return Render(argument1, argument2.IsTruthy());

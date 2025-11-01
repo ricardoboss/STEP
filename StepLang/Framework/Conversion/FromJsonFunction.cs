@@ -16,7 +16,7 @@ public class FromJsonFunction : GenericFunction<StringResult>
 
 	protected override IEnumerable<ResultType> ReturnTypes { get; } = AnyValueType;
 
-	protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		StringResult argument1)
 	{
 		try

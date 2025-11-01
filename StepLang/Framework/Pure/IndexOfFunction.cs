@@ -19,7 +19,7 @@ public class IndexOfFunction : GenericFunction<ExpressionResult, ExpressionResul
 		ResultType.Null, ResultType.Number, ResultType.Str,
 	];
 
-	protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ExpressionResult argument1, ExpressionResult argument2)
 	{
 		return GetResult(argument1, argument2);

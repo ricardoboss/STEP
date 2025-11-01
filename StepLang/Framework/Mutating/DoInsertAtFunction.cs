@@ -15,7 +15,7 @@ public class DoInsertAtFunction : GenericFunction<ListResult, NumberResult, Expr
 		new(AnyValueType, "value"),
 	];
 
-	protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ListResult argument1, NumberResult argument2, ExpressionResult argument3)
 	{
 		var list = argument1.Value;

@@ -9,11 +9,11 @@ namespace StepLang.Framework;
 
 public abstract class GenericFunction : GenericParameterlessFunction
 {
-	protected abstract ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter);
+	protected abstract ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter);
 
 	protected override IEnumerable<NativeParameter> NativeParameters { get; } = [];
 
-	public override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	public override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		IReadOnlyList<ExpressionNode> arguments)
 	{
 		if (arguments.Count > 0)
@@ -27,9 +27,9 @@ public abstract class GenericFunction : GenericParameterlessFunction
 
 public abstract class GenericFunction<T1> : GenericOneParameterFunction where T1 : ExpressionResult
 {
-	protected abstract ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter, T1 argument1);
+	protected abstract ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter, T1 argument1);
 
-	public override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	public override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		IReadOnlyList<ExpressionNode> arguments)
 	{
 		var requiredCount = GetRequiredCount();
@@ -50,10 +50,10 @@ public abstract class GenericFunction<T1, T2> : GenericTwoParameterFunction
 	where T1 : ExpressionResult
 	where T2 : ExpressionResult
 {
-	protected abstract ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter, T1 argument1,
+	protected abstract ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter, T1 argument1,
 		T2 argument2);
 
-	public override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	public override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		IReadOnlyList<ExpressionNode> arguments)
 	{
 		var requiredCount = GetRequiredCount();
@@ -76,10 +76,10 @@ public abstract class GenericFunction<T1, T2, T3> : GenericThreeParameterFunctio
 	where T2 : ExpressionResult
 	where T3 : ExpressionResult
 {
-	protected abstract ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter, T1 argument1,
+	protected abstract ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter, T1 argument1,
 		T2 argument2, T3 argument3);
 
-	public override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	public override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		IReadOnlyList<ExpressionNode> arguments)
 	{
 		var requiredCount = GetRequiredCount();

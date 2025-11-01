@@ -11,10 +11,8 @@ public class RandomFunction : GenericFunction
 
 	protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyNumber;
 
-	[SuppressMessage("Security", "CA5394:Do not use insecure randomness",
-		Justification = "This is not for security purposes")]
-	protected override NumberResult Invoke(TokenLocation callLocation, Interpreter interpreter)
+	protected override NumberResult Invoke(TokenLocation callLocation, IInterpreter interpreter)
 	{
-		return interpreter.Random.NextDouble();
+		return interpreter.NextRandom();
 	}
 }

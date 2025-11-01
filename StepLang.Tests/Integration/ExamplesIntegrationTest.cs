@@ -23,12 +23,10 @@ public class ExamplesIntegrationTest
 		}
 
 		await using var stdOut = new StringWriter();
-		await using var stdErr = new StringWriter();
 		using var stdIn = new StringReader(stdInText);
 
 		var expectedExitCode = 0;
 		var expectedOutput = "";
-		var expectedError = "";
 
 		if (File.Exists(exampleFile.FullName + ".exit"))
 		{
@@ -44,12 +42,6 @@ public class ExamplesIntegrationTest
 				await File.ReadAllTextAsync(exampleFile.FullName + ".out", TestContext.CurrentContext.CancellationToken);
 		}
 
-		if (File.Exists(exampleFile.FullName + ".err"))
-		{
-			expectedError =
-				await File.ReadAllTextAsync(exampleFile.FullName + ".err", TestContext.CurrentContext.CancellationToken);
-		}
-
 		// act
 		var diagnostics = new DiagnosticCollection();
 
@@ -59,7 +51,7 @@ public class ExamplesIntegrationTest
 		var parser = new Parser(tokens, diagnostics);
 		var root = parser.ParseRoot();
 
-		var interpreter = new Interpreter(stdOut, stdErr, stdIn, null, diagnostics);
+		var interpreter = new Interpreter(stdOut, stdIn, null, diagnostics);
 		root.Accept(interpreter);
 
 		// assert
@@ -67,7 +59,6 @@ public class ExamplesIntegrationTest
 		{
 			Assert.That(interpreter.ExitCode, Is.EqualTo(expectedExitCode));
 			Assert.That(NormalizeNewLines(stdOut.ToString()), Is.EqualTo(NormalizeNewLines(expectedOutput)));
-			Assert.That(NormalizeNewLines(stdErr.ToString()), Is.EqualTo(NormalizeNewLines(expectedError)));
 			Assert.That(diagnostics, Is.Empty);
 		}
 	}

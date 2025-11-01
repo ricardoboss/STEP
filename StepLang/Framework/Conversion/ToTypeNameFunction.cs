@@ -17,7 +17,7 @@ public class ToTypeNameFunction : NativeFunction
 	protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyString;
 
 	/// <inheritdoc />
-	public override StringResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	public override StringResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		IReadOnlyList<ExpressionNode> arguments)
 	{
 		CheckArgumentCount(callLocation, arguments);

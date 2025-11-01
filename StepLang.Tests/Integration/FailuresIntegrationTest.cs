@@ -33,13 +33,12 @@ public class FailuresIntegrationTest
 		var parsedDetails = details!;
 
 		await using var stdOut = new StringWriter();
-		await using var stdErr = new StringWriter();
 		using var stdIn = new StringReader(stdInText);
 
 		// act
 		var diagnostics = new DiagnosticCollection();
 		var tokenizer = new Tokenizer(exampleFile, diagnostics);
-		var interpreter = new Interpreter(stdOut, stdErr, stdIn, null, diagnostics);
+		var interpreter = new Interpreter(stdOut, stdIn, null, diagnostics);
 
 		// assert
 		var tokens = tokenizer.Tokenize(TestContext.CurrentContext.CancellationToken);

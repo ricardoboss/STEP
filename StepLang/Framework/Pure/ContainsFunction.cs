@@ -16,7 +16,7 @@ public class ContainsFunction : GenericFunction<ExpressionResult, ExpressionResu
 
 	protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyBool;
 
-	protected override BoolResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	protected override BoolResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ExpressionResult argument1, ExpressionResult argument2)
 	{
 		var result = IndexOfFunction.GetResult(argument1, argument2);

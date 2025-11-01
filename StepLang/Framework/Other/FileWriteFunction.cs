@@ -17,7 +17,7 @@ public class FileWriteFunction : GenericFunction<StringResult, StringResult, Boo
 		new(OnlyBool, "append", LiteralExpressionNode.FromBoolean(false)),
 	];
 
-	protected override BoolResult Invoke(TokenLocation callLocation, Interpreter interpreter, StringResult argument1,
+	protected override BoolResult Invoke(TokenLocation callLocation, IInterpreter interpreter, StringResult argument1,
 		StringResult argument2, BoolResult argument3)
 	{
 		var path = argument1.Value;

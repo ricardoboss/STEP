@@ -13,7 +13,7 @@ public class SeedFunction : GenericFunction<ExpressionResult>
 		new(NullableNumber, "seed"),
 	];
 
-	protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ExpressionResult argument1)
 	{
 		int seed;

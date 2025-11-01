@@ -15,7 +15,7 @@ public class CloneFunction : GenericFunction<ExpressionResult>
 
 	protected override IEnumerable<ResultType> ReturnTypes { get; } = AnyValueType;
 
-	protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ExpressionResult argument1)
 	{
 		return argument1.DeepClone();

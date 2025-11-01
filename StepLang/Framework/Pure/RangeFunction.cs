@@ -19,7 +19,7 @@ public class RangeFunction : GenericFunction<NumberResult, NumberResult, NumberR
 
 	protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyList;
 
-	protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		NumberResult argument1, NumberResult argument2, NumberResult argument3)
 	{
 		var startValue = Convert.ToDecimal(argument1.Value);

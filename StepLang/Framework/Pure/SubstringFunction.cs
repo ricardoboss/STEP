@@ -19,7 +19,7 @@ public class SubstringFunction : GenericFunction<StringResult, NumberResult, Exp
 
 	protected override IEnumerable<ResultType> ReturnTypes { get; } = OnlyString;
 
-	protected override StringResult Invoke(TokenLocation callLocation, Interpreter interpreter, StringResult argument1,
+	protected override StringResult Invoke(TokenLocation callLocation, IInterpreter interpreter, StringResult argument1,
 		NumberResult argument2, ExpressionResult argument3)
 	{
 		int? length;

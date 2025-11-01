@@ -15,7 +15,7 @@ public class ReversedFunction : GenericFunction<ExpressionResult>
 
 	protected override IEnumerable<ResultType> ReturnTypes { get; } = [ResultType.List, ResultType.Str];
 
-	protected override ExpressionResult Invoke(TokenLocation callLocation, Interpreter interpreter,
+	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ExpressionResult argument1)
 	{
 		return argument1 switch
