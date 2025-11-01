@@ -7,13 +7,15 @@ namespace StepLang.Tests.Framework.Other;
 
 public class FileFunctionsTest
 {
-	[TestCase("Windows", @"C:\temp\test.txt")]
+	[TestCase("Windows", @"C:\\temp\\test.txt")]
 	[TestCase("Linux", "/tmp/test.txt")]
 	[TestCase("macOS", "/tmp/test.txt")]
 	public void TestFileFunctions(string platform, string filename)
 	{
 		if (!OperatingSystem.IsOSPlatform(platform))
 		{
+			TestContext.Out.WriteLine($"Skipping test because it is for platform {platform}");
+
 			return;
 		}
 
