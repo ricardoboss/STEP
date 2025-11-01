@@ -10,7 +10,7 @@ public partial class Interpreter
 		{
 			var loopScope = PushScope();
 
-			Execute(statementNode.Body);
+			statementNode.Body.Accept(this);
 
 			_ = PopScope();
 

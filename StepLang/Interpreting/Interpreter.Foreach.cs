@@ -151,7 +151,7 @@ public partial class Interpreter
 			updateKey?.Invoke(keyValue);
 			updateValue(valueValue);
 
-			Execute(body);
+			body.Accept(this);
 
 			_ = PopScope();
 

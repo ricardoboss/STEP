@@ -47,7 +47,7 @@ public class UserDefinedFunctionDefinition(
 		// create the parameter variables in the new scope
 		CreateArgumentVariables(interpreter, evaldArgs);
 
-		interpreter.Execute(Body);
+		Body.Accept(interpreter);
 
 		if (interpreter.PopScope().TryGetResult(out var resultValue, out var resultLocation))
 		{

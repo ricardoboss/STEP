@@ -23,7 +23,5 @@ public interface IInterpreter : IRootNodeVisitor, IStatementVisitor, IExpression
 
 	TimeProvider Time { get; }
 
-	void Execute(StatementNode statement);
-
 	int ExitCode { get; }
 }

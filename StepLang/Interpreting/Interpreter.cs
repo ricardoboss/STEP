@@ -67,7 +67,7 @@ public partial class Interpreter : IInterpreter
 	{
 		foreach (var statement in statements)
 		{
-			Execute(statement);
+			statement.Accept(this);
 
 			if (CurrentScope.TryGetResult(out _, out _))
 			{
