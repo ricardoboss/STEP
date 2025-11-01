@@ -95,6 +95,6 @@ public static partial class StringExtensions
 		});
 	}
 
-	[GeneratedRegex(@"\\(\\|""|'|n|r|t|x[0-9A-Fa-f]{2})")]
+	[GeneratedRegex(@"\\(\\|""|'|n|r|t|x[0-9A-Fa-f]{2})", RegexOptions.IgnoreCase)]
 	private static partial Regex EscapedControlCharacterRegex();
 }
