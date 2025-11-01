@@ -298,7 +298,7 @@ jobs:
         run: Expand-Archive ./step.zip -DestinationPath publish/
 
       - name: Get Info
-        run: dotnet ./publish/step.dll --info
+        run: dotnet --roll-forward LatestMajor ./publish/step.dll --info
 
   release:
     name: Create GitHub Release
