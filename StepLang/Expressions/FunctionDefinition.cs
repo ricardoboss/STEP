@@ -4,21 +4,48 @@ using StepLang.Parsing.Nodes.Expressions;
 using StepLang.Parsing.Nodes.VariableDeclarations;
 using StepLang.Tokenizing;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace StepLang.Expressions;
 
 public abstract class FunctionDefinition
 {
 	[ExcludeFromCodeCoverage]
-	private string DebugParamsString => string.Join(", ", Parameters.Select(p =>
+	private string DebugParamsString
 	{
-		if (p is NullableVariableDeclarationNode nullable)
+		get
 		{
-			return $"{nullable.ResultTypesToString()}{nullable.NullabilityIndicator.Value} {nullable.Identifier.Value}";
-		}
+			var sb = new StringBuilder();
+			return string.Join(", ", Parameters.Select(p =>
+			{
+				sb.Clear();
 
-		return $"{p.ResultTypesToString()} {p.Identifier.Value}";
-	}));
+				sb.Append(p.ResultTypesToString());
+
+				if (p is NullableVariableDeclarationNode nullable)
+					sb.Append(nullable.NullabilityIndicator.Value);
+
+				sb.Append(' ');
+				sb.Append(p.Identifier.Value);
+
+				if (p is IVariableInitializationNode { Expression: { } expression })
+				{
+					sb.Append(" = ");
+
+					if (expression is LiteralExpressionNode { Literal: { } literal })
+						sb.Append(literal.Value);
+					else
+					{
+						sb.Append('{');
+						sb.Append(expression.GetType());
+						sb.Append('}');
+					}
+				}
+
+				return sb.ToString();
+			}));
+		}
+	}
 
 	[ExcludeFromCodeCoverage]
 	private string DebugReturnTypeString => string.Join("|", ReturnTypes.Select(r => r.ToString()));

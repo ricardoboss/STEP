@@ -90,4 +90,6 @@ public class BoolResult : ValueExpressionResult<bool>
 	{
 		return left != right;
 	}
+
+	public override string ToString() => Value.ToString();
 }
