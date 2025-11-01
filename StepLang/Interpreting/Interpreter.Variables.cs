@@ -1,11 +1,10 @@
 using StepLang.Expressions.Results;
-using StepLang.Parsing;
 using StepLang.Parsing.Nodes.Statements;
 using StepLang.Parsing.Nodes.VariableDeclarations;
 
 namespace StepLang.Interpreting;
 
-public partial class Interpreter : IVariableDeclarationEvaluator
+public partial class Interpreter
 {
 	public void Visit(VariableDeclarationStatementNode statementNode)
 	{
