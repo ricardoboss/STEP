@@ -1,3 +1,4 @@
+using StepLang.Tokenizing;
 using System.Text;
 
 namespace StepLang.Expressions.Results;
@@ -42,7 +43,7 @@ public class StringResult : ComparableValueExpressionResult<string>
 	/// <inheritdoc />
 	public override string ToString()
 	{
-		return $"\"{Value}\"";
+		return $"\"{Value.EscapeControlCharacters()}\"";
 	}
 
 	public static implicit operator StringResult(string value)

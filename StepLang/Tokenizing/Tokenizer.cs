@@ -142,9 +142,8 @@ public class Tokenizer
 
 		if (escaped)
 		{
-			var escapedChar = $"\\{c}";
-
-			tokenBuilder.Append(Regex.Unescape(escapedChar));
+			tokenBuilder.Append('\\');
+			tokenBuilder.Append(c);
 
 			escaped = false;
 
