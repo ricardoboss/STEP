@@ -36,7 +36,8 @@ internal sealed class HighlightCommand : AsyncCommand<HighlightCommand.Settings>
 		public bool HideLineNumbers { get; init; }
 	}
 
-	public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+	public override async Task<int> ExecuteAsync(CommandContext context, Settings settings,
+		CancellationToken cancellationToken)
 	{
 		if (settings.ListThemes)
 		{
@@ -59,7 +60,7 @@ internal sealed class HighlightCommand : AsyncCommand<HighlightCommand.Settings>
 
 		var scriptFile = new FileInfo(settings.File);
 
-		var source = await File.ReadAllTextAsync(scriptFile.FullName);
+		var source = await File.ReadAllTextAsync(scriptFile.FullName, cancellationToken);
 
 		var code = new Code(source, settings.Theme, !settings.HideLineNumbers);
 

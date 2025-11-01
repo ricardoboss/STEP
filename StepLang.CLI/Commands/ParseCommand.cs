@@ -27,10 +27,11 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 		public string File { get; init; } = null!;
 	}
 
-	public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+	public override async Task<int> ExecuteAsync(CommandContext context, Settings settings,
+		CancellationToken cancellationToken)
 	{
 		var scriptFile = new FileInfo(settings.File);
-		var source = await CharacterSource.FromFileAsync(scriptFile);
+		var source = await CharacterSource.FromFileAsync(scriptFile, cancellationToken);
 		var diagnostics = new DiagnosticCollection();
 		diagnostics.CollectionChanged += (_, e) =>
 		{
@@ -41,7 +42,7 @@ internal sealed class ParseCommand : AsyncCommand<ParseCommand.Settings>
 		};
 
 		var tokenizer = new Tokenizer(source, diagnostics);
-		var tokens = tokenizer.Tokenize();
+		var tokens = tokenizer.Tokenize(cancellationToken);
 		var parser = new Parser(tokens, diagnostics);
 		var root = parser.ParseRoot();
 

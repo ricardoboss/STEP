@@ -34,7 +34,8 @@ internal sealed class DefaultCommand : AsyncCommand<DefaultCommand.Settings>
 		public bool Handled { get; set; }
 	}
 
-	public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+	public override async Task<int> ExecuteAsync(CommandContext context, Settings settings,
+		CancellationToken cancellationToken)
 	{
 		if (settings is { Handled: true })
 			return 0;
@@ -45,7 +46,8 @@ internal sealed class DefaultCommand : AsyncCommand<DefaultCommand.Settings>
 
 		return await runCommand.ExecuteAsync(
 			context,
-			new() { File = fileToRun, NoWarn = settings.NoWarn }
+			new() { File = fileToRun, NoWarn = settings.NoWarn },
+			cancellationToken
 		);
 	}
 }
