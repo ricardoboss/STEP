@@ -7,7 +7,7 @@
 * Added `range` function to produce numeric sequences with configurable step sizes.
 * When no file to run is given, assume `program.step`
 * Removed global options `--info` and `--version` (will now only work when no command is given)
-* Fixed #130: literal string highlighting was broken if the string contained backslahes/escape sequences by @ricardoboss in https://github.com/ricardoboss/STEP/pull/189
+* Fixed #130: literal string highlighting was broken if the string contained backslashes/escape sequences by @ricardoboss in https://github.com/ricardoboss/STEP/pull/189
 
 # v2.1.0
 
