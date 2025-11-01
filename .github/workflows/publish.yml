@@ -280,7 +280,7 @@ jobs:
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ matrix.dotnet }}
-          dotnet-quality: "preview"
+          dotnet-quality: "ga"
 
       - name: Download binary
         uses: actions/download-artifact@v5
