@@ -298,7 +298,10 @@ jobs:
         run: Expand-Archive ./step.zip -DestinationPath publish/
 
       - name: Get Info
-        run: dotnet --roll-forward LatestMajor ./publish/step.dll --info
+        env:
+          DOTNET_ROLL_FORWARD_TO_PRERELEASE: 1
+          DOTNET_ROLL_FORWARD: LatestMajor
+        run: dotnet ./publish/step.dll --info
 
   release:
     name: Create GitHub Release
