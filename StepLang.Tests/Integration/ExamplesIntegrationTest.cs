@@ -84,6 +84,7 @@ public class ExamplesIntegrationTest
 		{
 			return Directory
 					.EnumerateFiles("Examples", "*.step", SearchOption.AllDirectories)
+					.Where(path => !File.Exists(path + ".skip"))
 					.Select(path => new TestCaseData(path))
 					.GetEnumerator();
 		}

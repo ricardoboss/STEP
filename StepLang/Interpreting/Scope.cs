@@ -98,6 +98,7 @@ public class Scope
 		CreateVariable(RandomFunction.Identifier, new RandomFunction().ToResult());
 		CreateVariable(RegexMatchFunction.Identifier, new RegexMatchFunction().ToResult());
 		CreateVariable(EnvFunction.Identifier, new EnvFunction().ToResult());
+		CreateVariable(TimestampFunction.Identifier, new TimestampFunction().ToResult());
 
 		// web functions
 		CreateVariable(FetchFunction.Identifier, new FetchFunction().ToResult());
