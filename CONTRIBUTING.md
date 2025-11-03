@@ -15,9 +15,10 @@ We value your input and appreciate your efforts to make our project better.
     - [Coding Guidelines](#coding-guidelines)
 5. [Submitting a Pull Request](#submitting-a-pull-request)
 6. [Code Review](#code-review)
-7. [Community](#community)
-8. [Licensing](#licensing)
-9. [Feedback and Questions](#feedback-and-questions)
+7. [Creating Releases](#creating-releases)
+8. [Community](#community)
+9. [Licensing](#licensing)
+10. [Feedback and Questions](#feedback-and-questions)
 
 ## Ways to Contribute
 
@@ -80,6 +81,8 @@ all contributors.
    git checkout -b workflow/add-build-scripts
    ```
 2. Commit your changes
+    - Use [Conventional Commit Messages](https://www.conventionalcommits.org/en/v1.0.0/#summary)
+      - Use `!` for breaking changes
     - Make sure your changes are not out-of-scope for the issue you are working on
     - Create small commits and put the idea behind each change in the commit message
 
@@ -88,7 +91,7 @@ all contributors.
         - create a new file in the `StepLang/Examples` folder
         - Add a file with the same name and the extension `.step.out` with the expected output in the
           `StepLang.Tests/Examples` folder
-    - To add unit tests, create new Xunit tests in the appropriate `StepLang.Tests` folder
+    - To add unit tests, create new NUnit tests in the appropriate `StepLang.Tests` folder
 
 4. Document your changes
     - Add a concise, human-readable bullet point under the `# Unreleased` heading in `CHANGELOG.md` summarizing your
@@ -134,6 +137,11 @@ to test interactive input using the corresponding `.step.in` fixture.
 
 - Your Pull Request will undergo review by maintainers and contributors.
 - Address feedback and make necessary changes.
+- Fix any issues flagged by the GitHub Actions workflows (like failing tests or code style).
+
+## Creating Releases
+
+See [Release Management](./docs/Release%20Management.md)
 
 ## Community
 

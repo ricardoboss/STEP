@@ -2,15 +2,13 @@ name: Publish
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main", 'release/**' ]
     tags:
       - "v*.*.*"
     paths:
       - ".github/workflows/publish.yml"
   pull_request:
-    branches:
-      - main
+    branches: [ "main", 'release/**' ]
     paths:
       - ".github/workflows/publish.yml"
 

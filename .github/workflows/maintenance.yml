@@ -1,0 +1,53 @@
+name: Maintenance
+
+on:
+  push:
+    paths-ignore:
+      - "docs/**"
+    branches: [ "maint/**" ]
+  pull_request:
+    paths-ignore:
+      - "docs/**"
+    branches: [ "maint/**" ]
+
+jobs:
+  maint-policy:
+    name: Enforce maint/* policy
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine range
+        id: range
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            base="${{ github.event.pull_request.base.sha }}"
+            head="${{ github.event.pull_request.head.sha }}"
+            # Ensure both SHAs are present locally
+            git fetch --no-tags origin "${base}:${base}" "${head}:${head}"
+            echo "range=${base}..${head}" >> "$GITHUB_OUTPUT"
+          else
+            # push
+            before="${{ github.event.before }}"
+            after="${{ github.sha }}"
+            echo "range=${before}..${after}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Enforce no features/perf on maint
+        shell: bash
+        run: |
+          set -euo pipefail
+          range="${{ steps.range.outputs.range }}"
+          git log --no-merges --format=%s "$range" > messages.txt || true
+          if grep -E '^(feat|perf)(!:|:)' messages.txt; then
+            echo "Feature/perf commits not allowed on maint/*"
+            echo "Commit subjects in range $range:"
+            cat messages.txt
+            exit 1
+          fi

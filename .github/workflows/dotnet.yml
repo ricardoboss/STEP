@@ -7,11 +7,11 @@ on:
   push:
     paths-ignore:
       - "docs/**"
-    branches: [ "main" ]
+    branches: [ "main", "release/**", "maint/**" ]
   pull_request:
     paths-ignore:
       - "docs/**"
-    branches: [ "main" ]
+    branches: [ "main", "release/**", "maint/**" ]
 
 env:
   DOTNET_NOLOGO: true

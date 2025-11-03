@@ -2,17 +2,15 @@ name: STEP Format
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main", "release/**", "maint/**" ]
     paths:
-      - '**/*.step'
+      - '**.step'
       - 'StepLang.Tooling.Analysis/**'
       - '.github/workflows/step.yml'
   pull_request:
-    branches:
-      - main
+    branches: [ "main", "release/**", "maint/**" ]
     paths:
-      - '**/*.step'
+      - '**.step'
       - 'StepLang.Tooling.Analysis/**'
 
 env:
