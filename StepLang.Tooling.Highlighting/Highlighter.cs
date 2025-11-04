@@ -57,6 +57,10 @@ public class Highlighter(ColorScheme scheme)
 			TokenType.ForEachKeyword => scheme.Keyword,
 			TokenType.InKeyword => scheme.Keyword,
 			TokenType.Error => scheme.Error,
+			TokenType.DotSymbol => scheme.Punctuation,
+			TokenType.ExtensionKeyword => scheme.Keyword,
+			TokenType.OnKeyword => scheme.Keyword,
+			TokenType.ThisKeyword => scheme.Keyword,
 			_ => scheme.Default,
 		};
 	}
