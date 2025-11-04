@@ -90,21 +90,17 @@ public class TokenizerTest
 		var tokenizer = new Tokenizer(source, diagnostics);
 		var tokens = tokenizer.Tokenize(TestContext.CurrentContext.CancellationToken).ToArray();
 
-		Assert.That(tokens, Has.Length.EqualTo(3));
+		Assert.That(tokens, Has.Length.EqualTo(2));
 
 		using (Assert.EnterMultipleScope())
 		{
-			Assert.That(tokens[0].Type, Is.EqualTo(TokenType.MinusSymbol));
-			Assert.That(tokens[0].Value, Is.EqualTo("-"));
+			Assert.That(tokens[0].Type, Is.EqualTo(TokenType.LiteralNumber));
+			Assert.That(tokens[0].Value, Is.EqualTo("-123"));
 			Assert.That(tokens[0].Location.Line, Is.EqualTo(1));
 			Assert.That(tokens[0].Location.Column, Is.EqualTo(1));
-			Assert.That(tokens[1].Type, Is.EqualTo(TokenType.LiteralNumber));
-			Assert.That(tokens[1].Value, Is.EqualTo("123"));
+			Assert.That(tokens[1].Type, Is.EqualTo(TokenType.EndOfFile));
 			Assert.That(tokens[1].Location.Line, Is.EqualTo(1));
-			Assert.That(tokens[1].Location.Column, Is.EqualTo(2));
-			Assert.That(tokens[2].Type, Is.EqualTo(TokenType.EndOfFile));
-			Assert.That(tokens[2].Location.Line, Is.EqualTo(1));
-			Assert.That(tokens[2].Location.Column, Is.EqualTo(source.Length + 1));
+			Assert.That(tokens[1].Location.Column, Is.EqualTo(source.Length + 1));
 		}
 
 		Assert.That(diagnostics, Is.Empty);
@@ -119,21 +115,17 @@ public class TokenizerTest
 		var tokenizer = new Tokenizer(source, diagnostics);
 		var tokens = tokenizer.Tokenize(TestContext.CurrentContext.CancellationToken).ToArray();
 
-		Assert.That(tokens, Has.Length.EqualTo(3));
+		Assert.That(tokens, Has.Length.EqualTo(2));
 
 		using (Assert.EnterMultipleScope())
 		{
-			Assert.That(tokens[0].Type, Is.EqualTo(TokenType.MinusSymbol));
-			Assert.That(tokens[0].Value, Is.EqualTo("-"));
+			Assert.That(tokens[0].Type, Is.EqualTo(TokenType.LiteralNumber));
+			Assert.That(tokens[0].Value, Is.EqualTo("-1.23"));
 			Assert.That(tokens[0].Location.Line, Is.EqualTo(1));
 			Assert.That(tokens[0].Location.Column, Is.EqualTo(1));
-			Assert.That(tokens[1].Type, Is.EqualTo(TokenType.LiteralNumber));
-			Assert.That(tokens[1].Value, Is.EqualTo("1.23"));
+			Assert.That(tokens[1].Type, Is.EqualTo(TokenType.EndOfFile));
 			Assert.That(tokens[1].Location.Line, Is.EqualTo(1));
-			Assert.That(tokens[1].Location.Column, Is.EqualTo(2));
-			Assert.That(tokens[2].Type, Is.EqualTo(TokenType.EndOfFile));
-			Assert.That(tokens[2].Location.Line, Is.EqualTo(1));
-			Assert.That(tokens[2].Location.Column, Is.EqualTo(source.Length + 1));
+			Assert.That(tokens[1].Location.Column, Is.EqualTo(source.Length + 1));
 		}
 
 		Assert.That(diagnostics, Is.Empty);
@@ -448,7 +440,7 @@ public class TokenizerTest
 	[Test]
 	public void TestReportsInvalidIdentifierDiagnostic()
 	{
-		const string source = "number a.b = 1";
+		const string source = "number a\u007fb = 1";
 
 		var diagnostics = new DiagnosticCollection();
 		var tokenizer = new Tokenizer(source, diagnostics);
@@ -463,7 +455,7 @@ public class TokenizerTest
 			Assert.That(tokens[1].Type, Is.EqualTo(TokenType.Whitespace));
 			Assert.That(tokens[1].Value, Is.EqualTo(" "));
 			Assert.That(tokens[2].Type, Is.EqualTo(TokenType.Error));
-			Assert.That(tokens[2].Value, Is.EqualTo("a.b"));
+			Assert.That(tokens[2].Value, Is.EqualTo("a\u007fb"));
 			Assert.That(tokens[3].Type, Is.EqualTo(TokenType.Whitespace));
 			Assert.That(tokens[3].Value, Is.EqualTo(" "));
 			Assert.That(tokens[4].Type, Is.EqualTo(TokenType.EqualsSymbol));

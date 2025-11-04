@@ -203,6 +203,13 @@ public class Tokenizer
 
 	private IEnumerable<Token> HandleChar(char c)
 	{
+		if (IsPartOfLiteralNumber(c))
+		{
+			tokenBuilder.Append(c);
+
+			yield break;
+		}
+
 		if (c.TryParseSymbol(out var symbolType))
 		{
 			foreach (var previous in TryFinalizePreviousAndStartNewToken(c))
@@ -214,9 +221,6 @@ public class Tokenizer
 		}
 
 		tokenBuilder.Append(c);
-
-		if (IsPartOfLiteralNumber(c))
-			yield break;
 
 		var token = TryFinalizeTokenFromBuilder(false);
 		if (token is not null)
