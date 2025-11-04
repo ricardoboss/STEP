@@ -21,11 +21,11 @@ public class ParserTest
 		var root = parser.ParseRoot();
 
 		// Assert
-		var errorStatement = AssertIsType<ErrorStatementNode>(root.Body.First());
+		var errorStatement = AssertIsType<ErrorStatementNode>(root.Body.FirstOrDefault());
 		using (Assert.EnterMultipleScope())
 		{
 			Assert.That(errorStatement.Description, Is.EqualTo("Unexpected end of tokens"));
-			Assert.That(errorStatement.Tokens.First()?.Type, Is.EqualTo(TokenType.EndOfFile));
+			Assert.That(errorStatement.Tokens.FirstOrDefault()?.Type, Is.EqualTo(TokenType.Identifier));
 		}
 	}
 
