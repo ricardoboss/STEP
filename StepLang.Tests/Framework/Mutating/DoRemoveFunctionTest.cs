@@ -17,7 +17,7 @@ public class DoRemoveFunctionTest
 
 		var interpreter = new Interpreter();
 		interpreter.CurrentScope.CreateVariable(listIdentifier, list);
-		var listVarExpression = new IdentifierExpressionNode(new(TokenType.Identifier, listIdentifier));
+		var listVarExpression = new IdentifierExpressionNode([new(TokenType.Identifier, listIdentifier)]);
 		var function = new DoRemoveFunction();
 
 		var result = function.Invoke(new(), interpreter, [listVarExpression, elementExpression]);
