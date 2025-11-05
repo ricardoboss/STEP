@@ -278,9 +278,9 @@ public class Tokenizer
 		return errorToken;
 	}
 
-	private static bool IsPartOfLiteralNumber(char c)
+	private bool IsPartOfLiteralNumber(char c)
 	{
-		return char.IsDigit(c) || c is '.' or '-';
+		return char.IsDigit(c) || c == '.' || tokenBuilder.Length == 0 && c == '-';
 	}
 
 	private Token FinalizeToken(TokenType type)
