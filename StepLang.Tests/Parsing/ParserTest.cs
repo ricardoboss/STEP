@@ -46,6 +46,22 @@ public class ParserTest
 	}
 
 	[Test]
+	public void TestParsesSimpleDecrement()
+	{
+		const string source = "i--";
+		var tokens = source.AsTokens();
+		var diagnostics = new DiagnosticCollection();
+		var parser = new Parser(tokens, diagnostics);
+		var root = parser.ParseRoot();
+
+		using (Assert.EnterMultipleScope())
+		{
+			Assert.That(root.Body, Has.Count.EqualTo(1));
+			Assert.That(diagnostics, Is.Empty, TestHelper.StringifyDiagnostics(diagnostics));
+		}
+	}
+
+	[Test]
 	public void TestParsesAssignmentWithSubtractionExpression()
 	{
 		const string source = "n = a - b";
