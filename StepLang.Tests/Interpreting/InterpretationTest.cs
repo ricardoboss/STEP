@@ -111,7 +111,7 @@ public class InterpretationTest
 	{
 		const string source = "import 123";
 
-		var exception = Assert.Throws<NotSupportedException>(() => source.Interpret());
+		var exception = Assert.Throws<NotSupportedException>(() => source.Interpret(throwOnParseError: false));
 
 		Assert.That(exception.Message, Is.EqualTo("Cannot interpret imports with errors"));
 	}
@@ -121,7 +121,7 @@ public class InterpretationTest
 	{
 		const string source = "number = 1";
 
-		var exception = Assert.Throws<NotSupportedException>(() => source.Interpret());
+		var exception = Assert.Throws<NotSupportedException>(() => source.Interpret(throwOnParseError: false));
 
 		Assert.That(exception.Message, Is.EqualTo("Cannot evaluate error variable declaration node"));
 	}
@@ -131,7 +131,7 @@ public class InterpretationTest
 	{
 		const string source = "number a =";
 
-		var exception = Assert.Throws<NotSupportedException>(() => source.Interpret());
+		var exception = Assert.Throws<NotSupportedException>(() => source.Interpret(throwOnParseError: false));
 
 		Assert.That(exception.Message, Is.EqualTo("Error expression nodes cannot be interpreted"));
 	}
@@ -141,7 +141,7 @@ public class InterpretationTest
 	{
 		const string source = "doSomething";
 
-		var exception = Assert.Throws<NotSupportedException>(() => source.Interpret());
+		var exception = Assert.Throws<NotSupportedException>(() => source.Interpret(throwOnParseError: false));
 
 		Assert.That(exception.Message, Is.EqualTo("Error statement nodes cannot be interpreted"));
 	}
