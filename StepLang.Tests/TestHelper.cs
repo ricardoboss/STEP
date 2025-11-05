@@ -3,6 +3,7 @@ using StepLang.Interpreting;
 using StepLang.Parsing;
 using StepLang.Parsing.Nodes;
 using StepLang.Tokenizing;
+using System.Text;
 
 namespace StepLang.Tests;
 
@@ -15,18 +16,52 @@ internal static class TestHelper
 		return tokenizer.Tokenize(TestContext.CurrentContext.CancellationToken);
 	}
 
-	public static RootNode AsParsed(this string code, DiagnosticCollection? diagnostics = null)
+	public static RootNode AsParsed(this string code, bool throwOnParseError = true, DiagnosticCollection? diagnostics = null)
 	{
-		var parser = new Parser(code.AsTokens(diagnostics), diagnostics ?? []);
+		diagnostics ??= [];
+		var parser = new Parser(code.AsTokens(diagnostics), diagnostics);
 
-		return parser.ParseRoot();
+		var root = parser.ParseRoot();
+
+		if (throwOnParseError && diagnostics is { ContainsErrors: true })
+		{
+			var message = StringifyDiagnostics(diagnostics);
+			message = "Parsing code caused errors: " + message;
+
+			throw new ArgumentException(message, nameof(code));
+		}
+
+		return root;
 	}
 
-	public static void Interpret(this string code)
+	public static string StringifyDiagnostics(DiagnosticCollection diagnostics)
 	{
-		var root = code.AsParsed();
+		var sb = new StringBuilder();
+		sb.Append(diagnostics.Errors.Count());
+		sb.Append(" error");
+		if (diagnostics.Errors.Count() != 1)
+			sb.Append('s');
+		sb.AppendLine(" found:");
 
-		var interpreter = new Interpreter();
+		foreach (var d in diagnostics.Errors)
+		{
+			sb.Append("- ");
+			sb.Append(d.Message);
+			sb.Append(" @ ");
+			sb.Append(d.Location);
+			sb.AppendLine();
+		}
+
+		return sb.ToString();
+	}
+
+	public static void Interpret(this string code, bool throwOnParseError = true, DiagnosticCollection? diagnostics = null)
+	{
+		diagnostics ??= [];
+
+		var root = code.AsParsed(throwOnParseError, diagnostics);
+
+		var interpreter = new Interpreter(diagnostics: diagnostics);
 
 		root.Accept(interpreter);
 	}

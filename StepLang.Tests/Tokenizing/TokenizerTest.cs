@@ -306,7 +306,7 @@ public class TokenizerTest
 			Assert.That(tokens[7].Location.Column, Is.EqualTo(22));
 			Assert.That(tokens[7].Location.Length, Is.Zero);
 
-			Assert.That(diagnostics, Is.Empty);
+			Assert.That(diagnostics, Is.Empty, TestHelper.StringifyDiagnostics(diagnostics));
 		}
 	}
 
@@ -448,7 +448,7 @@ public class TokenizerTest
 	[Test]
 	public void TestReportsInvalidIdentifierDiagnostic()
 	{
-		const string source = "number a.b = 1";
+		const string source = "number a\u007fb = 1";
 
 		var diagnostics = new DiagnosticCollection();
 		var tokenizer = new Tokenizer(source, diagnostics);
@@ -463,7 +463,7 @@ public class TokenizerTest
 			Assert.That(tokens[1].Type, Is.EqualTo(TokenType.Whitespace));
 			Assert.That(tokens[1].Value, Is.EqualTo(" "));
 			Assert.That(tokens[2].Type, Is.EqualTo(TokenType.Error));
-			Assert.That(tokens[2].Value, Is.EqualTo("a.b"));
+			Assert.That(tokens[2].Value, Is.EqualTo("a\u007fb"));
 			Assert.That(tokens[3].Type, Is.EqualTo(TokenType.Whitespace));
 			Assert.That(tokens[3].Value, Is.EqualTo(" "));
 			Assert.That(tokens[4].Type, Is.EqualTo(TokenType.EqualsSymbol));
@@ -677,7 +677,49 @@ public class TokenizerTest
 		{
 			Assert.That(tokens[0].Type, Is.EqualTo(TokenType.NewLine));
 			Assert.That(tokens[1].Type, Is.EqualTo(TokenType.EndOfFile));
-			Assert.That(diagnostics, Is.Empty);
+			Assert.That(diagnostics, Is.Empty, TestHelper.StringifyDiagnostics(diagnostics));
+		}
+	}
+
+	[Test]
+	public void TestTokenizeSimpleAssignment()
+	{
+		const string source = "n = a - b";
+
+		var diagnostics = new DiagnosticCollection();
+		var tokenizer = new Tokenizer(source, diagnostics);
+		var tokens = tokenizer.Tokenize(TestContext.CurrentContext.CancellationToken).ToList();
+
+		Assert.That(tokens, Has.Count.EqualTo(10));
+		using (Assert.EnterMultipleScope())
+		{
+			Assert.That(tokens[0].Type, Is.EqualTo(TokenType.Identifier));
+			Assert.That(tokens[2].Type, Is.EqualTo(TokenType.EqualsSymbol));
+			Assert.That(tokens[4].Type, Is.EqualTo(TokenType.Identifier));
+			Assert.That(tokens[6].Type, Is.EqualTo(TokenType.MinusSymbol));
+			Assert.That(tokens[8].Type, Is.EqualTo(TokenType.Identifier));
+			Assert.That(diagnostics, Is.Empty, TestHelper.StringifyDiagnostics(diagnostics));
+		}
+	}
+
+	[Test]
+	public void TestTokenizesFunctionCallParameterWithNegateExpression()
+	{
+		const string source = "foo(-a)";
+		var diagnostics = new DiagnosticCollection();
+		var tokenizer = new Tokenizer(source, diagnostics);
+		var tokens = tokenizer.Tokenize(TestContext.CurrentContext.CancellationToken).ToList();
+
+		Assert.That(tokens, Has.Count.EqualTo(6));
+		using (Assert.EnterMultipleScope())
+		{
+			Assert.That(tokens[0].Type, Is.EqualTo(TokenType.Identifier));
+			Assert.That(tokens[1].Type, Is.EqualTo(TokenType.OpeningParentheses));
+			Assert.That(tokens[2].Type, Is.EqualTo(TokenType.MinusSymbol));
+			Assert.That(tokens[3].Type, Is.EqualTo(TokenType.Identifier));
+			Assert.That(tokens[4].Type, Is.EqualTo(TokenType.ClosingParentheses));
+			Assert.That(tokens[5].Type, Is.EqualTo(TokenType.EndOfFile));
+			Assert.That(diagnostics, Is.Empty, TestHelper.StringifyDiagnostics(diagnostics));
 		}
 	}
 }
