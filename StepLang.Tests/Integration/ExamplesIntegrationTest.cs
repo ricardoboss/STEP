@@ -48,8 +48,14 @@ public class ExamplesIntegrationTest
 		var tokenizer = new Tokenizer(exampleFile, diagnostics);
 		var tokens = tokenizer.Tokenize(TestContext.CurrentContext.CancellationToken);
 
+		if (diagnostics.ContainsErrors)
+			Assert.Fail("Tokenizing resulted in errors: " + TestHelper.StringifyDiagnostics(diagnostics));
+
 		var parser = new Parser(tokens, diagnostics);
 		var root = parser.ParseRoot();
+
+		if (diagnostics.ContainsErrors)
+			Assert.Fail("Parsing resulted in errors: " + TestHelper.StringifyDiagnostics(diagnostics));
 
 		var interpreter = new Interpreter(stdOut, stdIn, null, diagnostics);
 		root.Accept(interpreter);
@@ -59,7 +65,7 @@ public class ExamplesIntegrationTest
 		{
 			Assert.That(interpreter.ExitCode, Is.EqualTo(expectedExitCode));
 			Assert.That(NormalizeNewLines(stdOut.ToString()), Is.EqualTo(NormalizeNewLines(expectedOutput)));
-			Assert.That(diagnostics, Is.Empty);
+			Assert.That(diagnostics, Is.Empty, TestHelper.StringifyDiagnostics(diagnostics));
 		}
 	}
 
