@@ -65,7 +65,7 @@ public class ExamplesIntegrationTest
 		{
 			Assert.That(interpreter.ExitCode, Is.EqualTo(expectedExitCode));
 			Assert.That(NormalizeNewLines(stdOut.ToString()), Is.EqualTo(NormalizeNewLines(expectedOutput)));
-			Assert.That(diagnostics, Is.Empty);
+			Assert.That(diagnostics, Is.Empty, TestHelper.StringifyDiagnostics(diagnostics));
 		}
 	}
 

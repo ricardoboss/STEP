@@ -220,11 +220,22 @@ public class Tokenizer
 			yield break;
 		}
 
+		if (TryFinalizeSymbol() is { } symbol)
+			yield return symbol;
+
 		tokenBuilder.Append(c);
 
 		var token = TryFinalizeTokenFromBuilder(false);
 		if (token is not null)
 			yield return token;
+	}
+
+	private Token? TryFinalizeSymbol()
+	{
+		var tokenValue = tokenBuilder.ToString();
+		return tokenValue.Length == 1 && tokenValue[0].TryParseSymbol(out var type)
+			? FinalizeToken(type.Value)
+			: null;
 	}
 
 	private Token? TryFinalizeTokenFromBuilder(bool allowIdentifier)
@@ -251,8 +262,8 @@ public class Tokenizer
 		if (tokenValue.Equals("null", StringComparison.OrdinalIgnoreCase))
 			return FinalizeToken(TokenType.LiteralNull);
 
-		if (tokenValue.Length == 1 && tokenValue[0].TryParseSymbol(out var type))
-			return FinalizeToken(type.Value);
+		if (TryFinalizeSymbol() is { } symbol)
+			return symbol;
 
 		if (!allowIdentifier)
 			return null;
