@@ -49,13 +49,13 @@ public class ExamplesIntegrationTest
 		var tokens = tokenizer.Tokenize(TestContext.CurrentContext.CancellationToken);
 
 		if (diagnostics.ContainsErrors)
-			Assert.Fail("Tokenizing resulted in errors: " + diagnostics.Errors.First().Message);
+			Assert.Fail("Tokenizing resulted in errors: " + TestHelper.StringifyDiagnostics(diagnostics));
 
 		var parser = new Parser(tokens, diagnostics);
 		var root = parser.ParseRoot();
 
 		if (diagnostics.ContainsErrors)
-			Assert.Fail("Parsing resulted in errors: " + diagnostics.Errors.First().Message);
+			Assert.Fail("Parsing resulted in errors: " + TestHelper.StringifyDiagnostics(diagnostics));
 
 		var interpreter = new Interpreter(stdOut, stdIn, null, diagnostics);
 		root.Accept(interpreter);

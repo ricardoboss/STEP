@@ -25,19 +25,31 @@ internal static class TestHelper
 
 		if (throwOnParseError && diagnostics is { ContainsErrors: true })
 		{
-			var sb = new StringBuilder();
-			sb.AppendLine("Parsing code caused errors:");
-			foreach (var d in diagnostics.Errors)
-			{
-				sb.Append("- ");
-				sb.Append(d.Message);
-				sb.AppendLine();
-			}
+			var message = StringifyDiagnostics(diagnostics);
+			message = "Parsing code caused errors: " + message;
 
-			throw new ArgumentException(sb.ToString(), nameof(code));
+			throw new ArgumentException(message, nameof(code));
 		}
 
 		return root;
+	}
+
+	public static string StringifyDiagnostics(DiagnosticCollection diagnostics)
+	{
+		var sb = new StringBuilder();
+		sb.Append(diagnostics.Errors.Count());
+		sb.AppendLine(" errors found:");
+
+		foreach (var d in diagnostics.Errors)
+		{
+			sb.Append("- ");
+			sb.Append(d.Message);
+			sb.Append(" @ ");
+			sb.Append(d.Location);
+			sb.AppendLine();
+		}
+
+		return sb.ToString();
 	}
 
 	public static void Interpret(this string code, bool throwOnParseError = true, DiagnosticCollection? diagnostics = null)
