@@ -141,7 +141,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 		var chain = identifierChainResult.Value;
 
-		var next = tokens.Peek(1);
+		var next = tokens.Peek();
 		if (next is null)
 			return diagnostics.AddUnexpectedEndOfTokens(tokens.LastToken);
 

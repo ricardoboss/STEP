@@ -25,7 +25,7 @@ public class ParserTest
 		using (Assert.EnterMultipleScope())
 		{
 			Assert.That(errorStatement.Description, Is.EqualTo("Unexpected end of tokens"));
-			Assert.That(errorStatement.Tokens.FirstOrDefault()?.Type, Is.EqualTo(TokenType.Identifier));
+			Assert.That(errorStatement.Tokens.FirstOrDefault()?.Type, Is.EqualTo(TokenType.EndOfFile));
 		}
 	}
 

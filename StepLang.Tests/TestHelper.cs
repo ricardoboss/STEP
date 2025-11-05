@@ -16,14 +16,14 @@ internal static class TestHelper
 		return tokenizer.Tokenize(TestContext.CurrentContext.CancellationToken);
 	}
 
-	public static RootNode AsParsed(this string code, DiagnosticCollection? diagnostics = null)
+	public static RootNode AsParsed(this string code, bool throwOnParseError = true, DiagnosticCollection? diagnostics = null)
 	{
 		diagnostics ??= [];
 		var parser = new Parser(code.AsTokens(diagnostics), diagnostics);
 
 		var root = parser.ParseRoot();
 
-		if (diagnostics is { ContainsErrors: true })
+		if (throwOnParseError && diagnostics is { ContainsErrors: true })
 		{
 			var sb = new StringBuilder();
 			sb.AppendLine("Parsing code caused errors:");
@@ -40,11 +40,11 @@ internal static class TestHelper
 		return root;
 	}
 
-	public static void Interpret(this string code, DiagnosticCollection? diagnostics = null)
+	public static void Interpret(this string code, bool throwOnParseError = true, DiagnosticCollection? diagnostics = null)
 	{
 		diagnostics ??= [];
 
-		var root = code.AsParsed(diagnostics);
+		var root = code.AsParsed(throwOnParseError, diagnostics);
 
 		var interpreter = new Interpreter(diagnostics: diagnostics);
 
