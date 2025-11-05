@@ -672,4 +672,25 @@ public class TokenizerTest
 			Assert.That(diagnostics, Is.Empty);
 		}
 	}
+
+	[Test]
+	public void TestTokenizeSimpleAssignment()
+	{
+		const string source = "n = a - b";
+
+		var diagnostics = new DiagnosticCollection();
+		var tokenizer = new Tokenizer(source, diagnostics);
+		var tokens = tokenizer.Tokenize(TestContext.CurrentContext.CancellationToken).ToList();
+
+		Assert.That(tokens, Has.Count.EqualTo(10));
+		using (Assert.EnterMultipleScope())
+		{
+			Assert.That(tokens[0].Type, Is.EqualTo(TokenType.Identifier));
+			Assert.That(tokens[2].Type, Is.EqualTo(TokenType.EqualsSymbol));
+			Assert.That(tokens[4].Type, Is.EqualTo(TokenType.Identifier));
+			Assert.That(tokens[6].Type, Is.EqualTo(TokenType.MinusSymbol));
+			Assert.That(tokens[8].Type, Is.EqualTo(TokenType.Identifier));
+			Assert.That(diagnostics, Is.Empty);
+		}
+	}
 }

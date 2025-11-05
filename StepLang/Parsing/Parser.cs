@@ -155,7 +155,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 				return ParseIndexAssignment(chain);
 		}
 
-		var nextNext = tokens.Peek(2);
+		var nextNext = tokens.Peek(1);
 		if (nextNext is null)
 		{
 			_ = tokens.Dequeue(TokenType.Identifier);

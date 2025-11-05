@@ -38,7 +38,10 @@ internal static class TestHelper
 	{
 		var sb = new StringBuilder();
 		sb.Append(diagnostics.Errors.Count());
-		sb.AppendLine(" errors found:");
+		sb.Append(" error");
+		if (diagnostics.Errors.Count() != 1)
+			sb.Append('s');
+		sb.AppendLine(" found:");
 
 		foreach (var d in diagnostics.Errors)
 		{

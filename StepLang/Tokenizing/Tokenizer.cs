@@ -251,6 +251,9 @@ public class Tokenizer
 		if (tokenValue.Equals("null", StringComparison.OrdinalIgnoreCase))
 			return FinalizeToken(TokenType.LiteralNull);
 
+		if (tokenValue.Length == 1 && tokenValue[0].TryParseSymbol(out var type))
+			return FinalizeToken(type.Value);
+
 		if (!allowIdentifier)
 			return null;
 
