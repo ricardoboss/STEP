@@ -43,7 +43,7 @@ public class SubstringFunctionTest
 		using (Assert.EnterMultipleScope())
 		{
 			Assert.That(output.ToString(), Is.EqualTo(result));
-			Assert.That(diagnostics, Is.Empty);
+			Assert.That(diagnostics, Is.Empty, TestHelper.StringifyDiagnostics(diagnostics));
 		}
 	}
 }
