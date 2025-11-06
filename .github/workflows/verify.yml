@@ -4,7 +4,6 @@ on:
   pull_request:
     paths-ignore:
       - "docs/**"
-      - ".github/**"
     types: [ assigned, opened, synchronize, reopened, labeled, unlabeled ]
     branches: [ "main", "release/**", "maint/**" ]
 
