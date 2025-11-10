@@ -1,0 +1,26 @@
+println("=== Benchmark start: ", timestamp())
+
+import "StepLang/Examples/assignment.step"
+import "StepLang/Examples/clone.step"
+import "StepLang/Examples/conversions.step"
+import "StepLang/Examples/docs-substring-behaviour.step"
+import "StepLang/Examples/docs-toJson-behaviour.step"
+import "StepLang/Examples/env.step"
+import "StepLang/Examples/expressions.step"
+import "StepLang/Examples/functions.step"
+import "StepLang/Examples/imports.step"
+import "StepLang/Examples/isset.step"
+import "StepLang/Examples/json.step"
+import "StepLang/Examples/lists.step"
+import "StepLang/Examples/looping.step"
+import "StepLang/Examples/maps.step"
+import "StepLang/Examples/math.step"
+import "StepLang/Examples/nullable.step"
+import "StepLang/Examples/range.step"
+import "StepLang/Examples/recursive.step"
+import "StepLang/Examples/step-by.step"
+import "StepLang/Examples/strings.step"
+import "StepLang/Examples/time.step"
+import "StepLang/Examples/zipped.step"
+
+println("=== Benchmark end: ", timestamp())
