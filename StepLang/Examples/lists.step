@@ -51,33 +51,33 @@ println(indexOf(mutable, 4))
 println(contains(mutable, 2))
 println(contains(mutable, 4))
 
-list l = [1, 2, 3, 4]
-println(converted(l, (number n) {
+list someList = [1, 2, 3, 4]
+println(converted(someList, (number n) {
 	return n * 2
 }))
 
-println(converted(l, (number n, number i) {
+println(converted(someList, (number n, number i) {
 	return n * i
 }))
 
-println(converted(l, (number n, number i) {
+println(converted(someList, (number n, number i) {
 	return "The " + (i + 1) + ". number is " + n
 }))
 
-println(filtered(l, (number n) {
+println(filtered(someList, (number n) {
 	return n % 2 == 0
 }))
 
-println(filtered(l, (number n, number i) {
+println(filtered(someList, (number n, number i) {
 	return i % 2 == 0
 }))
 
-println(reversed(l))
+println(reversed(someList))
 
-println(l)
+println(someList)
 
-list m = ["d", "a", "c", "b"]
-println(sorted(m))
+list someOtherList = ["d", "a", "c", "b"]
+println(sorted(someOtherList))
 
 function cmp = (number a, number b) {
 	return a - b
@@ -85,5 +85,5 @@ function cmp = (number a, number b) {
 
 println(sorted([3, 1, 2], cmp))
 
-println(length(m))
+println(length(someOtherList))
 println(length([]))

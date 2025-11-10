@@ -1,7 +1,7 @@
-(in scope) a = 3
-(in scope) b = 2
-a = 1
-b = 2
+(in scope) firstVar = 3
+(in scope) secondVar = 2
+firstVar = 1
+secondVar = 2
 Imported scoped.step
-a = 1
-b = 2
+firstVar = 1
+secondVar = 2

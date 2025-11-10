@@ -94,8 +94,8 @@ println("loop(false, false): ", loop(false, false))
 
 println()
 print("closure with captured variable: ")
-number a = 5 // variable names are explicitly different from the parameters so they are not used from global scope
-number b = 10
+number x = 5 // variable names are explicitly different from the parameters so they are not used from global scope
+number y = 10
 
-function captured = generateClosureWithCapturedVariable(a)
-println(captured(b))
+function captured = generateClosureWithCapturedVariable(x)
+println(captured(y))
