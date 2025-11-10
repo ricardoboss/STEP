@@ -1,5 +1,6 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
+using StepLang.Parsing.Nodes.Expressions;
 using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Pure;
@@ -11,7 +12,7 @@ public class SplitFunction : GenericFunction<StringResult, StringResult>
 	protected override IEnumerable<NativeParameter> NativeParameters { get; } =
 	[
 		new(OnlyString, "source"),
-		new(OnlyString, "separator", new StringResult("")),
+		new(OnlyString, "separator", LiteralExpressionNode.FromString("")),
 	];
 
 	protected override ListResult Invoke(TokenLocation callLocation, IInterpreter interpreter, StringResult argument1,

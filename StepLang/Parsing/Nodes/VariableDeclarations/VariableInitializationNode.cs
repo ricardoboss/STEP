@@ -8,7 +8,7 @@ public sealed record VariableInitializationNode(
 	TokenLocation AssignmentLocation,
 	IEnumerable<Token> Types,
 	Token Identifier,
-	ExpressionNode Expression) : IVariableInitializationNode
+	IExpressionNode Expression) : IVariableInitializationNode
 {
 	public Variable EvaluateUsing(IVariableDeclarationEvaluator evaluator)
 	{

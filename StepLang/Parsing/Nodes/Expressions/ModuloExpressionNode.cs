@@ -3,7 +3,7 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Parsing.Nodes.Expressions;
 
-public record ModuloExpressionNode(Token Operator, ExpressionNode Left, ExpressionNode Right)
+public record ModuloExpressionNode(Token Operator, IExpressionNode Left, IExpressionNode Right)
 	: BinaryExpressionNode(Operator, Left, Right, BinaryExpressionOperator.Modulo)
 {
 	public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)

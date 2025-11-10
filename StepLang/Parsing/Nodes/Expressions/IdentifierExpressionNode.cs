@@ -3,12 +3,12 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Parsing.Nodes.Expressions;
 
-public sealed record IdentifierExpressionNode(Token Identifier) : ExpressionNode
+public sealed record IdentifierExpressionNode(Token Identifier) : IExpressionNode
 {
-	public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)
+	public ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)
 	{
 		return evaluator.Evaluate(this);
 	}
 
-	public override Token FirstToken => Identifier;
+	public Token FirstToken => Identifier;
 }

@@ -29,7 +29,7 @@ public class FunctionResult : ValueExpressionResult<FunctionDefinition>
 		protected override string DebugBodyString => "";
 
 		public override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
-			IReadOnlyList<ExpressionNode> arguments)
+			IReadOnlyList<IExpressionNode> arguments)
 		{
 			return VoidResult.Instance;
 		}
