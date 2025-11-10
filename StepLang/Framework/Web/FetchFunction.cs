@@ -17,7 +17,7 @@ public class FetchFunction : GenericFunction<StringResult, MapResult>
 		new(OnlyString, "url"),
 		new(OnlyMap, "options",
 			new MapExpressionNode(new Token(TokenType.OpeningCurlyBracket, "{"),
-				new Dictionary<Token, ExpressionNode>())),
+				new Dictionary<Token, IExpressionNode>())),
 	];
 
 	protected override IEnumerable<ResultType> ReturnTypes { get; } = NullableString;
