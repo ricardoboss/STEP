@@ -3,7 +3,7 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Parsing.Nodes.Expressions;
 
-public record LessThanOrEqualExpressionNode(Token Operator, ExpressionNode Left, ExpressionNode Right)
+public record LessThanOrEqualExpressionNode(Token Operator, IExpressionNode Left, IExpressionNode Right)
 	: BinaryExpressionNode(Operator, Left, Right, BinaryExpressionOperator.LessThanOrEqual)
 {
 	public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)

@@ -2,10 +2,13 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Parsing.Nodes.Expressions;
 
-public interface IBinaryExpressionNode
+public interface IBinaryExpressionNode : IExpressionNode
 {
-	ExpressionNode Left { get; }
-	ExpressionNode Right { get; }
+	IExpressionNode Left { get; }
+
+	IExpressionNode Right { get; }
+
 	BinaryExpressionOperator Op { get; }
+
 	Token OperatorToken { get; }
 }

@@ -5,7 +5,7 @@ namespace StepLang.Interpreting;
 
 public static class ExpressionHelperExtensions
 {
-	public static IEnumerable<ExpressionResult> EvaluateUsing(this IEnumerable<ExpressionNode> nodes,
+	public static IEnumerable<ExpressionResult> EvaluateUsing(this IEnumerable<IExpressionNode> nodes,
 		IInterpreter interpreter)
 	{
 		return nodes.Select(node => node.EvaluateUsing(interpreter));

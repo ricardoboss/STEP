@@ -3,7 +3,7 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Parsing.Nodes.Expressions;
 
-public record NotExpressionNode(Token ExclamationMarkToken, ExpressionNode Expression)
+public record NotExpressionNode(Token ExclamationMarkToken, IExpressionNode Expression)
 	: ExpressionNode, IUnaryExpressionNode
 {
 	public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)

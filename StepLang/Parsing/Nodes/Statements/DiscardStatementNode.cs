@@ -3,7 +3,7 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Parsing.Nodes.Statements;
 
-public sealed record DiscardStatementNode(TokenLocation UnderscoreTokenLocation, ExpressionNode Expression)
+public sealed record DiscardStatementNode(TokenLocation UnderscoreTokenLocation, IExpressionNode Expression)
 	: StatementNode
 {
 	public override void Accept(IStatementVisitor visitor)

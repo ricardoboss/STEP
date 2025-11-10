@@ -3,7 +3,7 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Parsing.Nodes.Expressions;
 
-public record BitwiseAndExpressionNode(Token Operator, ExpressionNode Left, ExpressionNode Right)
+public record BitwiseAndExpressionNode(Token Operator, IExpressionNode Left, IExpressionNode Right)
 	: BinaryExpressionNode(Operator, Left, Right, BinaryExpressionOperator.BitwiseAnd)
 {
 	public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)

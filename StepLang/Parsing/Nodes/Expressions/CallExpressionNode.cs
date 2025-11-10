@@ -3,14 +3,14 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Parsing.Nodes.Expressions;
 
-public sealed record CallExpressionNode(Token Identifier, IReadOnlyList<ExpressionNode> Arguments) : ExpressionNode
+public sealed record CallExpressionNode(Token Identifier, IReadOnlyList<IExpressionNode> Arguments) : IExpressionNode
 {
-	public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)
+	public ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)
 	{
 		return evaluator.Evaluate(this);
 	}
 
-	public override Token FirstToken => Identifier;
+	public Token FirstToken => Identifier;
 
-	public override TokenLocation Location => Identifier.Location;
+	public TokenLocation Location => Identifier.Location;
 }

@@ -17,7 +17,7 @@ public class MaxFunction : NativeFunction
 	protected override IEnumerable<ResultType> ReturnTypes { get; } = [ResultType.Number];
 
 	public override NumberResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
-		IReadOnlyList<ExpressionNode> arguments)
+		IReadOnlyList<IExpressionNode> arguments)
 	{
 		CheckArgumentCount(callLocation, arguments, 1, int.MaxValue);
 

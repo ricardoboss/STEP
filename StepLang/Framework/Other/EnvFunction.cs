@@ -20,7 +20,7 @@ public class EnvFunction : NativeFunction
 	protected override IEnumerable<ResultType> ReturnTypes { get; } = NullableString;
 
 	public override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
-		IReadOnlyList<ExpressionNode> arguments)
+		IReadOnlyList<IExpressionNode> arguments)
 	{
 		CheckArgumentCount(callLocation, arguments, 1, 2);
 

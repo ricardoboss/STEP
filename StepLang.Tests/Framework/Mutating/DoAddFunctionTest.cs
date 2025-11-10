@@ -11,7 +11,7 @@ namespace StepLang.Tests.Framework.Mutating;
 public class DoAddFunctionTest
 {
 	[TestCaseSource(typeof(DoAddData))]
-	public void TestDoAdd(ListResult list, ExpressionNode elementExpression)
+	public void TestDoAdd(ListResult list, IExpressionNode elementExpression)
 	{
 		const string listIdentifier = "mylist";
 

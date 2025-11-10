@@ -27,11 +27,11 @@ public abstract class ListManipulationFunction : GenericFunction<ListResult, Fun
 		return new ListResult(result);
 	}
 
-	protected virtual IEnumerable<ExpressionNode[]> PrepareArgsForCallback(TokenLocation callLocation,
+	protected virtual IEnumerable<IExpressionNode[]> PrepareArgsForCallback(TokenLocation callLocation,
 		IEnumerable<ExpressionResult> list, FunctionDefinition callback)
 	{
 		var callbackParameters = callback.Parameters.ToList();
-		Func<ExpressionResult, int, ExpressionNode[]> argsConverter;
+		Func<ExpressionResult, int, IExpressionNode[]> argsConverter;
 
 		switch (callbackParameters.Count)
 		{
@@ -64,5 +64,5 @@ public abstract class ListManipulationFunction : GenericFunction<ListResult, Fun
 	}
 
 	protected abstract IEnumerable<ExpressionResult> EvaluateListManipulation(TokenLocation callLocation,
-		IInterpreter interpreter, IEnumerable<ExpressionNode[]> arguments, FunctionDefinition callback);
+		IInterpreter interpreter, IEnumerable<IExpressionNode[]> arguments, FunctionDefinition callback);
 }

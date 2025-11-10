@@ -14,7 +14,7 @@ public abstract class GenericFunction : GenericParameterlessFunction
 	protected override IEnumerable<NativeParameter> NativeParameters { get; } = [];
 
 	public override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
-		IReadOnlyList<ExpressionNode> arguments)
+		IReadOnlyList<IExpressionNode> arguments)
 	{
 		if (arguments.Count > 0)
 		{
@@ -30,7 +30,7 @@ public abstract class GenericFunction<T1> : GenericOneParameterFunction where T1
 	protected abstract ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter, T1 argument1);
 
 	public override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
-		IReadOnlyList<ExpressionNode> arguments)
+		IReadOnlyList<IExpressionNode> arguments)
 	{
 		var requiredCount = GetRequiredCount();
 		var totalCount = GetArgumentTotalCount();
@@ -54,7 +54,7 @@ public abstract class GenericFunction<T1, T2> : GenericTwoParameterFunction
 		T2 argument2);
 
 	public override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
-		IReadOnlyList<ExpressionNode> arguments)
+		IReadOnlyList<IExpressionNode> arguments)
 	{
 		var requiredCount = GetRequiredCount();
 		var totalCount = GetArgumentTotalCount();
@@ -80,7 +80,7 @@ public abstract class GenericFunction<T1, T2, T3> : GenericThreeParameterFunctio
 		T2 argument2, T3 argument3);
 
 	public override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
-		IReadOnlyList<ExpressionNode> arguments)
+		IReadOnlyList<IExpressionNode> arguments)
 	{
 		var requiredCount = GetRequiredCount();
 		var totalCount = GetArgumentTotalCount();
@@ -110,7 +110,7 @@ public abstract class GenericParameterlessFunction : NativeFunction
 		return NativeParameters.Count();
 	}
 
-	protected virtual ExpressionNode GetDefaultExpression(int index)
+	protected virtual IExpressionNode GetDefaultExpression(int index)
 	{
 		throw new InvalidOperationException();
 	}
@@ -133,7 +133,7 @@ public abstract class GenericParameterlessFunction : NativeFunction
 	}
 
 	protected TArgument GetArgument<TArgument>(int index, IExpressionEvaluator interpreter,
-		IReadOnlyList<ExpressionNode> arguments) where TArgument : ExpressionResult
+		IReadOnlyList<IExpressionNode> arguments) where TArgument : ExpressionResult
 	{
 		if (arguments.Count < index + 1)
 		{
@@ -153,14 +153,14 @@ public abstract class GenericParameterlessFunction : NativeFunction
 public abstract class GenericOneParameterFunction : GenericParameterlessFunction
 {
 	protected IReadOnlyList<ResultType> Argument1Types => NativeParameters.ElementAt(0).Types;
-	protected ExpressionNode? Argument1Default => NativeParameters.ElementAt(0).DefaultValue;
+	protected IExpressionNode? Argument1Default => NativeParameters.ElementAt(0).DefaultValue;
 
 	protected override int GetRequiredCount()
 	{
 		return Argument1Default is null ? 1 : 0;
 	}
 
-	protected override ExpressionNode GetDefaultExpression(int index)
+	protected override IExpressionNode GetDefaultExpression(int index)
 	{
 		return Argument1Default ?? throw new InvalidOperationException();
 	}
@@ -174,7 +174,7 @@ public abstract class GenericOneParameterFunction : GenericParameterlessFunction
 public abstract class GenericTwoParameterFunction : GenericOneParameterFunction
 {
 	protected IReadOnlyList<ResultType> Argument2Types => NativeParameters.ElementAt(1).Types;
-	protected ExpressionNode? Argument2Default => NativeParameters.ElementAt(1).DefaultValue;
+	protected IExpressionNode? Argument2Default => NativeParameters.ElementAt(1).DefaultValue;
 
 	protected override int GetRequiredCount()
 	{
@@ -193,7 +193,7 @@ public abstract class GenericTwoParameterFunction : GenericOneParameterFunction
 		return required;
 	}
 
-	protected override ExpressionNode GetDefaultExpression(int index)
+	protected override IExpressionNode GetDefaultExpression(int index)
 	{
 		return index switch
 		{
@@ -217,7 +217,7 @@ public abstract class GenericTwoParameterFunction : GenericOneParameterFunction
 public abstract class GenericThreeParameterFunction : GenericTwoParameterFunction
 {
 	protected IReadOnlyList<ResultType> Argument3Types => NativeParameters.ElementAt(2).Types;
-	protected ExpressionNode? Argument3Default => NativeParameters.ElementAt(2).DefaultValue;
+	protected IExpressionNode? Argument3Default => NativeParameters.ElementAt(2).DefaultValue;
 
 	protected override int GetRequiredCount()
 	{
@@ -241,7 +241,7 @@ public abstract class GenericThreeParameterFunction : GenericTwoParameterFunctio
 		return required;
 	}
 
-	protected override ExpressionNode GetDefaultExpression(int index)
+	protected override IExpressionNode GetDefaultExpression(int index)
 	{
 		return index switch
 		{
