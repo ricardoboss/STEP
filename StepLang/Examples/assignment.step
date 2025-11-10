@@ -1,7 +1,7 @@
-number a = 1
-string c = "Hello"
+number someNumber = 1
+string someString = "Hello"
 
-number b
-b = 1 + 2
+number someOtherNumber
+someOtherNumber = 1 + 2
 
-string d = toString(a) + " World" + 2 + EOL
+string anotherString = toString(someNumber) + " World" + 2 + EOL

@@ -27,47 +27,47 @@ while (i) {
 
 println(i, " is falsey")
 
-list l = [1, 2, 3, 4]
+list loopList = [1, 2, 3, 4]
 
 // iterate over the list values
-foreach (number n in l) {
+foreach (number n in loopList) {
 	print(n, EOL)
 }
 
 // iterate over the list values and keys
-foreach (number k: number v in l) {
+foreach (number k: number v in loopList) {
 	print(k, ": ", v, EOL)
 }
 
-map m = {"a": 1, "b": 2, "c": 3}
+map loopMap = {"a": 1, "b": 2, "c": 3}
 
 // iterate over the map values
-foreach (number n2 in m) {
+foreach (number n2 in loopMap) {
 	print(n2, EOL)
 }
 
 // iterate over the map values and keys
-foreach (string k2: number v2 in m) {
+foreach (string k2: number v2 in loopMap) {
 	print(k2, ": ", v2, EOL)
 }
 
 // declare key and value variables before usage
 string k3
 number v3
-foreach (k3: v3 in m) {
+foreach (k3: v3 in loopMap) {
 	print(k3, ": ", v3, EOL)
 }
 
 // call a function with another foreach loop
-list nums = [1, 2, 3, 4, 5]
-function f = (number x) {
+list loopNums = [1, 2, 3, 4, 5]
+function printNum = (number x) {
 	foreach (number n in [x]) {
 		println(n)
 	}
 }
 
-foreach (number x in nums) {
-	f(x)
+foreach (number x in loopNums) {
+	printNum(x)
 	println(x)
 }
 

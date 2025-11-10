@@ -1,12 +1,12 @@
-number a = 1
-number b = 2
+number firstVar = 1
+number secondVar = 2
 
 {
-	number a = 3
+	number firstVar = 3
 
-	println("(in scope) a = ", a)
-	println("(in scope) b = ", b)
+	println("(in scope) firstVar = ", firstVar)
+	println("(in scope) secondVar = ", secondVar)
 }
 
-println("a = ", a)
-println("b = ", b)
+println("firstVar = ", firstVar)
+println("secondVar = ", secondVar)
