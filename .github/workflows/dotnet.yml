@@ -109,4 +109,4 @@ jobs:
         uses: benchmark-action/github-action-benchmark@v1
         with:
           tool: 'benchmarkdotnet'
-          output-file-path: BenchmarkDotNet.Artifacts/results/Sample.Benchmarks-report-full-compressed.json
+          output-file-path: BenchmarkDotNet.Artifacts/results/StepLang.Benchmarks.ExampleFileBenchmark-report-full-compressed.json
