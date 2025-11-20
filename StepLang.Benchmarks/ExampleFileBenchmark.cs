@@ -9,9 +9,6 @@ namespace StepLang.Benchmarks;
 
 public class ExampleFileBenchmark
 {
-	[ParamsSource(nameof(ExampleFileNames))]
-	public string ExampleFileName { get; set; } = null!;
-
 	public static IEnumerable<string> ExampleFileNames
 	{
 		get
@@ -41,13 +38,43 @@ public class ExampleFileBenchmark
 		}
 	}
 
+	[ParamsSource(nameof(ExampleFileNames))]
+	public string ExampleFileName { get; set; } = null!;
+
+	private CharacterSource Source { get; set; } = null!;
+
+	private IReadOnlyList<Token> Tokens { get; set; } = null!;
+
+	private RootNode Root { get; set; } = null!;
+
+	[GlobalSetup]
+	public void PrepareSource()
+	{
+		var exampleFile = new FileInfo(Path.Combine("Examples", ExampleFileName));
+		if (!exampleFile.Exists)
+			throw new InvalidOperationException("Example file does not exist: " + exampleFile.FullName);
+
+		// exclude IO operations from benchmarks by loading the file now
+		Source = File.ReadAllText(exampleFile.FullName);
+	}
+
+	[GlobalSetup(Targets = [nameof(Parse), nameof(Interpret)])]
+	public void PrepareTokens()
+	{
+		Tokens = Tokenize();
+	}
+
+	[GlobalSetup(Targets = [nameof(Interpret)])]
+	public void PrepareAst()
+	{
+		Root = Parse();
+	}
+
 	[Benchmark]
 	public IReadOnlyList<Token> Tokenize()
 	{
-		var exampleFile = new FileInfo(ExampleFileName);
-
 		var diagnostics = new DiagnosticCollection();
-		var tokenizer = new Tokenizer(exampleFile, diagnostics);
+		var tokenizer = new Tokenizer(Source, diagnostics);
 		var tokens = tokenizer.Tokenize().ToList();
 
 		if (diagnostics.ContainsErrors)
@@ -61,9 +88,7 @@ public class ExampleFileBenchmark
 	{
 		var diagnostics = new DiagnosticCollection();
 
-		var tokens = Tokenize();
-
-		var parser = new Parser(tokens, diagnostics);
+		var parser = new Parser(Tokens, diagnostics);
 		var root = parser.ParseRoot();
 
 		if (diagnostics.ContainsErrors)
@@ -77,10 +102,8 @@ public class ExampleFileBenchmark
 	{
 		var diagnostics = new DiagnosticCollection();
 
-		var root = Parse();
-
 		var interpreter = new Interpreter(null, null, null, diagnostics);
-		root.Accept(interpreter);
+		Root.Accept(interpreter);
 
 		if (diagnostics.ContainsErrors)
 			throw new InvalidOperationException("Interpreting example file produced errors");
