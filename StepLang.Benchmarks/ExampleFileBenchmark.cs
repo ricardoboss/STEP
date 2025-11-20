@@ -58,15 +58,18 @@ public class ExampleFileBenchmark
 		Source = File.ReadAllText(exampleFile.FullName);
 	}
 
-	[GlobalSetup(Targets = [nameof(Parse), nameof(Interpret)])]
+	[GlobalSetup(Target = nameof(Parse))]
 	public void PrepareTokens()
 	{
+		PrepareSource();
 		Tokens = Tokenize();
 	}
 
-	[GlobalSetup(Targets = [nameof(Interpret)])]
+	[GlobalSetup(Target = nameof(Interpret))]
 	public void PrepareAst()
 	{
+		PrepareSource();
+		PrepareTokens();
 		Root = Parse();
 	}
 
