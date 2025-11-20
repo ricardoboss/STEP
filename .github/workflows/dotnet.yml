@@ -103,7 +103,7 @@ jobs:
         run: dotnet restore
 
       - name: Run Benchmarks
-        run: dotnet run --project StepLang.Benchmarks/StepLang.Benchmarks.csproj -- --exporters json  --filter '*'
+        run: dotnet run --configuration Test --project StepLang.Benchmarks/StepLang.Benchmarks.csproj -- --exporters json --filter '*'
 
       - name: Store benchmark result
         uses: benchmark-action/github-action-benchmark@v1
