@@ -51,6 +51,6 @@ jobs:
           # Enable Job Summary for PRs
           summary-always: true
           # Push and deploy GitHub pages branch automatically
-          auto-push: true
+          auto-push: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
           # GitHub API token to make a commit comment
           github-token: ${{ secrets.GITHUB_TOKEN }}
