@@ -37,6 +37,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		.github\workflows\verify.yml = .github\workflows\verify.yml
 		.github\workflows\backport.yml = .github\workflows\backport.yml
 		.github\workflows\maintenance.yml = .github\workflows\maintenance.yml
+		.github\workflows\benchmark.yml = .github\workflows\benchmark.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StepLang.Tooling.Analysis", "StepLang.Tooling.Analysis\StepLang.Tooling.Analysis.csproj", "{728ABD46-2621-45BC-ACB1-0EF00267DCCC}"
