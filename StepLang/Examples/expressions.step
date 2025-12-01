@@ -1,6 +1,6 @@
-number a = 1 + 2
+number sum = 1 + 2
 
-println(a)
+println(sum)
 println(1 + (2))
 println(2 + 3)
 println(1 * 2 + 3)
@@ -15,7 +15,7 @@ println(true)
 println(false)
 println(-1)
 println(-1.4)
-println(-a)
+println(-sum)
 println(!false)
 println(!(true && !false))
 

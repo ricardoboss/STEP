@@ -34,12 +34,12 @@
 	</PropertyGroup>
 
 	<!-- Hide actual source paths in release builds -->
-	<PropertyGroup Condition="$(Configuration) == 'Release'">
+	<PropertyGroup Condition="$(Configuration) != 'Debug'">
 		<Deterministic>true</Deterministic>
 		<DeterministicSourcePaths>true</DeterministicSourcePaths>
 	</PropertyGroup>
 
-	<ItemGroup Condition="$(Configuration) == 'Release'">
+	<ItemGroup Condition="$(Configuration) != 'Debug'">
 		<SourceRoot Include="$(MSBuildThisFileDirectory)/" />
 	</ItemGroup>
 
