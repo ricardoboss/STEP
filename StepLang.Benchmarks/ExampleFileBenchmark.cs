@@ -4,9 +4,11 @@ using StepLang.Interpreting;
 using StepLang.Parsing;
 using StepLang.Parsing.Nodes;
 using StepLang.Tokenizing;
+using System.Diagnostics.CodeAnalysis;
 
 namespace StepLang.Benchmarks;
 
+[SuppressMessage("Maintainability", "CA1515:Consider making public types internal")]
 public class ExampleFileBenchmark
 {
 	public static IEnumerable<string> ExampleFileNames
