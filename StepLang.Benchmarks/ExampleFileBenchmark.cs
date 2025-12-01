@@ -23,16 +23,16 @@ public class ExampleFileBenchmark
 			// yield return "functions.step";
 			// yield return "imports.step";
 			// yield return "isset.step";
-			yield return "json.step";
+			// yield return "json.step";
 			// yield return "lists.step";
-			yield return "looping.step";
+			// yield return "looping.step";
 			// yield return "maps.step";
 			yield return "math.step";
 			// yield return "nullable.step";
 			// yield return "range.step";
 			// yield return "recursive.step";
 			// yield return "step-by.step";
-			yield return "strings.step";
+			// yield return "strings.step";
 			// yield return "time.step";
 			// yield return "zipped.step";
 		}
