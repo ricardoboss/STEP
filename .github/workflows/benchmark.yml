@@ -34,12 +34,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuget-
 
-      - name: Download previous benchmark data
-        uses: actions/cache@v4
-        with:
-          path: ./cache
-          key: ${{ runner.os }}-benchmark
-
       - name: Restore dependencies
         run: dotnet restore
 
@@ -51,7 +45,6 @@ jobs:
         with:
           tool: 'benchmarkdotnet'
           output-file-path: BenchmarkDotNet.Artifacts/results/StepLang.Benchmarks.ExampleFileBenchmark-report-full-compressed.json
-          external-data-json-path: ./cache/benchmark-data.json
           # Enable Job Summary for PRs
           summary-always: true
           # Push and deploy GitHub pages branch automatically
