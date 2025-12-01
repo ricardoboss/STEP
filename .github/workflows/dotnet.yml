@@ -105,8 +105,8 @@ jobs:
       - name: Run Benchmarks
         run: dotnet run --configuration Test --project StepLang.Benchmarks/StepLang.Benchmarks.csproj -- --exporters json --filter '*'
 
-      - name: Store benchmark result
-        uses: benchmark-action/github-action-benchmark@v1
-        with:
-          tool: 'benchmarkdotnet'
-          output-file-path: BenchmarkDotNet.Artifacts/results/StepLang.Benchmarks.ExampleFileBenchmark-report-full-compressed.json
+#      - name: Store benchmark result
+#        uses: benchmark-action/github-action-benchmark@v1
+#        with:
+#          tool: 'benchmarkdotnet'
+#          output-file-path: BenchmarkDotNet.Artifacts/results/StepLang.Benchmarks.ExampleFileBenchmark-report-full-compressed.json
