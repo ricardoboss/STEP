@@ -6,7 +6,7 @@ echo "Cloning wiki..."
 git clone "https://github.com/$GITHUB_REPOSITORY.wiki.git" _wiki
 
 echo "Syncing wiki files..."
-rsync -av --delete docs/StepLang.Wiki/ _wiki/ --exclude .git --exclude StepLang.Wiki.csproj --exclude packages.lock.json
+rsync -av --delete docs/StepLang.Wiki/ _wiki/ --exclude .git --exclude StepLang.Wiki.proj --exclude packages.lock.json
 
 # switch to wiki directory
 pushd _wiki
