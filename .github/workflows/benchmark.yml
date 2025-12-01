@@ -40,6 +40,9 @@ jobs:
       - name: Run Benchmarks
         run: dotnet run --configuration Test --project StepLang.Benchmarks/StepLang.Benchmarks.csproj -- --exporters json --filter '*'
 
+      - name: Revert changes to unrelated files
+        run: git restore **/packages.lock.json
+
       - name: Store benchmark result
         uses: benchmark-action/github-action-benchmark@v1
         with:
