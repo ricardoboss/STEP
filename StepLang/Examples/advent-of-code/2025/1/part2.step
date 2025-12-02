@@ -1,0 +1,55 @@
+import "common.step"
+list lines = readLines("1/example.txt")
+
+function interpretLineDelta = (string line) {
+	bool left = line[0] == "L"
+	number value = toNumber(substring(line, 1))
+
+	if (left) {
+		return -1 * value
+	}
+
+	return value
+}
+
+number hit0 = 0
+number current = 50
+
+foreach (string line in lines) {
+	number delta = interpretLineDelta(line)
+
+	number previous = current
+	current += delta
+
+	if (current < 0) {
+		while (current < 0) {
+			if (previous != 0) {
+				hit0++
+				previous = current
+			}
+
+			current += 100
+
+			println({"current": current, "hit0": hit0, "delta": delta})
+		}
+	} else if (current > 99) {
+		while (current > 99) {
+			if (previous != 0) {
+				hit0++
+				previous = current
+			}
+
+			current -= 100
+
+			println({"current": current, "hit0": hit0, "delta": delta})
+		}
+	} else if (current == 0) {
+		hit0++
+
+		println({"current": current, "hit0": hit0, "delta": delta})
+	} else {
+		println({"current": current, "hit0": hit0, "delta": delta})
+	}
+}
+
+println("times hit 0: ", hit0)

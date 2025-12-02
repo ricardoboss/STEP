@@ -1,0 +1,36 @@
+import "common.step"
+list lines = readLines("1/example.txt")
+
+function interpretLineDelta = (string line) {
+	bool left = line[0] == "L"
+	number value = toNumber(substring(line, 1))
+
+	if (left) {
+		return -1 * value
+	}
+
+	return value
+}
+
+number hit0 = 0
+number current = 50
+
+foreach (string line in lines) {
+	number delta = interpretLineDelta(line)
+
+	current += delta
+
+	while (current < 0) {
+		current += 100
+	}
+
+	while (current > 99) {
+		current -= 100
+	}
+
+	if (current == 0) {
+		hit0++
+	}
+}
+
+println("times hit 0: ", hit0)

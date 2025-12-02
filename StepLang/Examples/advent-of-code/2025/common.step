@@ -1,0 +1,9 @@
+function readLines = (string file) {
+	string? input = fileRead(file)
+	if (input == null) {
+		println("Could not read file")
+		return null
+	}
+
+	return split(input, "\n")
+}
