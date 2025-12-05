@@ -20,6 +20,8 @@ public class Variable(string identifier, IReadOnlyList<ResultType> types, bool n
 
 	public override void Assign(TokenLocation assignmentLocation, ExpressionResult newValue)
 	{
+		using var span = Telemetry.Profile();
+
 		if (!Accepts(newValue))
 		{
 			if (Nullable || newValue is NullResult)
@@ -35,6 +37,8 @@ public class Variable(string identifier, IReadOnlyList<ResultType> types, bool n
 
 	public bool Accepts(ExpressionResult value)
 	{
+		using var span = Telemetry.Profile();
+
 		return value switch
 		{
 			VoidResult => false, // can never assign void to a variable

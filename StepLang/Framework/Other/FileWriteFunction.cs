@@ -20,6 +20,8 @@ public class FileWriteFunction : GenericFunction<StringResult, StringResult, Boo
 	protected override BoolResult Invoke(TokenLocation callLocation, IInterpreter interpreter, StringResult argument1,
 		StringResult argument2, BoolResult argument3)
 	{
+		using var span = Telemetry.Profile();
+
 		var path = argument1.Value;
 		var content = argument2.Value;
 		var append = argument3.Value;

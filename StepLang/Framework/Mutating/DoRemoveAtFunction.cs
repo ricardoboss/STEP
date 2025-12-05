@@ -19,6 +19,8 @@ public class DoRemoveAtFunction : GenericFunction<ListResult, NumberResult>
 	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ListResult argument1, NumberResult argument2)
 	{
+		using var span = Telemetry.Profile();
+
 		var list = argument1.Value;
 		var index = argument2;
 

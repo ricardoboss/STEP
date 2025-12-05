@@ -20,6 +20,8 @@ public class ClampFunction : GenericFunction<NumberResult, NumberResult, NumberR
 	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		NumberResult argument1, NumberResult argument2, NumberResult argument3)
 	{
+		using var span = Telemetry.Profile();
+
 		var min = argument1;
 		var max = argument2;
 		var x = argument3;

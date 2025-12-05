@@ -18,6 +18,8 @@ public class DoShiftFunction : GenericFunction<ListResult>
 	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ListResult argument1)
 	{
+		using var span = Telemetry.Profile();
+
 		var list = argument1.Value;
 		if (list.Count == 0)
 		{

@@ -7,6 +7,8 @@ public partial class Interpreter
 {
 	public void Visit(IncrementStatementNode statementNode)
 	{
+		using var span = Telemetry.Profile(nameof(IncrementStatementNode));
+
 		var variable = CurrentScope.GetVariable(statementNode.Identifier);
 		var value = variable.Value;
 		if (value is not NumberResult number)
@@ -19,6 +21,8 @@ public partial class Interpreter
 
 	public void Visit(DecrementStatementNode statementNode)
 	{
+		using var span = Telemetry.Profile(nameof(DecrementStatementNode));
+
 		var variable = CurrentScope.GetVariable(statementNode.Identifier);
 		var value = variable.Value;
 		if (value is not NumberResult number)

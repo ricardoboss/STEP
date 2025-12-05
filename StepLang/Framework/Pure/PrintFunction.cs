@@ -24,6 +24,8 @@ public class PrintFunction : NativeFunction
 	public override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		IReadOnlyList<ExpressionNode> arguments)
 	{
+		using var span = Telemetry.Profile();
+
 		if (interpreter.StdOut is not { } stdOut)
 		{
 			return VoidResult.Instance;

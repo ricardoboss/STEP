@@ -18,6 +18,8 @@ public abstract class ListManipulationFunction : GenericFunction<ListResult, Fun
 	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ListResult argument1, FunctionResult argument2)
 	{
+		using var span = Telemetry.Profile();
+
 		var list = argument1.DeepClone().Value;
 		var callback = argument2.Value;
 

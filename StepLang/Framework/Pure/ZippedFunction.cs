@@ -23,6 +23,8 @@ public class ZippedFunction : GenericFunction<ListResult, ListResult, FunctionRe
 		FunctionResult argument3
 	)
 	{
+		using var span = Telemetry.Profile();
+
 		return argument1.DeepClone().Value
 			.Zip(
 				argument2.DeepClone().Value,

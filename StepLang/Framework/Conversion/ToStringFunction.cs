@@ -22,11 +22,15 @@ public class ToStringFunction : GenericFunction<ExpressionResult, ExpressionResu
 	protected override StringResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ExpressionResult argument1, ExpressionResult argument2)
 	{
+		using var span = Telemetry.Profile();
+
 		return Render(argument1, argument2.IsTruthy());
 	}
 
 	internal static string Render(ExpressionResult result, bool pretty = false)
 	{
+		using var span = Telemetry.Profile();
+
 		using var writer = new StringWriter();
 
 		if (pretty)
@@ -45,6 +49,8 @@ public class ToStringFunction : GenericFunction<ExpressionResult, ExpressionResu
 
 	private static void Render(TextWriter writer, ExpressionResult result)
 	{
+		using var span = Telemetry.Profile();
+
 		switch (result)
 		{
 			case StringResult { Value: var stringValue }:
@@ -78,6 +84,8 @@ public class ToStringFunction : GenericFunction<ExpressionResult, ExpressionResu
 
 	private static void RenderList(TextWriter writer, ListResult result)
 	{
+		using var span = Telemetry.Profile();
+
 		writer.Write("[");
 
 		if (writer is IndentedTextWriter openingWriter)
@@ -125,6 +133,8 @@ public class ToStringFunction : GenericFunction<ExpressionResult, ExpressionResu
 
 	private static void RenderMap(TextWriter writer, MapResult result)
 	{
+		using var span = Telemetry.Profile();
+
 		writer.Write("{");
 
 		if (writer is IndentedTextWriter openingWriter)
@@ -177,6 +187,8 @@ public class ToStringFunction : GenericFunction<ExpressionResult, ExpressionResu
 
 	private static void RenderQuoted(TextWriter writer, string value)
 	{
+		using var span = Telemetry.Profile();
+
 		writer.Write('\"');
 		writer.Write(value);
 		writer.Write('\"');

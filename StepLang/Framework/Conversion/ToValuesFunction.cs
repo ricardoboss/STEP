@@ -17,6 +17,8 @@ public class ToValuesFunction : GenericFunction<MapResult>
 
 	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter, MapResult argument1)
 	{
+		using var span = Telemetry.Profile();
+
 		var map = argument1.Value;
 
 		return new ListResult(map.Values.ToList());

@@ -19,6 +19,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(AddExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(AddExpressionNode));
+
 		var (left, right, location) = EvaluateBinary(expressionNode);
 
 		return left switch
@@ -33,6 +35,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(CoalesceExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(CoalesceExpressionNode));
+
 		var leftResult = expressionNode.Left.EvaluateUsing(this);
 		if (leftResult is not NullResult)
 		{
@@ -44,6 +48,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(NotEqualsExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(NotEqualsExpressionNode));
+
 		var (left, right, location) = EvaluateBinary(expressionNode);
 
 		if (left is VoidResult || right is VoidResult)
@@ -72,6 +78,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(EqualsExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(EqualsExpressionNode));
+
 		var (left, right, location) = EvaluateBinary(expressionNode);
 
 		if (left is VoidResult || right is VoidResult)
@@ -100,6 +108,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(NegateExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(NegateExpressionNode));
+
 		var result = expressionNode.Expression.EvaluateUsing(this);
 
 		return result switch
@@ -111,6 +121,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(SubtractExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(SubtractExpressionNode));
+
 		var (left, right, location) = EvaluateBinary(expressionNode);
 
 		return left switch
@@ -122,6 +134,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(MultiplyExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(MultiplyExpressionNode));
+
 		var (left, right, location) = EvaluateBinary(expressionNode);
 
 		return left switch
@@ -133,6 +147,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(DivideExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(DivideExpressionNode));
+
 		var (left, right, location) = EvaluateBinary(expressionNode);
 
 		// TODO: throw a StepLangException when dividing by zero to provide more useful info
@@ -146,6 +162,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(ModuloExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(ModuloExpressionNode));
+
 		var (left, right, location) = EvaluateBinary(expressionNode);
 
 		return left switch
@@ -157,6 +175,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(PowerExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(PowerExpressionNode));
+
 		var (left, right, location) = EvaluateBinary(expressionNode);
 
 		if (left is not NumberResult baseNumber || right is not NumberResult exponentNumber)
@@ -169,6 +189,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(GreaterThanExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(GreaterThanExpressionNode));
+
 		var (left, right, location) = EvaluateBinary(expressionNode);
 
 		return left switch
@@ -180,6 +202,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(LessThanExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(LessThanExpressionNode));
+
 		var (left, right, location) = EvaluateBinary(expressionNode);
 
 		return left switch
@@ -191,6 +215,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(GreaterThanOrEqualExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(GreaterThanOrEqualExpressionNode));
+
 		var (left, right, location) = EvaluateBinary(expressionNode);
 
 		return left switch
@@ -203,6 +229,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(LessThanOrEqualExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(LessThanOrEqualExpressionNode));
+
 		var (left, right, location) = EvaluateBinary(expressionNode);
 
 		return left switch
@@ -215,6 +243,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(LogicalAndExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(LogicalAndExpressionNode));
+
 		var left = expressionNode.Left.EvaluateUsing(this);
 		if (left is not BoolResult aBool)
 		{
@@ -231,6 +261,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(LogicalOrExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(LogicalOrExpressionNode));
+
 		var left = expressionNode.Left.EvaluateUsing(this);
 		if (left is not BoolResult aBool)
 		{
@@ -247,6 +279,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(BitwiseXorExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(BitwiseXorExpressionNode));
+
 		var (left, right, location) = EvaluateBinary(expressionNode);
 
 		return left switch
@@ -258,6 +292,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(BitwiseAndExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(BitwiseAndExpressionNode));
+
 		var (left, right, location) = EvaluateBinary(expressionNode);
 
 		return left switch
@@ -269,6 +305,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(BitwiseOrExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(BitwiseOrExpressionNode));
+
 		var (left, right, location) = EvaluateBinary(expressionNode);
 
 		return left switch
@@ -280,6 +318,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(BitwiseShiftLeftExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(BitwiseShiftLeftExpressionNode));
+
 		var (left, right, location) = EvaluateBinary(expressionNode);
 
 		return left switch
@@ -291,6 +331,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(BitwiseShiftRightExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(BitwiseShiftRightExpressionNode));
+
 		var (left, right, location) = EvaluateBinary(expressionNode);
 
 		return left switch
@@ -302,6 +344,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(BitwiseRotateLeftExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(BitwiseRotateLeftExpressionNode));
+
 		var (left, right, location) = EvaluateBinary(expressionNode);
 
 		return left switch
@@ -314,6 +358,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(BitwiseRotateRightExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(BitwiseRotateRightExpressionNode));
+
 		var (left, right, location) = EvaluateBinary(expressionNode);
 
 		return left switch
@@ -326,6 +372,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(NotExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(NotExpressionNode));
+
 		var result = expressionNode.Expression.EvaluateUsing(this);
 
 		return result switch

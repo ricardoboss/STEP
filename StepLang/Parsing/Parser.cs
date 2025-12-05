@@ -16,6 +16,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	public RootNode ParseRoot()
 	{
+		using var span = Telemetry.Profile();
+
 		var imports = ParseImports();
 		var statements = ParseStatements(TokenType.EndOfFile);
 
@@ -24,6 +26,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private List<IImportNode> ParseImports()
 	{
+		using var span = Telemetry.Profile();
+
 		var imports = new List<IImportNode>();
 		while (tokens.PeekType() is TokenType.ImportKeyword)
 		{
@@ -35,6 +39,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private IImportNode ParseImport()
 	{
+		using var span = Telemetry.Profile();
+
 		_ = tokens.Dequeue(TokenType.ImportKeyword);
 		var pathResult = tokens.Dequeue(TokenType.LiteralString);
 		switch (pathResult)
@@ -55,6 +61,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private List<StatementNode> ParseStatements(TokenType stopTokenType)
 	{
+		using var span = Telemetry.Profile();
+
 		var statements = new List<StatementNode>();
 		TokenType? nextType;
 		while ((nextType = tokens.PeekType()) != null && nextType != stopTokenType)
@@ -74,6 +82,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private StatementNode ParseStatement()
 	{
+		using var span = Telemetry.Profile();
+
 		var token = tokens.Peek();
 		switch (token?.Type)
 		{
@@ -119,6 +129,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	public StatementNode ParseIdentifierUsage()
 	{
+		using var span = Telemetry.Profile();
+
 		var next = tokens.Peek(1);
 		if (next is null)
 		{
@@ -163,6 +175,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private StatementNode ParseDiscardStatement()
 	{
+		using var span = Telemetry.Profile();
+
 		var result = tokens.Dequeue(TokenType.UnderscoreSymbol);
 		if (result is Err<Token> error)
 			return diagnostics.AddError(error);
@@ -178,6 +192,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private StatementNode ParseIndexAssignment()
 	{
+		using var span = Telemetry.Profile();
+
 		var identifierResult = tokens.Dequeue(TokenType.Identifier);
 		if (identifierResult is Err<Token> identifierError)
 			return diagnostics.AddError(identifierError);
@@ -220,6 +236,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private StatementNode ParseShorthandMathOperation()
 	{
+		using var span = Telemetry.Profile();
+
 		var identifierResult = tokens.Dequeue(TokenType.Identifier);
 		if (identifierResult is Err<Token> identifierError)
 			return diagnostics.AddError(identifierError);
@@ -247,6 +265,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private StatementNode ParseShorthandMathOperationExpression()
 	{
+		using var span = Telemetry.Profile();
+
 		var identifierResult = tokens.Dequeue(TokenType.Identifier);
 		if (identifierResult is Err<Token> identifierError)
 			return diagnostics.AddError(identifierError);
@@ -381,6 +401,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private StatementNode ParseForeachStatement()
 	{
+		using var span = Telemetry.Profile();
+
 		var foreachKeywordResult = tokens.Dequeue(TokenType.ForEachKeyword);
 		if (foreachKeywordResult is Err<Token> foreachError)
 			return diagnostics.AddError(foreachError);
@@ -557,6 +579,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private StatementNode ParseCodeBlock()
 	{
+		using var span = Telemetry.Profile();
+
 		var openCurlyBraceResult = tokens.Dequeue(TokenType.OpeningCurlyBracket);
 		if (openCurlyBraceResult is Err<Token> openError)
 			return diagnostics.AddError(openError);
@@ -576,6 +600,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private StatementNode ParseContinueStatement()
 	{
+		using var span = Telemetry.Profile();
+
 		var continueTokenResult = tokens.Dequeue(TokenType.ContinueKeyword);
 		if (continueTokenResult is Err<Token> continueError)
 			return diagnostics.AddError(continueError);
@@ -585,6 +611,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private StatementNode ParseBreakStatement()
 	{
+		using var span = Telemetry.Profile();
+
 		var breakTokenResult = tokens.Dequeue(TokenType.BreakKeyword);
 		if (breakTokenResult is Err<Token> breakError)
 			return diagnostics.AddError(breakError);
@@ -594,6 +622,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private StatementNode ParseReturnStatement()
 	{
+		using var span = Telemetry.Profile();
+
 		var returnKeywordResult = tokens.Dequeue(TokenType.ReturnKeyword);
 		if (returnKeywordResult is Err<Token> returnError)
 			return diagnostics.AddError(returnError);
@@ -612,6 +642,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private StatementNode ParseWhileStatement()
 	{
+		using var span = Telemetry.Profile();
+
 		var whileKeywordResult = tokens.Dequeue(TokenType.WhileKeyword);
 		if (whileKeywordResult is Err<Token> whileError)
 			return diagnostics.AddError(whileError);
@@ -631,6 +663,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private StatementNode ParseIfStatement()
 	{
+		using var span = Telemetry.Profile();
+
 		var ifKeywordResult = tokens.Dequeue(TokenType.IfKeyword);
 		if (ifKeywordResult is Err<Token> ifError)
 			return diagnostics.AddError(ifError);
@@ -679,6 +713,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private CallStatementNode ParseFunctionCall()
 	{
+		using var span = Telemetry.Profile();
+
 		var callExpression = ParseFunctionCallExpression();
 
 		return new CallStatementNode(callExpression);
@@ -686,6 +722,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private IVariableDeclarationNode ParseVariableDeclaration()
 	{
+		using var span = Telemetry.Profile();
+
 		var typeResult = tokens.Dequeue(TokenType.TypeName);
 		if (typeResult is Err<Token> typeError)
 			return diagnostics.AddVariableDeclarationError(typeError);
@@ -737,6 +775,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private StatementNode ParseVariableAssignment()
 	{
+		using var span = Telemetry.Profile();
+
 		var identifierResult = tokens.Dequeue(TokenType.Identifier);
 		if (identifierResult is Err<Token> identifierError)
 			return diagnostics.AddError(identifierError);
@@ -756,6 +796,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private ExpressionNode ParseExpression(int parentPrecedence = 0)
 	{
+		using var span = Telemetry.Profile();
+
 		var left = ParsePrimaryExpression();
 
 		while (tokens.PeekType() is TokenType.OpeningSquareBracket)
@@ -885,6 +927,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private Result<BinaryExpressionOperator> ParseExpressionOperator(List<Token> operatorTokens)
 	{
+		using var span = Telemetry.Profile();
+
 		switch (operatorTokens.Count)
 		{
 			case 3:
@@ -1014,6 +1058,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private ExpressionNode ParsePrimaryExpression()
 	{
+		using var span = Telemetry.Profile();
+
 		var maybeTokenType = tokens.PeekType();
 		if (maybeTokenType is not { } tokenType)
 		{
@@ -1072,6 +1118,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private ExpressionNode ParseNotExpression()
 	{
+		using var span = Telemetry.Profile();
+
 		var exclamationMarkResult = tokens.Dequeue(TokenType.ExclamationMarkSymbol);
 		if (exclamationMarkResult is Err<Token> exclamationMarkError)
 			return diagnostics.AddErrorExpression(exclamationMarkError);
@@ -1083,6 +1131,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private ExpressionNode ParseNegateExpression()
 	{
+		using var span = Telemetry.Profile();
+
 		var minusResult = tokens.Dequeue(TokenType.MinusSymbol);
 		if (minusResult is Err<Token> minusError)
 			return diagnostics.AddErrorExpression(minusError);
@@ -1094,6 +1144,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private ExpressionNode ParseMapExpression()
 	{
+		using var span = Telemetry.Profile();
+
 		var openCurlyBraceResult = tokens.Dequeue(TokenType.OpeningCurlyBracket);
 		if (openCurlyBraceResult is Err<Token> openError)
 			return diagnostics.AddErrorExpression(openError);
@@ -1127,6 +1179,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private ExpressionNode ParseListExpression()
 	{
+		using var span = Telemetry.Profile();
+
 		var openSquareBracketResult = tokens.Dequeue(TokenType.OpeningSquareBracket);
 		if (openSquareBracketResult is Err<Token> openError)
 			return diagnostics.AddErrorExpression(openError);
@@ -1152,6 +1206,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private ExpressionNode ParseIdentifierExpression()
 	{
+		using var span = Telemetry.Profile();
+
 		var identifierResult = tokens.Dequeue(TokenType.Identifier);
 		if (identifierResult is Err<Token> identifierError)
 			return diagnostics.AddErrorExpression(identifierError);
@@ -1161,6 +1217,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private ExpressionNode ParseFunctionCallExpression()
 	{
+		using var span = Telemetry.Profile();
+
 		var identifierResult = tokens.Dequeue(TokenType.Identifier);
 		if (identifierResult is Err<Token> identifierError)
 			return diagnostics.AddErrorExpression(identifierError);
@@ -1176,6 +1234,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private ExpressionNode ParseNestedExpression()
 	{
+		using var span = Telemetry.Profile();
+
 		_ = tokens.Dequeue(TokenType.OpeningParentheses);
 
 		var expression = ParseExpression();
@@ -1187,6 +1247,8 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 
 	private ExpressionNode ParseFunctionDefinitionExpression()
 	{
+		using var span = Telemetry.Profile();
+
 		var openParenthesisResult = tokens.Dequeue(TokenType.OpeningParentheses);
 		if (openParenthesisResult is Err<Token> openError)
 			return diagnostics.AddErrorExpression(openError);

@@ -19,6 +19,8 @@ public class ContainsFunction : GenericFunction<ExpressionResult, ExpressionResu
 	protected override BoolResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ExpressionResult argument1, ExpressionResult argument2)
 	{
+		using var span = Telemetry.Profile();
+
 		var result = IndexOfFunction.GetResult(argument1, argument2);
 
 		return result switch

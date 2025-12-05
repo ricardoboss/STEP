@@ -1,9 +1,15 @@
+using OpenTelemetry;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using StepLang.CLI.Commands;
 using StepLang.Tooling.CLI;
 using StepLang.Tooling.Meta;
 using System.Diagnostics.CodeAnalysis;
+using StepLangTelemetry = StepLang.Telemetry;
+using StepLangCliTelemetry = StepLang.Tooling.CLI.Telemetry;
 
 namespace StepLang.CLI;
 
@@ -33,6 +39,30 @@ internal static class Program
 	{
 		const string slogan = "STEP - Simple Transition to Elevated Programming";
 
+		var libraryResource = ResourceBuilder
+			.CreateDefault()
+			.AddService("StepLang", "StepLang", CoreMetadataProvider.Instance.FullSemVer);
+
+		var cliResource = ResourceBuilder
+			.CreateDefault()
+			.AddService("StepLang.CLI", "StepLang", CliMetadataProvider.Instance.FullSemVer);
+
+		using var tracerProvider = Sdk.CreateTracerProviderBuilder()
+			.AddSource(StepLangTelemetry.ActivityName)
+			.AddSource(StepLangCliTelemetry.ActivityName)
+			.SetResourceBuilder(libraryResource)
+			.SetSampler(new AlwaysOnSampler())
+			.AddOtlpExporter()
+			// .AddConsoleExporter()
+			.Build();
+
+		using var meterProvider = Sdk.CreateMeterProviderBuilder()
+			.AddMeter(StepLangCliTelemetry.CommandMeterName)
+			.SetResourceBuilder(cliResource)
+			.AddOtlpExporter()
+			// .AddConsoleExporter()
+			.Build();
+
 		var app = new CommandApp<DefaultCommand>()
 				.WithDescription(slogan + Environment.NewLine + "Version: " + CliMetadataProvider.Instance.FullSemVer)
 			;
@@ -58,7 +88,7 @@ internal static class Program
 				.SetExceptionHandler(ErrorHandler.HandleException)
 				;
 
-			var interceptor = new OptionInterceptor(
+			var optionInterceptor = new OptionInterceptor(
 				config.Settings.Console ?? AnsiConsole.Console,
 				CliMetadataProvider.Instance,
 				new Dictionary<string, IMetadataProvider>
@@ -68,7 +98,11 @@ internal static class Program
 				}
 			);
 
-			config.SetInterceptor(interceptor);
+			var telemetryInterceptor = new TelemetryInterceptor();
+
+			var multiInterceptor = new MultipleCommandInterceptor(optionInterceptor, telemetryInterceptor);
+
+			config.SetInterceptor(multiInterceptor);
 
 			config.AddExample("script.step");
 			config.AddExample("format script.step");

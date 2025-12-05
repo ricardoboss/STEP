@@ -21,6 +21,8 @@ public class DoSwapFunction : GenericFunction<ExpressionResult, ExpressionResult
 	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ExpressionResult argument1, ExpressionResult argument2, ExpressionResult argument3)
 	{
+		using var span = Telemetry.Profile();
+
 		return argument1 switch
 		{
 			MapResult mapResult when argument2 is StringResult aKey && argument3 is StringResult bKey => SwapMap(

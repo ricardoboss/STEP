@@ -15,6 +15,8 @@ public class IssetFunction : GenericFunction<StringResult>
 
 	protected override BoolResult Invoke(TokenLocation callLocation, IInterpreter interpreter, StringResult argument1)
 	{
+		using var span = Telemetry.Profile();
+
 		return interpreter.CurrentScope.Exists(argument1.Value, includeParent: true);
 	}
 }

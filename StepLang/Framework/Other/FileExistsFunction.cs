@@ -17,6 +17,8 @@ public class FileExistsFunction : GenericFunction<StringResult>
 
 	protected override BoolResult Invoke(TokenLocation callLocation, IInterpreter interpreter, StringResult argument1)
 	{
+		using var span = Telemetry.Profile();
+
 		var path = argument1.Value;
 		var info = callLocation.GetFileInfoFromPath(path);
 

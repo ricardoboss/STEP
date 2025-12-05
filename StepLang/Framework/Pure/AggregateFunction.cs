@@ -23,6 +23,8 @@ public class AggregateFunction : GenericFunction<ExpressionResult, ListResult, F
 		ExpressionResult argument1,
 		ListResult argument2, FunctionResult argument3)
 	{
+		using var span = Telemetry.Profile();
+
 		// ReSharper disable once InlineTemporaryVariable
 		var initial = argument1;
 		var list = argument2.DeepClone().Value;

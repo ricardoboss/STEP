@@ -8,6 +8,8 @@ public partial class Interpreter : IImportNodeVisitor
 {
 	public void Visit(ImportNode importNode)
 	{
+		using var span = Telemetry.Profile(nameof(ImportNode));
+
 		var pathToken = importNode.PathToken;
 
 		FileInfo importedFile;
@@ -51,6 +53,8 @@ public partial class Interpreter : IImportNodeVisitor
 
 	public void Visit(ErrorImportNode importNode)
 	{
+		using var span = Telemetry.Profile(nameof(ErrorImportNode));
+
 		throw new NotSupportedException("Cannot interpret imports with errors");
 	}
 }

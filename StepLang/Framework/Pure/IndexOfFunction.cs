@@ -22,6 +22,8 @@ public class IndexOfFunction : GenericFunction<ExpressionResult, ExpressionResul
 	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ExpressionResult argument1, ExpressionResult argument2)
 	{
+		using var span = Telemetry.Profile();
+
 		return GetResult(argument1, argument2);
 	}
 

@@ -18,6 +18,8 @@ public class ReversedFunction : GenericFunction<ExpressionResult>
 	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ExpressionResult argument1)
 	{
+		using var span = Telemetry.Profile();
+
 		return argument1 switch
 		{
 			ListResult list => new ListResult(list.DeepClone().Value.Reverse().ToList()),

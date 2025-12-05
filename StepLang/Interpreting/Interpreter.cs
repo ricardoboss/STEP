@@ -47,6 +47,8 @@ public partial class Interpreter : IInterpreter
 
 	public Scope PushScope(Scope? parent = null)
 	{
+		using var span = Telemetry.Profile();
+
 		var newScope = new Scope(parent ?? CurrentScope);
 
 		scopes.Push(newScope);
@@ -58,6 +60,8 @@ public partial class Interpreter : IInterpreter
 
 	public Scope PopScope()
 	{
+		using var span = Telemetry.Profile();
+
 		DebugOut?.WriteLine($"Popping scope (new depth: {scopes.Count - 2})");
 
 		return scopes.Pop();
@@ -65,6 +69,8 @@ public partial class Interpreter : IInterpreter
 
 	private void Execute(IEnumerable<StatementNode> statements)
 	{
+		using var span = Telemetry.Profile(nameof(IEnumerable<StatementNode>));
+
 		foreach (var statement in statements)
 		{
 			statement.Accept(this);
@@ -94,6 +100,8 @@ public partial class Interpreter : IInterpreter
 
 	public void Execute(StatementNode statement)
 	{
+		using var span = Telemetry.Profile(nameof(StatementNode));
+
 		DebugOut?.WriteLine("Executing: " + statement);
 
 		statement.Accept(this);
@@ -101,6 +109,8 @@ public partial class Interpreter : IInterpreter
 
 	public void Visit(RootNode node)
 	{
+		using var span = Telemetry.Profile(nameof(RootNode));
+
 		foreach (var importNode in node.Imports)
 		{
 			importNode.Accept(this);
@@ -111,6 +121,8 @@ public partial class Interpreter : IInterpreter
 
 	public void Visit(CodeBlockStatementNode statementNode)
 	{
+		using var span = Telemetry.Profile(nameof(CodeBlockStatementNode));
+
 		_ = PushScope();
 
 		Execute(statementNode.Statements);
@@ -133,11 +145,15 @@ public partial class Interpreter : IInterpreter
 
 	public void Visit(ErrorStatementNode errorStatementNode)
 	{
+		using var span = Telemetry.Profile(nameof(ErrorStatementNode));
+
 		throw new NotSupportedException("Error statement nodes cannot be interpreted");
 	}
 
 	public ExpressionResult Evaluate(IdentifierExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(IdentifierExpressionNode));
+
 		var variable = CurrentScope.GetVariable(expressionNode.Identifier);
 
 		return variable.Value;
@@ -145,6 +161,8 @@ public partial class Interpreter : IInterpreter
 
 	public ExpressionResult Evaluate(ErrorExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(ErrorExpressionNode));
+
 		throw new NotSupportedException("Error expression nodes cannot be interpreted");
 	}
 }

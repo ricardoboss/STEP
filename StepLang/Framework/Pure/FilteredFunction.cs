@@ -13,6 +13,8 @@ public class FilteredFunction : ListManipulationFunction
 	protected override IEnumerable<ExpressionResult> EvaluateListManipulation(TokenLocation callLocation,
 		IInterpreter interpreter, IEnumerable<ExpressionNode[]> arguments, FunctionDefinition callback)
 	{
+		using var span = Telemetry.Profile();
+
 		return arguments.Where(args =>
 		{
 			var result = callback.Invoke(callLocation, interpreter, args);

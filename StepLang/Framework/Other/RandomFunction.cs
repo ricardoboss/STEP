@@ -12,6 +12,8 @@ public class RandomFunction : GenericFunction
 
 	protected override NumberResult Invoke(TokenLocation callLocation, IInterpreter interpreter)
 	{
+		using var span = Telemetry.Profile();
+
 		return interpreter.NextRandom();
 	}
 }

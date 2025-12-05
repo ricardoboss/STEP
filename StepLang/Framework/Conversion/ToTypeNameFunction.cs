@@ -20,6 +20,8 @@ public class ToTypeNameFunction : NativeFunction
 	public override StringResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		IReadOnlyList<ExpressionNode> arguments)
 	{
+		using var span = Telemetry.Profile();
+
 		CheckArgumentCount(callLocation, arguments);
 
 		var exp = arguments.Single();

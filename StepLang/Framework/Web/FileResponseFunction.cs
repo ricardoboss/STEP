@@ -22,6 +22,8 @@ public class FileResponseFunction : GenericFunction<StringResult, ExpressionResu
 	protected override MapResult Invoke(TokenLocation callLocation, IInterpreter interpreter, StringResult argument1,
 		ExpressionResult argument2)
 	{
+		using var span = Telemetry.Profile();
+
 		var path = argument1.Value;
 		if (!File.Exists(path))
 		{

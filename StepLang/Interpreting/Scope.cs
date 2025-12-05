@@ -30,6 +30,8 @@ public class Scope
 
 	private Scope()
 	{
+		using var span = Telemetry.Profile();
+
 		parentScope = null;
 
 		// mutating functions
@@ -123,6 +125,9 @@ public class Scope
 	public Variable CreateVariable(TokenLocation assignmentLocation, Token identifierToken,
 		IReadOnlyList<ResultType> types, ExpressionResult initialValue, bool nullable = false)
 	{
+		using var span = Telemetry.Profile();
+		span?.SetTag("Identifier", identifierToken.Value);
+
 		if (Exists(identifierToken.Value, false))
 		{
 			throw new VariableAlreadyDeclaredException(identifierToken);
@@ -139,6 +144,10 @@ public class Scope
 
 	public bool Exists(string identifier, bool includeParent)
 	{
+		using var span = Telemetry.Profile();
+		span?.SetTag("Identifier", identifier);
+		span?.SetTag("IncludeParent", includeParent);
+
 		if (includeParent)
 		{
 			return TryGetVariable(identifier, out _);
@@ -149,6 +158,9 @@ public class Scope
 
 	internal bool TryGetVariable(string identifier, [NotNullWhen(true)] out Variable? variable)
 	{
+		using var span = Telemetry.Profile();
+		span?.SetTag("Identifier", identifier);
+
 		if (identifiers.TryGetValue(identifier, out variable))
 		{
 			return true;
@@ -175,6 +187,8 @@ public class Scope
 
 	public void SetResult(TokenLocation location, ExpressionResult result)
 	{
+		using var span = Telemetry.Profile();
+
 		scopeResultLocation = location;
 		scopeResult = result;
 	}
@@ -187,6 +201,8 @@ public class Scope
 	public bool TryGetResult([NotNullWhen(true)] out ExpressionResult? result,
 		[NotNullWhen(true)] out TokenLocation? location)
 	{
+		using var span = Telemetry.Profile();
+
 		location = scopeResultLocation;
 		result = scopeResult;
 

@@ -1,6 +1,7 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
 using StepLang.Tokenizing;
+using System.Diagnostics;
 using System.Text.Json;
 
 namespace StepLang.Framework.Conversion;
@@ -19,6 +20,8 @@ public class FromJsonFunction : GenericFunction<StringResult>
 	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		StringResult argument1)
 	{
+		using var span = Telemetry.Profile();
+
 		try
 		{
 			return JsonSerializer.Deserialize(argument1.Value, JsonConversionContext.Default.ExpressionResult) ??

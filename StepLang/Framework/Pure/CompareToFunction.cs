@@ -19,6 +19,8 @@ public class CompareToFunction : GenericFunction<ExpressionResult, ExpressionRes
 	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ExpressionResult argument1, ExpressionResult argument2)
 	{
+		using var span = Telemetry.Profile();
+
 		return GetResult(callLocation, argument1, argument2);
 	}
 

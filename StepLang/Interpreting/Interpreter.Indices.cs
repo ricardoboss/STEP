@@ -11,6 +11,8 @@ public partial class Interpreter
 {
 	public void Visit(IdentifierIndexAssignmentNode statementNode)
 	{
+		using var span = Telemetry.Profile(nameof(IdentifierIndexAssignmentNode));
+
 		BaseVariable variable = CurrentScope.GetVariable(statementNode.Identifier);
 
 		foreach (var indexExpression in statementNode.IndexExpressions)

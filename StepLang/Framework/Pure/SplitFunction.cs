@@ -17,6 +17,8 @@ public class SplitFunction : GenericFunction<StringResult, StringResult>
 	protected override ListResult Invoke(TokenLocation callLocation, IInterpreter interpreter, StringResult argument1,
 		StringResult argument2)
 	{
+		using var span = Telemetry.Profile();
+
 		var source = argument1.Value;
 		var separator = argument2.Value;
 

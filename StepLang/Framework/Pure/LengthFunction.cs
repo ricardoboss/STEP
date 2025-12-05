@@ -20,6 +20,8 @@ public class LengthFunction : NativeFunction
 	public override NumberResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		IReadOnlyList<ExpressionNode> arguments)
 	{
+		using var span = Telemetry.Profile();
+
 		CheckArgumentCount(callLocation, arguments);
 
 		var subjectResult = arguments.Single().EvaluateUsing(interpreter);

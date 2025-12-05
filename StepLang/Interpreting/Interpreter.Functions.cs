@@ -9,6 +9,8 @@ public partial class Interpreter
 {
 	public void Visit(CallStatementNode statementNode)
 	{
+		using var span = Telemetry.Profile(nameof(CallStatementNode));
+
 		var calledExpression = statementNode.CallExpression;
 		if (calledExpression is not CallExpressionNode node)
 			throw new InvalidExpressionTypeException(calledExpression.Location, "a callable expression",
@@ -31,6 +33,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(CallExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(CallExpressionNode));
+
 		var variable = CurrentScope.GetVariable(expressionNode.Identifier);
 		if (variable.Value is not FunctionResult function)
 		{
@@ -42,6 +46,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(FunctionDefinitionExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(FunctionDefinitionExpressionNode));
+
 		var definition = new UserDefinedFunctionDefinition(expressionNode.Location, expressionNode.Parameters,
 			expressionNode.Body, CurrentScope);
 
@@ -50,6 +56,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(FunctionDefinitionCallExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(FunctionDefinitionCallExpressionNode));
+
 		var definition = new UserDefinedFunctionDefinition(expressionNode.Location, expressionNode.Parameters,
 			expressionNode.Body, CurrentScope);
 
@@ -58,6 +66,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(NativeFunctionDefinitionExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(NativeFunctionDefinitionExpressionNode));
+
 		var definition = expressionNode.Definition;
 
 		return new FunctionResult(definition);

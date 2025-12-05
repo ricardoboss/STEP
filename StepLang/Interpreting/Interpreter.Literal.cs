@@ -8,6 +8,8 @@ public partial class Interpreter
 {
 	public ExpressionResult Evaluate(LiteralExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(LiteralExpressionNode));
+
 		var literal = expressionNode.Literal;
 
 		return literal.Type switch
@@ -22,6 +24,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(ListExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(ListExpressionNode));
+
 		var results = expressionNode
 			.Expressions
 			.Select(expression => expression.EvaluateUsing(this))
@@ -32,6 +36,8 @@ public partial class Interpreter
 
 	public ExpressionResult Evaluate(MapExpressionNode expressionNode)
 	{
+		using var span = Telemetry.Profile(nameof(MapExpressionNode));
+
 		var results = expressionNode
 			.Expressions
 			.ToDictionary(

@@ -19,6 +19,8 @@ public class ContainsKeyFunction : GenericFunction<MapResult, StringResult>
 	protected override BoolResult Invoke(TokenLocation callLocation, IInterpreter interpreter, MapResult argument1,
 		StringResult argument2)
 	{
+		using var span = Telemetry.Profile();
+
 		return argument1.Value.ContainsKey(argument2.Value);
 	}
 }

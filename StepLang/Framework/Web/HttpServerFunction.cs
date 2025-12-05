@@ -24,6 +24,8 @@ public class HttpServerFunction : GenericFunction<ExpressionResult, FunctionResu
 	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ExpressionResult argument1, FunctionResult argument2)
 	{
+		using var span = Telemetry.Profile();
+
 		int port;
 		if (argument1 is MapResult { Value: var options })
 		{

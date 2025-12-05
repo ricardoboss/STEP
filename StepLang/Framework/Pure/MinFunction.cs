@@ -19,6 +19,8 @@ public class MinFunction : NativeFunction
 	public override NumberResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		IReadOnlyList<ExpressionNode> arguments)
 	{
+		using var span = Telemetry.Profile();
+
 		CheckArgumentCount(callLocation, arguments, 1, int.MaxValue);
 
 		return arguments

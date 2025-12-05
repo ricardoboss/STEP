@@ -17,6 +17,8 @@ public partial class Interpreter
 
 	public void Visit(ForeachDeclareKeyDeclareValueStatementNode statementNode)
 	{
+		using var span = Telemetry.Profile(nameof(ForeachDeclareKeyDeclareValueStatementNode));
+
 		var collection = statementNode.Collection.EvaluateUsing(this);
 		var collectionLocation = statementNode.Collection.Location;
 
@@ -31,6 +33,8 @@ public partial class Interpreter
 
 	public void Visit(ForeachDeclareKeyValueStatementNode statementNode)
 	{
+		using var span = Telemetry.Profile(nameof(ForeachDeclareKeyValueStatementNode));
+
 		var valueVariable = CurrentScope.GetVariable(statementNode.ValueIdentifier);
 		var valueLocation = statementNode.ValueIdentifier.Location;
 		var collection = statementNode.Collection.EvaluateUsing(this);
@@ -47,6 +51,8 @@ public partial class Interpreter
 
 	public void Visit(ForeachDeclareValueStatementNode statementNode)
 	{
+		using var span = Telemetry.Profile(nameof(ForeachDeclareValueStatementNode));
+
 		var collection = statementNode.Collection.EvaluateUsing(this);
 		var collectionLocation = statementNode.Collection.Location;
 
@@ -61,6 +67,8 @@ public partial class Interpreter
 
 	public void Visit(ForeachKeyValueStatementNode statementNode)
 	{
+		using var span = Telemetry.Profile(nameof(ForeachKeyValueStatementNode));
+
 		var keyVariable = CurrentScope.GetVariable(statementNode.KeyIdentifier);
 		var keyLocation = statementNode.KeyIdentifier.Location;
 		var valueVariable = CurrentScope.GetVariable(statementNode.ValueIdentifier);
@@ -79,6 +87,8 @@ public partial class Interpreter
 
 	public void Visit(ForeachKeyDeclareValueStatementNode statementNode)
 	{
+		using var span = Telemetry.Profile(nameof(ForeachKeyDeclareValueStatementNode));
+
 		var collection = statementNode.Collection.EvaluateUsing(this);
 		var collectionLocation = statementNode.Collection.Location;
 
@@ -93,6 +103,8 @@ public partial class Interpreter
 
 	public void Visit(ForeachValueStatementNode statementNode)
 	{
+		using var span = Telemetry.Profile(nameof(ForeachValueStatementNode));
+
 		var valueVariable = CurrentScope.GetVariable(statementNode.Identifier);
 		var valueLocation = statementNode.Identifier.Location;
 		var collection = statementNode.Collection.EvaluateUsing(this);

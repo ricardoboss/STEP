@@ -17,6 +17,8 @@ public class ToKeysFunction : GenericFunction<MapResult>
 
 	protected override ListResult Invoke(TokenLocation callLocation, IInterpreter interpreter, MapResult argument1)
 	{
+		using var span = Telemetry.Profile();
+
 		var keys = argument1.Value.Keys
 			.Select(k => new StringResult(k))
 			.Cast<ExpressionResult>()

@@ -22,6 +22,8 @@ public class EnvFunction : NativeFunction
 	public override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		IReadOnlyList<ExpressionNode> arguments)
 	{
+		using var span = Telemetry.Profile();
+
 		CheckArgumentCount(callLocation, arguments, 1, 2);
 
 		var keyExpression = arguments[0].EvaluateUsing(interpreter);

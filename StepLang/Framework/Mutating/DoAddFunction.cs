@@ -17,6 +17,8 @@ public class DoAddFunction : GenericFunction<ListResult, ExpressionResult>
 	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ListResult argument1, ExpressionResult argument2)
 	{
+		using var span = Telemetry.Profile();
+
 		var list = argument1;
 		var value = argument2;
 

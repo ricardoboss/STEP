@@ -20,6 +20,8 @@ public class ToNumberFunction : GenericFunction<StringResult, NumberResult>
 	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		StringResult argument1, NumberResult argument2)
 	{
+		using var span = Telemetry.Profile();
+
 		var value = argument1.Value;
 		var radix = argument2;
 

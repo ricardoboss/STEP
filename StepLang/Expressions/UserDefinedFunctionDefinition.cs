@@ -34,6 +34,8 @@ public class UserDefinedFunctionDefinition(
 	public override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		IReadOnlyList<ExpressionNode> arguments)
 	{
+		using var span = Telemetry.Profile();
+
 		if (arguments.Count < RequiredParametersCount || arguments.Count > TotalParametersCount)
 		{
 			throw new InvalidArgumentCountException(callLocation, parameters.Count, arguments.Count);

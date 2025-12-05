@@ -6,6 +6,8 @@ public partial class Interpreter
 {
 	public void Visit(WhileStatementNode statementNode)
 	{
+		using var span = Telemetry.Profile(nameof(WhileStatementNode));
+
 		while (ShouldLoop())
 		{
 			var loopScope = PushScope();

@@ -25,6 +25,8 @@ public class FetchFunction : GenericFunction<StringResult, MapResult>
 	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		StringResult argument1, MapResult argument2)
 	{
+		using var span = Telemetry.Profile();
+
 		var url = argument1.Value;
 		var options = argument2.Value;
 

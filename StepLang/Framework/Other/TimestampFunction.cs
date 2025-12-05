@@ -12,6 +12,8 @@ public class TimestampFunction : GenericFunction
 
 	protected override NumberResult Invoke(TokenLocation callLocation, IInterpreter interpreter)
 	{
+		using var span = Telemetry.Profile();
+
 		return interpreter.Time.GetUtcNow().ToUnixTimeMilliseconds();
 	}
 }

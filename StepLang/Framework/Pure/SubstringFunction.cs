@@ -22,6 +22,8 @@ public class SubstringFunction : GenericFunction<StringResult, NumberResult, Exp
 	protected override StringResult Invoke(TokenLocation callLocation, IInterpreter interpreter, StringResult argument1,
 		NumberResult argument2, ExpressionResult argument3)
 	{
+		using var span = Telemetry.Profile();
+
 		int? length;
 		if (argument3 is NumberResult number)
 		{

@@ -12,6 +12,8 @@ public class ReadFunction : GenericFunction
 
 	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter)
 	{
+		using var span = Telemetry.Profile();
+
 		if (interpreter.StdIn is not { } stdIn)
 		{
 			return NullResult.Instance;

@@ -22,6 +22,8 @@ public class RangeFunction : GenericFunction<NumberResult, NumberResult, NumberR
 	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		NumberResult argument1, NumberResult argument2, NumberResult argument3)
 	{
+		using var span = Telemetry.Profile();
+
 		var startValue = Convert.ToDecimal(argument1.Value);
 		var endValue = Convert.ToDecimal(argument2.Value);
 		var stepValue = Convert.ToDecimal(argument3.Value);

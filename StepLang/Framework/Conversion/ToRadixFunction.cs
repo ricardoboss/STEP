@@ -19,6 +19,8 @@ public class ToRadixFunction : GenericFunction<NumberResult, NumberResult>
 	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		NumberResult argument1, NumberResult argument2)
 	{
+		using var span = Telemetry.Profile();
+
 		var number = argument1;
 		var radix = argument2;
 

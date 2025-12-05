@@ -14,6 +14,8 @@ public class SortedFunction : ListManipulationFunction
 	public override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		IReadOnlyList<ExpressionNode> arguments)
 	{
+		using var span = Telemetry.Profile();
+
 		CheckArgumentCount(callLocation, arguments, 1, 2);
 
 		if (arguments.Count == 2)

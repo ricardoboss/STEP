@@ -15,6 +15,8 @@ public class SinFunction : GenericFunction<NumberResult>
 
 	protected override NumberResult Invoke(TokenLocation callLocation, IInterpreter interpreter, NumberResult argument1)
 	{
+		using var span = Telemetry.Profile();
+
 		return Math.Sin(argument1);
 	}
 }

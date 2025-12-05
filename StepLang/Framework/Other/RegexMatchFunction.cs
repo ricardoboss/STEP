@@ -23,6 +23,8 @@ public class RegexMatchFunction : GenericFunction<StringResult, StringResult, Ex
 	protected override ListResult Invoke(TokenLocation callLocation, IInterpreter interpreter, StringResult argument1,
 		StringResult argument2, ExpressionResult argument3)
 	{
+		using var span = Telemetry.Profile();
+
 		var options = RegexOptions.None;
 		if (argument3 is StringResult { Value: { } optionsString })
 		{

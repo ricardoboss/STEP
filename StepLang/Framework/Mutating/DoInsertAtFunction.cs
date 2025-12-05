@@ -18,6 +18,8 @@ public class DoInsertAtFunction : GenericFunction<ListResult, NumberResult, Expr
 	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ListResult argument1, NumberResult argument2, ExpressionResult argument3)
 	{
+		using var span = Telemetry.Profile();
+
 		var list = argument1.Value;
 		var index = argument2;
 		var value = argument3;

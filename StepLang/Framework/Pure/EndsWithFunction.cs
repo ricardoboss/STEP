@@ -19,6 +19,8 @@ public class EndsWithFunction : GenericFunction<StringResult, StringResult>
 	protected override BoolResult Invoke(TokenLocation callLocation, IInterpreter interpreter, StringResult argument1,
 		StringResult argument2)
 	{
+		using var span = Telemetry.Profile();
+
 		return argument1.Value.GraphemeEndsWith(argument2.Value);
 	}
 }

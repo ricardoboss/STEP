@@ -18,6 +18,8 @@ public class InterpolateFunction : GenericFunction<NumberResult, NumberResult, N
 	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		NumberResult argument1, NumberResult argument2, NumberResult argument3)
 	{
+		using var span = Telemetry.Profile();
+
 		var a = argument1;
 		var b = argument2;
 		var t = argument3;

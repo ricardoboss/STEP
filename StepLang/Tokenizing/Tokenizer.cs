@@ -39,6 +39,8 @@ public class Tokenizer
 
 	public IEnumerable<Token> Tokenize(CancellationToken cancellationToken = default)
 	{
+		using var span = Telemetry.Profile();
+
 		while (source.TryConsume(out var character))
 		{
 			cancellationToken.ThrowIfCancellationRequested();

@@ -18,6 +18,8 @@ public class ToBoolFunction : GenericFunction<ExpressionResult>
 	protected override BoolResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ExpressionResult argument1)
 	{
+		using var span = Telemetry.Profile();
+
 		return argument1.IsTruthy();
 	}
 }

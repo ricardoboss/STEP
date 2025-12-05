@@ -19,6 +19,8 @@ public class ToJsonFunction : GenericFunction<ExpressionResult>
 	protected override StringResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ExpressionResult argument1)
 	{
+		using var span = Telemetry.Profile();
+
 		return JsonSerializer.Serialize(argument1, JsonConversionContext.Default.ExpressionResult);
 	}
 }

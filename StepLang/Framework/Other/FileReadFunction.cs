@@ -19,6 +19,8 @@ public class FileReadFunction : GenericFunction<StringResult>
 	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		StringResult argument1)
 	{
+		using var span = Telemetry.Profile();
+
 		var path = argument1.Value;
 		var info = callLocation.GetFileInfoFromPath(path);
 

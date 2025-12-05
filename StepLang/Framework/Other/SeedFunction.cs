@@ -16,6 +16,8 @@ public class SeedFunction : GenericFunction<ExpressionResult>
 	protected override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
 		ExpressionResult argument1)
 	{
+		using var span = Telemetry.Profile();
+
 		int seed;
 		if (argument1 is NumberResult numberResult)
 		{
