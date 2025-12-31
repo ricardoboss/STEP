@@ -40,7 +40,7 @@
 	</PropertyGroup>
 
 	<ItemGroup Condition="$(Configuration) == 'Release'">
-		<SourceRoot Include="$(MSBuildThisFileDirectory)/" />
+		<SourceRoot Include="$(MSBuildThisFileDirectory)/"/>
 	</ItemGroup>
 
 	<!-- Globally enable source link -->
@@ -62,8 +62,8 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 
-		<PackageReference Include="SmartAnalyzers.CSharpExtensions.Annotations" />
-		<AdditionalFiles Include="$(MSBuildThisFileDirectory)/CSharpExtensions.json" />
+		<PackageReference Include="SmartAnalyzers.CSharpExtensions.Annotations"/>
+		<AdditionalFiles Include="$(MSBuildThisFileDirectory)/CSharpExtensions.json"/>
 	</ItemGroup>
 
 	<!-- For test projects, import additional props -->

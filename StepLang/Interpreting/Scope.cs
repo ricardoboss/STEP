@@ -7,6 +7,7 @@ using StepLang.Framework.Pure;
 using StepLang.Framework.Web;
 using StepLang.Tokenizing;
 using System.Diagnostics.CodeAnalysis;
+using StepLang.Framework.Ui;
 
 namespace StepLang.Interpreting;
 
@@ -104,6 +105,9 @@ public class Scope
 		CreateVariable(FetchFunction.Identifier, new FetchFunction().ToResult());
 		CreateVariable(HttpServerFunction.Identifier, new HttpServerFunction().ToResult());
 		CreateVariable(FileResponseFunction.Identifier, new FileResponseFunction().ToResult());
+
+		// ui functions
+		CreateVariable(DrawTextFunction.Identifier, new DrawTextFunction().ToResult());
 
 		CreateVariable("null", NullResult.Instance);
 

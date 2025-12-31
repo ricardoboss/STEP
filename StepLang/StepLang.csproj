@@ -31,6 +31,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\StepLang.Tooling.Meta\StepLang.Tooling.Meta.csproj"/>
+		<ProjectReference Include="..\StepLang.Tooling.UI\StepLang.Tooling.UI.csproj" />
 	</ItemGroup>
 
 	<PropertyGroup>
