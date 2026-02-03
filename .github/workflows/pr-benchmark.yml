@@ -52,7 +52,7 @@ jobs:
           --testbed ubuntu-latest \
           --err \
           --adapter c_sharp_dot_net \
-          --file BenchmarkDotNet.Artifacts/results/*.json
+          --file BenchmarkDotNet.Artifacts/results/StepLang.Benchmarks.ExampleFileBenchmark-report-full-compressed.json
           --github-actions '${{ secrets.GITHUB_TOKEN }}' \
           "dotnet run --configuration Test --project StepLang.Benchmarks/StepLang.Benchmarks.csproj -- --exporters json --filter '*'"
 
