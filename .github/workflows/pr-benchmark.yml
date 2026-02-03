@@ -44,6 +44,7 @@ jobs:
           bencher run \
           --project 190771e4-332f-48cb-bf22-01b43ceb83cb \
           --token '${{ secrets.BENCHER_API_TOKEN }}' \
+          --github-actions '${{ secrets.GITHUB_TOKEN }}' \
           --branch "$GITHUB_HEAD_REF" \
           --start-point "$GITHUB_BASE_REF" \
           --start-point-hash '${{ github.event.pull_request.base.sha }}' \
@@ -53,8 +54,13 @@ jobs:
           --err \
           --adapter c_sharp_dot_net \
           --file BenchmarkDotNet.Artifacts/results/StepLang.Benchmarks.ExampleFileBenchmark-report-full-compressed.json
-          --github-actions '${{ secrets.GITHUB_TOKEN }}' \
-          "dotnet run --configuration Test --project StepLang.Benchmarks/StepLang.Benchmarks.csproj -- --exporters json --filter '*'"
+          -- \
+          dotnet run \
+            --configuration Test \
+            --project StepLang.Benchmarks/StepLang.Benchmarks.csproj \
+            -- \
+            --exporters json \
+            --filter "*"
 
 #      - name: Revert changes to unrelated files
 #        run: git restore **/packages.lock.json
