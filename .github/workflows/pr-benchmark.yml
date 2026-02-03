@@ -1,0 +1,68 @@
+name: Benchmark (PR)
+
+on:
+  pull_request:
+    types: [ opened, reopened, edited, synchronize ]
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  benchmark:
+    name: Run Benchmarks
+
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Setup bencher
+        uses: bencherdev/bencher@main
+
+      - name: Run bencher
+        run: |
+          bencher run \
+          --project 190771e4-332f-48cb-bf22-01b43ceb83cb \
+          --token '${{ secrets.BENCHER_API_TOKEN }}' \
+          --branch "$GITHUB_HEAD_REF" \
+          --start-point "$GITHUB_BASE_REF" \
+          --start-point-hash '${{ github.event.pull_request.base.sha }}' \
+          --start-point-clone-thresholds \
+          --start-point-reset \
+          --testbed ubuntu-latest \
+          --err \
+          --adapter c_sharp_dot_net \
+          --file BenchmarkDotNet.Artifacts/results/*.json
+          --github-actions '${{ secrets.GITHUB_TOKEN }}' \
+          "dotnet run --configuration Test --project StepLang.Benchmarks/StepLang.Benchmarks.csproj -- --exporters json --filter '*'"
+
+#      - name: Revert changes to unrelated files
+#        run: git restore **/packages.lock.json
+
+#      - name: Upload to Bencher
+#        uses: bencherdev/bencher@v0
+#        with:
+#          api-token: ${{ secrets.BENCHER_API_TOKEN }}
+#          project: your-project-slug
+#          adapter: benchmarkdotnet
+#          file: BenchmarkDotNet.Artifacts/results/*.json
