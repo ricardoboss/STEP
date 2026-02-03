@@ -1,0 +1,30 @@
+name: Close Benchmark (PR)
+
+on:
+  pull_request:
+    types: [ closed ]
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  archive_pr_branch:
+    name: Archive closed PR branch
+
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup bencher
+        uses: bencherdev/bencher@main
+
+      - name: Archive closed PR branch
+        run: |
+          bencher archive \
+          --project 190771e4-332f-48cb-bf22-01b43ceb83cb \
+          --token '${{ secrets.BENCHER_API_TOKEN }}' \
+          --branch "$GITHUB_HEAD_REF"

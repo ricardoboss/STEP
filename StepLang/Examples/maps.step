@@ -1,27 +1,27 @@
-map m = { "a": 1, "b": 2, "c": 3 }
+map simpleMap = { "a": 1, "b": 2, "c": 3 }
 
-println(m)
+println(simpleMap)
 
-map nested = { "a": { "b": { "c": 1, "d": { "z": 99, "v": true } } } }
+map nestedMaps = { "a": { "b": { "c": 1, "d": { "z": 99, "v": true } } } }
 
-println(nested)
+println(nestedMaps)
 
-map a = nested["a"]
-map b = a["b"]
-map d = b["d"]
-d["z"] = 100
-println(nested["a"]["b"]["d"]["z"])
+map mapA = nestedMaps["a"]
+map mapB = mapA["b"]
+map mapD = mapB["d"]
+mapD["z"] = 100
+println(nestedMaps["a"]["b"]["d"]["z"])
 
-println(toKeys(nested["a"]["b"]))
-println(toValues(nested["a"]["b"]["d"]))
+println(toKeys(nestedMaps["a"]["b"]))
+println(toValues(nestedMaps["a"]["b"]["d"]))
 
-println(doSwap(nested["a"]["b"]["d"], "z", "v"))
-println(nested["a"]["b"]["d"])
+println(doSwap(nestedMaps["a"]["b"]["d"], "z", "v"))
+println(nestedMaps["a"]["b"]["d"])
 
-println(indexOf(nested["a"]["b"]["d"], 100))
-println(indexOf(nested["a"]["b"]["d"], 123))
-println(contains(nested["a"]["b"]["d"], 100))
-println(contains(nested["a"]["b"]["d"], 123))
+println(indexOf(nestedMaps["a"]["b"]["d"], 100))
+println(indexOf(nestedMaps["a"]["b"]["d"], 123))
+println(contains(nestedMaps["a"]["b"]["d"], 100))
+println(contains(nestedMaps["a"]["b"]["d"], 123))
 
-println(length(nested["a"]["b"]["d"]))
+println(length(nestedMaps["a"]["b"]["d"]))
 println(length({}))
