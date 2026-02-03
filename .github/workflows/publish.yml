@@ -237,7 +237,7 @@ jobs:
         os: [ linux, win, osx ]
         arch: [ x64, arm64 ]
 
-    runs-on: ${{ (matrix.os == 'win' && (matrix.arch == 'arm64' && 'windows-11-arm' || 'windows-latest')) || (matrix.os == 'osx' && (matrix.arch == 'x64' && 'macos-13' || 'macos-latest')) || (matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest') }}
+    runs-on: ${{ (matrix.os == 'win' && (matrix.arch == 'arm64' && 'windows-11-arm' || 'windows-latest')) || (matrix.os == 'osx' && (matrix.arch == 'x64' && 'macos-15-intel' || 'macos-latest')) || (matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest') }}
 
     steps:
       - name: Download binary
@@ -271,7 +271,7 @@ jobs:
         arch: [ x64, arm64 ]
         dotnet: [ "9.0", "10.0" ]
 
-    runs-on: ${{ (matrix.os == 'win' && (matrix.arch == 'arm64' && 'windows-11-arm' || 'windows-latest')) || (matrix.os == 'osx' && (matrix.arch == 'x64' && 'macos-13' || 'macos-latest')) || (matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest') }}
+    runs-on: ${{ (matrix.os == 'win' && (matrix.arch == 'arm64' && 'windows-11-arm' || 'windows-latest')) || (matrix.os == 'osx' && (matrix.arch == 'x64' && 'macos-15-intel' || 'macos-latest')) || (matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest') }}
 
     steps:
       - name: Install .NET
