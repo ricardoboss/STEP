@@ -9,6 +9,7 @@
 * Removed global options `--info` and `--version` (will now only work when no command is given)
 * Fixed #130: literal string highlighting was broken if the string contained backslashes/escape sequences by @ricardoboss in https://github.com/ricardoboss/STEP/pull/189
 * Added `timestamp` function by @ricardoboss in https://github.com/ricardoboss/STEP/pull/190
+* (internal) Updated macOS x64 runner image to `macos-15-intel`
 
 # v2.1.0
 
