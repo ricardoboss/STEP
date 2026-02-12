@@ -19,7 +19,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 		var imports = ParseImports();
 		var statements = ParseStatements(TokenType.EndOfFile);
 
-		return new RootNode(imports, statements);
+		return new(imports, statements);
 	}
 
 	private List<IImportNode> ParseImports()
@@ -681,7 +681,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 	{
 		var callExpression = ParseFunctionCallExpression();
 
-		return new CallStatementNode(callExpression);
+		return new(callExpression);
 	}
 
 	private IVariableDeclarationNode ParseVariableDeclaration()
@@ -838,7 +838,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 			BinaryExpressionOperator.BitwiseRotateRight => new BitwiseRotateRightExpressionNode(@operator, left,
 				right),
 			_ => throw new NotSupportedException("Expression for operator " + binaryOperator.ToSymbol() +
-												 " not supported"),
+			                                     " not supported"),
 		};
 	}
 
@@ -1063,7 +1063,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 				if (nullTokenResult is Err<Token> nullTokenError)
 					return diagnostics.AddErrorExpression(nullTokenError);
 
-				return new LiteralExpressionNode(new Token(TokenType.LiteralNull, nullTokenResult.Value.Value,
+				return new LiteralExpressionNode(new(TokenType.LiteralNull, nullTokenResult.Value.Value,
 					nullTokenResult.Value.Location));
 			default:
 				return diagnostics.AddMissingExpression(tokens.LastToken);
@@ -1159,7 +1159,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 		return new IdentifierExpressionNode(identifierResult.Value);
 	}
 
-	private ExpressionNode ParseFunctionCallExpression()
+	private IExpressionNode ParseFunctionCallExpression()
 	{
 		var identifierResult = tokens.Dequeue(TokenType.Identifier);
 		if (identifierResult is Err<Token> identifierError)

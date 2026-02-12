@@ -11,4 +11,6 @@ public sealed record IdentifierExpressionNode(Token Identifier) : IExpressionNod
 	}
 
 	public Token FirstToken => Identifier;
+
+	public TokenLocation Location => Identifier.Location;
 }
