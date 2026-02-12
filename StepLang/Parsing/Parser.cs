@@ -838,7 +838,7 @@ public class Parser(IEnumerable<Token> tokenList, DiagnosticCollection diagnosti
 			BinaryExpressionOperator.BitwiseRotateRight => new BitwiseRotateRightExpressionNode(@operator, left,
 				right),
 			_ => throw new NotSupportedException("Expression for operator " + binaryOperator.ToSymbol() +
-			                                     " not supported"),
+												 " not supported"),
 		};
 	}
 
