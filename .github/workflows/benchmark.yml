@@ -1,8 +1,8 @@
-name: Benchmark (PR)
+name: Benchmark
 
 on:
-  pull_request:
-    types: [ opened, reopened, edited, synchronize ]
+  push:
+    branches: [ main ]
 
 env:
   DOTNET_NOLOGO: true
@@ -12,12 +12,10 @@ jobs:
   benchmark:
     name: Run Benchmarks
 
-    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
-
     runs-on: ubuntu-latest
 
     permissions:
-      pull-requests: write
+      checks: write
 
     steps:
       - uses: actions/checkout@v6
@@ -47,11 +45,12 @@ jobs:
           --project 190771e4-332f-48cb-bf22-01b43ceb83cb \
           --token "${{ secrets.BENCHER_API_TOKEN }}" \
           --github-actions "${{ secrets.GITHUB_TOKEN }}" \
-          --branch "${{ github.event.pull_request.head.ref }}" \
-          --start-point "${{ github.event.pull_request.base.ref }}" \
-          --start-point-hash "${{ github.event.pull_request.base.sha }}" \
-          --start-point-clone-thresholds \
-          --start-point-reset \
+          --branch main \
+          --threshold-measure latency \
+          --threshold-test t_test \
+          --threshold-max-sample-size 64 \
+          --threshold-upper-boundary 0.99 \
+          --thresholds-reset \
           --testbed ubuntu-latest \
           --err \
           --adapter c_sharp_dot_net \
