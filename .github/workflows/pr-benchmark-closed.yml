@@ -27,4 +27,4 @@ jobs:
           bencher archive \
           --project 190771e4-332f-48cb-bf22-01b43ceb83cb \
           --token '${{ secrets.BENCHER_API_TOKEN }}' \
-          --branch "$GITHUB_HEAD_REF"
+          --branch "${{ github.event.pull_request.head.ref }}"
