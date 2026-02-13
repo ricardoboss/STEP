@@ -11,7 +11,7 @@ namespace StepLang.Tests.Framework.Mutating;
 public class DoRemoveFunctionTest
 {
 	[TestCaseSource(typeof(DoRemoveData))]
-	public void TestDoRemove(ListResult list, ExpressionNode elementExpression, ListResult resultingList)
+	public void TestDoRemove(ListResult list, IExpressionNode elementExpression, ListResult resultingList)
 	{
 		const string listIdentifier = "mylist";
 

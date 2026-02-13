@@ -5,8 +5,8 @@ namespace StepLang.Parsing.Nodes.Expressions;
 
 public record BitwiseRotateRightExpressionNode(
 	Token Operator,
-	ExpressionNode Left,
-	ExpressionNode Right)
+	IExpressionNode Left,
+	IExpressionNode Right)
 	: BinaryExpressionNode(Operator, Left, Right, BinaryExpressionOperator.BitwiseRotateRight)
 {
 	public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)

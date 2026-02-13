@@ -9,7 +9,7 @@ public record FunctionDefinitionCallExpressionNode(
 	Token OpenParenthesisToken,
 	IReadOnlyList<IVariableDeclarationNode> Parameters,
 	StatementNode Body,
-	IReadOnlyList<ExpressionNode> CallArguments) : ExpressionNode
+	IReadOnlyList<IExpressionNode> CallArguments) : ExpressionNode
 {
 	public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)
 	{

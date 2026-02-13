@@ -5,7 +5,7 @@ namespace StepLang.Parsing.Nodes.Expressions;
 
 public sealed record MapExpressionNode(
 	Token OpenCurlyBraceToken,
-	IReadOnlyDictionary<Token, ExpressionNode> Expressions) : ExpressionNode
+	IReadOnlyDictionary<Token, IExpressionNode> Expressions) : ExpressionNode
 {
 	public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)
 	{

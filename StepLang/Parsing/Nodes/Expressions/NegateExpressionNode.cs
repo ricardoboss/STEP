@@ -3,7 +3,7 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Parsing.Nodes.Expressions;
 
-public record NegateExpressionNode(Token MinusToken, ExpressionNode Expression) : ExpressionNode, IUnaryExpressionNode
+public record NegateExpressionNode(Token MinusToken, IExpressionNode Expression) : ExpressionNode, IUnaryExpressionNode
 {
 	public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)
 	{

@@ -27,7 +27,7 @@ public abstract class NativeFunction : FunctionDefinition
 	protected static IReadOnlyList<ResultType> OnlyMap => [ResultType.Map];
 	protected static IReadOnlyList<ResultType> OnlyFunction => [ResultType.Function];
 
-	protected void CheckArgumentCount(TokenLocation location, IReadOnlyList<ExpressionNode> arguments)
+	protected void CheckArgumentCount(TokenLocation location, IReadOnlyList<IExpressionNode> arguments)
 	{
 		var expectedCount = Parameters.Count;
 		if (arguments.Count != expectedCount)
@@ -36,7 +36,7 @@ public abstract class NativeFunction : FunctionDefinition
 		}
 	}
 
-	protected static void CheckArgumentCount(TokenLocation location, IReadOnlyList<ExpressionNode> arguments,
+	protected static void CheckArgumentCount(TokenLocation location, IReadOnlyList<IExpressionNode> arguments,
 		int minCount, int maxCount)
 	{
 		if (arguments.Count < minCount || arguments.Count > maxCount)
@@ -78,5 +78,5 @@ public abstract class NativeFunction : FunctionDefinition
 	protected record NativeParameter(
 		IReadOnlyList<ResultType> Types,
 		string Identifier,
-		ExpressionNode? DefaultValue = null);
+		IExpressionNode? DefaultValue = null);
 }
