@@ -15,7 +15,7 @@ public sealed record LiteralExpressionNode(Token Literal) : ExpressionNode
 
 	public static implicit operator LiteralExpressionNode(string literal)
 	{
-		return new LiteralExpressionNode(new Token(TokenType.LiteralString, $"\"{literal}\""));
+		return new LiteralExpressionNode(new Token(TokenType.LiteralString, $"\"{literal.EscapeControlCharacters()}\""));
 	}
 
 	public static implicit operator LiteralExpressionNode(double literal)
