@@ -37,7 +37,7 @@
 		<PackageVersion Include="NUnit.Analyzers" Version="4.11.2">
 			<PrivateAssets>all</PrivateAssets>
 		</PackageVersion>
-		<PackageVersion Include="coverlet.collector" Version="6.0.4">
+		<PackageVersion Include="coverlet.collector" Version="8.0.0">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageVersion>
