@@ -45,7 +45,7 @@ jobs:
         run: |
           bencher run \
           --project 190771e4-332f-48cb-bf22-01b43ceb83cb \
-          --token "${{ secrets.BENCHER_API_TOKEN }}" \
+          --token "${{ vars.BENCHER_API_TOKEN }}" \
           --github-actions "${{ secrets.GITHUB_TOKEN }}" \
           --branch "${{ github.event.pull_request.head.ref }}" \
           --start-point "${{ github.event.pull_request.base.ref }}" \
