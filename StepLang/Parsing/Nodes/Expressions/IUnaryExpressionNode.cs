@@ -1,6 +1,6 @@
 namespace StepLang.Parsing.Nodes.Expressions;
 
-public interface IUnaryExpressionNode
+public interface IUnaryExpressionNode : IExpressionNode
 {
-	ExpressionNode Expression { get; }
+	IExpressionNode Expression { get; }
 }

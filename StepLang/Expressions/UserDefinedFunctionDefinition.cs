@@ -32,7 +32,7 @@ public class UserDefinedFunctionDefinition(
 	private int TotalParametersCount => parameters.Count;
 
 	public override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
-		IReadOnlyList<ExpressionNode> arguments)
+		IReadOnlyList<IExpressionNode> arguments)
 	{
 		if (arguments.Count < RequiredParametersCount || arguments.Count > TotalParametersCount)
 		{
@@ -68,7 +68,7 @@ public class UserDefinedFunctionDefinition(
 	}
 
 	private IEnumerable<(TokenLocation, ExpressionResult)> EvaluateArguments(IExpressionEvaluator evaluator,
-		IEnumerable<ExpressionNode> arguments)
+		IEnumerable<IExpressionNode> arguments)
 	{
 		var suppliedArgs = 0;
 		foreach (var argExpression in arguments)

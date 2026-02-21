@@ -5,9 +5,9 @@ namespace StepLang.Parsing.Nodes.Statements;
 
 public sealed record IdentifierIndexAssignmentNode(
 	Token Identifier,
-	IReadOnlyList<ExpressionNode> IndexExpressions,
+	IReadOnlyList<IExpressionNode> IndexExpressions,
 	Token AssignmentToken,
-	ExpressionNode ValueExpression) : StatementNode
+	IExpressionNode ValueExpression) : StatementNode
 {
 	public override void Accept(IStatementVisitor visitor)
 	{

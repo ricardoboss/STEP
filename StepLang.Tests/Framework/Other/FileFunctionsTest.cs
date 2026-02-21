@@ -29,12 +29,12 @@ public class FileFunctionsTest
 		var fileDeleteFunction = new FileDeleteFunction();
 
 		var preWriteExistsResult = fileExistsFunction.Invoke(new(), interpreter,
-			new List<ExpressionNode> { LiteralExpressionNode.FromString(filename) });
+			new List<IExpressionNode> { LiteralExpressionNode.FromString(filename) });
 
 		var preWriteExistsBoolResult = AssertIsType<BoolResult>(preWriteExistsResult);
 		Assert.That(preWriteExistsBoolResult.Value, Is.False);
 
-		var writeArguments = new List<ExpressionNode>
+		var writeArguments = new List<IExpressionNode>
 		{
 			LiteralExpressionNode.FromString(filename), LiteralExpressionNode.FromString(content),
 		};
@@ -45,18 +45,18 @@ public class FileFunctionsTest
 		Assert.That(writeBoolResult.Value, Is.True);
 
 		var postWriteExistsResult = fileExistsFunction.Invoke(new(), interpreter,
-			new List<ExpressionNode> { LiteralExpressionNode.FromString(filename) });
+			new List<IExpressionNode> { LiteralExpressionNode.FromString(filename) });
 
 		var postWriteExistsBoolResult = AssertIsType<BoolResult>(postWriteExistsResult);
 		Assert.That(postWriteExistsBoolResult.Value, Is.True);
 
 		var firstReadResult = fileReadFunction.Invoke(new(), interpreter,
-			new List<ExpressionNode> { LiteralExpressionNode.FromString(filename) });
+			new List<IExpressionNode> { LiteralExpressionNode.FromString(filename) });
 
 		var firstReadStringResult = AssertIsType<StringResult>(firstReadResult);
 		Assert.That(firstReadStringResult.Value, Is.EqualTo(content));
 
-		var appendArguments = new List<ExpressionNode>
+		var appendArguments = new List<IExpressionNode>
 		{
 			LiteralExpressionNode.FromString(filename),
 			LiteralExpressionNode.FromString(content),
@@ -69,13 +69,13 @@ public class FileFunctionsTest
 		Assert.That(appendBoolResult.Value, Is.True);
 
 		var secondReadResult = fileReadFunction.Invoke(new(), interpreter,
-			new List<ExpressionNode> { LiteralExpressionNode.FromString(filename) });
+			new List<IExpressionNode> { LiteralExpressionNode.FromString(filename) });
 
 		var secondReadStringResult = AssertIsType<StringResult>(secondReadResult);
 		Assert.That(secondReadStringResult.Value, Is.EqualTo(content + content));
 
 		var deleteResult = fileDeleteFunction.Invoke(new(), interpreter,
-			new List<ExpressionNode> { LiteralExpressionNode.FromString(filename) });
+			new List<IExpressionNode> { LiteralExpressionNode.FromString(filename) });
 
 		var deleteBoolResult = AssertIsType<BoolResult>(deleteResult);
 		Assert.That(deleteBoolResult.Value, Is.True);
