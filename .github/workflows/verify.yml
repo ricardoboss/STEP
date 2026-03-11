@@ -40,17 +40,3 @@ jobs:
       - uses: tarides/changelog-check-action@v3
         with:
           changelog: CHANGELOG.md
-
-  lockfiles:
-    name: Package lock files
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v5
-
-      - name: Restore and regenerate lock files
-        run: dotnet restore --force-evaluate
