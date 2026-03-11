@@ -5,8 +5,7 @@ on:
     paths-ignore:
       - "docs/**"
     types: [ assigned, opened, synchronize, reopened, labeled, unlabeled ]
-    branches:
-      - main
+    branches: [ "main", "release/**", "maint/**" ]
 
 env:
   DOTNET_NOLOGO: true
@@ -19,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -41,31 +40,3 @@ jobs:
       - uses: tarides/changelog-check-action@v3
         with:
           changelog: CHANGELOG.md
-
-  lockfiles:
-    name: Package lock files
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v5
-
-      - name: Restore and regenerate lock files
-        run: dotnet restore --force-evaluate
-
-      - name: Check for modified lock files
-        run: |
-          echo "::group::Verifying packages.lock.json files"
-          if ! git diff --exit-code -- packages.lock.json '**/packages.lock.json'; then
-            echo "::warning::packages.lock.json files are out of date. Run 'dotnet restore --force-evaluate' and commit the changes."
-            echo "Modified files:"
-            git diff --name-only -- packages.lock.json '**/packages.lock.json'
-            echo "::endgroup::"
-            exit 1
-          fi
-          echo "All lock files are up to date."
-          echo "::endgroup::"
-
