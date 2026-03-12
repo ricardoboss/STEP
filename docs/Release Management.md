@@ -66,5 +66,5 @@ Allowed change types per branch:
 | Target Branch | Allowed commit types                                        | Purpose                 |
 |---------------|-------------------------------------------------------------|-------------------------|
 | `main`        | `feat`, `fix`, `perf`, `refactor`, `docs`, `build`, `chore` | Next major development  |
-| `release/x.y` | `fix`, `docs`, `refactor` (non-breaking)                    | Stabilization           |
+| `release/x.y` | `fix`, `chore`, `docs`, `refactor` (non-breaking)           | Stabilization           |
 | `maint/x.y`   | `fix`, `chore`, `security`                                  | Maintenance and patches |
