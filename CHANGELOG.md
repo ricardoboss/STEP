@@ -11,7 +11,7 @@
 * Added `timestamp` function by @ricardoboss in https://github.com/ricardoboss/STEP/pull/190
 * (internal) Updated macOS x64 runner image to `macos-15-intel`
 * (internal) Added benchmark workflow to track performance by @ricardoboss in https://github.com/ricardoboss/STEP/pull/195
-* Improved parser performance
+* Improved parser performance by @ricardoboss in https://github.com/ricardoboss/STEP/pull/215
 
 # v2.1.0
 
