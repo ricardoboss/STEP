@@ -1,0 +1,77 @@
+name: Apply PR Labels
+
+on:
+  pull_request:
+    types: [ opened, synchronize ]
+
+env:
+  LABEL_MAPPINGS: |
+    [
+      { "prefixes": ["perf"], "label": "performance"   },
+      { "prefixes": ["deps"], "label": "dependencies"  },
+      { "prefixes": ["fix"],  "label": "fix"  },
+      { "prefixes": ["feat!", "fix!", "perf!"],  "label": "breaking"  }
+    ]
+
+jobs:
+  commits:
+    name: From commits
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Detect labels from commit prefixes
+        id: check
+        run: |
+          commit_subjects=$(git log \
+            ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} \
+            --pretty=format:"%s")
+
+          matched_labels=()
+
+          while IFS= read -r mapping; do
+            label=$(echo "$mapping" | jq -r '.label')
+            pattern="^($(echo "$mapping" | jq -r '.prefixes | join("|")')): "
+
+            if echo "$commit_subjects" | grep -qP "$pattern"; then
+              matched_labels+=("$label")
+            fi
+          done < <(echo "$LABEL_MAPPINGS" | jq -c '.[]')
+
+          if [ ${#matched_labels[@]} -eq 0 ]; then
+            labels_json='[]'
+          else
+            labels_json=$(printf '%s\n' "${matched_labels[@]}" \
+              | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          fi
+
+          echo "labels=$labels_json" >> "$GITHUB_OUTPUT"
+
+      - name: Apply labels
+        if: steps.check.outputs.labels != '[]'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const labelsToAdd = ${{ steps.check.outputs.labels }};
+
+            const { data: existing } = await github.rest.issues.listLabelsOnIssue({
+              owner, repo, issue_number: context.issue.number,
+            });
+            const existingNames = new Set(existing.map(l => l.name));
+
+            const newLabels = labelsToAdd.filter(l => !existingNames.has(l));
+            if (newLabels.length > 0) {
+              await github.rest.issues.addLabels({
+                owner, repo,
+                issue_number: context.issue.number,
+                labels: newLabels,
+              });
+            }

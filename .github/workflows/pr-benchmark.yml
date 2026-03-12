@@ -2,7 +2,7 @@ name: Benchmark (PR)
 
 on:
   pull_request:
-    types: [ opened, reopened, edited, synchronize ]
+    types: [ labeled, synchronize ]
 
 env:
   DOTNET_NOLOGO: true
@@ -12,7 +12,13 @@ jobs:
   benchmark:
     name: Run Benchmarks
 
-    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    if: |
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      (
+        (github.event.action == 'labeled' && github.event.label.name == 'performance') ||
+        (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'performance'))
+      )
 
     runs-on: ubuntu-latest
 
