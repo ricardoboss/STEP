@@ -3,7 +3,7 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Parsing.Nodes.Expressions;
 
-public sealed record ListExpressionNode(Token OpenBracketToken, IReadOnlyCollection<ExpressionNode> Expressions)
+public sealed record ListExpressionNode(Token OpenBracketToken, IReadOnlyCollection<IExpressionNode> Expressions)
 	: ExpressionNode
 {
 	public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)

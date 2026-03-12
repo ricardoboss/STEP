@@ -6,7 +6,7 @@ namespace StepLang.Parsing.Nodes.Statements;
 public sealed record ForeachValueStatementNode(
 	Token ForeachKeywordToken,
 	Token Identifier,
-	ExpressionNode Collection,
+	IExpressionNode Collection,
 	StatementNode Body) : StatementNode
 {
 	public override void Accept(IStatementVisitor visitor)

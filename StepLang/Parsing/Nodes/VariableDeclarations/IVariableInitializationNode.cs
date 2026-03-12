@@ -4,5 +4,5 @@ namespace StepLang.Parsing.Nodes.VariableDeclarations;
 
 public interface IVariableInitializationNode : IVariableDeclarationNode
 {
-	ExpressionNode Expression { get; }
+	IExpressionNode Expression { get; }
 }

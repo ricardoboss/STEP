@@ -1,5 +1,6 @@
 using StepLang.Expressions.Results;
 using StepLang.Interpreting;
+using StepLang.Parsing.Nodes.Expressions;
 using StepLang.Tokenizing;
 
 namespace StepLang.Framework.Web;
@@ -12,7 +13,7 @@ public class FileResponseFunction : GenericFunction<StringResult, ExpressionResu
 	protected override IEnumerable<NativeParameter> NativeParameters { get; } =
 	[
 		new(OnlyString, "file"),
-		new(NullableNumber, "status", NullResult.Instance),
+		new(NullableNumber, "status", LiteralExpressionNode.Null),
 	];
 
 	/// <inheritdoc />

@@ -3,7 +3,7 @@ using StepLang.Tokenizing;
 
 namespace StepLang.Parsing.Nodes.Statements;
 
-public sealed record ReturnExpressionStatementNode(Token ReturnKeywordToken, ExpressionNode Expression) : StatementNode
+public sealed record ReturnExpressionStatementNode(Token ReturnKeywordToken, IExpressionNode Expression) : StatementNode
 {
 	public override void Accept(IStatementVisitor visitor)
 	{
