@@ -58,6 +58,7 @@ jobs:
         if: steps.check.outputs.labels != '[]'
         uses: actions/github-script@v7
         with:
+          github-token: '${{ secrets.PR_LABELER_PAT }}'
           script: |
             const { owner, repo } = context.repo;
             const labelsToAdd = ${{ steps.check.outputs.labels }};
