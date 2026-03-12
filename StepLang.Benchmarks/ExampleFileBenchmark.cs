@@ -9,6 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace StepLang.Benchmarks;
 
 [SuppressMessage("Maintainability", "CA1515:Consider making public types internal")]
+[MemoryDiagnoser]
 public class ExampleFileBenchmark
 {
 	public static IEnumerable<string> ExampleFileNames

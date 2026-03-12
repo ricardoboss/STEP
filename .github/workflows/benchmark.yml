@@ -52,6 +52,10 @@ jobs:
           --threshold-test t_test \
           --threshold-max-sample-size 64 \
           --threshold-upper-boundary 0.995 \
+          --threshold-measure memory \
+          --threshold-test t_test \
+          --threshold-max-sample-size 64 \
+          --threshold-upper-boundary 0.999 \
           --thresholds-reset \
           --testbed ubuntu-latest \
           --err \
