@@ -24,6 +24,18 @@ public class TokenQueueTest
 		_ = AssertIsType<UnexpectedEndOfTokensException>(allowedTypesParamErr.Exception);
 	}
 
+	[Test]
+	public void TestTryDequeueReturnsFalseWhenOnlyMeaninglessTokens()
+	{
+		var whitespace = new Token(TokenType.Whitespace, " ");
+		var queue = new TokenQueue([whitespace]) { IgnoreMeaningless = true };
+
+		var success = queue.TryDequeue(out var token);
+
+		Assert.That(success, Is.False);
+		Assert.That(token, Is.Null);
+	}
+
 	private static T AssertIsType<T>(object? value)
 	{
 		Assert.That(value, Is.TypeOf<T>());
