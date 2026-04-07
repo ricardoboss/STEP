@@ -58,7 +58,8 @@ jobs:
           --start-point-hash "${{ github.event.pull_request.base.sha }}" \
           --start-point-clone-thresholds \
           --start-point-reset \
-          --testbed ubuntu-latest \
+          --ci-only-thresholds \
+          --testbed "${{ runner.name }}" \
           --err \
           --adapter c_sharp_dot_net \
           --file BenchmarkDotNet.Artifacts/results/StepLang.Benchmarks.ExampleFileBenchmark-report-full-compressed.json
