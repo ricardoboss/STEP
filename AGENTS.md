@@ -73,3 +73,20 @@
   assumptions.
 * Verify every change against the build and test commands below before proposing it.
 * Follow existing code patterns, naming conventions, and formatting as established in the codebase and `.editorconfig`.
+
+## Commit messages
+
+* Use Conventional Commits format: `type: description`.
+* Allowed types: `feat`, `fix`, `perf`, `refactor`, `test`, `docs`, `chore`, `ci`, `build`, `style`.
+* The description must explain **why** the change was made, not what was changed. The diff shows the what; the commit message provides the context that the diff cannot.
+* Use lowercase, imperative mood, no trailing period.
+* If a commit includes a breaking change, add `!` after the type.
+
+Examples:
+* `fix: prevent crash when input file is empty`  (why: crash prevention)
+* `perf: reduce parser allocations during large file processing`  (why: performance problem)
+* `refactor: simplify token matching to prepare for regex support`  (why: future extensibility)
+
+Bad examples:
+* `fix: change null check in Parser.cs`  (this just restates the diff)
+* `feat: add new method to StringHelper`  (says what, not why)
