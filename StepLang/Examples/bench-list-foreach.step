@@ -1,0 +1,7 @@
+// Stress-test: foreach iteration over a large list.
+// Exercises NumberResult allocation per loop index and list element access.
+list items = range(0, 500)
+number sum = 0
+foreach (number item in items) {
+	sum = sum + item
+}

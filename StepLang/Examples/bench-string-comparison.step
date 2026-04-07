@@ -1,0 +1,22 @@
+// Stress-test: loop with string equality comparisons.
+// Exercises StringResult == and != operators and BoolResult allocation.
+string a = "hello"
+string b = "world"
+string c = "hello"
+number count = 0
+number i = 0
+while (i < 500) {
+	if (a == b) {
+		count++
+	}
+	if (a != b) {
+		count++
+	}
+	if (a == c) {
+		count++
+	}
+	if (a != c) {
+		count++
+	}
+	i++
+}

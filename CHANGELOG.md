@@ -1,6 +1,8 @@
 # Unreleased
 
 * (internal) Improved runtime performance by optimizing tokenizer, parser, and interpreter hot paths (reduced allocations and eliminated O(N) operations).
+* (internal) Added stress-test benchmarks for interpreter hot paths and micro-benchmarks for value type operations.
+* (internal) Fixed tokenizer benchmark using a consumed `CharacterSource` across iterations.
 
 * (internal) Clarified the changelog reminder in contributor docs so it is harder to miss.
 * Added `isset` function by @ricardoboss in https://github.com/ricardoboss/STEP/pull/166

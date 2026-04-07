@@ -1,0 +1,12 @@
+// Stress-test: nested while loops with variable declarations per scope.
+// Exercises scope creation/destruction, variable declaration, and nested arithmetic.
+number total = 0
+number i = 0
+while (i < 30) {
+	number j = 0
+	while (j < 30) {
+		total = total + i * j
+		j++
+	}
+	i++
+}

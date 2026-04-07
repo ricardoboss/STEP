@@ -17,6 +17,12 @@ public class ExampleFileBenchmark
 		get
 		{
 			// yield return "assignment.step";
+			yield return "bench-arithmetic-loop.step";
+			yield return "bench-comparison-loop.step";
+			yield return "bench-function-calls.step";
+			yield return "bench-list-foreach.step";
+			yield return "bench-nested-loops.step";
+			yield return "bench-string-comparison.step";
 			// yield return "clone.step";
 			// yield return "conversions.step";
 			// yield return "docs-substring-behaviour.step";
@@ -44,7 +50,7 @@ public class ExampleFileBenchmark
 	[ParamsSource(nameof(ExampleFileNames))]
 	public string ExampleFileName { get; set; } = null!;
 
-	private CharacterSource Source { get; set; } = null!;
+	private string SourceText { get; set; } = null!;
 
 	private IReadOnlyList<Token> Tokens { get; set; } = null!;
 
@@ -58,7 +64,7 @@ public class ExampleFileBenchmark
 			throw new InvalidOperationException("Example file does not exist: " + exampleFile.FullName);
 
 		// exclude IO operations from benchmarks by loading the file now
-		Source = File.ReadAllText(exampleFile.FullName);
+		SourceText = File.ReadAllText(exampleFile.FullName);
 	}
 
 	[GlobalSetup(Target = nameof(Parse))]
@@ -79,8 +85,11 @@ public class ExampleFileBenchmark
 	[Benchmark]
 	public IReadOnlyList<Token> Tokenize()
 	{
+		// Create a fresh CharacterSource each iteration because it is stateful (tracks position)
+		CharacterSource source = SourceText;
+
 		var diagnostics = new DiagnosticCollection();
-		var tokenizer = new Tokenizer(Source, diagnostics);
+		var tokenizer = new Tokenizer(source, diagnostics);
 		var tokens = tokenizer.Tokenize().ToList();
 
 		if (diagnostics.ContainsErrors)

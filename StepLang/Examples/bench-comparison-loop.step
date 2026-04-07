@@ -1,0 +1,25 @@
+// Stress-test: loop with many boolean comparison operators.
+// Exercises BoolResult ==, !=, >, < operator allocation and if-branching.
+number count = 0
+number i = 0
+while (i < 1000) {
+	if (i > 500) {
+		count++
+	}
+	if (i == 750) {
+		count++
+	}
+	if (i != 250) {
+		count++
+	}
+	if (i < 100) {
+		count++
+	}
+	if (i >= 900) {
+		count++
+	}
+	if (i <= 50) {
+		count++
+	}
+	i++
+}

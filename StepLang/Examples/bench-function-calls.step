@@ -1,0 +1,13 @@
+// Stress-test: loop calling a user-defined function.
+// Exercises function invocation, scope creation/destruction, variable declaration,
+// and return value handling.
+function add = (number a, number b) {
+	return a + b
+}
+
+number sum = 0
+number i = 0
+while (i < 500) {
+	sum = add(sum, i)
+	i++
+}
