@@ -19,12 +19,16 @@
 
 ## Testing and formatting
 
-* Match the CI pipeline locally:
+## Testing and formatting
+
+* **Before proposing any change, run both checks and confirm they pass:**
 
   ```sh
   dotnet format --verify-no-changes
   dotnet test --configuration Test
   ```
+
+* Do not propose changes that break either check.
 
 ## Run instructions
 
@@ -60,3 +64,12 @@
 * **Every change must add a one-line summary to the `# Unreleased` section of `CHANGELOG.md` before it is merged.**
 * Prefix entries with `(internal)` if they only affect contributors, tooling, or infrastructure.
 * Reviewers will block pull requests that do not include this update, so double-check before committing.
+* If unsure whether a change is user-facing or internal, mark it `(internal)`.
+
+## Agent behavior
+
+* Be direct. Lead with the answer or the code change, then explain only if needed.
+* Never guess. If context is missing or something is ambiguous, stop and ask rather than fabricating an answer or making
+  assumptions.
+* Verify every change against the build and test commands below before proposing it.
+* Follow existing code patterns, naming conventions, and formatting as established in the codebase and `.editorconfig`.
