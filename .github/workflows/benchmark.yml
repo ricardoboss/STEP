@@ -53,7 +53,23 @@ jobs:
           --threshold-test t_test \
           --threshold-max-sample-size 64 \
           --threshold-upper-boundary 0.995 \
-          --threshold-measure memory \
+          --threshold-measure allocated \
+          --threshold-test t_test \
+          --threshold-max-sample-size 64 \
+          --threshold-upper-boundary 0.999 \
+          --threshold-measure gen0-collects \
+          --threshold-test t_test \
+          --threshold-max-sample-size 64 \
+          --threshold-upper-boundary 0.999 \
+          --threshold-measure gen1-collects \
+          --threshold-test t_test \
+          --threshold-max-sample-size 64 \
+          --threshold-upper-boundary 0.999 \
+          --threshold-measure gen2-collects \
+          --threshold-test t_test \
+          --threshold-max-sample-size 64 \
+          --threshold-upper-boundary 0.999 \
+          --threshold-measure total-operations \
           --threshold-test t_test \
           --threshold-max-sample-size 64 \
           --threshold-upper-boundary 0.999 \
