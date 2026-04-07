@@ -26,12 +26,11 @@ public class TokenQueue
 	public bool TryDequeue([NotNullWhen(true)] out Token? token)
 	{
 		token = null;
-		if (tokenList.First is null)
+		if (tokenList.First is not { } node)
 		{
 			return false;
 		}
 
-		var node = tokenList.First;
 		while (node is not null)
 		{
 			if (!IgnoreMeaningless || node.Value.Type.HasMeaning())
@@ -118,9 +117,7 @@ public class TokenQueue
 			if (!IgnoreMeaningless || node.Value.Type.HasMeaning())
 			{
 				if (remaining == 0)
-				{
 					return node.Value;
-				}
 
 				remaining--;
 			}
