@@ -20,7 +20,7 @@ jobs:
         (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'performance'))
       )
 
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, benchmarks]
 
     permissions:
       pull-requests: write
