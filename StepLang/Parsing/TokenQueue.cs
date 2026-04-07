@@ -26,31 +26,34 @@ public class TokenQueue
 	public bool TryDequeue([NotNullWhen(true)] out Token? token)
 	{
 		token = null;
-		if (tokenList.Count == 0)
+		if (tokenList.First is null)
 		{
 			return false;
 		}
 
-		var skip = 0;
-		do
+		var node = tokenList.First;
+		while (node is not null)
 		{
-			token = tokenList.Skip(skip).FirstOrDefault();
-			skip++;
-		} while (IgnoreMeaningless && !(token?.Type.HasMeaning() ?? true));
+			if (!IgnoreMeaningless || node.Value.Type.HasMeaning())
+			{
+				token = node.Value;
 
-		if (token is null)
-		{
-			return false;
+				// Remove all nodes from the front up to and including this one
+				while (tokenList.First != node)
+				{
+					tokenList.RemoveFirst();
+				}
+
+				tokenList.RemoveFirst();
+
+				LastToken = token;
+				return true;
+			}
+
+			node = node.Next;
 		}
 
-		LastToken = token;
-
-		for (; skip > 0; skip--)
-		{
-			tokenList.RemoveFirst();
-		}
-
-		return true;
+		return false;
 	}
 
 	public Result<Token> Dequeue()
@@ -107,12 +110,24 @@ public class TokenQueue
 
 	public Token? Peek(int offset = 0)
 	{
-		var source = tokenList.AsEnumerable();
-		if (IgnoreMeaningless)
+		var node = tokenList.First;
+		var remaining = offset;
+
+		while (node is not null)
 		{
-			source = source.Where(t => t.Type.HasMeaning());
+			if (!IgnoreMeaningless || node.Value.Type.HasMeaning())
+			{
+				if (remaining == 0)
+				{
+					return node.Value;
+				}
+
+				remaining--;
+			}
+
+			node = node.Next;
 		}
 
-		return source.Skip(offset).FirstOrDefault();
+		return null;
 	}
 }

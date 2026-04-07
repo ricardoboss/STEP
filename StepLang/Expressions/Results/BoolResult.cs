@@ -53,12 +53,12 @@ public class BoolResult : ValueExpressionResult<bool>
 
 	public static BoolResult operator ==(BoolResult left, BoolResult right)
 	{
-		return new BoolResult(left.Value == right.Value);
+		return left.Value == right.Value ? True : False;
 	}
 
 	public static BoolResult operator !=(BoolResult left, BoolResult right)
 	{
-		return new BoolResult(left.Value != right.Value);
+		return left.Value != right.Value ? True : False;
 	}
 
 	public static BoolResult FromBoolean(bool value)
