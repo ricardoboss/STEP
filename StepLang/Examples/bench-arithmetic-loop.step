@@ -1,0 +1,9 @@
+// Stress-test: tight while loop with arithmetic operations.
+// Exercises NumberResult allocation per operation, while-loop condition checks,
+// and variable assignment in the interpreter hot path.
+number sum = 0
+number i = 0
+while (i < 1000) {
+	sum = sum + i * 2 - 1
+	i++
+}
