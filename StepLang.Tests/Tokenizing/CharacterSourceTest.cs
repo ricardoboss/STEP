@@ -53,7 +53,7 @@ public class CharacterSourceTest
 
 			var source = await CharacterSource.FromFileAsync(new FileInfo(tempFile));
 
-			Assert.That(source.DocumentUri, Is.EqualTo(new Uri(tempFile)));
+			Assert.That(source.DocumentUri, Is.EqualTo(new Uri(Path.GetFullPath(tempFile))));
 			Assert.That(source.TryConsume(out var ch), Is.True);
 			Assert.That(ch, Is.EqualTo('h'));
 		}
