@@ -10,7 +10,7 @@ public class NumberResult : ComparableValueExpressionResult<double>
 	/// </summary>
 	private const double Epsilon = 1e-32;
 
-	public static NumberResult Zero => new(0);
+	public static readonly NumberResult Zero = new(0);
 
 	/// <inheritdoc />
 	public NumberResult(double value) : base(ResultType.Number, value)

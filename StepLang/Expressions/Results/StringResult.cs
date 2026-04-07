@@ -5,7 +5,7 @@ namespace StepLang.Expressions.Results;
 
 public class StringResult : ComparableValueExpressionResult<string>
 {
-	public static StringResult Empty => new(string.Empty);
+	public static readonly StringResult Empty = new(string.Empty);
 
 	/// <inheritdoc />
 	public StringResult(string value) : base(ResultType.Str, value)
@@ -68,12 +68,16 @@ public class StringResult : ComparableValueExpressionResult<string>
 
 	public static BoolResult operator ==(StringResult left, StringResult right)
 	{
-		return new BoolResult(string.Equals(left.Value, right.Value, StringComparison.Ordinal));
+		return string.Equals(left.Value, right.Value, StringComparison.Ordinal)
+			? BoolResult.True
+			: BoolResult.False;
 	}
 
 	public static BoolResult operator !=(StringResult left, StringResult right)
 	{
-		return new BoolResult(!string.Equals(left.Value, right.Value, StringComparison.Ordinal));
+		return !string.Equals(left.Value, right.Value, StringComparison.Ordinal)
+			? BoolResult.True
+			: BoolResult.False;
 	}
 
 	public static StringResult FromString(string value)

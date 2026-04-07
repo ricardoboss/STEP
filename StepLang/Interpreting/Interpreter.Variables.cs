@@ -13,15 +13,15 @@ public partial class Interpreter
 
 	public Variable Evaluate(VariableDeclarationNode expressionNode)
 	{
-		var validResults = expressionNode.GetResultTypes().ToList();
+		var validResults = expressionNode.GetResultTypes().ToArray();
 
 		return CurrentScope.CreateVariable(expressionNode.Location, expressionNode.Identifier, validResults,
-			ExpressionResult.DefaultFor(validResults.First()));
+			ExpressionResult.DefaultFor(validResults[0]));
 	}
 
 	public Variable Evaluate(NullableVariableDeclarationNode expressionNode)
 	{
-		var validResults = expressionNode.GetResultTypes().ToList();
+		var validResults = expressionNode.GetResultTypes().ToArray();
 
 		return CurrentScope.CreateVariable(expressionNode.Location, expressionNode.Identifier, validResults,
 			NullResult.Instance, true);
@@ -29,7 +29,7 @@ public partial class Interpreter
 
 	public Variable Evaluate(VariableInitializationNode expressionNode)
 	{
-		var validResults = expressionNode.GetResultTypes().ToList();
+		var validResults = expressionNode.GetResultTypes().ToArray();
 
 		return CurrentScope.CreateVariable(expressionNode.Location, expressionNode.Identifier, validResults,
 			expressionNode.Expression.EvaluateUsing(this));
@@ -37,7 +37,7 @@ public partial class Interpreter
 
 	public Variable Evaluate(NullableVariableInitializationNode expressionNode)
 	{
-		var validResults = expressionNode.GetResultTypes().ToList();
+		var validResults = expressionNode.GetResultTypes().ToArray();
 
 		return CurrentScope.CreateVariable(expressionNode.Location, expressionNode.Identifier, validResults,
 			expressionNode.Expression.EvaluateUsing(this), true);
