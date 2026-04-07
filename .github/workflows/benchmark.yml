@@ -15,7 +15,7 @@ jobs:
   benchmark:
     name: Run Benchmarks
 
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, benchmarks]
 
     permissions:
       checks: write
