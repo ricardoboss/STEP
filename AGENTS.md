@@ -19,8 +19,6 @@
 
 ## Testing and formatting
 
-## Testing and formatting
-
 * **Before proposing any change, run both checks and confirm they pass:**
 
   ```sh
