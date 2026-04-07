@@ -7,7 +7,7 @@ public class BoolResult : ValueExpressionResult<bool>
 	public static readonly BoolResult False = new(false);
 
 	/// <inheritdoc />
-	public BoolResult(bool value) : base(ResultType.Bool, value)
+	private BoolResult(bool value) : base(ResultType.Bool, value)
 	{
 	}
 
