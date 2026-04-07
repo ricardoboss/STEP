@@ -58,7 +58,7 @@ jobs:
           --threshold-max-sample-size 64 \
           --threshold-upper-boundary 0.999 \
           --thresholds-reset \
-          --testbed ubuntu-latest \
+          --testbed "${{ runner.name }}" \
           --err \
           --adapter c_sharp_dot_net \
           --file BenchmarkDotNet.Artifacts/results/StepLang.Benchmarks.ExampleFileBenchmark-report-full-compressed.json
