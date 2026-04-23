@@ -7,7 +7,7 @@ namespace StepLang.Parsing;
 [SuppressMessage("Naming", "CA1711:Identifiers should not have incorrect suffix")]
 public class TokenQueue
 {
-	private readonly List<Token> tokenList;
+	private readonly LinkedList<Token> tokenList;
 
 	public TokenQueue()
 	{
@@ -45,15 +45,9 @@ public class TokenQueue
 
 				tokenList.RemoveFirst();
 
-		LastToken = token;
-
-		for (; skip > 0; skip--)
-		{
-			tokenList.RemoveAt(0);
-		}
-
-		return true;
-	}
+				LastToken = token;
+				return true;
+			}
 
 			node = node.Next;
 		}
