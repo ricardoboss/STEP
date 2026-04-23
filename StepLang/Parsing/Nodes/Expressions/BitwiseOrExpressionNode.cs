@@ -4,7 +4,7 @@ using StepLang.Tokenizing;
 namespace StepLang.Parsing.Nodes.Expressions;
 
 public record BitwiseOrExpressionNode(Token Operator, ExpressionNode Left, ExpressionNode Right)
-	: BinaryExpressionNode(Operator, Left, Right, BinaryExpressionOperator.BitwiseXor)
+	: BinaryExpressionNode(Operator, Left, Right, BinaryExpressionOperator.BitwiseOr)
 {
 	public override ExpressionResult EvaluateUsing(IExpressionEvaluator evaluator)
 	{
