@@ -3,7 +3,6 @@
 * (internal) Improved runtime performance by optimizing tokenizer, parser, and interpreter hot paths (reduced allocations and eliminated O(N) operations).
 * (internal) Added stress-test benchmarks for interpreter hot paths and micro-benchmarks for value type operations.
 * (internal) Fixed tokenizer benchmark using a consumed `CharacterSource` across iterations.
-
 * (internal) Clarified the changelog reminder in contributor docs so it is harder to miss.
 * Added `isset` function by @ricardoboss in https://github.com/ricardoboss/STEP/pull/166
 * (internal) Improved testing infrastructure for analyzers by @ricardoboss in https://github.com/ricardoboss/STEP/pull/168
@@ -15,6 +14,7 @@
 * Added `timestamp` function by @ricardoboss in https://github.com/ricardoboss/STEP/pull/190
 * (internal) Updated macOS x64 runner image to `macos-15-intel`
 * (internal) Added benchmark workflow to track performance by @ricardoboss in https://github.com/ricardoboss/STEP/pull/195
+* Fix: BitwiseOrExpression had the wrong operator (Xor)
 
 # v2.1.0
 
