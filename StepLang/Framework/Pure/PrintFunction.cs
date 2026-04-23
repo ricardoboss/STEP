@@ -22,7 +22,7 @@ public class PrintFunction : NativeFunction
 
 	/// <inheritdoc />
 	public override ExpressionResult Invoke(TokenLocation callLocation, IInterpreter interpreter,
-		IReadOnlyList<ExpressionNode> arguments)
+		IReadOnlyList<IExpressionNode> arguments)
 	{
 		if (interpreter.StdOut is not { } stdOut)
 		{
