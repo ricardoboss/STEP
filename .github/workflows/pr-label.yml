@@ -56,7 +56,7 @@ jobs:
 
       - name: Apply labels
         if: steps.check.outputs.labels != '[]'
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           github-token: '${{ secrets.PR_LABELER_PAT }}'
           script: |
