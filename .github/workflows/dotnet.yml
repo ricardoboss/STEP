@@ -29,7 +29,7 @@ jobs:
     name: Build & Test (${{ matrix.os }})
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
