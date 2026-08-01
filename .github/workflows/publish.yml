@@ -36,7 +36,7 @@ jobs:
 
       - name: Install .NET
         id: setup
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
 
       - name: Compute framework moniker
         id: netfx
@@ -117,7 +117,7 @@ jobs:
 
       - name: Install .NET
         id: setup
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
 
       - name: Compute framework moniker
         id: netfx
@@ -275,7 +275,7 @@ jobs:
 
     steps:
       - name: Install .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: ${{ matrix.dotnet }}
           dotnet-quality: "ga"
